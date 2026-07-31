@@ -7,6 +7,8 @@
  * database connection, no authentication. Its only job is to prove the
  * NestJS/webpack/Nx wiring produces a real, runnable service.
  */
+import 'reflect-metadata';
+
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app/app.module';

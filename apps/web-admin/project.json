@@ -3,21 +3,29 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "sourceRoot": "apps/web-admin/src",
-  "tags": ["scope:app"],
+  "tags": [
+    "scope:app"
+  ],
   "targets": {
     "build": {
       "executor": "@nx/webpack:webpack",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "production",
       "options": {
-        "compiler": "swc",
+        "compiler": "babel",
         "outputPath": "dist/apps/web-admin",
         "index": "apps/web-admin/index.html",
         "baseHref": "/",
         "main": "apps/web-admin/src/main.tsx",
         "tsConfig": "apps/web-admin/tsconfig.app.json",
-        "assets": ["apps/web-admin/src/assets"],
-        "styles": ["apps/web-admin/src/styles.css"],
+        "assets": [
+          "apps/web-admin/src/assets"
+        ],
+        "styles": [
+          "apps/web-admin/src/styles.css"
+        ],
         "webpackConfig": "apps/web-admin/webpack.config.js"
       },
       "configurations": {
@@ -47,6 +55,18 @@
         "production": {
           "buildTarget": "web-admin:build:production"
         }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "apps/web-admin/**/*.ts",
+          "apps/web-admin/**/*.tsx"
+        ]
       }
     }
   }

@@ -11,7 +11,7 @@ module.exports = {
   plugins: [
     new NxAppWebpackPlugin({
       tsConfig: './tsconfig.app.json',
-      compiler: 'swc',
+      compiler: 'babel',
       main: './src/main.tsx',
       index: './index.html',
       baseHref: '/',

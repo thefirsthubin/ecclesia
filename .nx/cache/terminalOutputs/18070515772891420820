@@ -1,0 +1,40 @@
+[33mwarning[39m: the transform cache was reset.
+[34m[1m                Welcome to Metro [37mv0.80.12[39m[34m[22m[39m
+[34m[1m[22m[39m[2m              Fast - Scalable - Integrated[22m
+[2m[22m
+[2m[22m
+[31m[1merror[22m[39m [0mUnable to resolve module react-native from /Users/king/Documents/ecclesia/apps/mobile/src/app/App.tsx: react-native could not be found within the project or in these directories:[0m
+[0m  ../../node_modules[0m
+[0m  ../../../../node_modules[0m
+[0m[0m[0m [90m  6 |[39m [90m * screen exists only to prove the React Native/Metro/Nx wiring works.[39m[0m
+[0m [90m  7 |[39m [90m */[39m[0m
+[0m[31m[1m>[22m[39m[90m  8 |[39m [36mimport[39m { [33mSafeAreaView[39m[33m,[39m [33mStyleSheet[39m[33m,[39m [33mText[39m } [36mfrom[39m [32m'react-native'[39m[33m;[39m[0m
+[0m [90m    |[39m                                                 [31m[1m^[22m[39m[0m
+[0m [90m  9 |[39m[0m
+[0m [90m 10 |[39m [36mexport[39m [36mfunction[39m [33mApp[39m() {[0m
+[0m [90m 11 |[39m   [36mreturn[39m ([0m[0m.[0m
+[0mError: Unable to resolve module react-native from /Users/king/Documents/ecclesia/apps/mobile/src/app/App.tsx: react-native could not be found within the project or in these directories:[0m
+[0m  ../../node_modules[0m
+[0m  ../../../../node_modules[0m
+[0m[0m[0m [90m  6 |[39m [90m * screen exists only to prove the React Native/Metro/Nx wiring works.[39m[0m
+[0m [90m  7 |[39m [90m */[39m[0m
+[0m[31m[1m>[22m[39m[90m  8 |[39m [36mimport[39m { [33mSafeAreaView[39m[33m,[39m [33mStyleSheet[39m[33m,[39m [33mText[39m } [36mfrom[39m [32m'react-native'[39m[33m;[39m[0m
+[0m [90m    |[39m                                                 [31m[1m^[22m[39m[0m
+[0m [90m  9 |[39m[0m
+[0m [90m 10 |[39m [36mexport[39m [36mfunction[39m [33mApp[39m() {[0m
+[0m [90m 11 |[39m   [36mreturn[39m ([0m[0m[0m
+[0m    at ModuleResolver.resolveDependency (/Users/king/Documents/ecclesia/node_modules/.pnpm/metro@0.80.12/node_modules/metro/src/node-haste/DependencyGraph/ModuleResolution.js:139:15)[0m
+[0m    at DependencyGraph.resolveDependency (/Users/king/Documents/ecclesia/node_modules/.pnpm/metro@0.80.12/node_modules/metro/src/node-haste/DependencyGraph.js:232:43)[0m
+[0m    at /Users/king/Documents/ecclesia/node_modules/.pnpm/metro@0.80.12/node_modules/metro/src/lib/transformHelpers.js:156:21[0m
+[0m    at resolveDependencies (/Users/king/Documents/ecclesia/node_modules/.pnpm/metro@0.80.12/node_modules/metro/src/DeltaBundler/buildSubgraph.js:42:25)[0m
+[0m    at visit (/Users/king/Documents/ecclesia/node_modules/.pnpm/metro@0.80.12/node_modules/metro/src/DeltaBundler/buildSubgraph.js:83:30)[0m
+[0m    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)[0m
+[0m    at async Promise.all (index 0)[0m
+[0m    at async visit (/Users/king/Documents/ecclesia/node_modules/.pnpm/metro@0.80.12/node_modules/metro/src/DeltaBundler/buildSubgraph.js:92:5)[0m
+[0m    at async Promise.all (index 0)[0m
+[0m    at async buildSubgraph (/Users/king/Documents/ecclesia/node_modules/.pnpm/metro@0.80.12/node_modules/metro/src/DeltaBundler/buildSubgraph.js:103:3)[0m
+[36m[1minfo[22m[39m [0m[2mRun CLI with [0m[0m--verbose[0m[0m [2mflag for more details.[22m[2m[22m[0m
+
+[0m[7m[1m[31m NX [39m[22m[27m[0m  [31m1[39m
+
+

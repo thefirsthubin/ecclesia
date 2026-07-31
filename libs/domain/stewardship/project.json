@@ -3,16 +3,33 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
   "sourceRoot": "libs/domain/stewardship/src",
-  "tags": ["scope:domain-stewardship"],
+  "tags": [
+    "scope:domain-stewardship"
+  ],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/libs/domain/stewardship",
         "main": "libs/domain/stewardship/src/index.ts",
         "tsConfig": "libs/domain/stewardship/tsconfig.lib.json",
-        "assets": ["libs/domain/stewardship/*.md"]
+        "assets": [
+          "libs/domain/stewardship/*.md"
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "libs/domain/stewardship/**/*.ts"
+        ]
       }
     }
   }

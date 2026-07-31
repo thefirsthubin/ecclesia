@@ -3,16 +3,33 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
   "sourceRoot": "libs/domain/gatherings/src",
-  "tags": ["scope:domain-gatherings"],
+  "tags": [
+    "scope:domain-gatherings"
+  ],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/libs/domain/gatherings",
         "main": "libs/domain/gatherings/src/index.ts",
         "tsConfig": "libs/domain/gatherings/tsconfig.lib.json",
-        "assets": ["libs/domain/gatherings/*.md"]
+        "assets": [
+          "libs/domain/gatherings/*.md"
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "libs/domain/gatherings/**/*.ts"
+        ]
       }
     }
   }

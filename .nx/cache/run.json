@@ -1,0 +1,164 @@
+{
+  "run": {
+    "command": "nx run-many --target=build --all",
+    "startTime": "2026-07-31T21:24:43.738Z",
+    "endTime": "2026-07-31T21:25:13.727Z",
+    "inner": false
+  },
+  "tasks": [
+    {
+      "taskId": "api:build:production",
+      "target": "build",
+      "projectName": "api",
+      "hash": "12464202448974044365",
+      "startTime": "2026-07-31T21:24:43.773Z",
+      "endTime": "2026-07-31T21:24:48.425Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    },
+    {
+      "taskId": "web-admin:build:production",
+      "target": "build",
+      "projectName": "web-admin",
+      "hash": "13146343079551417503",
+      "startTime": "2026-07-31T21:24:43.773Z",
+      "endTime": "2026-07-31T21:24:49.497Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    },
+    {
+      "taskId": "domain-stewardship:build",
+      "target": "build",
+      "projectName": "domain-stewardship",
+      "hash": "14295912195230461686",
+      "startTime": "2026-07-31T21:24:48.426Z",
+      "endTime": "2026-07-31T21:24:51.446Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    },
+    {
+      "taskId": "domain-gatherings:build",
+      "target": "build",
+      "projectName": "domain-gatherings",
+      "hash": "8275068665506391636",
+      "startTime": "2026-07-31T21:24:49.498Z",
+      "endTime": "2026-07-31T21:24:53.028Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    },
+    {
+      "taskId": "domain-pastoral-care:build",
+      "target": "build",
+      "projectName": "domain-pastoral-care",
+      "hash": "16069756700385056002",
+      "startTime": "2026-07-31T21:24:51.446Z",
+      "endTime": "2026-07-31T21:24:54.453Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    },
+    {
+      "taskId": "domain-insights:build",
+      "target": "build",
+      "projectName": "domain-insights",
+      "hash": "15627737668941825763",
+      "startTime": "2026-07-31T21:24:53.029Z",
+      "endTime": "2026-07-31T21:24:55.534Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    },
+    {
+      "taskId": "domain-ministry:build",
+      "target": "build",
+      "projectName": "domain-ministry",
+      "hash": "3326999799818727926",
+      "startTime": "2026-07-31T21:24:54.453Z",
+      "endTime": "2026-07-31T21:24:56.525Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    },
+    {
+      "taskId": "contracts:build",
+      "target": "build",
+      "projectName": "contracts",
+      "hash": "1072746031879791376",
+      "startTime": "2026-07-31T21:24:55.534Z",
+      "endTime": "2026-07-31T21:24:57.345Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    },
+    {
+      "taskId": "testing:build",
+      "target": "build",
+      "projectName": "testing",
+      "hash": "2049562470818324878",
+      "startTime": "2026-07-31T21:24:56.526Z",
+      "endTime": "2026-07-31T21:24:58.277Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    },
+    {
+      "taskId": "config:build",
+      "target": "build",
+      "projectName": "config",
+      "hash": "10196187876443348107",
+      "startTime": "2026-07-31T21:24:57.347Z",
+      "endTime": "2026-07-31T21:25:01.711Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    },
+    {
+      "taskId": "domain-people:build",
+      "target": "build",
+      "projectName": "domain-people",
+      "hash": "1121324515539507408",
+      "startTime": "2026-07-31T21:24:58.278Z",
+      "endTime": "2026-07-31T21:25:04.851Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    },
+    {
+      "taskId": "worker:build",
+      "target": "build",
+      "projectName": "worker",
+      "hash": "7564446630636997781",
+      "startTime": "2026-07-31T21:25:01.712Z",
+      "endTime": "2026-07-31T21:25:07.809Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    },
+    {
+      "taskId": "rbac:build",
+      "target": "build",
+      "projectName": "rbac",
+      "hash": "12299940379948860567",
+      "startTime": "2026-07-31T21:25:04.851Z",
+      "endTime": "2026-07-31T21:25:09.940Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    },
+    {
+      "taskId": "mobile:build",
+      "target": "build",
+      "projectName": "mobile",
+      "hash": "15833098326458723718",
+      "startTime": "2026-07-31T21:24:43.773Z",
+      "endTime": "2026-07-31T21:25:13.726Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    }
+  ]
+}

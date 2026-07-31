@@ -1,0 +1,60 @@
+assets by status 8.58 KiB [cached] 6 assets
+Entrypoint main = runtime.9f3ceb9bdb86953b.js main.8130085f5e18fc07.js
+Entrypoint styles = runtime.9f3ceb9bdb86953b.js styles.c4e4df19415eeccd.css styles.eb0fe9dda4552a61.js
+orphan modules 3.08 KiB (javascript) 1.34 KiB (runtime) [orphan] 7 modules
+runtime modules 2.46 KiB 3 modules
+cacheable modules 89 bytes (javascript) 244 bytes (css/mini-extract)
+  ./apps/web-admin/src/main.tsx 39 bytes [built] [code generated] [1 error]
+  ./apps/web-admin/src/styles.css 50 bytes [built] [code generated]
+  css ./node_modules/.pnpm/css-loader@6.11.0_webpack@5.109.2/node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[6].oneOf[8].use[1]!./node_modules/.pnpm/postcss-loader@6.2.1_postcss@8.5.25_webpack@5.109.2/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[6].oneOf[8].use[2]!./apps/web-admin/src/styles.css 244 bytes [built] [code generated]
+
+ERROR in ./apps/web-admin/src/main.tsx
+Module build failed (from ./node_modules/.pnpm/@nx+webpack@20.1.0_@babel+traverse@7.29.8_@swc-node+register@1.9.2_@swc+core@1.7.42_@swc+type_dqikmkfpxk3d3pblcuierh3rpm/node_modules/@nx/webpack/src/utils/web-babel-loader.js):
+Error: Cannot find module '/Users/king/Documents/ecclesia/apps/web-admin/.babelrc'
+Require stack:
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/config/files/configuration.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/config/files/index.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/index.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/babel-loader@9.2.1_@babel+core@7.29.7_webpack@5.109.2/node_modules/babel-loader/lib/index.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/@nx+webpack@20.1.0_@babel+traverse@7.29.8_@swc-node+register@1.9.2_@swc+core@1.7.42_@swc+type_dqikmkfpxk3d3pblcuierh3rpm/node_modules/@nx/webpack/src/utils/web-babel-loader.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/webpack@5.109.2_@swc+core@1.7.42_postcss@8.5.25_webpack-cli@5.1.4/node_modules/webpack/lib/loaders/loadLoader.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/webpack@5.109.2_@swc+core@1.7.42_postcss@8.5.25_webpack-cli@5.1.4/node_modules/webpack/lib/loaders/LoaderRunner.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/webpack@5.109.2_@swc+core@1.7.42_postcss@8.5.25_webpack-cli@5.1.4/node_modules/webpack/lib/NormalModule.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/webpack@5.109.2_@swc+core@1.7.42_postcss@8.5.25_webpack-cli@5.1.4/node_modules/webpack/lib/NormalModuleFactory.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/webpack@5.109.2_@swc+core@1.7.42_postcss@8.5.25_webpack-cli@5.1.4/node_modules/webpack/lib/Compiler.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/webpack@5.109.2_@swc+core@1.7.42_postcss@8.5.25_webpack-cli@5.1.4/node_modules/webpack/lib/webpack.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/webpack@5.109.2_@swc+core@1.7.42_postcss@8.5.25_webpack-cli@5.1.4/node_modules/webpack/lib/index.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/@nx+webpack@20.1.0_@babel+traverse@7.29.8_@swc-node+register@1.9.2_@swc+core@1.7.42_@swc+type_dqikmkfpxk3d3pblcuierh3rpm/node_modules/@nx/webpack/src/executors/webpack/lib/run-webpack.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/@nx+webpack@20.1.0_@babel+traverse@7.29.8_@swc-node+register@1.9.2_@swc+core@1.7.42_@swc+type_dqikmkfpxk3d3pblcuierh3rpm/node_modules/@nx/webpack/src/executors/webpack/webpack.impl.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/nx@20.1.0_@swc-node+register@1.9.2_@swc+core@1.7.42_@swc+types@0.1.28_typescript@5.6.3__@swc+core@1.7.42/node_modules/nx/src/config/schema-utils.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/nx@20.1.0_@swc-node+register@1.9.2_@swc+core@1.7.42_@swc+types@0.1.28_typescript@5.6.3__@swc+core@1.7.42/node_modules/nx/src/command-line/run/executor-utils.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/nx@20.1.0_@swc-node+register@1.9.2_@swc+core@1.7.42_@swc+types@0.1.28_typescript@5.6.3__@swc+core@1.7.42/node_modules/nx/src/devkit-internals.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/nx@20.1.0_@swc-node+register@1.9.2_@swc+core@1.7.42_@swc+types@0.1.28_typescript@5.6.3__@swc+core@1.7.42/node_modules/nx/src/utils/assert-workspace-validity.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/nx@20.1.0_@swc-node+register@1.9.2_@swc+core@1.7.42_@swc+types@0.1.28_typescript@5.6.3__@swc+core@1.7.42/node_modules/nx/src/project-graph/build-project-graph.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/nx@20.1.0_@swc-node+register@1.9.2_@swc+core@1.7.42_@swc+types@0.1.28_typescript@5.6.3__@swc+core@1.7.42/node_modules/nx/src/project-graph/project-graph.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/nx@20.1.0_@swc-node+register@1.9.2_@swc+core@1.7.42_@swc+types@0.1.28_typescript@5.6.3__@swc+core@1.7.42/node_modules/nx/src/project-graph/file-utils.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/nx@20.1.0_@swc-node+register@1.9.2_@swc+core@1.7.42_@swc+types@0.1.28_typescript@5.6.3__@swc+core@1.7.42/node_modules/nx/src/utils/package-manager.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/nx@20.1.0_@swc-node+register@1.9.2_@swc+core@1.7.42_@swc+types@0.1.28_typescript@5.6.3__@swc+core@1.7.42/node_modules/nx/src/utils/package-json.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/nx@20.1.0_@swc-node+register@1.9.2_@swc+core@1.7.42_@swc+types@0.1.28_typescript@5.6.3__@swc+core@1.7.42/node_modules/nx/src/utils/print-help.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/nx@20.1.0_@swc-node+register@1.9.2_@swc+core@1.7.42_@swc+types@0.1.28_typescript@5.6.3__@swc+core@1.7.42/node_modules/nx/src/command-line/run/run.js
+- /Users/king/Documents/ecclesia/node_modules/.pnpm/nx@20.1.0_@swc-node+register@1.9.2_@swc+core@1.7.42_@swc+types@0.1.28_typescript@5.6.3__@swc+core@1.7.42/node_modules/nx/bin/run-executor.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at resolve (node:internal/modules/helpers:193:19)
+    at loadConfig (/Users/king/Documents/ecclesia/node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/config/files/configuration.js:213:5)
+    at loadConfig.next (<anonymous>)
+    at buildRootChain (/Users/king/Documents/ecclesia/node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/config/config-chain.js:64:47)
+    at buildRootChain.next (<anonymous>)
+    at loadPrivatePartialConfig (/Users/king/Documents/ecclesia/node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/config/partial.js:72:62)
+    at loadPrivatePartialConfig.next (<anonymous>)
+    at loadPartialConfig (/Users/king/Documents/ecclesia/node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/config/partial.js:115:25)
+    at loadPartialConfig.next (<anonymous>)
+    at step (/Users/king/Documents/ecclesia/node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js:261:32)
+    at evaluateAsync (/Users/king/Documents/ecclesia/node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js:291:5)
+    at /Users/king/Documents/ecclesia/node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js:93:9
+    at new Promise (<anonymous>)
+    at async (/Users/king/Documents/ecclesia/node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js:92:14)
+    at stopHiding - secret - don't use this - v1 (/Users/king/Documents/ecclesia/node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/errors/rewrite-stack-trace.js:47:12)
+    at Object.loadPartialConfigAsync (/Users/king/Documents/ecclesia/node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/config/index.js:34:85)
+    at Object.loader (/Users/king/Documents/ecclesia/node_modules/.pnpm/babel-loader@9.2.1_@babel+core@7.29.7_webpack@5.109.2/node_modules/babel-loader/lib/index.js:116:30)
+
+webpack 5.109.2 compiled with 1 error in 1922 ms
