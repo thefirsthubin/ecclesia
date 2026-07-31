@@ -1,0 +1,19 @@
+{
+  "name": "domain-pastoral-care",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/domain/pastoral-care/src",
+  "tags": ["scope:domain-pastoral-care"],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/domain/pastoral-care",
+        "main": "libs/domain/pastoral-care/src/index.ts",
+        "tsConfig": "libs/domain/pastoral-care/tsconfig.lib.json",
+        "assets": ["libs/domain/pastoral-care/*.md"]
+      }
+    }
+  }
+}

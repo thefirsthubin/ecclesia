@@ -8,4 +8,4 @@ Depends only on `@ecclesia/contracts`. Authorization guards that consume
 this library's rules (e.g. the same-actor-verification check, Blueprint
 §9.4) live in `apps/api`'s `stewardship` module, not here.
 
-**Status:** scaffolded once `apps/api`'s module skeleton exists.
+**Status:** registered as a real Nx project (Sprint 0 Milestone 2), building and testing cleanly. Real domain logic lands in the Stewardship domain-modeling milestone.

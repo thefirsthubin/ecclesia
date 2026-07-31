@@ -1,0 +1,19 @@
+{
+  "name": "rbac",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/rbac/src",
+  "tags": ["scope:rbac"],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/rbac",
+        "main": "libs/rbac/src/index.ts",
+        "tsConfig": "libs/rbac/tsconfig.lib.json",
+        "assets": ["libs/rbac/*.md"]
+      }
+    }
+  }
+}

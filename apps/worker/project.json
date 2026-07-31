@@ -1,0 +1,25 @@
+{
+  "name": "worker",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/worker/src",
+  "tags": ["scope:app"],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/worker",
+        "main": "apps/worker/src/main.ts",
+        "tsConfig": "apps/worker/tsconfig.app.json",
+        "assets": ["apps/worker/src/assets"]
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "worker:build"
+      }
+    }
+  }
+}

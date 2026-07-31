@@ -5,5 +5,4 @@ recomputation, notification fan-out, and scheduled sweeps (silent-drift,
 follow-up SLA, attendance-completeness). Consumes the EventBridge/SQS
 Engagement Signal bus described in Blueprint Ch.4.
 
-**Status:** scaffolded in a later Sprint 0 milestone. Not yet generated as
-an Nx project.
+**Status:** registered as a real Nx project (Sprint 0 Milestone 2). No queue consumers or scheduled jobs yet, per this milestone's scope.

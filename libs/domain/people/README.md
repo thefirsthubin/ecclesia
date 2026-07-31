@@ -8,4 +8,4 @@ Per Blueprint §6.2/§6.4, this library must depend only on `@ecclesia/contracts
 - never on another domain library, never on `libs/rbac`. Cross-domain
 orchestration happens one layer up, in `apps/api`'s `people` module.
 
-**Status:** scaffolded once `apps/api`'s module skeleton exists.
+**Status:** registered as a real Nx project (Sprint 0 Milestone 2), building and testing cleanly. Real domain logic lands in the People domain-modeling milestone.
