@@ -1,0 +1,279 @@
+{
+  "version": "6.0",
+  "nxVersion": "20.1.0",
+  "pathMappings": {
+    "@ecclesia/contracts": [
+      "libs/contracts/src/index.ts"
+    ],
+    "@ecclesia/rbac": [
+      "libs/rbac/src/index.ts"
+    ],
+    "@ecclesia/config": [
+      "libs/config/src/index.ts"
+    ],
+    "@ecclesia/testing": [
+      "libs/testing/src/index.ts"
+    ],
+    "@ecclesia/domain-people": [
+      "libs/domain/people/src/index.ts"
+    ],
+    "@ecclesia/domain-pastoral-care": [
+      "libs/domain/pastoral-care/src/index.ts"
+    ],
+    "@ecclesia/domain-ministry": [
+      "libs/domain/ministry/src/index.ts"
+    ],
+    "@ecclesia/domain-gatherings": [
+      "libs/domain/gatherings/src/index.ts"
+    ],
+    "@ecclesia/domain-stewardship": [
+      "libs/domain/stewardship/src/index.ts"
+    ],
+    "@ecclesia/domain-insights": [
+      "libs/domain/insights/src/index.ts"
+    ]
+  },
+  "nxJsonPlugins": [
+    {
+      "name": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      }
+    },
+    {
+      "name": "@nx/jest/plugin",
+      "options": {
+        "targetName": "test"
+      }
+    }
+  ],
+  "fileMap": {
+    "nonProjectFiles": [
+      {
+        "file": "package.json",
+        "hash": "18213855262400318723"
+      },
+      {
+        "file": ".git/info/exclude",
+        "hash": "2084763735014985388"
+      },
+      {
+        "file": ".git/hooks/pre-applypatch.sample",
+        "hash": "1595391782482835178"
+      },
+      {
+        "file": ".git/hooks/applypatch-msg.sample",
+        "hash": "3740124940738663445"
+      },
+      {
+        "file": "pnpm-workspace.yaml",
+        "hash": "682888461564268127"
+      },
+      {
+        "file": "libs/domain/ministry/README.md",
+        "hash": "4201102173536800629"
+      },
+      {
+        "file": ".git/index.lock",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "README.md",
+        "hash": "5122788531720723322"
+      },
+      {
+        "file": "apps/mobile/README.md",
+        "hash": "12238569493761179965"
+      },
+      {
+        "file": "infra/environments/staging/README.md",
+        "hash": "4045442741294683752"
+      },
+      {
+        "file": "db/migrations/README.md",
+        "hash": "13685734863630600387"
+      },
+      {
+        "file": ".nx/workspace-data/lockfile.hash",
+        "hash": "13939190728630608079"
+      },
+      {
+        "file": "apps/worker/README.md",
+        "hash": "5115075317721060681"
+      },
+      {
+        "file": ".nx/workspace-data/project-graph.json",
+        "hash": "15859960773603504201"
+      },
+      {
+        "file": "libs/domain/people/README.md",
+        "hash": "15024118253032035550"
+      },
+      {
+        "file": "nx.json",
+        "hash": "7163517071887910218"
+      },
+      {
+        "file": ".git/FETCH_HEAD",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": ".git/description",
+        "hash": "6589616779641096119"
+      },
+      {
+        "file": "apps/web-admin/README.md",
+        "hash": "6814843307984873041"
+      },
+      {
+        "file": "pnpm-lock.yaml",
+        "hash": "9786318506607747062"
+      },
+      {
+        "file": "libs/domain/insights/README.md",
+        "hash": "3569725693599256481"
+      },
+      {
+        "file": ".git/hooks/pre-commit.sample",
+        "hash": "2931916916104981897"
+      },
+      {
+        "file": ".git/hooks/sendemail-validate.sample",
+        "hash": "7660090827690999586"
+      },
+      {
+        "file": "libs/contracts/README.md",
+        "hash": "14341818483580867135"
+      },
+      {
+        "file": "eslint.config.mjs",
+        "hash": "1088015716123110290"
+      },
+      {
+        "file": ".nx/workspace-data/nx_files.nxt",
+        "hash": "1320270728709142854"
+      },
+      {
+        "file": ".nx/workspace-data/eslint-4393011795395336301.hash",
+        "hash": "1389868326933519382"
+      },
+      {
+        "file": "tsconfig.json",
+        "hash": "1379983966652230747"
+      },
+      {
+        "file": ".git/hooks/fsmonitor-watchman.sample",
+        "hash": "5519580754951798083"
+      },
+      {
+        "file": "libs/domain/pastoral-care/README.md",
+        "hash": "14201701806262387247"
+      },
+      {
+        "file": ".git/hooks/commit-msg.sample",
+        "hash": "11930680668000581900"
+      },
+      {
+        "file": "apps/api/README.md",
+        "hash": "2656685048874827102"
+      },
+      {
+        "file": ".git/hooks/push-to-checkout.sample",
+        "hash": "5194610557431485830"
+      },
+      {
+        "file": ".git/hooks/pre-push.sample",
+        "hash": "3666369642558647280"
+      },
+      {
+        "file": "commitlint.config.js",
+        "hash": "13859930995759832907"
+      },
+      {
+        "file": ".git/hooks/post-update.sample",
+        "hash": "16498975149454253769"
+      },
+      {
+        "file": ".git/hooks/update.sample",
+        "hash": "14696759095365231402"
+      },
+      {
+        "file": "libs/rbac/README.md",
+        "hash": "8091929976277635773"
+      },
+      {
+        "file": "libs/config/README.md",
+        "hash": "18103629444380909610"
+      },
+      {
+        "file": ".git/hooks/pre-rebase.sample",
+        "hash": "15784748353859782246"
+      },
+      {
+        "file": ".git/hooks/pre-receive.sample",
+        "hash": "8999430056057037490"
+      },
+      {
+        "file": "infra/environments/production/README.md",
+        "hash": "3426130910225440914"
+      },
+      {
+        "file": ".git/HEAD",
+        "hash": "6460185820263248482"
+      },
+      {
+        "file": "libs/domain/stewardship/README.md",
+        "hash": "7194347313136364820"
+      },
+      {
+        "file": ".git/config",
+        "hash": "14656440403329541874"
+      },
+      {
+        "file": ".git/hooks/prepare-commit-msg.sample",
+        "hash": "4009645067798984574"
+      },
+      {
+        "file": ".nx/workspace-data/file-map.json",
+        "hash": "7012217036963460417"
+      },
+      {
+        "file": ".nx/workspace-data/jest-7930610538513362720.hash",
+        "hash": "1389868326933519382"
+      },
+      {
+        "file": ".nx/workspace-data/d/server-process.json",
+        "hash": "16058373122089866564"
+      },
+      {
+        "file": "infra/modules/README.md",
+        "hash": "2389633901137640884"
+      },
+      {
+        "file": ".git/hooks/pre-merge-commit.sample",
+        "hash": "5691533144974613569"
+      },
+      {
+        "file": "libs/domain/gatherings/README.md",
+        "hash": "2002795525228730324"
+      },
+      {
+        "file": "infra/environments/dev/README.md",
+        "hash": "14810488115060311102"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "5018176188862676736"
+      },
+      {
+        "file": "libs/testing/README.md",
+        "hash": "16657869759942483700"
+      },
+      {
+        "file": ".nx/workspace-data/parsed-lock-file.json",
+        "hash": "5125846453358580277"
+      }
+    ],
+    "projectFileMap": {}
+  }
+}
