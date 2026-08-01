@@ -16329,7 +16329,23 @@
       }
     ],
     "worker": [],
-    "rbac": [],
+    "rbac": [
+      {
+        "source": "rbac",
+        "target": "npm:reflect-metadata",
+        "type": "static"
+      },
+      {
+        "source": "rbac",
+        "target": "npm:@nestjs/common",
+        "type": "static"
+      },
+      {
+        "source": "rbac",
+        "target": "npm:@nestjs/core",
+        "type": "static"
+      }
+    ],
     "api": [
       {
         "source": "api",

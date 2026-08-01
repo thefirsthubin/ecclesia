@@ -39,6 +39,24 @@ module.exports = tseslint.config(
     plugins: {
       '@nx': nxEslintPlugin,
     },
+    // Sprint 1.1 fix: '@typescript-eslint/no-floating-promises' and
+    // 'no-misused-promises' below are type-aware rules - they require an
+    // actual TypeScript program, not just a syntax tree, to know which
+    // expressions are Promises. Without `parserOptions` telling the
+    // parser how to build that program, ESLint throws
+    // "you don't have parserOptions set to generate type information"
+    // the moment either rule runs, rather than silently skipping it.
+    // `projectService: true` is typescript-eslint v8's recommended
+    // mechanism for this in a monorepo: it finds the nearest tsconfig.json
+    // to each linted file automatically (e.g. libs/rbac/tsconfig.json,
+    // which already references tsconfig.lib.json/tsconfig.spec.json),
+    // rather than needing one hand-maintained project list here.
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: __dirname,
+      },
+    },
     rules: {
       '@nx/enforce-module-boundaries': [
         'error',
@@ -151,6 +169,28 @@ module.exports = tseslint.config(
     files: ['**/*.spec.ts', '**/*.test.ts'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
+  {
+    // Sprint 1.1 fix: every project's jest.config.ts imports
+    // `swcJestConfig` from the root jest.preset.js (Sprint 0 repair - one
+    // source of truth for the @swc/jest transform target instead of each
+    // project guessing its own, see jest.preset.js's own doc comment).
+    // jest.preset.js is a build-tooling file at the workspace root, not an
+    // Nx library or app - it has no project tags and isn't part of the
+    // dependency graph @nx/enforce-module-boundaries polices. The rule
+    // still statically flags the relative import as "external resources
+    // cannot be imported using a relative or absolute path", because from
+    // its perspective a source file reached outside any known project.
+    // This never surfaced before Sprint 1.1 because lint could not run at
+    // all until then (see the two comments above). enforce-module-boundaries
+    // exists to police source-code dependency direction between bounded
+    // contexts (Blueprint §4.3/§5.2); it is not meant to apply to test
+    // tooling configuration, so it is switched off specifically for
+    // jest.config.ts rather than weakened workspace-wide.
+    files: ['**/jest.config.ts'],
+    rules: {
+      '@nx/enforce-module-boundaries': 'off',
     },
   },
   eslintConfigPrettier,

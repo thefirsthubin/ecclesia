@@ -10,14 +10,29 @@ pick a side quietly.
 
 ## Current status
 
-**Sprint 0 — Engineering Foundation, Milestone 1 of N.** No application code
-exists yet. This milestone establishes the repository's tooling substrate:
-package manager, monorepo graph, TypeScript configuration, linting
-(including module-boundary enforcement), formatting, and commit hygiene.
-Subsequent milestones add the NestJS API, the background Worker, the React
-Native and React Admin clients, Prisma/PostgreSQL, authentication, CI/CD,
-and CDK infrastructure — each one incrementally, each one verified before
-the next begins.
+**Sprint 0 — Engineering Foundation: complete.** All 14 Nx projects (`api`,
+`worker`, `mobile`, `web-admin`, and ten shared libraries) are registered,
+build, lint, and test cleanly from a fresh install. No business logic,
+database models, authentication, or UI exist yet — this sprint was
+tooling only.
+
+**Sprint 1.0 — Repository Protection: complete.** A GitHub Actions
+workflow (`.github/workflows/ci.yml`) runs `pnpm install` / `lint` /
+`test` / `build` against a clean checkout on every push and pull request —
+the same gate above, automated, so a regression is caught by CI rather
+than discovered later by hand.
+
+**Sprint 1.1 — RBAC executable specification: complete.** `libs/rbac` now
+holds the PRD §17.3 permission matrix as executable data, the record-level
+policy checks (BR-STW-04, the Poimen gate), the authorization engine, and
+the NestJS guards/decorator that will apply it once controllers exist.
+See `libs/rbac/README.md`. Not wired into `apps/api` yet — that happens
+alongside Sprint 1.2's first real controllers.
+
+Next: Sprint 1.2 (NestJS platform foundation — config, logging, health
+check, validation, Swagger, exception handling), Sprint 1.3
+(Prisma/PostgreSQL), Sprint 1.4 (Cognito authentication) — all before the
+first business domain (People) is implemented, per Blueprint §15.4.
 
 ## Prerequisites
 
@@ -36,19 +51,16 @@ corepack prepare pnpm@9.12.0 --activate
 
 ```bash
 pnpm install       # installs dependencies and runs `prepare` (Husky hooks)
-pnpm build         # nx run-many --target=build --all (no-op until apps/libs exist)
+npx nx show projects
 pnpm lint          # nx run-many --target=lint --all
 pnpm test          # nx run-many --target=test --all
+pnpm build         # nx run-many --target=build --all
 pnpm format:check  # prettier --check .
 ```
 
-> **A note on this environment.** These files were authored in a sandboxed
-> session with no outbound access to npm, GitHub, or any package registry —
-> every config file here was hand-verified for syntactic correctness, but
-> `pnpm install` / `nx build` / `nx lint` have not been executed against a
-> real dependency tree. Run the commands above on your machine (or let CI
-> run them on push) as the first real build/lint gate, and report back
-> anything that doesn't pass before we proceed to Milestone 2.
+All five commands above must pass before a change is considered done —
+this is enforced automatically on every push and pull request by
+`.github/workflows/ci.yml`.
 
 ## Repository layout
 
@@ -81,7 +93,7 @@ db/
 
 ## Module boundaries
 
-`eslint.config.mjs` enforces the dependency-direction rules from Blueprint
+`eslint.config.cjs` enforces the dependency-direction rules from Blueprint
 §4.3 and §5.2 via `@nx/enforce-module-boundaries`: a domain library may
 depend only on `libs/contracts`, never on another domain library or on
 `libs/rbac` directly; applications may depend on anything. This is checked

@@ -3,7 +3,13 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
-    "types": ["jest", "node", "react-native"]
+    "types": [
+      "jest",
+      "node",
+      "react-native"
+    ],
+    "declaration": false,
+    "declarationMap": false
   },
   "include": [
     "jest.config.ts",

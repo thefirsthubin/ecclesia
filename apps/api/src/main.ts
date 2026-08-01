@@ -21,4 +21,7 @@ async function bootstrap() {
   console.log(`[api] Ecclesia API listening on port ${port} (scaffold - no domain modules registered yet)`);
 }
 
-bootstrap();
+bootstrap().catch((error: unknown) => {
+  console.error('[api] Fatal error during bootstrap', error);
+  process.exitCode = 1;
+});
