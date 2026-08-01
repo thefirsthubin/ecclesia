@@ -1,73 +1,89 @@
-# Database design notes (Sprint 1.3)
+# Database design notes (Sprint 1.3 — rebuilt against the real Blueprint/PRD)
 
-**How this document came to exist:** `db/migrations/README.md` commits this
-migration to implementing Blueprint §7.2 (seven bounded-context Postgres
-schemas), §7.3 (Row-Level Security), §7.4 (the append-only Financial
-Transaction event log), and §7.5 (the temporal `GROUP_MEMBERSHIP` model).
-The actual Blueprint/PRD text for those sections was not available in this
-session. Given that choice, every entity, field, and constraint below is
-traced to something already committed to this repository - primarily
-`libs/rbac`'s types, permission matrix, and action taxonomy (which a past
-session transcribed directly from PRD §17.2-17.4), and every domain
-library's `README.md` (which cite specific PRD/Blueprint sections for the
-business logic each library will eventually hold). Nothing here is
-transcribed from the Blueprint itself, because the Blueprint text was not
-provided. **This schema is a draft pending review against the actual
-Blueprint §7.2-7.5 text - treat every "Evidence" citation below as exactly
-that: evidence, not a quotation of the source of truth.**
+**Status:** This is a full rebuild. The first version of this schema was
+designed without the actual Blueprint/PRD text (by explicit user
+direction, since that text wasn't available in that session) and is now
+known to have been wrong in several structural ways. `docs/Ecclesia_PRD.md`
+and `docs/Ecclesia_Technical_Blueprint.md` are now in the repository
+verbatim (copied byte-for-byte from the user's upload — see their md5sums
+if you need to re-verify). Every entity and field below cites the exact
+section, table, FR-ID, or BR-ID it comes from. Two confidence tiers are
+used throughout, because the Blueprint itself is explicit that its §7.2
+table lists "representative tables," not exhaustive column lists:
 
-Where evidence ran out, the entity or field is either left out entirely
-(see "Deliberately not built" below) or flagged as an open question rather
-than guessed.
+- **[BLUEPRINT-EXACT]** — the table or column is shown verbatim in
+  Blueprint §7.2-7.5, §8, or §9 (table names, the four worked DDL
+  examples, the RLS policy example).
+- **[PRD-DERIVED]** — the table is *named* in Blueprint §7.2's
+  schema-to-module mapping, but its column list is not given anywhere in
+  either document. Fields are derived from the specific FR-/BR-ID(s) that
+  describe that capability, cited per field. Treat these as a considered
+  draft, not a transcription.
 
-## Traceability index
+## What was wrong in the first version, and why
 
-| Schema object | Evidence |
+| First version | Correction | Evidence |
+|---|---|---|
+| `GroupType` enum had `CLUSTER`, `BACENTA`, `BASONTA`, with a self-referencing `parentGroupId` hierarchy | There is no Cluster entity. `Group.type` is exactly `PASTORAL_CARE` (Bacenta) or `MINISTRY` (Basonta) — no third type, no hierarchy | PRD §12.6 (the Group model table has exactly two rows); Blueprint §7.2 lists no `clusters` table. PRD line ~1164 (§17.2, Assistant Pastor row): "cluster assignment **is itself a configuration, not a hard-coded structure**" — cluster is a Role Assignment scope concept, not a Group |
+| `GroupMembership.validFrom`/`validTo` | Renamed `started_at`/`ended_at`, added required-on-close `reason` | Blueprint §7.5's exact DDL |
+| Financial data modeled as only an event log, no header row | Added `financial_transactions` (the header/current-state row) alongside `financial_transaction_events` (the append-only log) | Blueprint §7.4's exact DDL — both tables shown verbatim |
+| `FinancialTransactionEvent.eventType` = RECORDED/VERIFIED/RECONCILED; `amount Decimal` | `financial_transactions.type` = OFFERING/TITHE/SPECIAL_OFFERING/PLEDGE/DONATION/EXPENSE (a CHECK constraint, shown verbatim); events use free-form `from_state`/`to_state` text, not a fixed 3-value enum (the real state machine has 8+ states per PRD §12.7, two different sub-flows); money stored as `amount_minor BIGINT`, not `Decimal(12,2)` | Blueprint §7.4 exact DDL; PRD §12.7's inbound/outbound state diagrams |
+| Actors tracked via `personId` everywhere | Actors performing an auditable, security-relevant state transition (financial events, denial/audit logging) are tracked via `platform.users` (`actor_user_id`), not `people.persons` directly — a `User` is the authenticated Cognito identity; a `Person` is the pastoral/ministry profile. Fields that describe *who is responsible for* something (task assignment, leadership) still use `person_id`, matching the PRD's own wording for those specific requirements | Blueprint §7.4's `actor_user_id UUID NOT NULL REFERENCES platform.users(id)`; Blueprint §8.5: "every authentication event... logged... with the authenticated user" |
+| `Person.poimenStatus` as a field on `Person` | Moved to its own `poimen_enrollments` table | Blueprint §7.2 lists `poimen_enrollments` as its own `pastoral_care`-schema table, separate from `persons` |
+| `Person.lifecycleStage` as an unconstrained string | Now a real 7-state enum | PRD §12.5's state diagram and BR-PPL-03 give the exact, complete state list: `VISITOR`, `FIRST_TIME_GUEST`, `FOLLOW_UP`, `LAPSED`, `ASSIGNED_TO_BACENTA`, `SIX_WEEKS_PARTICIPATION`, `MEMBER` |
+| `ministry` and `insights` schemas left empty | Both have real Release-1 tables per Blueprint §7.2's own mapping table — leaving them empty was itself the mistake (the "RBAC-first" reasoning that justified it doesn't apply once the actual Blueprint says otherwise) | Blueprint §7.2: `ministry` → `staffing_targets`, `worker_availability`; `insights` → `engagement_signals`, `pulse_scores`, `pulse_score_history`, `alerts` |
+| No `platform.users`, `platform.sessions`, `platform.councils`, `Person.guardianPersonId` | All added | Blueprint §7.2's table list; Blueprint §8 (Authentication) for users/sessions; Blueprint §7.2's `persons` row: "includes optional nullable `guardian_person_id`"; PRD FR-ADM-03 for Council |
+| `Expense` as an independent table with its own `ExpenseStatus` enum | Modeled as a 1:1 extension of a `financial_transactions` row with `type = 'EXPENSE'`, sharing the same `financial_transaction_events` state log as inbound transactions (Requested→Approved/Rejected→Paid→ReceiptRetained instead of Recorded→Verified→...) | PRD §12.7's outbound state diagram uses the same `FinancialTransaction` entity; Blueprint §7.4's `type` CHECK constraint includes `'EXPENSE'` as one of six transaction types. **[PRD-DERIVED, flagged below]** — this specific extension-table relationship (rather than some other way of storing Expense-only fields) is my construction, not shown verbatim |
+
+## Traceability index — [BLUEPRINT-EXACT] entities
+
+| Table | Schema | Source |
+|---|---|---|
+| Seven schemas (`people`, `pastoral_care`, `ministry`, `gatherings`, `stewardship`, `insights`, `platform`) | — | Blueprint §7.1 ADR-003, §7.2 |
+| `branches`, `configurations`, `audit_log` | `platform` | Blueprint §7.2 |
+| `persons` (incl. `guardian_person_id`), `groups`, `group_memberships`, `role_assignments` | `people` | Blueprint §7.2; `group_memberships` DDL in §7.5 |
+| `financial_transactions`, `financial_transaction_events` | `stewardship` | Blueprint §7.4, full DDL shown |
+| Row-Level Security: `ENABLE ROW LEVEL SECURITY` + `branch_id = current_setting('app.current_branch_id')::uuid` policy, per Branch-scoped table | — | Blueprint §7.3, exact policy shown for `financial_transactions`, generalized here to every Branch-scoped table per §7.3's own text ("every Branch-scoped table") |
+| Append-only enforcement on `financial_transaction_events` (no UPDATE/DELETE grants for the app's DB role) | `stewardship` | Blueprint §7.4: "No UPDATE or DELETE grants... for the application's database role... enforced at the database-role permission level" — **note:** the first version of this migration used a trigger that raises an exception; the Blueprint's actual mechanism is a **`REVOKE`/role-permission** approach, not a trigger. Corrected below (see Open Question #2) |
+| `poimen_gate_enabled` boolean on `platform.configurations` | `platform` | Blueprint §9.3, exact field name |
+| One active `PASTORAL_CARE` `GROUP_MEMBERSHIP` per person via a partial unique index | `people` | Blueprint §7.5, exact index shown: `CREATE UNIQUE INDEX one_active_bacenta_per_person ON people.group_memberships (person_id) WHERE group_type = 'PASTORAL_CARE' AND ended_at IS NULL` |
+| `financial_transaction_events.actor_user_id REFERENCES platform.users(id)` | `stewardship`/`platform` | Blueprint §7.4 |
+
+## Traceability index — [PRD-DERIVED] entities (table named in Blueprint §7.2, columns derived from cited FR-/BR-IDs)
+
+| Table | Fields derived from |
 |---|---|
-| Seven Postgres schemas: `people`, `pastoral_care`, `ministry`, `gatherings`, `stewardship`, `insights`, `platform` | `apps/api/src/app/app.module.ts`'s bounded-context module list (PeopleModule, PastoralCareModule, MinistryModule, GatheringsModule, StewardshipModule, InsightsModule, PlatformModule = 7) matches `db/migrations/README.md`'s "seven bounded-context schemas" count exactly, and matches the action-namespace prefixes already used throughout `libs/rbac/src/lib/actions.ts` (`people.*`, `gatherings.*`, `stewardship.*`, `pastoral_care.*`, `insights.*`, `platform.*`). |
-| `Group` (unifies Cluster/Bacenta/Basonta with a `type` discriminator + self-referencing `parentGroupId`, rather than three separate tables) | `libs/rbac/src/lib/evaluate.ts`'s `resourceInScope` comment: "Bacenta Leader and Basonta Leader the same *shape* of authority... just over different **group types**"; `libs/domain/people/README.md` says "Group/GroupMembership invariants," not "Bacenta/GroupMembership"; the codebase's established pattern of one generalized entity with a type discriminator instead of parallel tables (Gatherings' own README: "the generalized Gathering type hierarchy - 'Everything Is A Gathering'"). **This is an inference by analogy, not a direct citation - flagged in Open Questions.** |
-| `Person.lifecycleStage` modeled as a plain string, not a Postgres enum | `libs/domain/people/README.md`: "the lifecycle-stage state machine (PRD §12.5)" confirms a state machine exists, but no state names are evidenced anywhere in this repo. An enum would require guessing the actual state vocabulary, which risks contradicting the real PRD §12.5 states later - "Domain Language is Sacred" (engineering-principles.md §2) argues against inventing the words. |
-| `Person.poimenStatus` as a real 3-value enum (`NOT_STARTED`, `IN_PROGRESS`, `COMPLETE`) | `libs/rbac/src/lib/types.ts`'s `ResourceContext.candidatePoimenStatus` literal union - exact values, directly copied. |
-| `RoleAssignment` has `effectiveFrom`/`effectiveTo` (time-bound) | `libs/rbac/src/lib/roles.ts`'s own doc comment: "the succession runbook models interim authority as an ordinary, **time-bound Role Assignment**." |
-| `GroupMembership` has `validFrom`/`validTo` (temporal) | `db/migrations/README.md`: "the temporal GROUP_MEMBERSHIP model (§7.5)" - the word "temporal" is the source's own word, not mine. |
-| `FinancialTransactionEvent` is an append-only event log, not a mutable row with a status column | `db/migrations/README.md`: "the append-only Financial Transaction event log (§7.4)"; `libs/domain/stewardship/README.md`: "the Financial Transaction **state machine** (PRD §12.7)" - modeled as a sequence of immutable events (`RECORDED`/`VERIFIED`/`RECONCILED`) rather than a mutable status field, because "append-only event log" and "state machine" together describe event sourcing, not a single mutable record. |
-| `FinancialTransactionEvent.eventType` enum values (`RECORDED`, `VERIFIED`, `RECONCILED`) | The three action names in `libs/rbac/src/lib/actions.ts`: `stewardship.transaction.record`, `.verify`, `.reconcile`. |
-| `FinancialTransactionEvent.recordedByPersonId` distinct from the verifying actor | `libs/rbac/src/lib/record-level-checks.ts`'s `differentActorThanRecorder` (BR-STW-04 / PRD §17.4) needs exactly this fact to exist on the resource. |
-| `platform.configurations` table name | `libs/rbac/src/lib/types.ts`'s `BranchConfiguration` doc comment names it literally: `` `platform.configurations` ``. |
-| `Configuration` fields (`gatheringTypes`, `churchPulseWeights`, `poimenGateEnabled`, `followupSlaDefaults`) | `libs/config/README.md` and `libs/config/src/lib/config.ts`'s doc comment, verbatim list: "gathering types, Church Pulse weights, the Poimen-gate flag..., follow-up SLA defaults." `poimenGateEnabled`'s exact name/type also matches `BranchConfiguration.poimenGateEnabled: boolean` in `libs/rbac/src/lib/types.ts`. |
-| `AuditLog` | `libs/rbac/src/lib/actions.ts`'s `platform.audit_log.read` action, scoped per-role in the permission matrix (Branch/Cluster/OwnGroup) - a scoped, queryable read implies a persisted, filterable table, not just a log stream. Also engineering-principles.md §5: "denials are logged as rigorously as approvals." |
-| `Gathering`/`GatheringSeries` split for recurrence | `libs/domain/gatherings/README.md`: "recurrence-series handling." |
-| `Attendance` has no status enum - a row's existence means present | No evidence of an "absent" state anywhere; `libs/domain/gatherings/README.md`'s "attendance-completeness evaluation" implies completeness is computed by comparing recorded Attendance rows against expected Group membership at gathering time, not by storing explicit absence rows. |
+| `pastoral_care.follow_up_tasks` | FR-PC-03 (auto-creation trigger), FR-PC-04 (assignment to a Person, SLA window, escalation) |
+| `pastoral_care.silent_drift_flags` | PRD §15.8's decision tree (BR-PC-02 operationalized); FR-INS-05 (act/dismiss resolution tracking) |
+| `pastoral_care.poimen_enrollments` | FR-PC-06 (enrollment/completion status, `NOT_STARTED`/`IN_PROGRESS`/`COMPLETE` — same 3 values already used in `libs/rbac`'s `ResourceContext.candidatePoimenStatus`) |
+| `pastoral_care.pastoral_notes` | §16.2 capability list; NFR-PRIV-01 restriction (ADMIN explicit deny already encoded in `libs/rbac`) |
+| `ministry.staffing_targets` | FR-MIN-02 ("numeric staffing target against a specific Gathering instance") |
+| `ministry.worker_availability` | §16.3 ("lets a worker mark themselves unavailable for a date range") |
+| `gatherings.gathering_series` | FR-GTH-02 (recurring series generating dated instances) |
+| `gatherings.gatherings` | PRD §12.4's exact field list: `id`, `type`, `scheduledStart`, `scheduledEnd`, `recurrenceRule`, `venue`, `ownerGroupId` (nullable), `status`, plus a `config` JSON column for type-specific fields (§12.4's implementation note) |
+| `gatherings.attendance_records` | PRD §12.2: "a status (present, absent, excused)" — exact 3-value status; FR-GTH-03 (Branch/Bacenta-level scoping via `ownerGroupId`) |
+| `gatherings.visitor_intake_submissions` | FR-GTH-04; §16.1 ("name, phone, how they heard about the church" as minimal capture fields) |
+| `stewardship.expenses` | FR-STW-09 (approver ≠ requester, mandatory receipt before terminal state); PRD §12.7's outbound state diagram |
+| `stewardship.projects`, `stewardship.pledges` | FR-STW-08 (target, pledge/donation tracking, single opt-in reminder — "never a repeated or pressuring sequence," resolved OQ-07) |
+| `insights.engagement_signals` | PRD §12.8's flowchart: six signal source categories feeding one stream |
+| `insights.pulse_scores`, `insights.pulse_score_history` | FR-INS-01 (Person/Group/Branch level scores); §12.8 ("Church Pulse: Person/Group/Branch level" as three outputs of the scoring engine) — modeled as a current-value table plus a full history table, mirroring the `financial_transactions`/`financial_transaction_events` current-state-plus-event-log pattern the Blueprint already establishes for exactly this "denormalized current value, full history separately" shape |
+| `insights.alerts` | FR-INS-03 (trend/threshold alerts), FR-INS-05 (act/dismiss resolution) |
+| `platform.users` | Blueprint §8 (Cognito-backed identity); only a minimal shape is built in Sprint 1.3 (enough for other tables' `actor_user_id`/`user_id` foreign keys to reference) — the full Cognito integration (custom `auth_method` attribute, MFA enrollment state) is Sprint 1.4's scope, not this one's |
+| `platform.sessions` | Named in Blueprint §7.2's table list but never given schema detail anywhere in either document — Blueprint §8.3's token strategy describes Cognito's own device tracking, which may mean this table's real purpose is narrower than "sessions" implies. Built minimally (Open Question #4) |
+| `platform.councils` | FR-ADM-03 ("Branch and Council as first-class entities from Release 1"); PRD §12.3's ERD: `COUNCIL ||--o{ BRANCH : oversees` |
 
-## Deliberately not built
+## Open questions (still genuinely unresolved by the source documents)
 
-**`ministry` schema: declared, no tables.** `libs/domain/ministry/README.md` describes "Basonta staffing-adequacy calculation, worker overcommitment detection," which is enough to guess at a `MinistryAssignment` entity - but `libs/rbac/src/lib/actions.ts` has **zero** `ministry.*` actions. Every other bounded context in this codebase was built RBAC-first (Sprint 1.1 defined the full action taxonomy before Sprint 1.3 touches a table). Building Ministry tables now would put the database ahead of an authorization model that doesn't yet exist for it - the opposite order from how every other domain here was built. Recommend deferring Ministry's schema to whenever its RBAC actions are defined.
+1. **Assistant Pastor "cluster" scope mechanism.** Confirmed real (PRD §17.2, §11.3, §16.2/16.6 all reference it functionally) and confirmed *not* a Group entity (see the corrections table above), but neither document specifies its schema shape beyond "cluster assignment is itself a configuration." This migration models it as `role_assignments.scope_group_ids UUID[]` (nullable, populated only for cluster-scoped Role Assignments) — a plain array is the most literal reading of "configuration, not a hard-coded structure," but this is a construction, not a citation. `libs/rbac`'s `Scope` type already has a `CLUSTER` value and `ActorContext.clusterId` — that code will need to change from a single `clusterId` to something that can express "member of this set of Bacentas" once this is wired up (Sprint 1.4 or the Pastoral Care domain milestone).
+2. **Append-only enforcement mechanism.** Blueprint §7.4 says no UPDATE/DELETE *grants* for the application's database role — i.e., enforced via `REVOKE`/role permissions, not a rejecting trigger. This requires a dedicated, non-owner application database role to exist and be the one the app actually connects as (the same prerequisite already flagged for RLS in Open Question #3 below) — until that role exists, this migration keeps the rejecting-trigger approach from the first version as an interim safeguard, clearly commented as such, so the append-only guarantee holds even before the role-based grant model is set up.
+3. **RLS session role and GUC-setting mechanism.** Blueprint §7.3: "The API service sets `app.current_branch_id` as a session-local setting at the start of every request." Nothing in Sprint 1.2/1.3 does this yet — it depends on Sprint 1.4 authentication existing to derive a Branch from. Also unconfirmed: whether the app's database role is distinct from the migration-owning role (RLS is bypassed for table owners by default; Blueprint doesn't state the role name).
+4. **`platform.sessions`.** No schema given anywhere. Modeled minimally (id, user_id, device identifier, created_at, revoked_at) as a plausible local record of Cognito-issued refresh-token sessions for the per-device revocation Blueprint §8.3 describes, but this is the least-evidenced table in this migration and should be revisited once Sprint 1.4 actually implements Cognito integration.
+5. **`stewardship.expenses`' exact relationship to `financial_transactions`.** Modeled as a 1:1 extension table (see corrections table above) — a reasonable reading of the evidence, not a citation.
+6. **Gathering `status` and `Group` lifecycle enum exact value sets.** PRD §12.4 names a `status` field on `Gathering` and §12.6 names `Active`/`Splitting`/`Merging`/`Archived` for `Group`, but doesn't enumerate `Gathering.status`'s values explicitly. Modeled `Group.lifecycleStatus` with the four given values (real citation); `Gathering.status` modeled minimally (`SCHEDULED`, `CANCELLED`, `COMPLETED`) since no PRD text enumerates it.
+7. **`insights.pulse_scores` vs `pulse_score_history` split.** Both tables are named in Blueprint §7.2 but the current/history relationship between them is my inference by analogy to the `financial_transactions`/`financial_transaction_events` pattern, not a citation.
 
-**`insights` schema: declared, no tables.** `libs/domain/insights/README.md`: Insights "Consumes only the Engagement Signal shape defined in `@ecclesia/contracts`" - its primary input is a stream/contract shape, not something Insights itself owns as a table. Whether an Engagement Signal or a computed Church Pulse score gets persisted to Postgres at all (versus staying in an event stream, e.g. via the Worker app) is genuinely unspecified here. Left empty rather than guessed.
+## What's still deliberately not built
 
-**No `Ministry`, `EngagementSignal`, or `ChurchPulseScore` tables.** Same reasoning as above.
-
-## Open questions (need the real Blueprint/PRD text to close)
-
-1. **Is `Group` (unified Cluster/Bacenta/Basonta with a type discriminator) actually how the Blueprint models this, or are Cluster/Bacenta/Basonta separate tables?** This is the single biggest structural inference in this schema (see Traceability index above). Everything downstream (`RoleAssignment`, `GroupMembership`, `Gathering`) depends on this choice.
-2. **`Person.lifecycleStage`**: what are the actual state names and transitions (PRD §12.5)? Modeled as an unconstrained string for now.
-3. **BR-PPL-01, BR-PPL-02, BR-PPL-04** (`libs/domain/people/README.md` cites these for "Group/GroupMembership invariants"; BR-PPL-03 is not cited anywhere in this repo) - what do they actually constrain? (E.g., can a Person hold membership in more than one Bacenta simultaneously? This schema assumes not, enforced by `GroupMembership`'s temporal model, but that assumption is unconfirmed.)
-4. **BR-STW-02, 03, 05 through 11** (`libs/domain/stewardship/README.md` cites "BR-STW-01 through BR-STW-11"; only 01 and 04 are known from `libs/rbac`) - do any of these require additional fields, tables, or constraints on `FinancialTransactionEvent`/`Expense` beyond what's built here?
-5. **Expense rejection**: only `request`/`approve` actions exist in `libs/rbac`. Is there a reject/decline path with its own state, or is "not approved" simply the absence of an approval?
-6. **Row-Level Security mechanism**: this migration enables RLS and adds `branch_id`-scoped policies using a Postgres session variable (`app.current_branch_id`, set via `SET LOCAL` per request/transaction). This is a reasonable, common pattern but **not evidenced** by anything in this repo - the actual GUC naming convention, whether Cluster/Bacenta-level policies are also required (vs. Branch-level RLS with narrower scoping left entirely to the application layer, per engineering-principles.md §5's "RLS is a backstop under application-layer filtering, not a replacement for it"), and which Postgres role(s) the app connects as (RLS is bypassed by table owners/superusers by default) are all unconfirmed.
-7. **Primary key strategy**: UUIDs (`gen_random_uuid()`) are used throughout as a reasonable default. Not evidenced.
-8. **`AuditLog`**: is this really a Postgres table, or should `platform.audit_log.read` instead be served by querying the structured pino log stream (`nestjs-pino`, Sprint 1.2)? Built as a table here because a *scoped* read (Branch/Cluster/OwnGroup, per the permission matrix) is hard to serve efficiently from a log stream, but this is an inference, not a citation.
-9. **`Attendance` and `FollowupTask` status vocabularies**: not evidenced beyond the actions that create/read/update them.
-
-## What Sprint 1.4 (authentication) and each domain module still need to wire up
-
-- Nothing in this migration sets the Postgres session variables the RLS
-  policies check (`app.current_branch_id`, etc.) - there is no
-  authenticated actor yet to derive them from. That wiring is a
-  Prisma middleware/interceptor that populates them from
-  `EcclesiaRequestContext` (`libs/rbac`), landing with Sprint 1.4 or the
-  first domain module that needs real data access.
-- `libs/config`'s typed accessors over the `platform.configurations` table
-  (referenced by its own README as landing "alongside the Prisma/database
-  milestone") are not built in this sprint - only the table they will read
-  from.
+- No columns for FR-PPL-08's configurable custom profile fields beyond a `custom_fields` JSONB column on `Person` — the field-definition/config side of that (Horizon 2, per §13.1) isn't specified further and would need its own configuration table when built.
+- Cognito integration itself (Sprint 1.4): `platform.users` here is intentionally minimal.
+- The Prisma middleware/interceptor that populates `app.current_branch_id` per request (Open Question #3) and the dedicated non-owner database role (Open Questions #2, #3) — both prerequisites for RLS/append-only enforcement to do anything at runtime, neither built yet.

@@ -12,7 +12,7 @@ connection. `src/platform/` holds:
 |---|---|
 | `config/env.schema.ts` | Zod-validated process config (`NODE_ENV`, `PORT`, `LOG_LEVEL`, `API_DOCS_ENABLED`, `DATABASE_URL`) - fails fast at boot on an invalid value. See `.env.example`. |
 | `platform.module.ts` | Wires `ConfigModule`, `nestjs-pino`'s `LoggerModule`, `TerminusModule`, `DatabaseModule`, and the workspace-wide `AllExceptionsFilter` (as an `APP_FILTER` provider). |
-| `database/prisma.service.ts` | The one `PrismaClient` instance, connected/disconnected on module init/destroy. See `db/README.md` and `db/DESIGN_NOTES.md` - the schema it's generated from is a **draft**, designed without the actual Blueprint §7.2-7.5 text. |
+| `database/prisma.service.ts` | The one `PrismaClient` instance, connected/disconnected on module init/destroy. See `db/README.md` and `db/DESIGN_NOTES.md` - the schema it's generated from has been rebuilt against the real Blueprint §7.2-7.5/PRD text and fully verified against a real PostgreSQL instance (`prisma migrate diff` empty, seed succeeds). |
 | `database/database-health.indicator.ts` | Custom Terminus indicator (`SELECT 1`) so `/health` reflects real database reachability, not just process liveness. |
 | `health/health.controller.ts` | `GET /health` - version-neutral, checks process memory (heap/RSS) and the database. |
 | `filters/all-exceptions.filter.ts` | Every error response goes through here: consistent shape, 4xx logged at `warn`, 5xx at `error` with the original exception, per engineering-principles.md §5 (Security by Default - denials logged as rigorously as approvals). |
