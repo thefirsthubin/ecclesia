@@ -27,12 +27,21 @@ holds the PRD §17.3 permission matrix as executable data, the record-level
 policy checks (BR-STW-04, the Poimen gate), the authorization engine, and
 the NestJS guards/decorator that will apply it once controllers exist.
 See `libs/rbac/README.md`. Not wired into `apps/api` yet — that happens
-alongside Sprint 1.2's first real controllers.
+alongside the People domain's first real controllers.
 
-Next: Sprint 1.2 (NestJS platform foundation — config, logging, health
-check, validation, Swagger, exception handling), Sprint 1.3
-(Prisma/PostgreSQL), Sprint 1.4 (Cognito authentication) — all before the
-first business domain (People) is implemented, per Blueprint §15.4.
+**Sprint 1.2 — NestJS platform foundation: complete.** `apps/api/src/platform`
+now provides Zod-validated process config, structured logging
+(`nestjs-pino`), a version-neutral `/health` endpoint (`@nestjs/terminus`),
+a per-route Zod validation pipe, Swagger at `/docs`, and a workspace-wide
+exception filter that logs denials at `warn` and bugs at `error` (Security
+by Default). URI path versioning (`/v1/...`) is enabled from this first
+endpoint, per Blueprint §14.7. See `apps/api/README.md`. `libs/rbac` is
+still not wired in — that's the RBAC guards' first real usage, alongside
+Sprint 1.4 authentication and the People domain's first controllers.
+
+Next: Sprint 1.3 (Prisma/PostgreSQL), Sprint 1.4 (Cognito authentication)
+— both before the first business domain (People) is implemented, per
+Blueprint §15.4.
 
 ## Prerequisites
 

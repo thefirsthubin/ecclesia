@@ -1,0 +1,19 @@
+asset pnpm-lock.yaml 43.8 KiB [emitted]
+asset main.js 21 KiB [emitted] (name: main)
+asset package.json 525 bytes [emitted]
+asset assets/.gitkeep 0 bytes [emitted] [from: apps/api/src/assets/.gitkeep] [copied]
+cacheable modules 18.5 KiB
+  modules by path ./apps/api/src/platform/ 12.2 KiB 4 modules
+  modules by path ./apps/api/src/app/*.ts 3.38 KiB 3 modules
+  ./apps/api/src/main.ts 2.94 KiB [built] [code generated]
+modules by path external "@nestjs/ 210 bytes
+  external "@nestjs/common" 42 bytes [built] [code generated]
+  external "@nestjs/core" 42 bytes [built] [code generated]
+  external "@nestjs/config" 42 bytes [built] [code generated]
+  external "@nestjs/swagger" 42 bytes [built] [code generated]
+  external "@nestjs/terminus" 42 bytes [built] [code generated]
+external "reflect-metadata" 42 bytes [built] [code generated]
+external "nestjs-pino" 42 bytes [built] [code generated]
+external "tslib" 42 bytes [built] [code generated]
+external "zod" 42 bytes [built] [code generated]
+webpack 5.109.2 compiled successfully in 2419 ms
