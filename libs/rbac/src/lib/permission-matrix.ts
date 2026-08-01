@@ -118,6 +118,39 @@ const BASE_MATRIX: PermissionRule[] = [
     reason: 'PRD §17.3 - admin correction only',
   },
 
+  // --- [INFERRED, no PRD §17.3 row] Group (Bacenta/Basonta): create/read/update ---
+  // FR-PC-01/FR-MIN-01 require this capability to exist; §17.3's matrix
+  // has no row for it. Modeled by extension from the adjacent "reassign
+  // member" row's actor set, with one deliberate narrowing: ASSISTANT_PASTOR
+  // is NOT granted create authority, because deciding which cluster a
+  // brand-new Bacenta belongs to is itself an unresolved configuration
+  // question (see db/DESIGN_NOTES.md Open Question #1) this matrix cannot
+  // presume an answer to. See PASTORAL_CARE_DESIGN_NOTES.md.
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'people.group.create',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason: '[INFERRED] FR-PC-01/FR-MIN-01 - no PRD §17.3 citation',
+  },
+  { role: 'RESIDENT_PASTOR', action: 'people.group.read', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'RESIDENT_PASTOR', action: 'people.group.update', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'ASSISTANT_PASTOR', action: 'people.group.read', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'ASSISTANT_PASTOR', action: 'people.group.update', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'BACENTA_LEADER', action: 'people.group.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BACENTA_LEADER', action: 'people.group.update', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BASONTA_LEADER', action: 'people.group.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BASONTA_LEADER', action: 'people.group.update', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  {
+    role: 'ADMIN',
+    action: 'people.group.create',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason: '[INFERRED] FR-PC-01/FR-MIN-01 - no PRD §17.3 citation',
+  },
+  { role: 'ADMIN', action: 'people.group.read', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'ADMIN', action: 'people.group.update', effect: 'ALLOW', scope: 'BRANCH' },
+
   // --- Gathering: create/configure -----------------------------------
   { role: 'RESIDENT_PASTOR', action: 'gatherings.gathering.read', effect: 'ALLOW', scope: 'BRANCH' },
   { role: 'ASSISTANT_PASTOR', action: 'gatherings.gathering.create', effect: 'ALLOW', scope: 'CLUSTER' },
@@ -292,6 +325,31 @@ const BASE_MATRIX: PermissionRule[] = [
     effect: 'DENY',
     reason: 'NFR-PRIV-01 - configuration authority does not imply pastoral-content access',
   },
+
+  // --- [INFERRED - no PRD §17.3 row covers this] Poimen enrollment ------------
+  // tracking (FR-PC-06). §19.4's workflow narrative names "Resident Pastor
+  // or Assistant Pastor" as the actors who enroll/graduate a Poimen, plus
+  // "Admin (record-keeping support)" - modeled here the same way as every
+  // other §17.3 row that names these same three actors for a comparable
+  // capability: RESIDENT_PASTOR at BRANCH, ASSISTANT_PASTOR at CLUSTER
+  // (matching pastoral_care.notes.* immediately above), ADMIN limited to
+  // read/update (record-keeping support, not initiating enrollment) per
+  // §19.4's own phrasing and the NFR-PRIV-01 pattern already established
+  // for ADMIN in this matrix. See PASTORAL_CARE_DESIGN_NOTES.md.
+  { role: 'RESIDENT_PASTOR', action: 'pastoral_care.poimen_enrollment.create', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'RESIDENT_PASTOR', action: 'pastoral_care.poimen_enrollment.update', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'RESIDENT_PASTOR', action: 'pastoral_care.poimen_enrollment.read', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'ASSISTANT_PASTOR', action: 'pastoral_care.poimen_enrollment.create', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'ASSISTANT_PASTOR', action: 'pastoral_care.poimen_enrollment.update', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'ASSISTANT_PASTOR', action: 'pastoral_care.poimen_enrollment.read', effect: 'ALLOW', scope: 'CLUSTER' },
+  {
+    role: 'ADMIN',
+    action: 'pastoral_care.poimen_enrollment.read',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason: '§19.4 - "Admin (record-keeping support)"',
+  },
+  { role: 'ADMIN', action: 'pastoral_care.poimen_enrollment.update', effect: 'ALLOW', scope: 'BRANCH' },
 
   // --- Insights: Branch-level dashboard ---------------------------------------
   { role: 'RESIDENT_PASTOR', action: 'insights.branch_dashboard.read', effect: 'ALLOW', scope: 'BRANCH' },

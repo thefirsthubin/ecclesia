@@ -7,13 +7,11 @@ const actor: ActorContext = {
   personId: 'actor-1',
   role: 'BACENTA_LEADER',
   branchId: 'branch-1',
-  clusterId: 'cluster-1',
   bacentaId: 'bacenta-1',
 };
 
 const resourceInScope: ResourceContext = {
   branchId: 'branch-1',
-  clusterId: 'cluster-1',
   bacentaId: 'bacenta-1',
 };
 
@@ -84,6 +82,85 @@ describe('evaluate() - scope resolution (Blueprint §9.2)', () => {
       basontaMatrix,
     );
     expect(outOfScope.effect).toBe('DENY');
+  });
+
+  it('CLUSTER scope allows when the resource’s Bacenta is in the actor’s clusterBacentaIds set', () => {
+    const assistantPastor: ActorContext = {
+      personId: 'ap-1',
+      role: 'ASSISTANT_PASTOR',
+      branchId: 'branch-1',
+      clusterBacentaIds: ['bacenta-1', 'bacenta-2', 'bacenta-3'],
+    };
+    const clusterMatrix: PermissionRule[] = [
+      { role: 'ASSISTANT_PASTOR', action: 'people.person.read', effect: 'ALLOW', scope: 'CLUSTER' },
+    ];
+
+    const decision = evaluateRoleAndScope(
+      assistantPastor,
+      'people.person.read',
+      { branchId: 'branch-1', bacentaId: 'bacenta-2' },
+      clusterMatrix,
+    );
+    expect(decision.effect).toBe('ALLOW');
+  });
+
+  it('CLUSTER scope denies when the resource’s Bacenta is not in the actor’s clusterBacentaIds set', () => {
+    const assistantPastor: ActorContext = {
+      personId: 'ap-1',
+      role: 'ASSISTANT_PASTOR',
+      branchId: 'branch-1',
+      clusterBacentaIds: ['bacenta-1', 'bacenta-2'],
+    };
+    const clusterMatrix: PermissionRule[] = [
+      { role: 'ASSISTANT_PASTOR', action: 'people.person.read', effect: 'ALLOW', scope: 'CLUSTER' },
+    ];
+
+    const decision = evaluateRoleAndScope(
+      assistantPastor,
+      'people.person.read',
+      { branchId: 'branch-1', bacentaId: 'a-bacenta-outside-the-cluster' },
+      clusterMatrix,
+    );
+    expect(decision.effect).toBe('DENY');
+  });
+
+  it('CLUSTER scope denies when the actor holds no clusterBacentaIds at all (the pre-fix default)', () => {
+    const assistantPastorWithNoCluster: ActorContext = {
+      personId: 'ap-2',
+      role: 'ASSISTANT_PASTOR',
+      branchId: 'branch-1',
+    };
+    const clusterMatrix: PermissionRule[] = [
+      { role: 'ASSISTANT_PASTOR', action: 'people.person.read', effect: 'ALLOW', scope: 'CLUSTER' },
+    ];
+
+    const decision = evaluateRoleAndScope(
+      assistantPastorWithNoCluster,
+      'people.person.read',
+      { branchId: 'branch-1', bacentaId: 'bacenta-1' },
+      clusterMatrix,
+    );
+    expect(decision.effect).toBe('DENY');
+  });
+
+  it('CLUSTER scope denies when the resource has no bacentaId at all (nothing to test membership against)', () => {
+    const assistantPastor: ActorContext = {
+      personId: 'ap-1',
+      role: 'ASSISTANT_PASTOR',
+      branchId: 'branch-1',
+      clusterBacentaIds: ['bacenta-1'],
+    };
+    const clusterMatrix: PermissionRule[] = [
+      { role: 'ASSISTANT_PASTOR', action: 'insights.branch_dashboard.read', effect: 'ALLOW', scope: 'CLUSTER' },
+    ];
+
+    const decision = evaluateRoleAndScope(
+      assistantPastor,
+      'insights.branch_dashboard.read',
+      { branchId: 'branch-1' },
+      clusterMatrix,
+    );
+    expect(decision.effect).toBe('DENY');
   });
 
   it('GLOBAL scope matches any resource', () => {

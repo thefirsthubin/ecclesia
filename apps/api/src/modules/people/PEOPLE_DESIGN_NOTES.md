@@ -4,10 +4,12 @@ Read this alongside `libs/domain/people/README.md` (the framework-agnostic
 rules this module orchestrates), `libs/rbac`'s `request-context.ts` (the
 `EcclesiaRequestContext` contract this module fulfills the second half
 of), and `apps/api/src/platform/auth/AUTH_DESIGN_NOTES.md` (Sprint 1.4 -
-two of its open questions carry forward unchanged into this module, noted
-below). Same discipline as every prior sprint: every design choice cites
-the Blueprint/PRD section it comes from, or is explicitly flagged as
-inferred/unresolved.
+one of its two open questions, CLUSTER scope, was resolved as a follow-up
+to this milestone; see "CLUSTER scope is now resolved" below. The other,
+multi-Role-Assignment Persons, remains open and carries forward
+unchanged). Same discipline as every prior sprint: every design choice
+cites the Blueprint/PRD section it comes from, or is explicitly flagged
+as inferred/unresolved.
 
 ## What this milestone builds
 
@@ -45,16 +47,50 @@ their first real consumer here.
 5. **No `dto/` folder**, despite Blueprint §6.4's per-module sketch showing one. This codebase's actual contract strategy (established well before this milestone) is Zod schemas consumed directly by `ZodValidationPipe`, with no class-validator decorators anywhere to add - a `dto/` folder here would only re-export `libs/contracts` types under a different path.
 6. **Duplicate-detection age tolerance (`AGE_TOLERANCE_YEARS = 2`).** FR-PPL-02 says "approximate age" with no number. Unlike PRD FR-PC-05's silent-drift thresholds (which the PRD itself flags as "N=3/M=3... provisional... pending one live calibration session"), there is no equivalent calibration commitment on record for this threshold anywhere in either document. Treated the same way regardless - an engineering placeholder, not a citation - and named here so it gets the same calibration treatment before it's relied on operationally.
 
-## Two pre-existing gaps (Sprint 1.4) that now have real, concrete consequences
+## CLUSTER scope is now resolved (follow-up to this milestone)
 
-Both were already disclosed in `AUTH_DESIGN_NOTES.md`; restated here because this module is the first place they actually bite:
+This module's own endpoints (`people.person.read`/`update`, `people.person.lifecycle_stage.update`, `people.role_assignment.grant`/`grant_shepherd`, all with `CLUSTER`-scope rows for `ASSISTANT_PASTOR`) were the concrete reason Sprint 1.4's CLUSTER-scope gap could no longer stay open - Pastoral Care's flagship Assistant Pastor cluster view depends on it working. Fixed in `libs/rbac` (`ActorContext.clusterBacentaIds: string[]`, populated from `role_assignments.scope_group_ids`; `evaluate.ts`'s CLUSTER check now tests set membership against `resource.bacentaId` instead of equality against a `clusterId` nothing could populate) and in `ActorContextResolverService`. See `AUTH_DESIGN_NOTES.md`'s "Resolved" section for the full before/after. No changes were needed in this module's own guards/services - `PersonResourceContextGuard` and friends already populated `resource.bacentaId` correctly; they were only ever blocked by the actor side of the equation.
 
-1. **CLUSTER scope always denies.** Every `ASSISTANT_PASTOR` row in the permission matrix that this module's endpoints check (`people.person.read`/`update` at `CLUSTER` scope, `people.person.lifecycle_stage.update` at `CLUSTER` scope, `people.role_assignment.grant`/`grant_shepherd` at `CLUSTER` scope) will deny an Assistant Pastor acting on a Person outside their own led Bacenta, even a Person legitimately within their cluster, until the CLUSTER-scope schema gap is resolved. Assistant Pastors can still act on Persons within a Bacenta they personally lead (`OWN_GROUP`, if they also hold a `BACENTA_LEADER` assignment) or, more likely in practice, this is simply non-functional for them today.
-2. **A Person with more than one concurrently active Role Assignment cannot authenticate at all** (`ActorContextResolverService` throws `ConflictException`) - so they cannot act as an actor against any People endpoint either. Not re-solved here; same open product decision as before.
+## One pre-existing gap (Sprint 1.4) still open, with real, concrete consequences here
+
+**A Person with more than one concurrently active Role Assignment cannot authenticate at all** (`ActorContextResolverService` throws `ConflictException`) - so they cannot act as an actor against any People endpoint either. Deliberately not re-solved here (see `AUTH_DESIGN_NOTES.md` Open Question #1) - it needs an actual product decision (multi-role `ActorContext`? client-specified "acting as"?), not a mechanical fix like CLUSTER scope turned out to be.
 
 ## Row-Level Security is still not wired (db/DESIGN_NOTES.md Open Question #3 - now more consequential)
 
 This module is the first to issue real queries against `people.persons` / `people.groups` / `people.group_memberships` / `people.role_assignments`. Every query in `PersonRepository`/`GroupMembershipRepository`/`RoleAssignmentRepository` filters by `branchId` (or a related record already scoped to one) explicitly in application code - this is, today, the *only* enforcement of Branch isolation. The RLS backstop Blueprint §7.3 describes (`SET LOCAL app.current_branch_id` per request, plus a non-owner Postgres role) is still not wired anywhere, exactly as `db/DESIGN_NOTES.md` already flagged. That gap was low-stakes while no domain module queried these tables; it is not anymore. Recommended as a near-term follow-up, not built in this milestone (the non-owner database role half is infrastructure/deployment work, not application code).
+
+## Pastoral Care milestone follow-ups (this module, touched again)
+
+The Pastoral Care milestone required three changes back in this module -
+see `apps/api/src/modules/pastoral-care/PASTORAL_CARE_DESIGN_NOTES.md` for
+the full reasoning on each:
+
+1. **Group (Bacenta/Basonta) CRUD backfilled.** This module previously
+   only supported *assigning* a Person to a pre-existing Group, never
+   creating the Group itself (FR-PC-01/FR-MIN-01) - `GroupRepository`/
+   `GroupService`/`GroupController`/`GroupResourceContextGuard` added,
+   plus the previously-missing `people.group.*` permission-matrix rows
+   (`[INFERRED]`, no PRD §17.3 row covers Group creation).
+2. **Bacenta Leader succession fixed.** `RoleAssignmentService.grant()`
+   now closes a prior active `BACENTA_LEADER` assignment for the same
+   Bacenta (`RoleAssignmentRepository.findActiveBacentaLeader`/
+   `createWithSuccession`) instead of silently allowing two concurrently
+   -active leaders, per PRD §17.2's "exactly one active Bacenta Leader per
+   Bacenta at a time" and §19.4 step 6.
+3. **`PersonScopeService` extracted and exported.** The Person-scope
+   -resolution logic previously duplicated/reused awkwardly between
+   `PersonResourceContextGuard` and `GroupMembershipResourceContextGuard`
+   is now a proper injectable service, exported from `PeopleModule` so
+   Pastoral Care's own resource-context guards can consume it via DI -
+   the concrete instance of Blueprint §7.2's "calls that module's public
+   service interface" pattern.
+4. **A module-boundary violation fixed.** `RoleAssignmentRepository` used
+   to query `prisma.poimenEnrollment` directly (a `pastoral_care`-schema
+   table) for the Poimen gate check - `RoleAssignmentService` now injects
+   Pastoral Care's exported `PoimenEnrollmentService` instead.
+   `PeopleModule` and `PastoralCareModule` now import each other via
+   `forwardRef` as a result - a genuine bidirectional public-service
+   dependency between the two bounded contexts.
 
 ## Known sandbox limitation
 

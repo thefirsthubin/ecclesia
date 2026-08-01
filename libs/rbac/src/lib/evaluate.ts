@@ -32,7 +32,14 @@ function resourceInScope(scope: Scope, actor: ActorContext, resource: ResourceCo
         (actor.basontaId !== undefined && resource.basontaId === actor.basontaId)
       );
     case 'CLUSTER':
-      return actor.clusterId !== undefined && resource.clusterId === actor.clusterId;
+      // Set membership, not equality - see ActorContext.clusterBacentaIds's
+      // doc comment (types.ts). A resource with no bacentaId (no single
+      // owning Bacenta) can never match CLUSTER scope.
+      return (
+        actor.clusterBacentaIds !== undefined &&
+        resource.bacentaId !== undefined &&
+        actor.clusterBacentaIds.includes(resource.bacentaId)
+      );
     case 'BRANCH':
       return resource.branchId === actor.branchId;
   }

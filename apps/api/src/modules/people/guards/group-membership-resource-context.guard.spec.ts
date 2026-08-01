@@ -10,22 +10,21 @@ function buildContext(request: Partial<RequestWithActorContext>): ExecutionConte
 }
 
 describe('GroupMembershipResourceContextGuard', () => {
-  it('reads the target Person from the :personId route param', async () => {
-    const personRepository = {
-      findById: jest.fn().mockResolvedValue({ id: 'person-1', branchId: 'branch-1' }),
-      findActiveGroupMemberships: jest.fn().mockResolvedValue([]),
+  it('reads the target Person from the :personId route param via PersonScopeService', async () => {
+    const personScopeService = {
+      loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', ownerId: 'person-1' }),
     };
     const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
     const guard = new GroupMembershipResourceContextGuard(
       branchConfigurationService as never,
-      personRepository as never,
+      personScopeService as never,
     );
     const actor: ActorContext = { personId: 'bl-1', role: 'BACENTA_LEADER', branchId: 'branch-1' };
     const request: Partial<RequestWithActorContext> = { actorContext: actor, params: { personId: 'person-1' } } as never;
 
     await guard.canActivate(buildContext(request));
 
-    expect(personRepository.findById).toHaveBeenCalledWith('person-1');
+    expect(personScopeService.loadResourceContext).toHaveBeenCalledWith('person-1', actor);
     expect((request as Record<string, unknown>)[ECCLESIA_REQUEST_CONTEXT_KEY]).toMatchObject({
       resource: { branchId: 'branch-1', ownerId: 'person-1' },
     });

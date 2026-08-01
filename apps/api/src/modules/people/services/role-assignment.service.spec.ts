@@ -8,16 +8,19 @@ describe('RoleAssignmentService', () => {
     const roleAssignmentRepository = {
       create: jest.fn(),
       findUserIdByPersonId: jest.fn().mockResolvedValue('user-1'),
-      findPoimenStatus: jest.fn(),
+      findActiveBacentaLeader: jest.fn().mockResolvedValue(null),
+      createWithSuccession: jest.fn(),
     };
     const personRepository = { findById: jest.fn() };
     const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+    const poimenEnrollmentService = { getStatus: jest.fn() };
     const service = new RoleAssignmentService(
       roleAssignmentRepository as never,
       personRepository as never,
       branchConfigurationService as never,
+      poimenEnrollmentService as never,
     );
-    return { service, roleAssignmentRepository, personRepository, branchConfigurationService };
+    return { service, roleAssignmentRepository, personRepository, branchConfigurationService, poimenEnrollmentService };
   }
 
   const residentPastor: ActorContext = { personId: 'rp-1', role: 'RESIDENT_PASTOR', branchId: 'branch-1' };
@@ -75,22 +78,23 @@ describe('RoleAssignmentService', () => {
   });
 
   it('applies the Poimen gate when granting BACENTA_LEADER and the Branch flag is enabled', async () => {
-    const { service, personRepository, roleAssignmentRepository, branchConfigurationService } = buildService();
+    const { service, personRepository, roleAssignmentRepository, branchConfigurationService, poimenEnrollmentService } =
+      buildService();
     personRepository.findById.mockResolvedValue({ id: 'person-1', branchId: 'branch-1', lifecycleStage: 'MEMBER' });
     branchConfigurationService.loadForBranch.mockResolvedValue({ poimenGateEnabled: true });
-    roleAssignmentRepository.findPoimenStatus.mockResolvedValue('IN_PROGRESS');
+    poimenEnrollmentService.getStatus.mockResolvedValue('IN_PROGRESS');
 
     await expect(
       service.grant(residentPastor, 'person-1', { role: 'BACENTA_LEADER', scopeGroupIds: [] }),
     ).rejects.toThrow(ForbiddenException);
-    expect(roleAssignmentRepository.findPoimenStatus).toHaveBeenCalledWith('person-1');
+    expect(poimenEnrollmentService.getStatus).toHaveBeenCalledWith('person-1');
     expect(roleAssignmentRepository.create).not.toHaveBeenCalled();
   });
 
   it('does not apply the Poimen gate when the Branch flag is disabled (default)', async () => {
-    const { service, personRepository, roleAssignmentRepository } = buildService();
+    const { service, personRepository, roleAssignmentRepository, poimenEnrollmentService } = buildService();
     personRepository.findById.mockResolvedValue({ id: 'person-1', branchId: 'branch-1', lifecycleStage: 'MEMBER' });
-    roleAssignmentRepository.findPoimenStatus.mockResolvedValue('NOT_STARTED');
+    poimenEnrollmentService.getStatus.mockResolvedValue('NOT_STARTED');
     roleAssignmentRepository.create.mockResolvedValue({ ...roleAssignmentRow, role: 'BACENTA_LEADER' });
 
     const result = await service.grant(residentPastor, 'person-1', { role: 'BACENTA_LEADER', scopeGroupIds: [] });
@@ -99,12 +103,75 @@ describe('RoleAssignmentService', () => {
   });
 
   it('never fetches Poimen status when granting a role other than BACENTA_LEADER', async () => {
-    const { service, personRepository, roleAssignmentRepository } = buildService();
+    const { service, personRepository, roleAssignmentRepository, poimenEnrollmentService } = buildService();
     personRepository.findById.mockResolvedValue({ id: 'person-1', branchId: 'branch-1', lifecycleStage: 'MEMBER' });
     roleAssignmentRepository.create.mockResolvedValue(roleAssignmentRow);
 
     await service.grant(residentPastor, 'person-1', { role: 'TREASURER', scopeGroupIds: [] });
 
-    expect(roleAssignmentRepository.findPoimenStatus).not.toHaveBeenCalled();
+    expect(poimenEnrollmentService.getStatus).not.toHaveBeenCalled();
+  });
+
+  it('PRD §17.2: closes the prior active Bacenta Leader when granting a new one for the same Bacenta', async () => {
+    const { service, personRepository, roleAssignmentRepository, poimenEnrollmentService } = buildService();
+    personRepository.findById.mockResolvedValue({ id: 'person-2', branchId: 'branch-1', lifecycleStage: 'MEMBER' });
+    poimenEnrollmentService.getStatus.mockResolvedValue('COMPLETE');
+    roleAssignmentRepository.findActiveBacentaLeader.mockResolvedValue({ id: 'ra-prior' });
+    roleAssignmentRepository.createWithSuccession.mockResolvedValue({
+      ...roleAssignmentRow,
+      id: 'ra-new',
+      personId: 'person-2',
+      role: 'BACENTA_LEADER',
+      groupId: 'bacenta-1',
+    });
+
+    const result = await service.grant(residentPastor, 'person-2', {
+      role: 'BACENTA_LEADER',
+      groupId: 'bacenta-1',
+      scopeGroupIds: [],
+    });
+
+    expect(roleAssignmentRepository.findActiveBacentaLeader).toHaveBeenCalledWith('bacenta-1', expect.any(Date));
+    expect(roleAssignmentRepository.createWithSuccession).toHaveBeenCalledWith(
+      expect.objectContaining({ personId: 'person-2', role: 'BACENTA_LEADER', groupId: 'bacenta-1' }),
+      'ra-prior',
+      expect.any(Date),
+    );
+    expect(roleAssignmentRepository.create).not.toHaveBeenCalled();
+    expect(result.id).toBe('ra-new');
+  });
+
+  it('grants a Bacenta Leader with no prior holder without a close step (still via createWithSuccession)', async () => {
+    const { service, personRepository, roleAssignmentRepository, poimenEnrollmentService } = buildService();
+    personRepository.findById.mockResolvedValue({ id: 'person-2', branchId: 'branch-1', lifecycleStage: 'MEMBER' });
+    poimenEnrollmentService.getStatus.mockResolvedValue('COMPLETE');
+    roleAssignmentRepository.findActiveBacentaLeader.mockResolvedValue(null);
+    roleAssignmentRepository.createWithSuccession.mockResolvedValue({
+      ...roleAssignmentRow,
+      id: 'ra-new',
+      role: 'BACENTA_LEADER',
+      groupId: 'bacenta-1',
+    });
+
+    await service.grant(residentPastor, 'person-2', { role: 'BACENTA_LEADER', groupId: 'bacenta-1', scopeGroupIds: [] });
+
+    expect(roleAssignmentRepository.createWithSuccession).toHaveBeenCalledWith(
+      expect.any(Object),
+      undefined,
+      expect.any(Date),
+    );
+  });
+
+  it('uses plain create() for a BACENTA_LEADER grant with no groupId (no succession target to check)', async () => {
+    const { service, personRepository, roleAssignmentRepository, poimenEnrollmentService } = buildService();
+    personRepository.findById.mockResolvedValue({ id: 'person-2', branchId: 'branch-1', lifecycleStage: 'MEMBER' });
+    poimenEnrollmentService.getStatus.mockResolvedValue('COMPLETE');
+    roleAssignmentRepository.create.mockResolvedValue({ ...roleAssignmentRow, role: 'BACENTA_LEADER' });
+
+    await service.grant(residentPastor, 'person-2', { role: 'BACENTA_LEADER', scopeGroupIds: [] });
+
+    expect(roleAssignmentRepository.findActiveBacentaLeader).not.toHaveBeenCalled();
+    expect(roleAssignmentRepository.createWithSuccession).not.toHaveBeenCalled();
+    expect(roleAssignmentRepository.create).toHaveBeenCalled();
   });
 });

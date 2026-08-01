@@ -36,6 +36,15 @@ export const ACTIONS = [
   // Bacenta/Basonta (row: "Bacenta/Basonta: reassign member")
   'people.group_membership.update',
 
+  // [INFERRED - no PRD §17.3 row covers this] Group (Bacenta/Basonta)
+  // creation/configuration itself (FR-PC-01, FR-MIN-01). §17.3's table
+  // has a "reassign member" row but none for creating the Group entity
+  // in the first place - a real gap in the source document, not a
+  // transcription omission. See PASTORAL_CARE_DESIGN_NOTES.md.
+  'people.group.create',
+  'people.group.update',
+  'people.group.read',
+
   // Gathering (row: "Gathering: create/configure")
   'gatherings.gathering.create',
   'gatherings.gathering.update',
@@ -63,6 +72,14 @@ export const ACTIONS = [
   // Pastoral notes (row: "Pastoral notes: view/create")
   'pastoral_care.notes.read',
   'pastoral_care.notes.create',
+
+  // [INFERRED - no PRD §17.3 row covers this] Poimen enrollment tracking
+  // (FR-PC-06). §19.4's workflow narrative names actors ("Resident Pastor
+  // or Assistant Pastor... Admin (record-keeping support)") but §17.3's
+  // matrix has no corresponding row. See PASTORAL_CARE_DESIGN_NOTES.md.
+  'pastoral_care.poimen_enrollment.create',
+  'pastoral_care.poimen_enrollment.update',
+  'pastoral_care.poimen_enrollment.read',
 
   // Insights (rows: Branch / cluster / own-Bacenta dashboards)
   'insights.branch_dashboard.read',

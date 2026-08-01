@@ -170,6 +170,63 @@ export const roleAssignmentResponseSchema = z.object({
 });
 export type RoleAssignmentResponseDto = z.infer<typeof roleAssignmentResponseSchema>;
 
+export const GROUP_TYPE_VALUES = ['PASTORAL_CARE', 'MINISTRY'] as const;
+export const groupTypeSchema = z.enum(GROUP_TYPE_VALUES);
+export type GroupTypeDto = z.infer<typeof groupTypeSchema>;
+
+export const GROUP_LIFECYCLE_STATUS_VALUES = ['ACTIVE', 'SPLITTING', 'MERGING', 'ARCHIVED'] as const;
+export const groupLifecycleStatusSchema = z.enum(GROUP_LIFECYCLE_STATUS_VALUES);
+export type GroupLifecycleStatusDto = z.infer<typeof groupLifecycleStatusSchema>;
+
+/**
+ * [INFERRED - no PRD §17.3 row covers Group creation itself, see
+ * `libs/rbac/src/lib/actions.ts`'s `people.group.*` doc comment]
+ * `type` picks Bacenta (`PASTORAL_CARE`, FR-PC-01: "name, leader, meeting
+ * schedule, meeting location") vs Basonta (`MINISTRY`, FR-MIN-01: "name,
+ * leader, purpose/category"). Both field sets are accepted regardless of
+ * `type` rather than validated as type-conditionally-required: the PRD
+ * describes what each creation *flow* captures, not a hard schema
+ * constraint that the other type's fields must be absent, and
+ * `db/schema.prisma`'s own `Group` model leaves `meetingSchedule`/
+ * `meetingLocation`/`category` optional for exactly this reason. `leader`
+ * itself is deliberately absent - PRD §19.4 step 6 and this module's own
+ * `RoleAssignmentService.grant()` establish Bacenta/Basonta leadership as
+ * a separate Role Assignment, not a field on Group.
+ */
+export const createGroupSchema = z.object({
+  type: groupTypeSchema,
+  name: z.string().trim().min(1, 'name is required'),
+  meetingSchedule: z.string().trim().min(1).optional(),
+  meetingLocation: z.string().trim().min(1).optional(),
+  category: z.string().trim().min(1).optional(),
+});
+export type CreateGroupInput = z.infer<typeof createGroupSchema>;
+
+export const updateGroupSchema = z
+  .object({
+    name: z.string().trim().min(1).optional(),
+    meetingSchedule: z.string().trim().min(1).nullable().optional(),
+    meetingLocation: z.string().trim().min(1).nullable().optional(),
+    category: z.string().trim().min(1).nullable().optional(),
+    lifecycleStatus: groupLifecycleStatusSchema.optional(),
+  })
+  .refine((value) => Object.keys(value).length > 0, { message: 'At least one field must be provided' });
+export type UpdateGroupInput = z.infer<typeof updateGroupSchema>;
+
+export const groupResponseSchema = z.object({
+  id: z.string().uuid(),
+  branchId: z.string().uuid(),
+  type: groupTypeSchema,
+  name: z.string(),
+  meetingSchedule: z.string().nullable(),
+  meetingLocation: z.string().nullable(),
+  category: z.string().nullable(),
+  lifecycleStatus: groupLifecycleStatusSchema,
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+export type GroupResponseDto = z.infer<typeof groupResponseSchema>;
+
 export const groupMembershipResponseSchema = z.object({
   id: z.string().uuid(),
   personId: z.string().uuid(),

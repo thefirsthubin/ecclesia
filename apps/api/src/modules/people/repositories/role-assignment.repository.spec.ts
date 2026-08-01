@@ -3,9 +3,9 @@ import { RoleAssignmentRepository } from './role-assignment.repository';
 describe('RoleAssignmentRepository', () => {
   function buildRepository() {
     const prisma = {
-      roleAssignment: { create: jest.fn() },
+      roleAssignment: { create: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
       user: { findUnique: jest.fn() },
-      poimenEnrollment: { findUnique: jest.fn() },
+      $transaction: jest.fn(async (fn: (tx: unknown) => unknown) => fn(prisma)),
     };
     const repository = new RoleAssignmentRepository(prisma as never);
     return { repository, prisma };
@@ -36,10 +36,56 @@ describe('RoleAssignmentRepository', () => {
     await expect(repository.findUserIdByPersonId('p1')).resolves.toBeUndefined();
   });
 
-  it('findPoimenStatus returns the status when an enrollment exists', async () => {
+  it('findActiveBacentaLeader queries for an active BACENTA_LEADER row scoped to the given Group', async () => {
     const { repository, prisma } = buildRepository();
-    prisma.poimenEnrollment.findUnique.mockResolvedValue({ status: 'COMPLETE' });
+    const now = new Date('2026-08-01T00:00:00Z');
+    prisma.roleAssignment.findFirst.mockResolvedValue({ id: 'ra-prior' });
 
-    await expect(repository.findPoimenStatus('p1')).resolves.toBe('COMPLETE');
+    const result = await repository.findActiveBacentaLeader('bacenta-1', now);
+
+    expect(prisma.roleAssignment.findFirst).toHaveBeenCalledWith({
+      where: {
+        groupId: 'bacenta-1',
+        role: 'BACENTA_LEADER',
+        effectiveFrom: { lte: now },
+        OR: [{ effectiveTo: null }, { effectiveTo: { gt: now } }],
+      },
+    });
+    expect(result).toEqual({ id: 'ra-prior' });
+  });
+
+  it('createWithSuccession closes the prior holder and creates the new one in one transaction', async () => {
+    const { repository, prisma } = buildRepository();
+    const now = new Date('2026-08-01T00:00:00Z');
+    prisma.roleAssignment.create.mockResolvedValue({ id: 'ra-new' });
+
+    const result = await repository.createWithSuccession(
+      { personId: 'p2', role: 'BACENTA_LEADER', branchId: 'branch-1', groupId: 'bacenta-1', scopeGroupIds: [] },
+      'ra-prior',
+      now,
+    );
+
+    expect(prisma.roleAssignment.update).toHaveBeenCalledWith({
+      where: { id: 'ra-prior' },
+      data: { effectiveTo: now },
+    });
+    expect(prisma.roleAssignment.create).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ personId: 'p2', role: 'BACENTA_LEADER' }) }),
+    );
+    expect(result).toEqual({ id: 'ra-new' });
+  });
+
+  it('createWithSuccession skips the close step when there is no prior holder', async () => {
+    const { repository, prisma } = buildRepository();
+    const now = new Date('2026-08-01T00:00:00Z');
+    prisma.roleAssignment.create.mockResolvedValue({ id: 'ra-new' });
+
+    await repository.createWithSuccession(
+      { personId: 'p2', role: 'BACENTA_LEADER', branchId: 'branch-1', groupId: 'bacenta-1', scopeGroupIds: [] },
+      undefined,
+      now,
+    );
+
+    expect(prisma.roleAssignment.update).not.toHaveBeenCalled();
   });
 });

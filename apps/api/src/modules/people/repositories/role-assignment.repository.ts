@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { PoimenStatus, Role as PrismaRole, RoleAssignment } from '@prisma/client';
+import type { Role as PrismaRole, RoleAssignment } from '@prisma/client';
 
 import { PrismaService } from '../../../platform/database/prisma.service';
 
@@ -40,6 +40,64 @@ export class RoleAssignmentRepository {
   }
 
   /**
+   * PRD §17.2's Bacenta Leader row: "Exactly one active Bacenta Leader per
+   * Bacenta at a time." **Resolved OQ-05 (§24):** co-leadership is
+   * deliberately deferred in v1.0 - single-leader is the only supported
+   * model. `now` is passed in (not computed here) so the caller and this
+   * lookup agree on the instant "active" is evaluated at, matching
+   * `ActorContextResolverService`'s own "active" definition (`effectiveFrom
+   * <= now`, `effectiveTo` null or in the future).
+   */
+  findActiveBacentaLeader(groupId: string, now: Date): Promise<RoleAssignment | null> {
+    return this.prisma.roleAssignment.findFirst({
+      where: {
+        groupId,
+        role: 'BACENTA_LEADER',
+        effectiveFrom: { lte: now },
+        OR: [{ effectiveTo: null }, { effectiveTo: { gt: now } }],
+      },
+    });
+  }
+
+  /**
+   * PRD §17.2 + §19.4 step 6: granting a new Bacenta Leader for a Bacenta
+   * that already has one active must close the prior holder's assignment
+   * (`effectiveTo = now`) in the same transaction as creating the new one
+   * - the same "close-then-open, atomically" pattern
+   * `GroupMembershipRepository.applyChange` already uses for FR-PPL-04's
+   * "automatically closing the prior membership" requirement, applied here
+   * to Role Assignment succession instead of Group Membership succession.
+   * `assignmentIdToClose` is undefined when there is no prior holder to
+   * close (a brand-new Bacenta, or one whose leader stepped down without a
+   * same-transaction successor).
+   */
+  async createWithSuccession(
+    input: CreateRoleAssignmentRecord,
+    assignmentIdToClose: string | undefined,
+    now: Date,
+  ): Promise<RoleAssignment> {
+    return this.prisma.$transaction(async (tx) => {
+      if (assignmentIdToClose) {
+        await tx.roleAssignment.update({
+          where: { id: assignmentIdToClose },
+          data: { effectiveTo: now },
+        });
+      }
+      return tx.roleAssignment.create({
+        data: {
+          personId: input.personId,
+          role: input.role as PrismaRole,
+          branchId: input.branchId,
+          groupId: input.groupId,
+          scopeGroupIds: input.scopeGroupIds,
+          grantedByUserId: input.grantedByUserId,
+          ...(input.effectiveFrom ? { effectiveFrom: input.effectiveFrom } : {}),
+        },
+      });
+    });
+  }
+
+  /**
    * `people.role_assignments.granted_by_user_id` references
    * `platform.users`, but `ActorContext` (Sprint 1.4) only carries
    * `personId` - this reverse lookup is the narrow, single-write-path
@@ -53,8 +111,11 @@ export class RoleAssignmentRepository {
     return user?.id;
   }
 
-  async findPoimenStatus(personId: string): Promise<PoimenStatus | undefined> {
-    const enrollment = await this.prisma.poimenEnrollment.findUnique({ where: { personId }, select: { status: true } });
-    return enrollment?.status;
-  }
+  // `findPoimenStatus` used to live here, querying `prisma.poimenEnrollment`
+  // directly - a `pastoral_care`-schema table this module does not own
+  // (Blueprint §7.2). That was a module-boundary violation introduced
+  // during the People sprint, fixed in the Pastoral Care milestone:
+  // `RoleAssignmentService` now injects `PoimenEnrollmentService`
+  // (Pastoral Care's exported public service interface) instead. See
+  // `PASTORAL_CARE_DESIGN_NOTES.md`.
 }

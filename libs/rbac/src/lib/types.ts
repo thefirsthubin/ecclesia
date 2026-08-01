@@ -61,12 +61,32 @@ export interface PermissionRule {
  * Role Assignment (PRD §12.2). Authentication itself (Sprint 1.4,
  * Blueprint Chapter 4) is what will eventually populate this shape from
  * a validated JWT; this library only consumes it.
+ *
+ * **`clusterBacentaIds` (People domain milestone) replaces an earlier,
+ * broken `clusterId: string` field.** PRD §17.2 is explicit that "cluster
+ * assignment is itself a configuration, not a hard-coded structure" - a
+ * single-value cluster identifier can never express that, since it
+ * requires *some* entity (a Cluster row, or an equivalent) to hand out
+ * matching ids to both the actor and every resource in it, which
+ * contradicts the PRD's own framing and doesn't exist in
+ * `db/schema.prisma` (Sprint 1.3; see `db/DESIGN_NOTES.md` Open Question
+ * #1). The schema's actual mechanism (`role_assignments.scope_group_ids
+ * UUID[]`, Blueprint-adjacent but PRD-derived, populated only for
+ * CLUSTER-scoped Role Assignments) models a cluster as *the literal set
+ * of Bacenta group ids it covers* - so `ActorContext` now carries that
+ * same set, and `resourceInScope()` (`evaluate.ts`) tests set membership
+ * against `ResourceContext.bacentaId` (already present below for
+ * `OWN_GROUP`) rather than equality against a second `clusterId` field
+ * that resources would have no principled way to populate. This finally
+ * closes Sprint 1.4's Open Question #1 (`AUTH_DESIGN_NOTES.md`) - not a
+ * new citation, but a correction to fit the schema's own already-chosen
+ * mechanism instead of inventing a competing one.
  */
 export interface ActorContext {
   personId: string;
   role: Role;
   branchId: string;
-  clusterId?: string;
+  clusterBacentaIds?: string[];
   bacentaId?: string;
   basontaId?: string;
 }
@@ -76,10 +96,16 @@ export interface ActorContext {
  * needed to evaluate a Scope check, plus whatever record-level facts a
  * `RecordLevelCheckId` needs (e.g. `recordedByPersonId` for
  * `DIFFERENT_ACTOR_THAN_RECORDER`).
+ *
+ * No separate `clusterId` field - see `ActorContext.clusterBacentaIds`'s
+ * doc comment. A CLUSTER-scope check tests whether *this* resource's own
+ * `bacentaId` is a member of the actor's cluster set; a resource that has
+ * no single owning Bacenta (e.g. a Branch-wide record) simply cannot be
+ * matched by CLUSTER scope, which is the semantically correct outcome,
+ * not a modeling gap.
  */
 export interface ResourceContext {
   branchId: string;
-  clusterId?: string;
   bacentaId?: string;
   basontaId?: string;
   /** For SELF-scope actions: the person the resource belongs to/is about. */

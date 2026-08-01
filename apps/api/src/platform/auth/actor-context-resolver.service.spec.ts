@@ -112,7 +112,7 @@ describe('ActorContextResolverService', () => {
     });
   });
 
-  it('leaves clusterId undefined for a cluster-scoped assignment (documented gap, not guessed)', async () => {
+  it('populates clusterBacentaIds from a non-empty scope_group_ids (CLUSTER scope, now resolved)', async () => {
     const prisma = buildPrisma({
       user: { id: 'user-1', person: { id: PERSON_ID, branchId: BRANCH_ID, lifecycleStage: 'MEMBER' } },
       roleAssignments: [
@@ -128,8 +128,26 @@ describe('ActorContextResolverService', () => {
 
     const actor = await service.resolve('sub-1');
 
-    expect(actor.clusterId).toBeUndefined();
-    expect(actor).toEqual({ personId: PERSON_ID, role: 'ASSISTANT_PASTOR', branchId: BRANCH_ID });
+    expect(actor).toEqual({
+      personId: PERSON_ID,
+      role: 'ASSISTANT_PASTOR',
+      branchId: BRANCH_ID,
+      clusterBacentaIds: ['bacenta-a', 'bacenta-b'],
+    });
+  });
+
+  it('leaves clusterBacentaIds undefined (not an empty array) for a Role Assignment with an empty scope_group_ids', async () => {
+    const prisma = buildPrisma({
+      user: { id: 'user-1', person: { id: PERSON_ID, branchId: BRANCH_ID, lifecycleStage: 'MEMBER' } },
+      roleAssignments: [
+        { role: 'ASSISTANT_PASTOR', branchId: BRANCH_ID, scopeGroupIds: [], group: null },
+      ],
+    });
+    const service = new ActorContextResolverService(prisma, buildLogger());
+
+    const actor = await service.resolve('sub-1');
+
+    expect(actor.clusterBacentaIds).toBeUndefined();
   });
 
   it('resolves a Branch-scoped Role Assignment (no group) without a bacenta/basonta id', async () => {

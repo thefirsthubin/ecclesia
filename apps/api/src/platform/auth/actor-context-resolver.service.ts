@@ -15,8 +15,8 @@ import { PrismaService } from '../database/prisma.service';
  * `people.role_assignments` row(s) (Blueprint §7.5: "active" means
  * `effective_from <= now` and `effective_to` is null or in the future).
  *
- * Two genuine gaps found while building this, both deliberately NOT
- * papered over with a guessed default - see AUTH_DESIGN_NOTES.md:
+ * One genuine gap remains open, deliberately NOT papered over with a
+ * guessed default - see AUTH_DESIGN_NOTES.md:
  *
  * 1. **Multiple concurrent active Role Assignments.** `ActorContext.role`
  *    is a single `Role` (a Sprint 1.1 / libs/rbac design decision, out of
@@ -25,21 +25,14 @@ import { PrismaService } from '../database/prisma.service';
  *    Treasurer and Shepherd) - this throws `ConflictException` rather
  *    than silently picking one, since a wrong silent choice is a
  *    security-relevant bug, not a cosmetic one.
- * 2. **CLUSTER scope has no resolvable identifier.** `ActorContext.clusterId`
- *    is compared against `ResourceContext.clusterId` by
- *    `libs/rbac`'s `evaluate.ts` (`actor.clusterId === resource.clusterId`),
- *    but `db/schema.prisma` has no Cluster entity and no `cluster_id`
- *    column anywhere (PRD §17.2's own words: "cluster assignment is
- *    itself a configuration, not a hard-coded structure" -
- *    `db/DESIGN_NOTES.md` Open Question #1). This resolver therefore
- *    never populates `clusterId`, which means any `CLUSTER`-scope
- *    permission rule (Assistant Pastor's grants) will always evaluate to
- *    DENY via `evaluate.ts`'s own `actor.clusterId !== undefined` check -
- *    a fail-closed default, not a fail-open guess, but a real product gap
- *    that needs a decision (either add a real cluster identifier to the
- *    schema, or change `libs/rbac`'s `Scope`/`ActorContext` shape to
- *    match a set of Bacenta ids) before Assistant Pastor's day-to-day
- *    cluster-scoped actions can work at all.
+ *
+ * A second gap, previously open here, is now resolved (People domain
+ * milestone): **CLUSTER scope.** `ActorContext.clusterBacentaIds` is now
+ * populated directly from `assignment.scopeGroupIds` - `libs/rbac`'s
+ * `evaluate.ts` tests set membership (is this resource's Bacenta among
+ * the actor's `clusterBacentaIds`?) rather than equality against a
+ * `clusterId` that nothing could ever populate. See `libs/rbac/src/lib/types.ts`'s
+ * `ActorContext.clusterBacentaIds` doc comment for the full reasoning.
  */
 @Injectable()
 export class ActorContextResolverService {
@@ -114,18 +107,16 @@ export class ActorContextResolverService {
       }
     }
 
-    // clusterId deliberately left undefined - see this class's doc
-    // comment, point 2. `assignment.scopeGroupIds` (when non-empty) is
-    // the cluster-scoped Bacenta set this Role Assignment covers, but
-    // there is nowhere in ActorContext to put a *set* of ids, and no
-    // resource-side clusterId to compare it against even if there were.
+    // `assignment.scopeGroupIds` (Blueprint-adjacent/PRD-derived,
+    // db/schema.prisma) is exactly the cluster-scoped Bacenta set a
+    // CLUSTER-scoped Role Assignment covers - populate it directly.
+    // Left undefined (not an empty array) when there is nothing to
+    // populate, matching evaluate.ts's `actor.clusterBacentaIds !==
+    // undefined` guard for a Role Assignment that isn't CLUSTER-scoped at
+    // all (e.g. an Assistant Pastor configured Branch-wide, PRD §17.2:
+    // "or Branch-wide by configuration").
     if (assignment.scopeGroupIds.length > 0) {
-      this.logger.warn(
-        { personId: user.person.id, role: assignment.role, scopeGroupIds: assignment.scopeGroupIds },
-        'Role Assignment has a non-empty scope_group_ids (cluster scope) - CLUSTER-scope permission checks for ' +
-          'this actor will always deny until the schema/libs/rbac CLUSTER model gap is resolved (see ' +
-          'AUTH_DESIGN_NOTES.md, Open Question #1)',
-      );
+      actor.clusterBacentaIds = assignment.scopeGroupIds;
     }
 
     return actor;

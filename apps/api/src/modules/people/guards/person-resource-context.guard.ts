@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import type { ActorContext, ResourceContext } from '@ecclesia/rbac';
 
 import { BranchConfigurationService } from '../../../platform/rbac/branch-configuration.service';
 import { EcclesiaContextGuardBase } from '../../../platform/rbac/ecclesia-context.guard-base';
 import type { RequestWithActorContext } from '../../../platform/auth/auth.guard';
-import { PersonRepository } from '../repositories/person.repository';
+import { PersonScopeService } from '../services/person-scope.service';
 
 /**
  * Loads the `ResourceContext` for a route acting on an existing Person
@@ -12,65 +12,28 @@ import { PersonRepository } from '../repositories/person.repository';
  * See `EcclesiaContextGuardBase`'s doc comment for why this must be a
  * Guard, not an Interceptor.
  *
- * **`basontaId` is resolved from the actor's perspective, not the
- * Person's.** PRD §17.2: "A Person may lead more than one Basonta," and a
- * Person being read/updated may likewise hold several concurrent active
- * Basonta memberships (BR-PPL-02) - but `libs/rbac`'s `ResourceContext`
- * only has room for one `basontaId` to compare against the acting
- * Basonta Leader's own `actor.basontaId`. Rather than picking an
- * arbitrary one of the Person's several Basontas (which could produce a
- * wrong ALLOW or a wrong DENY depending on which one got picked), this
- * guard checks whether the *specific* Basonta the actor leads is among
- * the Person's active memberships and only then reports that one as
- * `resource.basontaId` - the correct answer for `resourceInScope`'s
- * single-value equality check, computed using information (the actor)
- * only this guard has access to at resource-load time. This is a design
- * choice, not a citation - see `PEOPLE_DESIGN_NOTES.md`.
+ * The actual `bacentaId`/`basontaId` resolution (including the "resolve
+ * `basontaId` from the actor's perspective, not the Person's" reasoning -
+ * see `PersonScopeService`'s doc comment for the full explanation) now
+ * lives in `PersonScopeService`, People module's exported public service
+ * interface (Blueprint §7.2), so it can be reused both here and by the
+ * Group Membership module's own resource-context guard, as well as by
+ * Pastoral Care's upcoming FollowUpTask/PastoralNote/PoimenEnrollment
+ * resource-context guards, without any of them reaching into People's
+ * `PersonRepository`/Prisma layer directly.
  */
-/**
- * Shared by `PersonResourceContextGuard` and the Group Membership /
- * Role Assignment modules' own resource-context guards - every one of
- * them targets "the Person identified by a route param" and needs the
- * identical `bacentaId`/`basontaId` resolution described above, just
- * from a different param name (`:id` vs `:personId`).
- */
-export async function loadPersonResourceContext(
-  personRepository: PersonRepository,
-  actor: ActorContext,
-  personId: string,
-): Promise<ResourceContext> {
-  const person = await personRepository.findById(personId);
-  if (!person) {
-    throw new NotFoundException(`No Person found with id '${personId}'`);
-  }
-
-  const activeMemberships = await personRepository.findActiveGroupMemberships(personId);
-  const bacentaMembership = activeMemberships.find((m) => m.groupType === 'PASTORAL_CARE');
-  const actorLedBasontaMembership =
-    actor.basontaId !== undefined
-      ? activeMemberships.find((m) => m.groupType === 'MINISTRY' && m.groupId === actor.basontaId)
-      : undefined;
-
-  return {
-    branchId: person.branchId,
-    ownerId: person.id,
-    bacentaId: bacentaMembership?.groupId,
-    basontaId: actorLedBasontaMembership?.groupId,
-  };
-}
-
 @Injectable()
 export class PersonResourceContextGuard extends EcclesiaContextGuardBase {
   constructor(
     branchConfigurationService: BranchConfigurationService,
-    private readonly personRepository: PersonRepository,
+    private readonly personScopeService: PersonScopeService,
   ) {
     super(branchConfigurationService);
   }
 
   protected loadResource(request: RequestWithActorContext, actor: ActorContext): Promise<ResourceContext> {
     const id = (request.params as Record<string, string>).id;
-    return loadPersonResourceContext(this.personRepository, actor, id);
+    return this.personScopeService.loadResourceContext(id, actor);
   }
 }
 

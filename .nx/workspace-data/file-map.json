@@ -50,76 +50,552 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "dist/apps/api/main.js",
-        "hash": "9015198988955780290"
+        "file": "dist/libs/domain/pastoral-care/src/lib/silent-drift.d.ts",
+        "hash": "6511476135198295094"
       },
       {
-        "file": "dist/libs/domain/ministry/src/lib/ministry.js.map",
-        "hash": "16511227717361004895"
+        "file": "dist/libs/domain/stewardship/src/index.js.map",
+        "hash": "15472537006141997174"
       },
       {
-        "file": "dist/libs/rbac/src/lib/guards/rbac.guard.d.ts.map",
-        "hash": "14086776829497057147"
+        "file": "dist/libs/domain/people/package.json",
+        "hash": "784992265323252696"
       },
       {
-        "file": "dist/libs/rbac/src/lib/record-level-checks.js",
-        "hash": "2561435081946258967"
+        "file": "dist/libs/rbac/src/lib/types.d.ts.map",
+        "hash": "15418788431976024229"
       },
       {
-        "file": "dist/libs/domain/ministry/src/lib/ministry.d.ts.map",
-        "hash": "7198950340415397374"
+        "file": "dist/apps/api/assets/.gitkeep",
+        "hash": "3244421341483603138"
       },
       {
-        "file": "dist/libs/rbac/src/lib/permission-matrix.js.map",
-        "hash": "7264647142883769034"
+        "file": "dist/libs/domain/ministry/src/lib/ministry.js",
+        "hash": "6084640742552552471"
       },
       {
-        "file": "dist/libs/rbac/src/lib/request-context.js.map",
-        "hash": "5454881423518217459"
+        "file": "dist/libs/domain/ministry/src/lib/ministry.d.ts",
+        "hash": "17266755283541408874"
       },
       {
-        "file": "dist/libs/domain/people/src/lib/duplicate-detection.d.ts",
-        "hash": "516553094152868589"
+        "file": "dist/apps/web-admin/styles.c4e4df19415eeccd.css",
+        "hash": "8108729793271319988"
       },
       {
-        "file": "dist/apps/mobile/ios/main.jsbundle",
-        "hash": "4456485870009428533"
+        "file": "dist/libs/domain/insights/src/lib/insights.js.map",
+        "hash": "13122995112753594068"
       },
       {
-        "file": "dist/libs/rbac/src/lib/types.d.ts",
-        "hash": "12470334078347187640"
+        "file": "dist/libs/domain/pastoral-care/src/lib/poimen-enrollment.d.ts.map",
+        "hash": "2589497505017156564"
       },
       {
-        "file": "dist/apps/web-admin/runtime.9f3ceb9bdb86953b.js",
-        "hash": "17361832655461242939"
+        "file": "dist/libs/rbac/src/lib/permission-matrix.d.ts",
+        "hash": "812020236313436164"
       },
       {
-        "file": "dist/libs/rbac/src/lib/guards/rbac.guard.js.map",
-        "hash": "11656231314128691037"
+        "file": "dist/libs/contracts/src/lib/people.schemas.d.ts",
+        "hash": "7840071525302656017"
       },
       {
-        "file": "dist/libs/rbac/src/index.js.map",
-        "hash": "18022535640552935297"
+        "file": "dist/libs/domain/pastoral-care/src/index.d.ts",
+        "hash": "13158882254701881210"
       },
       {
-        "file": "jest.preset.js",
-        "hash": "4924014127227633326"
+        "file": "dist/libs/domain/stewardship/src/lib/stewardship.js.map",
+        "hash": "4704814747167721515"
+      },
+      {
+        "file": "infra/environments/dev/README.md",
+        "hash": "14810488115060311102"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/evaluate.d.ts",
+        "hash": "4978133209474849392"
+      },
+      {
+        "file": "pnpm-lock.yaml",
+        "hash": "10750243751178593166"
+      },
+      {
+        "file": ".github/skills/link-workspace-packages/SKILL.md",
+        "hash": "6638592300654417978"
+      },
+      {
+        "file": "dist/libs/domain/pastoral-care/README.md",
+        "hash": "18152086253233424493"
+      },
+      {
+        "file": "dist/libs/domain/people/README.md",
+        "hash": "9859871894107924985"
+      },
+      {
+        "file": "dist/libs/domain/gatherings/src/lib/gatherings.js.map",
+        "hash": "13740497183576058098"
+      },
+      {
+        "file": "dist/libs/testing/src/index.js",
+        "hash": "3622362070641583688"
+      },
+      {
+        "file": "dist/libs/contracts/src/lib/contracts.js",
+        "hash": "11550382177903241683"
+      },
+      {
+        "file": "dist/libs/domain/people/src/index.js",
+        "hash": "1444583081665263988"
+      },
+      {
+        "file": "dist/libs/testing/src/lib/testing.d.ts.map",
+        "hash": "4076030074480648382"
+      },
+      {
+        "file": "dist/libs/domain/pastoral-care/src/lib/follow-up-task.d.ts.map",
+        "hash": "17019088861583793629"
+      },
+      {
+        "file": "db/migrations/20260801030000_normalize_foreign_key_on_update_cascade/migration.sql",
+        "hash": "304940384874752931"
+      },
+      {
+        "file": "dist/libs/contracts/src/lib/pastoral-care.schemas.d.ts",
+        "hash": "16826834527941237883"
+      },
+      {
+        "file": "dist/libs/domain/people/src/lib/role-assignment-eligibility.d.ts",
+        "hash": "10814702679680767670"
+      },
+      {
+        "file": "dist/libs/domain/insights/src/index.js",
+        "hash": "4948486341555561576"
+      },
+      {
+        "file": "db/schema.prisma",
+        "hash": "15922933706798041664"
+      },
+      {
+        "file": "dist/libs/domain/people/src/lib/duplicate-detection.js",
+        "hash": "10217909069714940647"
+      },
+      {
+        "file": "dist/libs/contracts/src/lib/contracts.js.map",
+        "hash": "2535259418430697222"
+      },
+      {
+        "file": "dist/libs/domain/gatherings/src/index.js.map",
+        "hash": "35010658096035140"
+      },
+      {
+        "file": ".github/skills/nx-import/references/GRADLE.md",
+        "hash": "15868511153961490698"
+      },
+      {
+        "file": "dist/libs/domain/stewardship/src/lib/stewardship.d.ts",
+        "hash": "7702984367194888180"
+      },
+      {
+        "file": "dist/libs/contracts/src/index.js.map",
+        "hash": "17295561310792070983"
+      },
+      {
+        "file": ".github/skills/nx-import/references/JEST.md",
+        "hash": "8022966628634571060"
+      },
+      {
+        "file": "dist/libs/testing/src/lib/testing.js.map",
+        "hash": "3113978321118918664"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/evaluate.js",
+        "hash": "14791198985230276407"
+      },
+      {
+        "file": "dist/libs/domain/insights/src/lib/insights.js",
+        "hash": "10146477538613226785"
+      },
+      {
+        "file": "dist/libs/config/package.json",
+        "hash": "11393823626697839766"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/roles.js.map",
+        "hash": "12084084795731529802"
       },
       {
         "file": "db/migrations/20260801020000_drop_updated_at_column_defaults/migration.sql",
         "hash": "17823066077875768985"
       },
       {
-        "file": "dist/libs/domain/pastoral-care/README.md",
-        "hash": "13787817830426484369"
+        "file": "dist/libs/contracts/README.md",
+        "hash": "9026837095883396963"
       },
       {
-        "file": "pnpm-workspace.yaml",
-        "hash": "682888461564268127"
+        "file": "eslint.config.cjs",
+        "hash": "517181047419377789"
+      },
+      {
+        "file": "db/README.md",
+        "hash": "3227257409835561292"
+      },
+      {
+        "file": ".github/skills/nx-generate/SKILL.md",
+        "hash": "12149253535688076771"
+      },
+      {
+        "file": "dist/libs/contracts/package.json",
+        "hash": "14886529337397087149"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/record-level-checks.js.map",
+        "hash": "1921348546083911418"
+      },
+      {
+        "file": "dist/libs/domain/ministry/src/index.js",
+        "hash": "12339721370582428966"
+      },
+      {
+        "file": "dist/apps/worker/src/main.js.map",
+        "hash": "15519747424233133520"
+      },
+      {
+        "file": "dist/apps/api/package.json",
+        "hash": "16753003535421491403"
+      },
+      {
+        "file": "dist/libs/contracts/src/lib/pastoral-care.schemas.js.map",
+        "hash": "12099580173560864733"
+      },
+      {
+        "file": "docs/Ecclesia_Technical_Blueprint.md",
+        "hash": "3639650851133654593"
+      },
+      {
+        "file": "AGENTS.md",
+        "hash": "3693179293707062853"
+      },
+      {
+        "file": "dist/apps/web-admin/index.html",
+        "hash": "15506897624449030817"
+      },
+      {
+        "file": "dist/apps/api/main.js",
+        "hash": "1599451695981645206"
+      },
+      {
+        "file": "dist/libs/domain/people/src/lib/lifecycle-stage.js.map",
+        "hash": "15677408027612488877"
+      },
+      {
+        "file": "dist/libs/domain/stewardship/src/index.d.ts.map",
+        "hash": "8314990592890114819"
+      },
+      {
+        "file": "dist/apps/api/main.js.map",
+        "hash": "17804038077142795499"
+      },
+      {
+        "file": "infra/modules/README.md",
+        "hash": "2389633901137640884"
+      },
+      {
+        "file": "jest.preset.js",
+        "hash": "4924014127227633326"
+      },
+      {
+        "file": "dist/libs/domain/people/src/lib/group-membership-rules.d.ts",
+        "hash": "11058172597917590666"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/request-context.d.ts",
+        "hash": "3238906831514097138"
+      },
+      {
+        "file": "dist/libs/domain/ministry/package.json",
+        "hash": "5152174164347297476"
+      },
+      {
+        "file": "dist/libs/domain/insights/src/index.js.map",
+        "hash": "8817212285122634418"
+      },
+      {
+        "file": "dist/apps/web-admin/assets/.gitkeep",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "dist/libs/config/src/index.js",
+        "hash": "2576889716946465900"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/record-level-checks.d.ts.map",
+        "hash": "16527838887733871"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/roles.d.ts.map",
+        "hash": "4430008526539061517"
+      },
+      {
+        "file": "dist/apps/worker/src/main.d.ts",
+        "hash": "7555221963606533283"
+      },
+      {
+        "file": "dist/libs/domain/pastoral-care/src/lib/poimen-enrollment.d.ts",
+        "hash": "3493764039085288613"
+      },
+      {
+        "file": ".github/workflows/ci.yml",
+        "hash": "10796920281363788755"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/actions.d.ts",
+        "hash": "16087365346791726332"
+      },
+      {
+        "file": "dist/libs/domain/people/src/lib/duplicate-detection.d.ts",
+        "hash": "516553094152868589"
+      },
+      {
+        "file": "dist/apps/web-admin/main.a3e6ca3e4e2db770.js",
+        "hash": "3630933193508895599"
+      },
+      {
+        "file": "dist/libs/domain/people/src/lib/lifecycle-stage.js",
+        "hash": "8690574035935969358"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/request-context.js",
+        "hash": "7025594646382659963"
+      },
+      {
+        "file": ".github/skills/monitor-ci/references/fix-flows.md",
+        "hash": "14499115380699629375"
+      },
+      {
+        "file": "dist/libs/domain/gatherings/src/index.js",
+        "hash": "10632620328922155952"
+      },
+      {
+        "file": "dist/libs/domain/gatherings/README.md",
+        "hash": "13871924907406488344"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "17668408757827692662"
+      },
+      {
+        "file": "dist/libs/contracts/src/lib/contracts.d.ts",
+        "hash": "4226988890581109698"
+      },
+      {
+        "file": "dist/libs/domain/people/src/lib/role-assignment-eligibility.js.map",
+        "hash": "11728374233267651143"
+      },
+      {
+        "file": "dist/libs/domain/pastoral-care/src/index.d.ts.map",
+        "hash": "14062831941163101841"
+      },
+      {
+        "file": "db/migrations/20260801000000_init_bounded_context_schemas/migration.sql",
+        "hash": "7773390412211496408"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/types.d.ts",
+        "hash": "13037406277126556712"
+      },
+      {
+        "file": "dist/libs/domain/pastoral-care/src/lib/silent-drift.d.ts.map",
+        "hash": "4334409035851050599"
+      },
+      {
+        "file": "dist/libs/testing/src/index.d.ts",
+        "hash": "11398324245438965274"
+      },
+      {
+        "file": ".env.example",
+        "hash": "4740725816970567344"
+      },
+      {
+        "file": "dist/libs/domain/stewardship/src/lib/stewardship.d.ts.map",
+        "hash": "2004532214795423531"
+      },
+      {
+        "file": "dist/libs/domain/people/src/index.js.map",
+        "hash": "4908577960593665976"
+      },
+      {
+        "file": ".github/skills/monitor-ci/SKILL.md",
+        "hash": "18088016943973848606"
+      },
+      {
+        "file": ".github/skills/nx-import/references/ESLINT.md",
+        "hash": "3100736771536685484"
+      },
+      {
+        "file": "db/migrations/migration_lock.toml",
+        "hash": "872437952673290735"
+      },
+      {
+        "file": ".github/skills/nx-import/references/NEXT.md",
+        "hash": "8705422121624482541"
+      },
+      {
+        "file": "dist/libs/domain/people/src/lib/group-membership-rules.js.map",
+        "hash": "8197815375744353664"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/types.js",
+        "hash": "7466608880973388498"
+      },
+      {
+        "file": "package.json",
+        "hash": "6029639343399453597"
+      },
+      {
+        "file": ".github/skills/nx-import/references/VITE.md",
+        "hash": "5793928500507593678"
+      },
+      {
+        "file": ".github/skills/nx-workspace/references/AFFECTED.md",
+        "hash": "10577828056523124002"
+      },
+      {
+        "file": "dist/libs/domain/people/src/lib/lifecycle-stage.d.ts.map",
+        "hash": "16116010347034501934"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/decorators/require-permission.decorator.js",
+        "hash": "6861782684939119391"
+      },
+      {
+        "file": "dist/libs/contracts/src/lib/contracts.d.ts.map",
+        "hash": "1609875852916811136"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/types.js.map",
+        "hash": "2157908700260999588"
+      },
+      {
+        "file": ".github/skills/monitor-ci/scripts/ci-state-update.mjs",
+        "hash": "7215142467513984630"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "18253190891512926189"
+      },
+      {
+        "file": "dist/libs/domain/pastoral-care/src/lib/poimen-enrollment.js.map",
+        "hash": "968893147294686150"
+      },
+      {
+        "file": "tsconfig.json",
+        "hash": "1379983966652230747"
+      },
+      {
+        "file": "db/migrations/README.md",
+        "hash": "17688236361133860184"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/roles.js",
+        "hash": "16659164231970494284"
+      },
+      {
+        "file": "dist/libs/config/src/lib/config.js.map",
+        "hash": "8247158146574185519"
+      },
+      {
+        "file": "dist/libs/testing/README.md",
+        "hash": "925929604841187705"
+      },
+      {
+        "file": ".github/skills/nx-plugins/SKILL.md",
+        "hash": "4717624081372438208"
+      },
+      {
+        "file": ".github/skills/nx-import/SKILL.md",
+        "hash": "9709061508228126022"
+      },
+      {
+        "file": "dist/libs/domain/insights/src/index.d.ts.map",
+        "hash": "7798565477166851388"
+      },
+      {
+        "file": "dist/libs/domain/pastoral-care/src/index.js",
+        "hash": "6352487001951368429"
+      },
+      {
+        "file": "dist/libs/testing/src/lib/testing.d.ts",
+        "hash": "9765084814130361281"
+      },
+      {
+        "file": "dist/libs/domain/insights/package.json",
+        "hash": "9643524106241773202"
+      },
+      {
+        "file": "dist/libs/config/src/index.d.ts",
+        "hash": "7488015159911797003"
+      },
+      {
+        "file": "infra/environments/staging/README.md",
+        "hash": "4045442741294683752"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/actions.js.map",
+        "hash": "540045469606559743"
+      },
+      {
+        "file": "dist/libs/domain/gatherings/package.json",
+        "hash": "11223100998339112501"
+      },
+      {
+        "file": "docs/engineering-principles.md",
+        "hash": "16894825870253417927"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/request-context.js.map",
+        "hash": "5454881423518217459"
+      },
+      {
+        "file": "docs/Ecclesia_PRD copy.md",
+        "hash": "8701530406522058201"
+      },
+      {
+        "file": "dist/libs/domain/gatherings/src/index.d.ts",
+        "hash": "3499699182018202969"
+      },
+      {
+        "file": "dist/libs/contracts/src/lib/people.schemas.d.ts.map",
+        "hash": "7022338339858691549"
+      },
+      {
+        "file": "db/seed.ts",
+        "hash": "18323212845898440313"
+      },
+      {
+        "file": ".vscode/extensions.json",
+        "hash": "1722394586280447872"
+      },
+      {
+        "file": "dist/libs/config/src/index.d.ts.map",
+        "hash": "11813004687730141135"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/evaluate.d.ts.map",
+        "hash": "14215583101741268752"
       },
       {
         "file": "dist/libs/domain/gatherings/src/index.d.ts.map",
         "hash": "9569250514463092609"
+      },
+      {
+        "file": "dist/libs/domain/people/src/lib/duplicate-detection.js.map",
+        "hash": "16588539120000382758"
+      },
+      {
+        "file": "dist/apps/worker/src/main.js",
+        "hash": "10939475907404679077"
+      },
+      {
+        "file": "dist/libs/domain/people/src/lib/duplicate-detection.d.ts.map",
+        "hash": "14738142942010129489"
       },
       {
         "file": "dist/libs/config/src/lib/config.js",
@@ -130,824 +606,336 @@
         "hash": "13133309962255346736"
       },
       {
-        "file": "dist/libs/domain/people/src/lib/group-membership-rules.js.map",
-        "hash": "8197815375744353664"
-      },
-      {
-        "file": ".github/skills/monitor-ci/scripts/ci-state-update.mjs",
-        "hash": "7215142467513984630"
-      },
-      {
-        "file": "dist/apps/worker/src/main.d.ts",
-        "hash": "7555221963606533283"
-      },
-      {
-        "file": "db/seed.ts",
-        "hash": "18323212845898440313"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/request-context.js",
-        "hash": "7025594646382659963"
-      },
-      {
-        "file": "dist/libs/testing/src/index.js",
-        "hash": "3622362070641583688"
-      },
-      {
-        "file": "dist/libs/contracts/src/index.d.ts.map",
-        "hash": "13829843457363702515"
-      },
-      {
-        "file": "dist/apps/worker/src/main.js.map",
-        "hash": "15519747424233133520"
-      },
-      {
-        "file": "dist/libs/contracts/src/lib/contracts.js.map",
-        "hash": "2535259418430697222"
-      },
-      {
-        "file": "dist/libs/domain/people/src/index.js",
-        "hash": "1444583081665263988"
-      },
-      {
-        "file": "dist/libs/contracts/src/lib/people.schemas.d.ts.map",
-        "hash": "6612307561263409537"
-      },
-      {
-        "file": "dist/libs/domain/people/src/index.d.ts",
-        "hash": "9711510964110580273"
-      },
-      {
-        "file": ".vscode/extensions.json",
-        "hash": "1722394586280447872"
-      },
-      {
-        "file": "dist/apps/worker/package.json",
-        "hash": "13016795196651829255"
-      },
-      {
-        "file": "dist/libs/contracts/src/lib/people.schemas.js",
-        "hash": "3064992362445563985"
-      },
-      {
-        "file": "db/migrations/20260801000000_init_bounded_context_schemas/migration.sql",
-        "hash": "7773390412211496408"
-      },
-      {
-        "file": "infra/environments/production/README.md",
-        "hash": "3426130910225440914"
-      },
-      {
-        "file": "dist/libs/domain/people/src/lib/lifecycle-stage.js.map",
-        "hash": "15677408027612488877"
-      },
-      {
-        "file": "dist/libs/contracts/src/index.js",
-        "hash": "17507845597219903862"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/types.js",
-        "hash": "7466608880973388498"
-      },
-      {
-        "file": "db/migrations/20260801030000_normalize_foreign_key_on_update_cascade/migration.sql",
-        "hash": "304940384874752931"
-      },
-      {
-        "file": "dist/libs/domain/people/src/lib/lifecycle-stage.d.ts.map",
-        "hash": "16116010347034501934"
-      },
-      {
-        "file": "dist/libs/config/src/lib/config.d.ts.map",
-        "hash": "7373647038471274412"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/roles.js",
-        "hash": "16659164231970494284"
-      },
-      {
-        "file": "dist/libs/domain/stewardship/src/lib/stewardship.d.ts.map",
-        "hash": "2004532214795423531"
-      },
-      {
-        "file": "dist/apps/web-admin/styles.c4e4df19415eeccd.css",
-        "hash": "8108729793271319988"
-      },
-      {
-        "file": "dist/libs/domain/insights/README.md",
-        "hash": "4093407951908796051"
-      },
-      {
-        "file": "dist/libs/testing/README.md",
-        "hash": "925929604841187705"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/guards/record-level-policy.guard.d.ts.map",
-        "hash": "2225335810133651059"
-      },
-      {
-        "file": ".github/skills/monitor-ci/SKILL.md",
-        "hash": "18088016943973848606"
-      },
-      {
-        "file": "dist/libs/domain/pastoral-care/src/lib/pastoral-care.d.ts",
-        "hash": "8684368182887002971"
-      },
-      {
-        "file": "dist/libs/domain/stewardship/README.md",
-        "hash": "82907116088931977"
-      },
-      {
-        "file": "dist/libs/config/src/index.js.map",
-        "hash": "1692573638136860213"
-      },
-      {
-        "file": ".github/prompts/monitor-ci.prompt.md",
-        "hash": "9080849368932184607"
-      },
-      {
-        "file": "dist/libs/domain/people/src/index.d.ts.map",
-        "hash": "2987951736323418866"
-      },
-      {
-        "file": "dist/libs/domain/insights/src/lib/insights.js",
-        "hash": "10146477538613226785"
-      },
-      {
         "file": "dist/libs/rbac/src/lib/actions.d.ts.map",
-        "hash": "2161655895179078493"
-      },
-      {
-        "file": "dist/libs/domain/gatherings/src/lib/gatherings.d.ts",
-        "hash": "3612609110644987867"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/record-level-checks.js.map",
-        "hash": "1921348546083911418"
-      },
-      {
-        "file": "dist/libs/domain/stewardship/src/index.d.ts.map",
-        "hash": "8314990592890114819"
-      },
-      {
-        "file": "docs/engineering-principles.md",
-        "hash": "16894825870253417927"
-      },
-      {
-        "file": "dist/libs/testing/src/lib/testing.d.ts",
-        "hash": "9765084814130361281"
-      },
-      {
-        "file": "dist/libs/domain/pastoral-care/src/index.d.ts",
-        "hash": "3881336311014773495"
-      },
-      {
-        "file": "dist/libs/contracts/src/lib/contracts.d.ts",
-        "hash": "4226988890581109698"
-      },
-      {
-        "file": "dist/apps/web-admin/main.a3e6ca3e4e2db770.js",
-        "hash": "3630933193508895599"
-      },
-      {
-        "file": "dist/libs/domain/pastoral-care/src/index.d.ts.map",
-        "hash": "781764715411471927"
+        "hash": "9912332661677001847"
       },
       {
         "file": "commitlint.config.js",
         "hash": "13859930995759832907"
       },
       {
-        "file": ".github/skills/link-workspace-packages/SKILL.md",
-        "hash": "6638592300654417978"
+        "file": "dist/libs/domain/pastoral-care/src/lib/silent-drift.js",
+        "hash": "10043615539345943650"
       },
       {
-        "file": "dist/libs/rbac/src/index.d.ts.map",
-        "hash": "3511274078981401511"
-      },
-      {
-        "file": ".swcrc",
-        "hash": "16428088087537574834"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/roles.d.ts",
-        "hash": "6633503923337205488"
-      },
-      {
-        "file": "dist/libs/domain/ministry/src/index.d.ts",
-        "hash": "7725816666689304312"
-      },
-      {
-        "file": "dist/libs/testing/src/index.js.map",
-        "hash": "14698125357255943347"
-      },
-      {
-        "file": "dist/libs/config/src/lib/config.d.ts",
-        "hash": "15057189477040050153"
-      },
-      {
-        "file": ".github/skills/nx-import/references/TURBOREPO.md",
-        "hash": "6654032474246573297"
-      },
-      {
-        "file": ".env.example",
-        "hash": "4740725816970567344"
-      },
-      {
-        "file": "dist/libs/domain/ministry/src/index.js.map",
-        "hash": "10618169509888609267"
-      },
-      {
-        "file": "tsconfig.json",
-        "hash": "1379983966652230747"
-      },
-      {
-        "file": "dist/libs/testing/src/index.d.ts",
-        "hash": "11398324245438965274"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/evaluate.js.map",
-        "hash": "1361968918628451264"
-      },
-      {
-        "file": "dist/libs/domain/people/src/lib/group-membership-rules.d.ts.map",
-        "hash": "3979025276044632899"
-      },
-      {
-        "file": "dist/libs/domain/insights/src/index.d.ts.map",
-        "hash": "7798565477166851388"
-      },
-      {
-        "file": "docs/Ecclesia_PRD copy.md",
-        "hash": "8701530406522058201"
-      },
-      {
-        "file": "dist/libs/domain/gatherings/src/index.js",
-        "hash": "10632620328922155952"
-      },
-      {
-        "file": "dist/libs/domain/insights/src/index.js.map",
-        "hash": "8817212285122634418"
-      },
-      {
-        "file": ".github/workflows/ci.yml",
-        "hash": "10796920281363788755"
-      },
-      {
-        "file": "dist/libs/domain/stewardship/src/lib/stewardship.js.map",
-        "hash": "4704814747167721515"
-      },
-      {
-        "file": ".github/skills/nx-import/SKILL.md",
-        "hash": "9709061508228126022"
-      },
-      {
-        "file": "dist/libs/testing/package.json",
-        "hash": "4352102078145544397"
-      },
-      {
-        "file": "dist/libs/domain/pastoral-care/src/index.js.map",
-        "hash": "13394321500578969808"
-      },
-      {
-        "file": "dist/apps/api/main.js.map",
-        "hash": "4257052701810623823"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/decorators/require-permission.decorator.js",
-        "hash": "6861782684939119391"
-      },
-      {
-        "file": "nx.json",
-        "hash": "7163517071887910218"
-      },
-      {
-        "file": "dist/libs/domain/gatherings/README.md",
-        "hash": "13871924907406488344"
-      },
-      {
-        "file": "dist/libs/config/README.md",
-        "hash": "16391758181626718279"
-      },
-      {
-        "file": "dist/libs/domain/gatherings/src/index.d.ts",
-        "hash": "3499699182018202969"
-      },
-      {
-        "file": "dist/libs/domain/gatherings/package.json",
-        "hash": "11223100998339112501"
-      },
-      {
-        "file": "dist/libs/domain/gatherings/src/lib/gatherings.js",
-        "hash": "3100657582147767390"
-      },
-      {
-        "file": "dist/libs/domain/people/src/lib/group-membership-rules.js",
-        "hash": "14991723703193779970"
-      },
-      {
-        "file": "dist/libs/domain/stewardship/src/lib/stewardship.d.ts",
-        "hash": "7702984367194888180"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/guards/record-level-policy.guard.js.map",
-        "hash": "1747706095468824870"
-      },
-      {
-        "file": "dist/apps/api/assets/.gitkeep",
-        "hash": "3244421341483603138"
-      },
-      {
-        "file": ".github/skills/nx-workspace/references/AFFECTED.md",
-        "hash": "10577828056523124002"
-      },
-      {
-        "file": "dist/libs/domain/ministry/src/lib/ministry.d.ts",
-        "hash": "17266755283541408874"
-      },
-      {
-        "file": "dist/libs/config/src/index.d.ts",
-        "hash": "7488015159911797003"
-      },
-      {
-        "file": "dist/libs/domain/ministry/src/index.js",
-        "hash": "12339721370582428966"
-      },
-      {
-        "file": ".vscode/settings.json",
-        "hash": "16236994141215880409"
-      },
-      {
-        "file": "db/migrations/README.md",
-        "hash": "17688236361133860184"
-      },
-      {
-        "file": "dist/libs/testing/src/lib/testing.d.ts.map",
-        "hash": "4076030074480648382"
-      },
-      {
-        "file": "dist/libs/domain/pastoral-care/src/index.js",
-        "hash": "2100288613355493879"
-      },
-      {
-        "file": "README.md",
-        "hash": "4936417028686322384"
-      },
-      {
-        "file": "dist/libs/domain/stewardship/src/index.d.ts",
-        "hash": "16682282880240941490"
-      },
-      {
-        "file": "dist/libs/contracts/src/lib/contracts.js",
-        "hash": "11550382177903241683"
+        "file": ".github/prompts/monitor-ci.prompt.md",
+        "hash": "9080849368932184607"
       },
       {
         "file": "dist/libs/rbac/src/lib/decorators/require-permission.decorator.js.map",
         "hash": "1378035330564630250"
       },
       {
-        "file": ".github/skills/nx-plugins/SKILL.md",
-        "hash": "4717624081372438208"
+        "file": "dist/libs/domain/people/src/lib/role-assignment-eligibility.d.ts.map",
+        "hash": "10503178705686966023"
       },
       {
-        "file": "dist/libs/contracts/README.md",
-        "hash": "9026837095883396963"
+        "file": "dist/libs/rbac/src/lib/permission-matrix.js",
+        "hash": "16695692109676300277"
       },
       {
-        "file": "docs/Ecclesia_Technical_Blueprint copy.md",
-        "hash": "3639650851133654593"
-      },
-      {
-        "file": "infra/environments/dev/README.md",
-        "hash": "14810488115060311102"
-      },
-      {
-        "file": "dist/libs/contracts/src/lib/people.schemas.d.ts",
-        "hash": "5509035203341938669"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/actions.js",
-        "hash": "2933881165206592405"
-      },
-      {
-        "file": "dist/apps/worker/src/main.js",
-        "hash": "10939475907404679077"
-      },
-      {
-        "file": "dist/libs/contracts/src/index.d.ts",
-        "hash": "4217457417034763696"
-      },
-      {
-        "file": "dist/apps/web-admin/styles.eb0fe9dda4552a61.js",
-        "hash": "1159661496321619003"
-      },
-      {
-        "file": "dist/libs/domain/ministry/src/lib/ministry.js",
-        "hash": "6084640742552552471"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/evaluate.js",
-        "hash": "17010205059720281519"
-      },
-      {
-        "file": "db/DESIGN_NOTES.md",
-        "hash": "15080841539806762895"
-      },
-      {
-        "file": "dist/libs/contracts/package.json",
-        "hash": "14886529337397087149"
-      },
-      {
-        "file": "infra/modules/README.md",
-        "hash": "2389633901137640884"
-      },
-      {
-        "file": "infra/environments/staging/README.md",
-        "hash": "4045442741294683752"
-      },
-      {
-        "file": "dist/libs/testing/src/lib/testing.js.map",
-        "hash": "3113978321118918664"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/permission-matrix.d.ts",
-        "hash": "812020236313436164"
-      },
-      {
-        "file": "dist/libs/domain/people/src/lib/role-assignment-eligibility.js",
-        "hash": "6717101469866169717"
-      },
-      {
-        "file": "dist/libs/testing/src/index.d.ts.map",
-        "hash": "2174248506686263917"
-      },
-      {
-        "file": "dist/libs/rbac/package.json",
-        "hash": "15586185805906320532"
+        "file": "dist/libs/rbac/src/lib/roles.d.ts",
+        "hash": "6633503923337205488"
       },
       {
         "file": "db/migrations/20260801010000_rename_indexes_to_match_prisma_convention/migration.sql",
         "hash": "9539944722116491802"
       },
       {
-        "file": "AGENTS.md",
-        "hash": "3693179293707062853"
+        "file": "dist/apps/web-admin/styles.eb0fe9dda4552a61.js",
+        "hash": "1159661496321619003"
       },
       {
-        "file": "dist/libs/domain/stewardship/src/index.js",
-        "hash": "5856631974810718535"
-      },
-      {
-        "file": "dist/libs/testing/src/lib/testing.js",
-        "hash": "15735980153588765370"
-      },
-      {
-        "file": ".github/skills/nx-run-tasks/SKILL.md",
-        "hash": "10723914446406921246"
-      },
-      {
-        "file": "dist/libs/domain/ministry/package.json",
-        "hash": "5152174164347297476"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/request-context.d.ts.map",
-        "hash": "8010622320506334410"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/actions.d.ts",
-        "hash": "10527093073676290633"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/evaluate.d.ts.map",
-        "hash": "5653230592773347050"
-      },
-      {
-        "file": "dist/libs/domain/stewardship/src/lib/stewardship.js",
-        "hash": "3734767089694156189"
-      },
-      {
-        "file": "dist/libs/domain/stewardship/src/index.js.map",
-        "hash": "15472537006141997174"
-      },
-      {
-        "file": "dist/libs/domain/people/src/index.js.map",
-        "hash": "4908577960593665976"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "17668408757827692662"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/guards/record-level-policy.guard.js",
-        "hash": "17307239368375444407"
-      },
-      {
-        "file": "dist/libs/contracts/src/lib/contracts.d.ts.map",
-        "hash": "1609875852916811136"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/actions.js.map",
-        "hash": "15042105669853946230"
-      },
-      {
-        "file": "dist/libs/domain/insights/package.json",
-        "hash": "9643524106241773202"
-      },
-      {
-        "file": "dist/libs/contracts/src/lib/people.schemas.js.map",
-        "hash": "7837368885609994332"
-      },
-      {
-        "file": "dist/libs/domain/insights/src/lib/insights.js.map",
-        "hash": "13122995112753594068"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/guards/rbac.guard.js",
-        "hash": "15497181869942473015"
-      },
-      {
-        "file": "dist/libs/domain/ministry/src/index.d.ts.map",
-        "hash": "13545461144090191018"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/request-context.d.ts",
-        "hash": "3238906831514097138"
-      },
-      {
-        "file": "dist/libs/domain/people/src/lib/duplicate-detection.js",
-        "hash": "10217909069714940647"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/guards/rbac.guard.d.ts",
-        "hash": "11191393603631539859"
-      },
-      {
-        "file": "dist/apps/api/package.json",
-        "hash": "16753003535421491403"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/record-level-checks.d.ts",
-        "hash": "14425861968111380985"
-      },
-      {
-        "file": "dist/libs/domain/people/src/lib/lifecycle-stage.d.ts",
-        "hash": "12833895901941183906"
-      },
-      {
-        "file": "dist/libs/domain/gatherings/src/index.js.map",
-        "hash": "35010658096035140"
-      },
-      {
-        "file": "dist/libs/domain/pastoral-care/src/lib/pastoral-care.js.map",
-        "hash": "8046396411225469414"
-      },
-      {
-        "file": "dist/libs/domain/pastoral-care/package.json",
-        "hash": "3038030197480810708"
-      },
-      {
-        "file": ".github/skills/monitor-ci/scripts/ci-poll-decide.mjs",
-        "hash": "13193289048342915957"
-      },
-      {
-        "file": "pnpm-lock.yaml",
-        "hash": "10750243751178593166"
-      },
-      {
-        "file": ".github/skills/nx-workspace/SKILL.md",
-        "hash": "56694506768298655"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "18253190891512926189"
-      },
-      {
-        "file": "dist/libs/domain/people/src/lib/lifecycle-stage.js",
-        "hash": "8690574035935969358"
-      },
-      {
-        "file": ".github/agents/ci-monitor-subagent.agent.md",
-        "hash": "6573591679819005545"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/permission-matrix.js",
-        "hash": "8504915130752459945"
-      },
-      {
-        "file": "dist/libs/rbac/README.md",
-        "hash": "1384000412505373336"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/decorators/require-permission.decorator.d.ts.map",
-        "hash": "8681157457186340740"
-      },
-      {
-        "file": "docs/Ecclesia_PRD.md",
-        "hash": "8701530406522058201"
-      },
-      {
-        "file": "dist/libs/config/src/lib/config.js.map",
-        "hash": "8247158146574185519"
-      },
-      {
-        "file": "db/schema.prisma",
-        "hash": "15922933706798041664"
-      },
-      {
-        "file": ".github/skills/nx-import/references/JEST.md",
-        "hash": "8022966628634571060"
-      },
-      {
-        "file": "dist/libs/domain/people/README.md",
-        "hash": "9859871894107924985"
-      },
-      {
-        "file": "dist/apps/web-admin/assets/.gitkeep",
-        "hash": "3244421341483603138"
-      },
-      {
-        "file": "dist/libs/domain/people/src/lib/duplicate-detection.js.map",
-        "hash": "16588539120000382758"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/types.js.map",
-        "hash": "2157908700260999588"
-      },
-      {
-        "file": "dist/libs/domain/pastoral-care/src/lib/pastoral-care.js",
-        "hash": "10925501808457550933"
-      },
-      {
-        "file": "db/README.md",
-        "hash": "3227257409835561292"
-      },
-      {
-        "file": ".github/skills/monitor-ci/references/fix-flows.md",
-        "hash": "14499115380699629375"
-      },
-      {
-        "file": "dist/libs/rbac/src/index.js",
-        "hash": "14276546692499355384"
-      },
-      {
-        "file": ".github/skills/nx-import/references/VITE.md",
-        "hash": "5793928500507593678"
-      },
-      {
-        "file": "eslint.config.cjs",
-        "hash": "517181047419377789"
-      },
-      {
-        "file": "dist/apps/web-admin/index.html",
-        "hash": "15506897624449030817"
-      },
-      {
-        "file": "db/migrations/migration_lock.toml",
-        "hash": "872437952673290735"
-      },
-      {
-        "file": "dist/libs/domain/ministry/README.md",
-        "hash": "5290314638076440108"
-      },
-      {
-        "file": "dist/libs/config/package.json",
-        "hash": "11393823626697839766"
-      },
-      {
-        "file": "dist/libs/domain/gatherings/src/lib/gatherings.js.map",
-        "hash": "13740497183576058098"
-      },
-      {
-        "file": "dist/libs/domain/people/package.json",
-        "hash": "784992265323252696"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/record-level-checks.d.ts.map",
-        "hash": "16527838887733871"
-      },
-      {
-        "file": "dist/libs/config/src/index.d.ts.map",
-        "hash": "11813004687730141135"
-      },
-      {
-        "file": ".npmrc",
-        "hash": "4193862657021922584"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/permission-matrix.d.ts.map",
-        "hash": "8688632672521268640"
-      },
-      {
-        "file": "dist/libs/domain/stewardship/package.json",
-        "hash": "1890076432575544047"
-      },
-      {
-        "file": "dist/libs/config/src/index.js",
-        "hash": "2576889716946465900"
-      },
-      {
-        "file": ".github/skills/nx-import/references/NEXT.md",
-        "hash": "8705422121624482541"
-      },
-      {
-        "file": "dist/libs/domain/insights/src/index.js",
-        "hash": "4948486341555561576"
-      },
-      {
-        "file": "dist/libs/contracts/src/index.js.map",
-        "hash": "18433692268732489635"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/roles.js.map",
-        "hash": "12084084795731529802"
-      },
-      {
-        "file": "dist/libs/rbac/src/index.d.ts",
-        "hash": "7638579511785015933"
-      },
-      {
-        "file": "dist/libs/domain/people/src/lib/role-assignment-eligibility.d.ts.map",
-        "hash": "10503178705686966023"
-      },
-      {
-        "file": "package.json",
-        "hash": "6029639343399453597"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/roles.d.ts.map",
-        "hash": "4430008526539061517"
-      },
-      {
-        "file": "dist/libs/domain/people/src/lib/role-assignment-eligibility.js.map",
-        "hash": "11728374233267651143"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/evaluate.d.ts",
-        "hash": "4978133209474849392"
-      },
-      {
-        "file": ".github/skills/nx-import/references/GRADLE.md",
-        "hash": "15868511153961490698"
-      },
-      {
-        "file": "dist/libs/domain/insights/src/lib/insights.d.ts.map",
-        "hash": "4686701496748594438"
-      },
-      {
-        "file": "dist/libs/rbac/src/lib/guards/record-level-policy.guard.d.ts",
-        "hash": "14135659547166591892"
-      },
-      {
-        "file": "dist/libs/domain/insights/src/lib/insights.d.ts",
-        "hash": "2663175291803091732"
-      },
-      {
-        "file": ".github/skills/nx-generate/SKILL.md",
-        "hash": "12149253535688076771"
+        "file": "dist/libs/domain/pastoral-care/src/lib/follow-up-task.d.ts",
+        "hash": "7496881460493719785"
       },
       {
         "file": "dist/libs/domain/gatherings/src/lib/gatherings.d.ts.map",
         "hash": "2166872606549155691"
       },
       {
-        "file": "dist/libs/domain/people/src/lib/role-assignment-eligibility.d.ts",
-        "hash": "10814702679680767670"
+        "file": "dist/libs/domain/ministry/src/index.d.ts.map",
+        "hash": "13545461144090191018"
       },
       {
-        "file": "docs/Ecclesia_Technical_Blueprint.md",
+        "file": "dist/libs/testing/package.json",
+        "hash": "4352102078145544397"
+      },
+      {
+        "file": "dist/libs/domain/pastoral-care/src/lib/silent-drift.js.map",
+        "hash": "1262913252067180936"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/record-level-checks.js",
+        "hash": "2561435081946258967"
+      },
+      {
+        "file": "docs/Ecclesia_PRD.md",
+        "hash": "8701530406522058201"
+      },
+      {
+        "file": "dist/libs/domain/ministry/src/lib/ministry.js.map",
+        "hash": "16511227717361004895"
+      },
+      {
+        "file": ".swcrc",
+        "hash": "16428088087537574834"
+      },
+      {
+        "file": "dist/apps/mobile/ios/main.jsbundle",
+        "hash": "4456485870009428533"
+      },
+      {
+        "file": "dist/libs/domain/ministry/README.md",
+        "hash": "5290314638076440108"
+      },
+      {
+        "file": ".github/skills/nx-run-tasks/SKILL.md",
+        "hash": "10723914446406921246"
+      },
+      {
+        "file": "dist/libs/config/README.md",
+        "hash": "16391758181626718279"
+      },
+      {
+        "file": "dist/libs/domain/people/src/index.d.ts.map",
+        "hash": "2987951736323418866"
+      },
+      {
+        "file": ".vscode/settings.json",
+        "hash": "16236994141215880409"
+      },
+      {
+        "file": "dist/libs/domain/ministry/src/index.js.map",
+        "hash": "10618169509888609267"
+      },
+      {
+        "file": "dist/libs/domain/ministry/src/lib/ministry.d.ts.map",
+        "hash": "7198950340415397374"
+      },
+      {
+        "file": "dist/libs/config/src/lib/config.d.ts.map",
+        "hash": "7373647038471274412"
+      },
+      {
+        "file": "dist/libs/domain/gatherings/src/lib/gatherings.d.ts",
+        "hash": "3612609110644987867"
+      },
+      {
+        "file": "docs/Ecclesia_Technical_Blueprint copy.md",
         "hash": "3639650851133654593"
       },
       {
-        "file": "dist/libs/rbac/src/lib/decorators/require-permission.decorator.d.ts",
-        "hash": "10860017260285406553"
+        "file": "dist/apps/web-admin/runtime.9f3ceb9bdb86953b.js",
+        "hash": "17361832655461242939"
       },
       {
-        "file": "dist/libs/domain/people/src/lib/duplicate-detection.d.ts.map",
-        "hash": "14738142942010129489"
+        "file": "dist/libs/testing/src/lib/testing.js",
+        "hash": "15735980153588765370"
       },
       {
-        "file": ".github/skills/nx-import/references/ESLINT.md",
-        "hash": "3100736771536685484"
+        "file": "README.md",
+        "hash": "6987221746955066588"
       },
       {
-        "file": "dist/libs/domain/people/src/lib/group-membership-rules.d.ts",
-        "hash": "11058172597917590666"
+        "file": "tmp/libs/rbac/build/tsconfig.generated.json",
+        "hash": "16126685474966495263"
       },
       {
-        "file": "dist/libs/rbac/src/lib/types.d.ts.map",
-        "hash": "14658764730036626037"
+        "file": "dist/libs/contracts/src/lib/people.schemas.js",
+        "hash": "6690827584379002122"
       },
       {
-        "file": "dist/libs/domain/insights/src/index.d.ts",
-        "hash": "5258818477280943094"
+        "file": "dist/libs/domain/people/src/index.d.ts",
+        "hash": "9711510964110580273"
+      },
+      {
+        "file": "dist/libs/domain/insights/README.md",
+        "hash": "4093407951908796051"
+      },
+      {
+        "file": "dist/libs/contracts/src/index.js",
+        "hash": "9701176018530157894"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/actions.js",
+        "hash": "1378772716241994571"
+      },
+      {
+        "file": ".npmrc",
+        "hash": "4193862657021922584"
+      },
+      {
+        "file": "dist/libs/domain/stewardship/src/index.js",
+        "hash": "5856631974810718535"
+      },
+      {
+        "file": "pnpm-workspace.yaml",
+        "hash": "682888461564268127"
+      },
+      {
+        "file": "dist/libs/config/src/lib/config.d.ts",
+        "hash": "15057189477040050153"
+      },
+      {
+        "file": "dist/apps/worker/package.json",
+        "hash": "13016795196651829255"
+      },
+      {
+        "file": "db/DESIGN_NOTES.md",
+        "hash": "14596454600968759705"
+      },
+      {
+        "file": "dist/libs/domain/people/src/lib/group-membership-rules.js",
+        "hash": "14991723703193779970"
+      },
+      {
+        "file": "dist/libs/contracts/src/lib/people.schemas.js.map",
+        "hash": "7451039791403768930"
+      },
+      {
+        "file": "dist/libs/contracts/src/index.d.ts",
+        "hash": "6101701943825571472"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/request-context.d.ts.map",
+        "hash": "8010622320506334410"
       },
       {
         "file": "dist/apps/api/pnpm-lock.yaml",
         "hash": "12338255917142263934"
       },
       {
-        "file": "dist/libs/domain/pastoral-care/src/lib/pastoral-care.d.ts.map",
-        "hash": "18124377732321500882"
+        "file": "dist/libs/domain/people/src/lib/lifecycle-stage.d.ts",
+        "hash": "12833895901941183906"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/evaluate.js.map",
+        "hash": "14568171233527452321"
+      },
+      {
+        "file": "dist/libs/domain/stewardship/src/lib/stewardship.js",
+        "hash": "3734767089694156189"
+      },
+      {
+        "file": "dist/libs/domain/stewardship/README.md",
+        "hash": "82907116088931977"
+      },
+      {
+        "file": "dist/libs/contracts/src/lib/pastoral-care.schemas.js",
+        "hash": "7615175605325462451"
+      },
+      {
+        "file": "dist/libs/domain/people/src/lib/group-membership-rules.d.ts.map",
+        "hash": "3979025276044632899"
+      },
+      {
+        "file": "dist/libs/domain/stewardship/package.json",
+        "hash": "1890076432575544047"
+      },
+      {
+        "file": "dist/libs/config/src/index.js.map",
+        "hash": "1692573638136860213"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/record-level-checks.d.ts",
+        "hash": "14425861968111380985"
+      },
+      {
+        "file": "infra/environments/production/README.md",
+        "hash": "3426130910225440914"
+      },
+      {
+        "file": "dist/libs/domain/insights/src/index.d.ts",
+        "hash": "5258818477280943094"
+      },
+      {
+        "file": "dist/libs/testing/src/index.js.map",
+        "hash": "14698125357255943347"
+      },
+      {
+        "file": "dist/libs/contracts/src/lib/pastoral-care.schemas.d.ts.map",
+        "hash": "3421534668703088070"
+      },
+      {
+        "file": "nx.json",
+        "hash": "7163517071887910218"
+      },
+      {
+        "file": "dist/libs/testing/src/index.d.ts.map",
+        "hash": "2174248506686263917"
+      },
+      {
+        "file": ".github/skills/nx-workspace/SKILL.md",
+        "hash": "56694506768298655"
+      },
+      {
+        "file": ".github/skills/monitor-ci/scripts/ci-poll-decide.mjs",
+        "hash": "13193289048342915957"
+      },
+      {
+        "file": "dist/libs/domain/gatherings/src/lib/gatherings.js",
+        "hash": "3100657582147767390"
+      },
+      {
+        "file": "dist/libs/domain/insights/src/lib/insights.d.ts.map",
+        "hash": "4686701496748594438"
+      },
+      {
+        "file": "dist/libs/domain/stewardship/src/index.d.ts",
+        "hash": "16682282880240941490"
+      },
+      {
+        "file": "dist/libs/domain/pastoral-care/src/lib/follow-up-task.js",
+        "hash": "17209477020049066006"
+      },
+      {
+        "file": ".github/skills/nx-import/references/TURBOREPO.md",
+        "hash": "6654032474246573297"
+      },
+      {
+        "file": "dist/libs/domain/pastoral-care/package.json",
+        "hash": "3038030197480810708"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/permission-matrix.js.map",
+        "hash": "5815092563557621533"
+      },
+      {
+        "file": "dist/libs/rbac/src/lib/permission-matrix.d.ts.map",
+        "hash": "6632448874250925312"
+      },
+      {
+        "file": "dist/libs/domain/pastoral-care/src/index.js.map",
+        "hash": "12055730790801124376"
+      },
+      {
+        "file": "dist/libs/domain/ministry/src/index.d.ts",
+        "hash": "7725816666689304312"
+      },
+      {
+        "file": "dist/libs/domain/people/src/lib/role-assignment-eligibility.js",
+        "hash": "6717101469866169717"
+      },
+      {
+        "file": ".github/agents/ci-monitor-subagent.agent.md",
+        "hash": "6573591679819005545"
+      },
+      {
+        "file": "dist/libs/domain/pastoral-care/src/lib/poimen-enrollment.js",
+        "hash": "16261508980770684845"
+      },
+      {
+        "file": "dist/libs/domain/insights/src/lib/insights.d.ts",
+        "hash": "2663175291803091732"
+      },
+      {
+        "file": "dist/libs/domain/pastoral-care/src/lib/follow-up-task.js.map",
+        "hash": "16499385584843715582"
+      },
+      {
+        "file": "dist/libs/contracts/src/index.d.ts.map",
+        "hash": "4352366728451229077"
       }
     ],
     "projectFileMap": {
@@ -1137,7 +1125,7 @@
         },
         {
           "file": "libs/rbac/src/lib/actions.ts",
-          "hash": "1251653268651143667"
+          "hash": "11827401325258330650"
         },
         {
           "file": "libs/rbac/src/lib/decorators/require-permission.decorator.ts",
@@ -1149,11 +1137,11 @@
         },
         {
           "file": "libs/rbac/src/lib/evaluate.spec.ts",
-          "hash": "1891942968702336332"
+          "hash": "3489789935473750027"
         },
         {
           "file": "libs/rbac/src/lib/evaluate.ts",
-          "hash": "12965151881688358136"
+          "hash": "12179041025944842064"
         },
         {
           "file": "libs/rbac/src/lib/guards/rbac.guard.spec.ts",
@@ -1189,11 +1177,11 @@
         },
         {
           "file": "libs/rbac/src/lib/permission-matrix.spec.ts",
-          "hash": "17560552442721256918"
+          "hash": "5550140352206770095"
         },
         {
           "file": "libs/rbac/src/lib/permission-matrix.ts",
-          "hash": "4836844319346121529"
+          "hash": "10218079366476299652"
         },
         {
           "file": "libs/rbac/src/lib/record-level-checks.spec.ts",
@@ -1213,7 +1201,7 @@
         },
         {
           "file": "libs/rbac/src/lib/types.ts",
-          "hash": "6932807500759073763"
+          "hash": "3436186877035330215"
         },
         {
           "file": "libs/rbac/tsconfig.json",
@@ -1435,7 +1423,7 @@
         },
         {
           "file": "libs/contracts/src/index.ts",
-          "hash": "6710778317760860819"
+          "hash": "2040612543413251770"
         },
         {
           "file": "libs/contracts/src/lib/contracts.spec.ts",
@@ -1446,12 +1434,19 @@
           "hash": "10764828599637654589"
         },
         {
+          "file": "libs/contracts/src/lib/pastoral-care.schemas.ts",
+          "hash": "12971369749282531413",
+          "deps": [
+            "npm:zod"
+          ]
+        },
+        {
           "file": "libs/contracts/src/lib/people.schemas.spec.ts",
           "hash": "12357409793839961842"
         },
         {
           "file": "libs/contracts/src/lib/people.schemas.ts",
-          "hash": "5482271702288793075",
+          "hash": "13245029424125311970",
           "deps": [
             "npm:zod"
           ]
@@ -1631,7 +1626,7 @@
       "domain-pastoral-care": [
         {
           "file": "libs/domain/pastoral-care/README.md",
-          "hash": "13787817830426484369"
+          "hash": "18152086253233424493"
         },
         {
           "file": "libs/domain/pastoral-care/eslint.config.cjs",
@@ -1647,15 +1642,31 @@
         },
         {
           "file": "libs/domain/pastoral-care/src/index.ts",
-          "hash": "2927015032815105434"
+          "hash": "3668681597594732356"
         },
         {
-          "file": "libs/domain/pastoral-care/src/lib/pastoral-care.spec.ts",
-          "hash": "11586146472089046640"
+          "file": "libs/domain/pastoral-care/src/lib/follow-up-task.spec.ts",
+          "hash": "5327539324285627510"
         },
         {
-          "file": "libs/domain/pastoral-care/src/lib/pastoral-care.ts",
-          "hash": "11937201276226162498"
+          "file": "libs/domain/pastoral-care/src/lib/follow-up-task.ts",
+          "hash": "17393261679266250214"
+        },
+        {
+          "file": "libs/domain/pastoral-care/src/lib/poimen-enrollment.spec.ts",
+          "hash": "4594896686897027838"
+        },
+        {
+          "file": "libs/domain/pastoral-care/src/lib/poimen-enrollment.ts",
+          "hash": "7940837058967433744"
+        },
+        {
+          "file": "libs/domain/pastoral-care/src/lib/silent-drift.spec.ts",
+          "hash": "2894945085455099729"
+        },
+        {
+          "file": "libs/domain/pastoral-care/src/lib/silent-drift.ts",
+          "hash": "11112889076910538625"
         },
         {
           "file": "libs/domain/pastoral-care/tsconfig.json",
@@ -1673,7 +1684,7 @@
       "api": [
         {
           "file": "apps/api/README.md",
-          "hash": "11636360356595321287"
+          "hash": "2459181132151506830"
         },
         {
           "file": "apps/api/eslint.config.cjs",
@@ -1703,7 +1714,7 @@
         },
         {
           "file": "apps/api/src/app/app.module.ts",
-          "hash": "9898521056293622946",
+          "hash": "14843551803669538150",
           "deps": [
             "npm:@nestjs/common"
           ]
@@ -1732,8 +1743,206 @@
           ]
         },
         {
+          "file": "apps/api/src/modules/pastoral-care/PASTORAL_CARE_DESIGN_NOTES.md",
+          "hash": "6719185080829686912"
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/controllers/follow-up-task.controller.spec.ts",
+          "hash": "851470830383693245",
+          "deps": [
+            "rbac"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/controllers/follow-up-task.controller.ts",
+          "hash": "1308319047080108659",
+          "deps": [
+            "npm:@nestjs/common",
+            "rbac",
+            "contracts"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/controllers/pastoral-note.controller.spec.ts",
+          "hash": "12381262041767898294",
+          "deps": [
+            "rbac"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/controllers/pastoral-note.controller.ts",
+          "hash": "4831317595728695840",
+          "deps": [
+            "npm:@nestjs/common",
+            "rbac",
+            "contracts"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/controllers/poimen-enrollment.controller.spec.ts",
+          "hash": "4549263943451735164",
+          "deps": [
+            "rbac"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/controllers/poimen-enrollment.controller.ts",
+          "hash": "16065907732669515389",
+          "deps": [
+            "npm:@nestjs/common",
+            "rbac",
+            "contracts"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/guards/follow-up-task-resource-context.guard.spec.ts",
+          "hash": "15543526169287782946",
+          "deps": [
+            "npm:@nestjs/common",
+            "rbac"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/guards/follow-up-task-resource-context.guard.ts",
+          "hash": "18382653215621912767",
+          "deps": [
+            "npm:@nestjs/common",
+            "rbac"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/guards/pastoral-note-resource-context.guard.spec.ts",
+          "hash": "4069816323547690658",
+          "deps": [
+            "npm:@nestjs/common",
+            "rbac"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/guards/pastoral-note-resource-context.guard.ts",
+          "hash": "10008351196624755083",
+          "deps": [
+            "npm:@nestjs/common",
+            "rbac"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/guards/poimen-enrollment-resource-context.guard.spec.ts",
+          "hash": "13840238987615077032",
+          "deps": [
+            "npm:@nestjs/common",
+            "rbac"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/guards/poimen-enrollment-resource-context.guard.ts",
+          "hash": "13293260312097848608",
+          "deps": [
+            "npm:@nestjs/common",
+            "rbac"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/pastoral-care.module.ts",
+          "hash": "16934300343023037311",
+          "deps": [
+            "npm:@nestjs/common"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/repositories/follow-up-task.repository.spec.ts",
+          "hash": "3458640303403407051"
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/repositories/follow-up-task.repository.ts",
+          "hash": "5319850996032526702",
+          "deps": [
+            "npm:@nestjs/common",
+            "npm:@prisma/client"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/repositories/pastoral-note.repository.spec.ts",
+          "hash": "2657313064975079043"
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/repositories/pastoral-note.repository.ts",
+          "hash": "38011231264308643",
+          "deps": [
+            "npm:@nestjs/common",
+            "npm:@prisma/client"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/repositories/poimen-enrollment.repository.spec.ts",
+          "hash": "10995556820116674242"
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/repositories/poimen-enrollment.repository.ts",
+          "hash": "597159314684659169",
+          "deps": [
+            "npm:@nestjs/common",
+            "npm:@prisma/client"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/services/follow-up-task.service.spec.ts",
+          "hash": "15946949110233408041",
+          "deps": [
+            "npm:@nestjs/common",
+            "rbac"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/services/follow-up-task.service.ts",
+          "hash": "343801330487705024",
+          "deps": [
+            "npm:@nestjs/common",
+            "domain-pastoral-care",
+            "contracts",
+            "rbac",
+            "npm:@prisma/client"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/services/pastoral-note.service.spec.ts",
+          "hash": "15326126507053235595",
+          "deps": [
+            "rbac"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/services/pastoral-note.service.ts",
+          "hash": "1480422486005120138",
+          "deps": [
+            "npm:@nestjs/common",
+            "contracts",
+            "rbac",
+            "npm:@prisma/client"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/services/poimen-enrollment.service.spec.ts",
+          "hash": "5707029444853135730",
+          "deps": [
+            "npm:@nestjs/common",
+            "rbac"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/pastoral-care/services/poimen-enrollment.service.ts",
+          "hash": "15180184247294998505",
+          "deps": [
+            "npm:@nestjs/common",
+            "domain-pastoral-care",
+            "contracts",
+            "rbac",
+            "npm:@prisma/client"
+          ]
+        },
+        {
           "file": "apps/api/src/modules/people/PEOPLE_DESIGN_NOTES.md",
-          "hash": "683676442266646291"
+          "hash": "11784824839209809037"
         },
         {
           "file": "apps/api/src/modules/people/controllers/group-membership.controller.spec.ts",
@@ -1742,6 +1951,22 @@
         {
           "file": "apps/api/src/modules/people/controllers/group-membership.controller.ts",
           "hash": "17311837838203912347",
+          "deps": [
+            "npm:@nestjs/common",
+            "rbac",
+            "contracts"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/people/controllers/group.controller.spec.ts",
+          "hash": "2991349764775117527",
+          "deps": [
+            "rbac"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/people/controllers/group.controller.ts",
+          "hash": "7254308109574888650",
           "deps": [
             "npm:@nestjs/common",
             "rbac",
@@ -1782,7 +2007,7 @@
         },
         {
           "file": "apps/api/src/modules/people/guards/group-membership-resource-context.guard.spec.ts",
-          "hash": "18015068772186003311",
+          "hash": "2576403733441663486",
           "deps": [
             "npm:@nestjs/common",
             "rbac"
@@ -1790,7 +2015,23 @@
         },
         {
           "file": "apps/api/src/modules/people/guards/group-membership-resource-context.guard.ts",
-          "hash": "17676359080670409458",
+          "hash": "1249453831428957225",
+          "deps": [
+            "npm:@nestjs/common",
+            "rbac"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/people/guards/group-resource-context.guard.spec.ts",
+          "hash": "6652366802607699464",
+          "deps": [
+            "npm:@nestjs/common",
+            "rbac"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/people/guards/group-resource-context.guard.ts",
+          "hash": "9859748476169663909",
           "deps": [
             "npm:@nestjs/common",
             "rbac"
@@ -1798,7 +2039,7 @@
         },
         {
           "file": "apps/api/src/modules/people/guards/person-resource-context.guard.spec.ts",
-          "hash": "8438927141168381038",
+          "hash": "15606868582363473461",
           "deps": [
             "npm:@nestjs/common",
             "rbac"
@@ -1806,7 +2047,7 @@
         },
         {
           "file": "apps/api/src/modules/people/guards/person-resource-context.guard.ts",
-          "hash": "12543023350217225600",
+          "hash": "14331783244969326027",
           "deps": [
             "npm:@nestjs/common",
             "rbac"
@@ -1814,7 +2055,7 @@
         },
         {
           "file": "apps/api/src/modules/people/people.module.ts",
-          "hash": "4876471844576850734",
+          "hash": "4527656577476086547",
           "deps": [
             "npm:@nestjs/common"
           ]
@@ -1826,6 +2067,18 @@
         {
           "file": "apps/api/src/modules/people/repositories/group-membership.repository.ts",
           "hash": "16880950829065519660",
+          "deps": [
+            "npm:@nestjs/common",
+            "npm:@prisma/client"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/people/repositories/group.repository.spec.ts",
+          "hash": "5057471843983516302"
+        },
+        {
+          "file": "apps/api/src/modules/people/repositories/group.repository.ts",
+          "hash": "2329184021836342017",
           "deps": [
             "npm:@nestjs/common",
             "npm:@prisma/client"
@@ -1846,11 +2099,11 @@
         },
         {
           "file": "apps/api/src/modules/people/repositories/role-assignment.repository.spec.ts",
-          "hash": "1164809204869375207"
+          "hash": "15769516077379739525"
         },
         {
           "file": "apps/api/src/modules/people/repositories/role-assignment.repository.ts",
-          "hash": "1300773030137017606",
+          "hash": "13260427595864429202",
           "deps": [
             "npm:@nestjs/common",
             "npm:@prisma/client"
@@ -1874,6 +2127,40 @@
           ]
         },
         {
+          "file": "apps/api/src/modules/people/services/group.service.spec.ts",
+          "hash": "6877006781889119129",
+          "deps": [
+            "npm:@nestjs/common",
+            "rbac"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/people/services/group.service.ts",
+          "hash": "575410721869268970",
+          "deps": [
+            "npm:@nestjs/common",
+            "contracts",
+            "rbac",
+            "npm:@prisma/client"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/people/services/person-scope.service.spec.ts",
+          "hash": "12599984159952448859",
+          "deps": [
+            "npm:@nestjs/common",
+            "rbac"
+          ]
+        },
+        {
+          "file": "apps/api/src/modules/people/services/person-scope.service.ts",
+          "hash": "11489010257481451851",
+          "deps": [
+            "npm:@nestjs/common",
+            "rbac"
+          ]
+        },
+        {
           "file": "apps/api/src/modules/people/services/person.service.spec.ts",
           "hash": "14922166065063026537",
           "deps": [
@@ -1894,7 +2181,7 @@
         },
         {
           "file": "apps/api/src/modules/people/services/role-assignment.service.spec.ts",
-          "hash": "15170623010792640837",
+          "hash": "10470868970310981792",
           "deps": [
             "npm:@nestjs/common",
             "rbac"
@@ -1902,7 +2189,7 @@
         },
         {
           "file": "apps/api/src/modules/people/services/role-assignment.service.ts",
-          "hash": "830990328799734859",
+          "hash": "4243895681467790015",
           "deps": [
             "npm:@nestjs/common",
             "domain-people",
@@ -1931,11 +2218,11 @@
         },
         {
           "file": "apps/api/src/platform/auth/AUTH_DESIGN_NOTES.md",
-          "hash": "5520994061424013760"
+          "hash": "17768994053948276474"
         },
         {
           "file": "apps/api/src/platform/auth/actor-context-resolver.service.spec.ts",
-          "hash": "10636572663910472780",
+          "hash": "6025028688083454173",
           "deps": [
             "npm:@nestjs/common",
             "npm:nestjs-pino"
@@ -1943,7 +2230,7 @@
         },
         {
           "file": "apps/api/src/platform/auth/actor-context-resolver.service.ts",
-          "hash": "2471211320659873946",
+          "hash": "2903251441087235950",
           "deps": [
             "npm:@nestjs/common",
             "rbac",

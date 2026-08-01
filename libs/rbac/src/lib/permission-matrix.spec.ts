@@ -18,20 +18,21 @@ import type { ActorContext, BranchConfiguration, PermissionRule, ResourceContext
  */
 
 const BRANCH_ID = 'branch-1';
-const CLUSTER_ID = 'cluster-1';
 const BACENTA_ID = 'bacenta-1';
 const ACTOR_PERSON_ID = 'person-actor';
 const OTHER_PERSON_ID = 'person-someone-else';
 
 const GATE_DISABLED: BranchConfiguration = { poimenGateEnabled: false };
 
-/** An actor whose scope identifiers line up with IN_SCOPE_RESOURCE below. */
+/** An actor whose scope identifiers line up with IN_SCOPE_RESOURCE below.
+ * `clusterBacentaIds` includes `BACENTA_ID` so the same in-scope resource
+ * fixture below satisfies both OWN_GROUP and CLUSTER scope checks. */
 function buildActor(rule: PermissionRule): ActorContext {
   return {
     personId: ACTOR_PERSON_ID,
     role: rule.role,
     branchId: BRANCH_ID,
-    clusterId: CLUSTER_ID,
+    clusterBacentaIds: [BACENTA_ID],
     bacentaId: BACENTA_ID,
   };
 }
@@ -40,7 +41,6 @@ function buildActor(rule: PermissionRule): ActorContext {
 function buildInScopeResource(rule: PermissionRule): ResourceContext {
   const base: ResourceContext = {
     branchId: BRANCH_ID,
-    clusterId: CLUSTER_ID,
     bacentaId: BACENTA_ID,
     ownerId: ACTOR_PERSON_ID,
   };
@@ -60,9 +60,9 @@ function buildOutOfScopeResource(scope: Scope): ResourceContext {
     case 'SELF':
       return { branchId: BRANCH_ID, ownerId: OTHER_PERSON_ID };
     case 'OWN_GROUP':
-      return { branchId: BRANCH_ID, clusterId: CLUSTER_ID, bacentaId: 'a-different-bacenta' };
+      return { branchId: BRANCH_ID, bacentaId: 'a-different-bacenta' };
     case 'CLUSTER':
-      return { branchId: BRANCH_ID, clusterId: 'a-different-cluster' };
+      return { branchId: BRANCH_ID, bacentaId: 'a-bacenta-outside-the-cluster' };
     case 'BRANCH':
       return { branchId: 'a-different-branch' };
     case 'GLOBAL':

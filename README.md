@@ -60,48 +60,46 @@ database) have been run against a real local Postgres; `prisma migrate
 diff` comes back empty and `pnpm db:seed` succeeds — see
 `db/migrations/README.md` for exactly what those three follow-ups fixed.
 
-**Sprint 1.4 — Cognito authentication: complete and verified against real
-tooling** (`pnpm install`/`lint`/`test`/`build` all pass on the user's
-machine, `aws-jwt-verify` installs cleanly) — **not yet verified against a
-real Cognito User Pool**, since none is provisioned. `apps/api/src/platform/auth` implements the
-piece `libs/rbac/src/lib/request-context.ts` explicitly called out as
-missing: verifying an incoming Cognito access token (`aws-jwt-verify`,
-`tokenUse: 'access'`, Blueprint §8.3) and resolving it through
-`platform.users` → `people.persons` → active `people.role_assignments`
-into the `ActorContext` shape `RbacGuard` consumes. Applied globally as
-`AuthGuard` (`APP_GUARD`) — every route requires a verified identity by
-default, opt out via `@Public()` (used only by `GET /health`, since
-infrastructure health checks can't present a token). A shared
-`platform.audit_log` writer (`AuditModule`) logs authentication failures
-per Blueprint §8.5. See `apps/api/src/platform/auth/AUTH_DESIGN_NOTES.md`
-for the full breakdown of what's Blueprint-exact vs. inferred, and — most
-importantly — **two real, unresolved gaps found while building this**:
-`libs/rbac`'s `CLUSTER` scope has no schema-backed identifier to compare
-against (Assistant Pastor's cluster-scoped grants will always evaluate to
-DENY until this is resolved), and a Person holding more than one
-concurrently active Role Assignment has no defined resolution (the
-resolver throws rather than guessing). Like Sprint 1.3's `DATABASE_URL`,
-`COGNITO_USER_POOL_ID`/`COGNITO_CLIENT_ID`/`COGNITO_REGION` require a real,
-already-provisioned resource — verification against real Cognito is still
-outstanding; everything short of that (install, lint, unit tests, build)
-is green.
+**Sprint 1.4 — Cognito authentication: complete.** `apps/api/src/platform/auth`
+implements the piece `libs/rbac/src/lib/request-context.ts` explicitly
+called out as missing: verifying an incoming Cognito access token
+(`aws-jwt-verify`, `tokenUse: 'access'`, Blueprint §8.3) and resolving it
+through `platform.users` → `people.persons` → active
+`people.role_assignments` into the `ActorContext` shape `RbacGuard`
+consumes. Applied globally as `AuthGuard` (`APP_GUARD`) — every route
+requires a verified identity by default, opt out via `@Public()` (used
+only by `GET /health`). A shared `platform.audit_log` writer
+(`AuditModule`) logs authentication failures per Blueprint §8.5. See
+`apps/api/src/platform/auth/AUTH_DESIGN_NOTES.md`. Of the two gaps
+originally found while building this, one (CLUSTER scope) is now
+resolved as a People domain follow-up — see below; the other
+(multi-Role-Assignment Persons) remains open, deliberately, pending a
+product decision. `COGNITO_USER_POOL_ID`/`COGNITO_CLIENT_ID`/`COGNITO_REGION`
+still require a real, already-provisioned Cognito User Pool for
+end-to-end verification, which remains outstanding.
 
-**People domain — built, not yet verified against real tooling.**
-`apps/api/src/modules/people` is the first bounded-context module: Person
-create/read/update with FR-PPL-02 duplicate detection, the FR-PPL-03
-lifecycle-stage state machine, Bacenta/Basonta assignment (FR-PPL-04/05,
-including PRD §19.1 step 6's automatic lifecycle side effect), and Role
-Assignment grants (including the Poimen gate, PRD §24 OQ-02) — the first
-real consumer of both `AuthGuard`'s `ActorContext` and `libs/rbac`'s
+**People domain — built.** `apps/api/src/modules/people` is the first
+bounded-context module: Person create/read/update with FR-PPL-02
+duplicate detection, the FR-PPL-03 lifecycle-stage state machine,
+Bacenta/Basonta assignment (FR-PPL-04/05, including PRD §19.1 step 6's
+automatic lifecycle side effect), and Role Assignment grants (including
+the Poimen gate, PRD §24 OQ-02) — the first real consumer of both
+`AuthGuard`'s `ActorContext` and `libs/rbac`'s
 `RbacGuard`/`RecordLevelPolicyGuard` (built Sprint 1.1, unwired until
-now). See `apps/api/src/modules/people/PEOPLE_DESIGN_NOTES.md` for the
-full citation breakdown. Three items worth flagging up front:
+now). `pnpm install`/`test`/`build` passed on the user's machine on first
+try; `pnpm lint` initially failed on 7 real errors (type-only imports,
+floating promises in new test files) — fixed, pending a final confirming
+lint run. See `apps/api/src/modules/people/PEOPLE_DESIGN_NOTES.md` for
+the full citation breakdown. Worth flagging up front:
 
-- The two Sprint 1.4 open questions (CLUSTER scope, multi-Role-Assignment
-  Persons) are still unresolved and now have concrete consequences here —
-  an Assistant Pastor acting outside a Bacenta they personally lead will
-  be denied by every People endpoint until the CLUSTER-scope gap is
-  resolved.
+- **CLUSTER scope is now fixed** (a direct follow-up to this milestone,
+  not part of it originally) — Pastoral Care's flagship Assistant Pastor
+  cluster view would otherwise have been built on the same broken
+  foundation. `libs/rbac`'s `ActorContext.clusterId` (a single value
+  nothing could ever populate) is now `ActorContext.clusterBacentaIds:
+  string[]`, populated from `role_assignments.scope_group_ids` and tested
+  as set membership, not equality. See
+  `apps/api/src/platform/auth/AUTH_DESIGN_NOTES.md`'s "Resolved" section.
 - Row-Level Security (Blueprint §7.3) is still not wired — this module's
   repositories rely entirely on explicit `branchId` filtering in
   application code as the *only* current Branch-isolation enforcement,
@@ -109,11 +107,40 @@ full citation breakdown. Three items worth flagging up front:
 - PRD §16.1's persistent Admin-facing "duplicate resolution queue" isn't
   built (no backing table in the Sprint 1.3 schema); FR-PPL-02 is
   implemented as a narrower synchronous check-and-reject instead.
+- Multi-Role-Assignment Persons still can't authenticate at all (Sprint
+  1.4's other open question) — deliberately left open, not a schema/code
+  mechanics fix like CLUSTER scope turned out to be.
 
-Next: resolve the two Sprint 1.4 open questions (needed before Pastoral
-Care's Assistant Pastor persona can work at all), then the Pastoral Care
-domain's first controllers (Bacenta configuration, Follow-up tasks,
-silent-drift detection).
+**Pastoral Care domain — built.** `apps/api/src/modules/pastoral-care` is
+the second bounded-context module: Poimen enrollment tracking (FR-PC-06),
+Follow-up task creation/completion/escalation (FR-PC-03/04, BR-PC-04), and
+Pastoral notes (§16.2, NFR-PRIV-01's explicit ADMIN deny). The silent-drift
+decision tree (PRD §15.8, BR-PC-02, FR-PC-05) is built as a pure function
+in `libs/domain/pastoral-care` but not yet wired to a real trigger — the
+attendance data it needs comes from `gatherings.attendance_records`, and
+the Gatherings domain doesn't exist yet. See
+`apps/api/src/modules/pastoral-care/PASTORAL_CARE_DESIGN_NOTES.md` for the
+full citation breakdown, including two pre-existing People-module gaps
+this milestone found and fixed (Group/Bacenta creation was never built;
+Bacenta Leader succession never closed the prior leader's Role Assignment)
+and one module-boundary violation fixed (People's `RoleAssignmentRepository`
+used to query `pastoral_care.poimen_enrollments` directly — now consumes
+`PoimenEnrollmentService` via cross-module DI, with `PeopleModule` and
+`PastoralCareModule` importing each other via `forwardRef`). Worth flagging:
+
+- **FR-PC-03's automatic task-creation trigger and BR-PC-04's automatic
+  escalation-target resolution are deliberately not wired up** — both
+  require resolving a "default Shepherd"/"organizational superior" from
+  data the schema doesn't capture (no rotation-state field, no direct
+  reporting-line pointer). Every Follow-up task create/escalate call
+  requires an explicit assignee/target instead of an invented default.
+  This needs a product decision, not an engineering guess.
+- Same Row-Level-Security and duplicate-resolution-queue caveats as the
+  People domain above still apply, unchanged.
+
+Next: a real `pnpm install && pnpm lint && pnpm test && pnpm build` run on
+the user's machine to confirm both milestones, then the Ministry,
+Gatherings, Stewardship, or Insights domain (not yet decided).
 
 ## Prerequisites
 
