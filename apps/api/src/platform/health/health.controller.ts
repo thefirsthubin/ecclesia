@@ -2,6 +2,8 @@ import { Controller, Get, VERSION_NEUTRAL } from '@nestjs/common';
 import type { HealthCheckResult } from '@nestjs/terminus';
 import { HealthCheck, HealthCheckService, MemoryHealthIndicator } from '@nestjs/terminus';
 
+import { DatabaseHealthIndicator } from '../database/database-health.indicator';
+
 const HEAP_THRESHOLD_BYTES = 300 * 1024 * 1024;
 // RSS needs meaningfully more headroom than heap: it also covers V8
 // engine overhead and native addons (e.g. @swc/core's binary), which sit
@@ -14,23 +16,24 @@ const HEAP_THRESHOLD_BYTES = 300 * 1024 * 1024;
 const RSS_THRESHOLD_BYTES = 512 * 1024 * 1024;
 
 /**
- * `GET /health` (Sprint 1.2). Deliberately `VERSION_NEUTRAL` - unlike
- * every business endpoint (Blueprint §14.7's `/v1/...` convention), a
- * load balancer or container orchestrator's health check should not need
- * to track an API version bump. This is the one endpoint in the service
- * that infrastructure, not a client, calls.
+ * `GET /health`. Deliberately `VERSION_NEUTRAL` - unlike every business
+ * endpoint (Blueprint §14.7's `/v1/...` convention), a load balancer or
+ * container orchestrator's health check should not need to track an API
+ * version bump. This is the one endpoint in the service that
+ * infrastructure, not a client, calls.
  *
- * Only process-level checks exist so far (heap/RSS memory, both cheap and
- * dependency-free) because there is no database connection yet - Sprint
- * 1.3 (Prisma/PostgreSQL) adds a `PrismaHealthIndicator` here so the
- * check reflects real downstream health, not just "the Node process is
- * still running."
+ * Sprint 1.2 shipped only process-level checks (heap/RSS memory) because
+ * there was no database connection yet. Sprint 1.3 adds
+ * `DatabaseHealthIndicator` so the check reflects real downstream health,
+ * not just "the Node process is still running" - a crashed or
+ * unreachable PostgreSQL instance now fails this check.
  */
 @Controller({ path: 'health', version: VERSION_NEUTRAL })
 export class HealthController {
   constructor(
     private readonly health: HealthCheckService,
     private readonly memory: MemoryHealthIndicator,
+    private readonly database: DatabaseHealthIndicator,
   ) {}
 
   @Get()
@@ -39,6 +42,7 @@ export class HealthController {
     return this.health.check([
       () => this.memory.checkHeap('memory_heap', HEAP_THRESHOLD_BYTES),
       () => this.memory.checkRSS('memory_rss', RSS_THRESHOLD_BYTES),
+      () => this.database.isHealthy('database'),
     ]);
   }
 }

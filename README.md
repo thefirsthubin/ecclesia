@@ -39,9 +39,26 @@ endpoint, per Blueprint §14.7. See `apps/api/README.md`. `libs/rbac` is
 still not wired in — that's the RBAC guards' first real usage, alongside
 Sprint 1.4 authentication and the People domain's first controllers.
 
-Next: Sprint 1.3 (Prisma/PostgreSQL), Sprint 1.4 (Cognito authentication)
-— both before the first business domain (People) is implemented, per
-Blueprint §15.4.
+**Sprint 1.3 — Database Foundation: DRAFT, not yet verified.** `db/`
+holds a Prisma schema and hand-written initial migration covering the
+seven bounded-context Postgres schemas, Row-Level Security policies, the
+append-only Financial Transaction event log, and the temporal
+GroupMembership model (Blueprint §7.2-§7.5, per `db/migrations/README.md`'s
+existing commitment) — designed **without** the actual Blueprint §7.2-7.5
+text, at the user's explicit direction, from evidence already committed
+in `libs/rbac` and every domain library's README. See `db/DESIGN_NOTES.md`
+for the full traceability index and open questions before trusting any of
+it. `apps/api/src/platform/database` wires a `PrismaService` and a
+database health indicator. Unlike every sprint above, this one has not
+been confirmed against a real PostgreSQL instance or the real Prisma
+CLI — no database or package registry access was available while building
+it. Do not build on this schema until it has been reviewed against the
+actual Blueprint and applied successfully to a real database.
+
+Next: Sprint 1.4 (Cognito authentication) — before the first business
+domain (People) is implemented, per Blueprint §15.4. Sprint 1.3's open
+questions should be resolved before or alongside People, since that
+domain's controllers are the schema's first real consumer.
 
 ## Prerequisites
 

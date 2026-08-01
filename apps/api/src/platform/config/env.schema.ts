@@ -39,6 +39,21 @@ export const envSchema = z.object({
     .enum(['true', 'false'])
     .default('true')
     .transform((value) => value === 'true'),
+
+  /**
+   * PostgreSQL connection string consumed directly by `db/schema.prisma`'s
+   * `datasource` block (`env("DATABASE_URL")`) - PrismaClient reads this
+   * from `process.env` itself, not through `ConfigService`. Required, no
+   * default: a process with no database to connect to should refuse to
+   * boot, not start and fail on the first query (Sprint 1.3).
+   */
+  DATABASE_URL: z
+    .string()
+    .min(1, 'DATABASE_URL is required')
+    .refine(
+      (value) => value.startsWith('postgresql://') || value.startsWith('postgres://'),
+      'DATABASE_URL must be a postgresql:// or postgres:// connection string',
+    ),
 });
 
 export type EnvConfig = z.infer<typeof envSchema>;

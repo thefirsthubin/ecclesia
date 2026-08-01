@@ -23,7 +23,14 @@
     "format:check": "prettier --check .",
     "graph": "nx graph",
     "affected:graph": "nx affected:graph",
-    "projects": "nx show projects"
+    "projects": "nx show projects",
+    "db:generate": "prisma generate",
+    "db:validate": "prisma validate",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:migrate:status": "prisma migrate status",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.6",
@@ -32,6 +39,7 @@
     "@nestjs/platform-express": "^10.4.6",
     "@nestjs/swagger": "^7.4.2",
     "@nestjs/terminus": "^10.2.3",
+    "@prisma/client": "^5.20.0",
     "nestjs-pino": "^4.1.0",
     "pino": "^9.4.0",
     "pino-http": "^10.3.0",
@@ -86,6 +94,7 @@
     "nx": "20.1.0",
     "pino-pretty": "^11.2.2",
     "prettier": "^3.3.3",
+    "prisma": "^5.20.0",
     "react-test-renderer": "^18.3.1",
     "swc-loader": "~0.2.6",
     "ts-jest": "^29.2.5",
@@ -101,5 +110,9 @@
     "*.{md,json,yml,yaml}": [
       "prettier --write"
     ]
+  },
+  "prisma": {
+    "schema": "db/schema.prisma",
+    "seed": "node -r @swc-node/register db/seed.ts"
   }
 }

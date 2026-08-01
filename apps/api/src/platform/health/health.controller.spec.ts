@@ -2,7 +2,18 @@ import { Test } from '@nestjs/testing';
 import type { HealthCheckResult } from '@nestjs/terminus';
 import { HealthCheckService, MemoryHealthIndicator, TerminusModule } from '@nestjs/terminus';
 
+import { DatabaseHealthIndicator } from '../database/database-health.indicator';
 import { HealthController } from './health.controller';
+
+/**
+ * A healthy-by-default mock - `DatabaseHealthIndicator` isn't provided by
+ * `TerminusModule` (it's ours, from `platform/database`), and every test
+ * below needs *some* value for it even when the test itself is only
+ * exercising the memory indicators or `HealthCheckService`.
+ */
+function healthyDatabaseIndicator() {
+  return { provide: DatabaseHealthIndicator, useValue: { isHealthy: jest.fn().mockResolvedValue({ database: { status: 'up' } }) } };
+}
 
 describe('HealthController', () => {
   // Both memory indicators are mocked in every test below, deliberately -
@@ -14,13 +25,14 @@ describe('HealthController', () => {
   // this controller's own logic must not be at the mercy of the ambient
   // memory footprint of whatever machine or CI runner happens to execute
   // it - that is what makes a test flaky rather than deterministic.
-  it('reports ok when both memory indicators pass', async () => {
+  it('reports ok when every indicator passes', async () => {
     const checkHeap = jest.fn().mockResolvedValue({ memory_heap: { status: 'up' } });
     const checkRSS = jest.fn().mockResolvedValue({ memory_rss: { status: 'up' } });
 
     const moduleRef = await Test.createTestingModule({
       imports: [TerminusModule],
       controllers: [HealthController],
+      providers: [healthyDatabaseIndicator()],
     })
       .overrideProvider(MemoryHealthIndicator)
       .useValue({ checkHeap, checkRSS })
@@ -32,6 +44,7 @@ describe('HealthController', () => {
     expect(result.status).toBe('ok');
     expect(result.info).toHaveProperty('memory_heap');
     expect(result.info).toHaveProperty('memory_rss');
+    expect(result.info).toHaveProperty('database');
   });
 
   it('checks both heap and RSS thresholds via MemoryHealthIndicator', async () => {
@@ -41,6 +54,7 @@ describe('HealthController', () => {
     const moduleRef = await Test.createTestingModule({
       imports: [TerminusModule],
       controllers: [HealthController],
+      providers: [healthyDatabaseIndicator()],
     })
       .overrideProvider(MemoryHealthIndicator)
       .useValue({ checkHeap, checkRSS })
@@ -53,6 +67,27 @@ describe('HealthController', () => {
     expect(checkRSS).toHaveBeenCalledWith('memory_rss', expect.any(Number));
   });
 
+  it('calls DatabaseHealthIndicator.isHealthy with the "database" key', async () => {
+    const isHealthy = jest.fn().mockResolvedValue({ database: { status: 'up' } });
+
+    const moduleRef = await Test.createTestingModule({
+      imports: [TerminusModule],
+      controllers: [HealthController],
+      providers: [{ provide: DatabaseHealthIndicator, useValue: { isHealthy } }],
+    })
+      .overrideProvider(MemoryHealthIndicator)
+      .useValue({
+        checkHeap: jest.fn().mockResolvedValue({ memory_heap: { status: 'up' } }),
+        checkRSS: jest.fn().mockResolvedValue({ memory_rss: { status: 'up' } }),
+      })
+      .compile();
+
+    const controller = moduleRef.get(HealthController);
+    await controller.check();
+
+    expect(isHealthy).toHaveBeenCalledWith('database');
+  });
+
   it('surfaces a real, unmocked memory indicator failure as a ServiceUnavailableException', async () => {
     // The one test that deliberately exercises the real indicator, so the
     // "a genuinely unhealthy process fails the check" path is still
@@ -62,6 +97,7 @@ describe('HealthController', () => {
     const moduleRef = await Test.createTestingModule({
       imports: [TerminusModule],
       controllers: [HealthController],
+      providers: [healthyDatabaseIndicator()],
     }).compile();
 
     const health = moduleRef.get(HealthCheckService);
@@ -75,6 +111,7 @@ describe('HealthController', () => {
     const moduleRef = await Test.createTestingModule({
       imports: [TerminusModule],
       controllers: [HealthController],
+      providers: [healthyDatabaseIndicator()],
     })
       .overrideProvider(HealthCheckService)
       .useValue({ check: jest.fn().mockRejectedValue(failure) })

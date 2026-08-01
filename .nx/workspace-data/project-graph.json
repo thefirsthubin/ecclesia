@@ -16767,12 +16767,12 @@
       },
       {
         "source": "api",
-        "target": "npm:express",
+        "target": "npm:@nestjs/terminus",
         "type": "static"
       },
       {
         "source": "api",
-        "target": "npm:@nestjs/terminus",
+        "target": "npm:express",
         "type": "static"
       },
       {

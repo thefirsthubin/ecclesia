@@ -6,6 +6,7 @@ import { LoggerModule } from 'nestjs-pino';
 
 import { validateEnv } from './config/env.schema';
 import type { EnvConfig } from './config/env.schema';
+import { DatabaseModule } from './database/database.module';
 import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 import { HealthController } from './health/health.controller';
 
@@ -53,6 +54,7 @@ import { HealthController } from './health/health.controller';
       }),
     }),
     TerminusModule,
+    DatabaseModule,
   ],
   controllers: [HealthController],
   providers: [
@@ -61,6 +63,6 @@ import { HealthController } from './health/health.controller';
       useClass: AllExceptionsFilter,
     },
   ],
-  exports: [ConfigModule],
+  exports: [ConfigModule, DatabaseModule],
 })
 export class PlatformModule {}
