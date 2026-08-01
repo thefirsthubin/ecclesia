@@ -15,7 +15,9 @@ import { GroupMembershipRepository } from './repositories/group-membership.repos
 import { PersonRepository } from './repositories/person.repository';
 import { RoleAssignmentRepository } from './repositories/role-assignment.repository';
 import { GroupService } from './services/group.service';
+import { GroupLeadershipService } from './services/group-leadership.service';
 import { GroupMembershipService } from './services/group-membership.service';
+import { GroupScopeService } from './services/group-scope.service';
 import { PersonScopeService } from './services/person-scope.service';
 import { PersonService } from './services/person.service';
 import { RoleAssignmentService } from './services/role-assignment.service';
@@ -56,6 +58,8 @@ import { RoleAssignmentService } from './services/role-assignment.service';
     PersonService,
     PersonScopeService,
     GroupService,
+    GroupScopeService,
+    GroupLeadershipService,
     GroupMembershipService,
     RoleAssignmentService,
     PersonResourceContextGuard,
@@ -66,11 +70,23 @@ import { RoleAssignmentService } from './services/role-assignment.service';
   ],
   // `PersonScopeService` is People's public service interface (Blueprint
   // §7.2) for other bounded-context modules whose resources reference a
-  // Person - specifically Pastoral Care, whose FollowUpTask, PastoralNote,
-  // and PoimenEnrollment resource-context guards all need the same
-  // Person-scope resolution this module already implements. Only this one
-  // service is exported - repositories stay private, per the schema-
-  // ownership rule (Blueprint §7.2, `PEOPLE_DESIGN_NOTES.md`).
-  exports: [PersonScopeService],
+  // Person - Pastoral Care's FollowUpTask/PastoralNote/PoimenEnrollment
+  // resource-context guards, and now Gatherings' own resource-context
+  // guards, all need the same Person-scope resolution this module already
+  // implements. `PersonService` is additionally exported (Gatherings
+  // milestone) so `VisitorIntakeService` (FR-GTH-04) can create/transition
+  // a Person - reusing FR-PPL-01's duplicate detection and FR-PPL-03's
+  // lifecycle-stage validation rather than reimplementing either in
+  // Gatherings - instead of Gatherings reaching into `PersonRepository`
+  // directly. Repositories otherwise stay private, per the
+  // schema-ownership rule (Blueprint §7.2, `PEOPLE_DESIGN_NOTES.md`).
+  // `GroupLeadershipService` is likewise exported so
+  // Gatherings' `VisitorIntakeService` can resolve "the active Bacenta
+  // Leader for this Bacenta preference" (US-A2) without reaching into
+  // `RoleAssignmentRepository` directly. `GroupScopeService` is Group's
+  // analogue of `PersonScopeService`, consumed by Gatherings' own
+  // resource-context guards when a Gathering/GatheringSeries names an
+  // `ownerGroupId`/`groupId`.
+  exports: [PersonScopeService, PersonService, GroupScopeService, GroupLeadershipService],
 })
 export class PeopleModule {}

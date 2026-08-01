@@ -1,42 +1,28 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import type { ActorContext, ResourceContext } from '@ecclesia/rbac';
 
 import { BranchConfigurationService } from '../../../platform/rbac/branch-configuration.service';
 import { EcclesiaContextGuardBase } from '../../../platform/rbac/ecclesia-context.guard-base';
 import type { RequestWithActorContext } from '../../../platform/auth/auth.guard';
-import { GroupRepository } from '../repositories/group.repository';
+import { GroupScopeService } from '../services/group-scope.service';
 
 /**
  * Loads the `ResourceContext` for a route acting on an existing Group
- * (`GET/PATCH /v1/groups/:id`). The Group itself *is* the OWN_GROUP/
- * CLUSTER scope boundary here, unlike `PersonResourceContextGuard` where
- * `bacentaId`/`basontaId` had to be derived from memberships - a Bacenta
- * Group's own `id` is its `resource.bacentaId`, and a Basonta Group's own
- * `id` is its `resource.basontaId`, so `resourceInScope`'s existing
- * OWN_GROUP (`actor.bacentaId === resource.bacentaId`) and CLUSTER
- * (`resource.bacentaId` in `actor.clusterBacentaIds`) checks apply
- * directly with no further translation needed.
+ * (`GET/PATCH /v1/groups/:id`). See `GroupScopeService`'s doc comment for
+ * the resolution logic (extracted there so Gatherings can reuse it too).
  */
 @Injectable()
 export class GroupResourceContextGuard extends EcclesiaContextGuardBase {
   constructor(
     branchConfigurationService: BranchConfigurationService,
-    private readonly groupRepository: GroupRepository,
+    private readonly groupScopeService: GroupScopeService,
   ) {
     super(branchConfigurationService);
   }
 
-  protected async loadResource(request: RequestWithActorContext, _actor: ActorContext): Promise<ResourceContext> {
+  protected loadResource(request: RequestWithActorContext, _actor: ActorContext): Promise<ResourceContext> {
     const id = (request.params as Record<string, string>).id;
-    const group = await this.groupRepository.findById(id);
-    if (!group) {
-      throw new NotFoundException(`No Group found with id '${id}'`);
-    }
-    return {
-      branchId: group.branchId,
-      bacentaId: group.type === 'PASTORAL_CARE' ? group.id : undefined,
-      basontaId: group.type === 'MINISTRY' ? group.id : undefined,
-    };
+    return this.groupScopeService.loadResourceContext(id);
   }
 }
 

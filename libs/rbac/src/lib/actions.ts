@@ -54,6 +54,20 @@ export const ACTIONS = [
   'gatherings.attendance.create',
   'gatherings.attendance.read',
 
+  // [INFERRED - no PRD §17.3 row covers this] Digital visitor capture
+  // (FR-GTH-04, BR-GTH-03). §16.4 names "Ushers, self-service (future)"
+  // as the primary actors, but "Usher" is not a modeled `Role`
+  // (`libs/rbac/src/lib/roles.ts` - the PRD §17.2 role catalog Sprint 1.1
+  // transcribed has no Usher entry, and §17.3's own column headers omit
+  // it too) - a genuine gap between the narrative personas and the
+  // formal RBAC model, not something this milestone invents a fix for.
+  // Modeled with the same role/scope shape as `gatherings.attendance.create`
+  // immediately above (the roles who can already record attendance are
+  // the same roles present at a Gathering to also capture a visitor).
+  // See GATHERINGS_DESIGN_NOTES.md.
+  'gatherings.visitor_intake.create',
+  'gatherings.visitor_intake.read',
+
   // Financial Transaction (rows: record / verify / reconcile)
   'stewardship.transaction.record',
   'stewardship.transaction.verify',
@@ -63,6 +77,36 @@ export const ACTIONS = [
   // Expense (rows: request / approve)
   'stewardship.expense.request',
   'stewardship.expense.approve',
+
+  // [INFERRED - no PRD §17.3 row covers this] Expense: pay / attach
+  // receipt (FR-STW-09/BR-STW-08). §17.3's matrix stops at "approve" -
+  // who executes payment and who attaches the retained receipt afterward
+  // is named in PRD narrative ("payment executed," "receipt attached and
+  // archived," §12.7) but has no permission-matrix row. `pay` is modeled
+  // as a Treasurer action (money movement is Finance Team's designated
+  // function, BR-STW-03); `receipt` is modeled as available to the same
+  // roles who may request an expense (§17.3's "Expense: request" row) -
+  // the original requester is the one holding the physical receipt after
+  // their own purchase - restricted at the service layer to the specific
+  // transaction's own `requestedByPersonId`, not a new record-level check.
+  // See STEWARDSHIP_DESIGN_NOTES.md.
+  'stewardship.expense.pay',
+  'stewardship.expense.receipt',
+  'stewardship.expense.read',
+
+  // [INFERRED - no PRD §17.3 row covers this] Project / Pledge (FR-STW-08,
+  // H2). §17.3's matrix predates this H2 feature entirely - no row names
+  // it at all. Modeled with the same role/scope shape as "Gathering:
+  // create/configure" for Project (a Branch/cluster-level leadership
+  // action creating a structural entity), and "Financial Transaction:
+  // record" for Pledge (a Member's own commitment, SELF-scoped, verified/
+  // read by the same Treasurer/Pastor roles who already see Financial
+  // Transactions). See STEWARDSHIP_DESIGN_NOTES.md.
+  'stewardship.project.create',
+  'stewardship.project.read',
+  'stewardship.pledge.create',
+  'stewardship.pledge.read',
+  'stewardship.pledge.fulfill',
 
   // Follow-up task (row: "Follow-up task: create/assign")
   'pastoral_care.followup_task.create',

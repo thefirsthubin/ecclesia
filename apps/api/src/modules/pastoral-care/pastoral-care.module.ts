@@ -57,6 +57,10 @@ import { PoimenEnrollmentService } from './services/poimen-enrollment.service';
     PastoralNoteService,
     PastoralNoteResourceContextGuard,
   ],
-  exports: [PoimenEnrollmentService],
+  // `FollowUpTaskService` is additionally exported (Gatherings milestone)
+  // so `VisitorIntakeService` (FR-GTH-04) can auto-create a Follow-up task
+  // for US-A2's Bacenta-preference path without reaching into
+  // `FollowUpTaskRepository` directly.
+  exports: [PoimenEnrollmentService, FollowUpTaskService],
 })
 export class PastoralCareModule {}

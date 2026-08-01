@@ -1,1 +1,2 @@
-export * from './lib/gatherings';
+export * from './lib/attendance-completeness';
+export * from './lib/gathering-status';

@@ -138,9 +138,80 @@ used to query `pastoral_care.poimen_enrollments` directly — now consumes
 - Same Row-Level-Security and duplicate-resolution-queue caveats as the
   People domain above still apply, unchanged.
 
+**Gatherings domain — built.** `apps/api/src/modules/gatherings` is the
+third bounded-context module: Gathering/GatheringSeries create/read/update
+(FR-GTH-01/02, §12.4), attendance recording and per-Gathering
+completeness checks (FR-GTH-03/05), and the visitor-intake flow
+(FR-GTH-04/BR-GTH-03) — creating a Person (reusing People's FR-PPL-01/02/03
+logic via the newly-exported `PersonService`) and, per US-A2, conditionally
+auto-creating a Follow-up task via Pastoral Care's newly-exported
+`FollowUpTaskService` when a Bacenta preference resolves to an active
+Shepherd. Two new People-module public service interfaces
+(`GroupScopeService`, `GroupLeadershipService`) were extracted to support
+this, following the same Blueprint §7.2 pattern Pastoral Care established.
+See `apps/api/src/modules/gatherings/GATHERINGS_DESIGN_NOTES.md` for the
+full citation breakdown. Worth flagging:
+
+- **The "Usher" role gap** — PRD narrative repeatedly names "Usher" as the
+  actor recording attendance and capturing visitor forms, but `libs/rbac`'s
+  Role catalog (built Sprint 1.1 from §17.3's literal column headers) has
+  no such role. `BACENTA_LEADER`/`BASONTA_LEADER`/`ASSISTANT_PASTOR`/`ADMIN`
+  are granted the relevant permissions as a reasonable stand-in, not a
+  citation. Needs a product decision.
+- **The recurrence-rule format is unspecified by the PRD** — `recurrenceRule`
+  is stored as an opaque string; Gathering instances are always created
+  explicitly, never auto-generated from a series. This still fully
+  satisfies §12.4's "individually cancellable without altering the series"
+  edge case.
+- **US-A2's default-assignee "rotation among Shepherds" fallback is not
+  built** — same unresolved gap `PASTORAL_CARE_DESIGN_NOTES.md` already
+  flagged; the Follow-up task is only auto-created when an explicit Bacenta
+  preference resolves to an active Shepherd.
+- The Branch-wide attendance-completeness sweep/reminder and a real
+  silent-drift-sweep consumer of the now-real `attendance_records` table
+  are both deliberately out of scope this milestone (no scheduler exists
+  yet in this codebase).
+
+**Stewardship domain — built.** `apps/api/src/modules/stewardship` is the
+fourth bounded-context module: the Financial Transaction inbound sub-flow
+(record/read/verify/flag/escalate/reconcile, FR-STW-01 through 05/07,
+BR-STW-01 through 04), the Expense outbound sub-flow (request/read/approve/
+reject/pay/receipt, FR-STW-09, BR-STW-07/08), and Project/Pledge
+create/read/fulfill (FR-STW-08, H2) — consuming People's already-exported
+`GroupScopeService`/`PersonScopeService` unchanged (no new People exports
+needed this time). Went ahead of Ministry/Insights because its RBAC
+groundwork (the full permission matrix, and BR-STW-04's same-actor
+record-level check) had sat unused since Sprint 1.1, the same "plumbing
+before its first consumer" pattern the Poimen gate followed. This
+milestone reuses that same check (`DIFFERENT_ACTOR_THAN_RECORDER`) for
+FR-STW-09's approver-must-not-be-requester rule too, rather than inventing
+a parallel one, and is this codebase's first real *declarative* use of
+`RecordLevelPolicyGuard`. See
+`apps/api/src/modules/stewardship/STEWARDSHIP_DESIGN_NOTES.md` for the
+full citation breakdown. Worth flagging:
+
+- **`amountMinor` travels as a decimal string, never a JSON number** —
+  Prisma `BigInt` cannot round-trip through `JSON.stringify`, and a JS
+  `number` loses precision past 2^53. Documented at the schema layer, not
+  an incidental choice.
+- **FR-STW-07's bank-deposit comparison is not built** — `db/schema.prisma`
+  has no bank-deposit-confirmation entity at all; only the `Verified ->
+  Reconciled` state transition itself is buildable against the existing
+  schema. Needs a schema change, not an engineering guess — the same
+  framing as PRD §16.1's duplicate-resolution queue gap from the People
+  milestone.
+- **No scheduler exists** for the `Flagged -> UnderInvestigation` SLA
+  trigger, Mobile Money provider confirmation (NFR-INT-01, H2), or Pledge
+  reminder delivery (OQ-07) — same disclosed gap category as Pastoral
+  Care's silent-drift sweep and Gatherings' completeness sweep.
+- Three more `[INFERRED]` permission-matrix gaps (Expense pay/receipt/read,
+  Financial Transaction read for Treasurer/Bacenta Leader, and Project/
+  Pledge entirely, since §17.3 predates FR-STW-08) — see the design notes
+  for the exact reasoning behind each.
+
 Next: a real `pnpm install && pnpm lint && pnpm test && pnpm build` run on
-the user's machine to confirm both milestones, then the Ministry,
-Gatherings, Stewardship, or Insights domain (not yet decided).
+the user's machine to confirm all four milestones, then Ministry or
+Insights (not yet decided).
 
 ## Prerequisites
 

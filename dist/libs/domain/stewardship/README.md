@@ -1,11 +1,22 @@
 # libs/domain/stewardship
 
-Framework-agnostic business logic for Stewardship (PRD §13.5): the
-Financial Transaction state machine (PRD §12.7), separation-of-duties
-rules (BR-STW-01 through BR-STW-11).
+Framework-agnostic business logic for Stewardship (PRD §13.5):
 
-Depends only on `@ecclesia/contracts`. Authorization guards that consume
-this library's rules (e.g. the same-actor-verification check, Blueprint
-§9.4) live in `apps/api`'s `stewardship` module, not here.
+- `financial-transaction-status.ts` - the two PRD §12.7 state machines
+  under the single `FinancialTransaction` entity: the inbound sub-flow
+  (`RECORDED` -> `VERIFIED`/`FLAGGED` -> `RECONCILED`, with
+  `FLAGGED` -> `UNDER_INVESTIGATION` for an unresolved discrepancy) and
+  the outbound/Expense sub-flow (`REQUESTED` -> `APPROVED`/`REJECTED` ->
+  `PAID` -> `RECEIPT_RETAINED`). `[BLUEPRINT-EXACT]` transitions,
+  `[INFERRED]` SCREAMING_SNAKE_CASE casing (the PRD's own Mermaid diagrams
+  use PascalCase) - see the module's own doc comment.
 
-**Status:** registered as a real Nx project (Sprint 0 Milestone 2), building and testing cleanly. Real domain logic lands in the Stewardship domain-modeling milestone.
+BR-STW-04's same-actor-verification check (the record-level rule, not the
+state machine) lives in `libs/rbac`'s `record-level-checks.ts`
+(`DIFFERENT_ACTOR_THAN_RECORDER`), not here - Blueprint §9.4's own
+separation between "domain state machine" and "authorization policy."
+
+Depends only on `@ecclesia/contracts`, same rule as every other
+`libs/domain/*` library.
+
+**Status:** real domain logic (Stewardship domain-modeling milestone).

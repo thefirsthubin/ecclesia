@@ -1,4 +1,3 @@
-import { NotFoundException } from '@nestjs/common';
 import type { ExecutionContext } from '@nestjs/common';
 import { ECCLESIA_REQUEST_CONTEXT_KEY } from '@ecclesia/rbac';
 import type { ActorContext } from '@ecclesia/rbac';
@@ -14,45 +13,32 @@ function buildContext(request: Partial<RequestWithActorContext>): ExecutionConte
 }
 
 describe('GroupResourceContextGuard', () => {
-  const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
-
-  it('throws NotFoundException when the target Group does not exist', async () => {
-    const groupRepository = { findById: jest.fn().mockResolvedValue(null) };
-    const guard = new GroupResourceContextGuard(branchConfigurationService as never, groupRepository as never);
-    const actor: ActorContext = { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' };
-    const request: Partial<RequestWithActorContext> = { actorContext: actor, params: { id: 'missing' } } as never;
-
-    await expect(guard.canActivate(buildContext(request))).rejects.toThrow(NotFoundException);
-  });
-
-  it('reports a PASTORAL_CARE Group’s own id as resource.bacentaId', async () => {
-    const groupRepository = {
-      findById: jest.fn().mockResolvedValue({ id: 'bacenta-1', branchId: 'branch-1', type: 'PASTORAL_CARE' }),
+  it('delegates resource resolution to GroupScopeService', async () => {
+    const groupScopeService = {
+      loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', bacentaId: 'bacenta-1' }),
     };
-    const guard = new GroupResourceContextGuard(branchConfigurationService as never, groupRepository as never);
+    const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+    const guard = new GroupResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
     const actor: ActorContext = { personId: 'bl-1', role: 'BACENTA_LEADER', branchId: 'branch-1', bacentaId: 'bacenta-1' };
     const request: Partial<RequestWithActorContext> = { actorContext: actor, params: { id: 'bacenta-1' } } as never;
 
     await guard.canActivate(buildContext(request));
 
+    expect(groupScopeService.loadResourceContext).toHaveBeenCalledWith('bacenta-1');
     expect((request as Record<string, unknown>)[ECCLESIA_REQUEST_CONTEXT_KEY]).toMatchObject({
-      resource: { branchId: 'branch-1', bacentaId: 'bacenta-1', basontaId: undefined },
+      resource: { branchId: 'branch-1', bacentaId: 'bacenta-1' },
     });
   });
 
-  it('reports a MINISTRY Group’s own id as resource.basontaId', async () => {
-    const groupRepository = {
-      findById: jest.fn().mockResolvedValue({ id: 'basonta-1', branchId: 'branch-1', type: 'MINISTRY' }),
-    };
-    const guard = new GroupResourceContextGuard(branchConfigurationService as never, groupRepository as never);
-    const actor: ActorContext = { personId: 'bsl-1', role: 'BASONTA_LEADER', branchId: 'branch-1', basontaId: 'basonta-1' };
-    const request: Partial<RequestWithActorContext> = { actorContext: actor, params: { id: 'basonta-1' } } as never;
+  it('propagates a NotFoundException from GroupScopeService unchanged', async () => {
+    const notFound = new Error('No Group found');
+    const groupScopeService = { loadResourceContext: jest.fn().mockRejectedValue(notFound) };
+    const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+    const guard = new GroupResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
+    const actor: ActorContext = { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' };
+    const request: Partial<RequestWithActorContext> = { actorContext: actor, params: { id: 'missing' } } as never;
 
-    await guard.canActivate(buildContext(request));
-
-    expect((request as Record<string, unknown>)[ECCLESIA_REQUEST_CONTEXT_KEY]).toMatchObject({
-      resource: { branchId: 'branch-1', bacentaId: undefined, basontaId: 'basonta-1' },
-    });
+    await expect(guard.canActivate(buildContext(request))).rejects.toThrow(notFound);
   });
 });
 

@@ -92,6 +92,49 @@ the full reasoning on each:
    `forwardRef` as a result - a genuine bidirectional public-service
    dependency between the two bounded contexts.
 
+## Gatherings milestone follow-ups (this module, touched again)
+
+The Gatherings milestone required three more changes back in this module -
+see `apps/api/src/modules/gatherings/GATHERINGS_DESIGN_NOTES.md` for the
+full reasoning on each:
+
+1. **`GroupScopeService` extracted and exported.** "What RBAC scope does
+   this Group belong to" was previously inline logic inside
+   `GroupResourceContextGuard` (this module's own guard) - extracted into
+   an injectable service, mirroring `PersonScopeService`'s own extraction
+   the prior milestone, so Gatherings' guards can resolve a Bacenta/Basonta
+   scope via DI whenever a Gathering/series/visitor-intake names an
+   `ownerGroupId`/`groupId`/`bacentaPreferenceGroupId`, instead of
+   duplicating the Group-type-to-scope mapping or reaching into
+   `GroupRepository`/Prisma directly.
+2. **`GroupLeadershipService` added and exported.** A single narrow
+   method, `getActiveBacentaLeaderPersonId(groupId, now)`, wrapping
+   `RoleAssignmentRepository.findActiveBacentaLeader` (the same lookup
+   `RoleAssignmentService.grant()`'s succession logic already uses) - the
+   one Role Assignment fact Gatherings' `VisitorIntakeService` needs
+   (US-A2's "Follow-up task defaults to the matching Shepherd") without
+   exporting `RoleAssignmentRepository` itself.
+3. **`PersonService` exported (was module-private).** Gatherings'
+   `VisitorIntakeService` creates and lifecycle-transitions the visitor's
+   Person record through this same service, reusing FR-PPL-01's create
+   path, FR-PPL-02's duplicate detection, and FR-PPL-03's state-machine
+   validation unchanged, rather than writing a second Person-mutation path
+   inside Gatherings.
+
+No module-boundary violations were found this time - Gatherings only
+consumes People's already-exported (or newly-exported) services, the same
+pattern established fixing Pastoral Care's earlier violation.
+
+## Stewardship milestone follow-up (this module, touched again - by reference, not by edit)
+
+Unlike Pastoral Care and Gatherings, the Stewardship milestone required
+**no changes** to this module - `GroupScopeService` and `PersonScopeService`
+(both already exported) were consumed exactly as-is by Stewardship's
+Financial Transaction and Expense resource-context guards respectively.
+See `apps/api/src/modules/stewardship/STEWARDSHIP_DESIGN_NOTES.md`'s
+"Cross-module consumption" section for the specifics. No module-boundary
+violation was found this time either.
+
 ## Known sandbox limitation
 
 Same disclosed limitation as every prior sprint: no `tsc`/`eslint`/`jest`/`prisma` execution against real `node_modules` or a live database in this environment. Verified via the same static methods used in Sprints 1.2-1.4 (brace-balance and import-resolution checks). Needs a real `pnpm install && pnpm lint && pnpm test && pnpm build` run, and ultimately exercising these endpoints against the real local Postgres from Sprint 1.3's verification, before this can be considered proven correct rather than merely reviewed.

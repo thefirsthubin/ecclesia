@@ -181,6 +181,21 @@ const BASE_MATRIX: PermissionRule[] = [
     reason: 'PRD §17.3 - support cases only',
   },
 
+  // --- [INFERRED - no PRD §17.3 row covers this] Digital visitor capture
+  // (FR-GTH-04). Same role/scope shape as gatherings.attendance.create
+  // immediately above - see GATHERINGS_DESIGN_NOTES.md.
+  { role: 'RESIDENT_PASTOR', action: 'gatherings.visitor_intake.read', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'ASSISTANT_PASTOR', action: 'gatherings.visitor_intake.create', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'BACENTA_LEADER', action: 'gatherings.visitor_intake.create', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BASONTA_LEADER', action: 'gatherings.visitor_intake.create', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  {
+    role: 'ADMIN',
+    action: 'gatherings.visitor_intake.create',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason: 'PRD §17.3 pattern - support cases only, mirroring gatherings.attendance.create',
+  },
+
   // --- Financial Transaction: record ("Recorded") --------------------
   // BR-STW-01: pastors never handle cash, regardless of any other
   // privilege they hold - this is the canonical explicit-deny example
@@ -222,6 +237,18 @@ const BASE_MATRIX: PermissionRule[] = [
   // --- Financial Transaction: verify ("Verified") ---------------------
   { role: 'RESIDENT_PASTOR', action: 'stewardship.transaction.read', effect: 'ALLOW', scope: 'BRANCH' },
   { role: 'ASSISTANT_PASTOR', action: 'stewardship.transaction.read', effect: 'ALLOW', scope: 'CLUSTER' },
+  // [INFERRED - no PRD §17.3 row explicitly grants these] Treasurer and
+  // Bacenta Leader read access to Financial Transactions. FR-STW-03's own
+  // acceptance criterion ("Given a Recorded transaction matches my
+  // count... I tap Verify") presupposes a Treasurer can already see the
+  // verification queue, and a Bacenta Leader recording an offering
+  // (`stewardship.transaction.record`, OWN_GROUP, above) has an obvious
+  // need to see what they themselves already recorded - neither
+  // capability is buildable without a `.read` grant, even though §17.3's
+  // table only lists these two roles against `.record`/`.verify`, not
+  // `.read` explicitly. See STEWARDSHIP_DESIGN_NOTES.md.
+  { role: 'TREASURER', action: 'stewardship.transaction.read', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'BACENTA_LEADER', action: 'stewardship.transaction.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
   {
     role: 'BACENTA_LEADER',
     action: 'stewardship.transaction.verify',
@@ -255,13 +282,67 @@ const BASE_MATRIX: PermissionRule[] = [
   { role: 'TREASURER', action: 'stewardship.expense.request', effect: 'ALLOW', scope: 'BRANCH' },
 
   // --- Expense: approve --------------------------------------------------
-  { role: 'RESIDENT_PASTOR', action: 'stewardship.expense.approve', effect: 'ALLOW', scope: 'BRANCH' },
+  // FR-STW-09: "cannot reach Approved without action from a Person other
+  // than the requester" - the same separation-of-duties shape as
+  // BR-STW-04's transaction verification, so this reuses
+  // `DIFFERENT_ACTOR_THAN_RECORDER` rather than inventing a parallel
+  // record-level check: `ExpenseResourceContextGuard` populates
+  // `resource.recordedByPersonId` with the Expense's own
+  // `requestedByPersonId` (see STEWARDSHIP_DESIGN_NOTES.md), and the check
+  // itself is already generically named/implemented as "actor differs
+  // from whoever performed the prior step," not literally
+  // transaction-specific.
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'stewardship.expense.approve',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    recordLevelCheck: 'DIFFERENT_ACTOR_THAN_RECORDER',
+    reason: 'FR-STW-09 - approver must not be the requester',
+  },
   {
     role: 'ASSISTANT_PASTOR',
     action: 'stewardship.expense.approve',
     effect: 'ALLOW',
     scope: 'CLUSTER',
-    reason: 'PRD §17.3 - only if delegated by the Resident Pastor',
+    recordLevelCheck: 'DIFFERENT_ACTOR_THAN_RECORDER',
+    reason: 'PRD §17.3 - only if delegated by the Resident Pastor; FR-STW-09 - approver must not be the requester',
+  },
+
+  // --- Expense: pay / receipt (both [INFERRED], see actions.ts) ----------
+  { role: 'TREASURER', action: 'stewardship.expense.pay', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'RESIDENT_PASTOR', action: 'stewardship.expense.receipt', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'ASSISTANT_PASTOR', action: 'stewardship.expense.receipt', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'BACENTA_LEADER', action: 'stewardship.expense.receipt', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BASONTA_LEADER', action: 'stewardship.expense.receipt', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'TREASURER', action: 'stewardship.expense.receipt', effect: 'ALLOW', scope: 'BRANCH', reason: 'Treasurer may also submit and self-fulfil an expense request' },
+
+  // [INFERRED - no PRD §17.3 row covers this] Expense: read. Mirrors
+  // `.request`'s own role/scope shape - whoever may request an expense
+  // has an obvious need to see their own submission's status, and the
+  // approver roles need to see the request queue before approving.
+  { role: 'RESIDENT_PASTOR', action: 'stewardship.expense.read', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'ASSISTANT_PASTOR', action: 'stewardship.expense.read', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'BACENTA_LEADER', action: 'stewardship.expense.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BASONTA_LEADER', action: 'stewardship.expense.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'TREASURER', action: 'stewardship.expense.read', effect: 'ALLOW', scope: 'BRANCH' },
+
+  // --- Project / Pledge (both [INFERRED], H2, see actions.ts) -------------
+  { role: 'RESIDENT_PASTOR', action: 'stewardship.project.create', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'RESIDENT_PASTOR', action: 'stewardship.project.read', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'ASSISTANT_PASTOR', action: 'stewardship.project.read', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'TREASURER', action: 'stewardship.project.read', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'MEMBER', action: 'stewardship.project.read', effect: 'ALLOW', scope: 'BRANCH', reason: 'A Project is a Branch-visible fundraising goal, not a private record' },
+  { role: 'MEMBER', action: 'stewardship.pledge.create', effect: 'ALLOW', scope: 'SELF' },
+  { role: 'MEMBER', action: 'stewardship.pledge.read', effect: 'ALLOW', scope: 'SELF' },
+  { role: 'RESIDENT_PASTOR', action: 'stewardship.pledge.read', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'TREASURER', action: 'stewardship.pledge.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'TREASURER',
+    action: 'stewardship.pledge.fulfill',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason: 'Linking a Pledge to its fulfilling transaction is a Finance Team record-keeping action, mirroring stewardship.transaction.reconcile',
   },
 
   // --- Follow-up task: create/assign --------------------------------------

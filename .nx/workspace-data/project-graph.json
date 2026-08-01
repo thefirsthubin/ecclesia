@@ -16855,12 +16855,22 @@
       },
       {
         "source": "api",
+        "target": "domain-gatherings",
+        "type": "static"
+      },
+      {
+        "source": "api",
         "target": "domain-pastoral-care",
         "type": "static"
       },
       {
         "source": "api",
         "target": "domain-people",
+        "type": "static"
+      },
+      {
+        "source": "api",
+        "target": "domain-stewardship",
         "type": "static"
       },
       {

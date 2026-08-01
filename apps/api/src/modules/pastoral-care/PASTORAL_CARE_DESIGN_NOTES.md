@@ -168,6 +168,21 @@ declaration sites in `libs/rbac/src/lib/actions.ts` and
   redesigns. `complete()` moves a task to the single terminal `COMPLETED`
   state regardless of which specific outcome applied.
 
+## Gatherings milestone follow-up (this module, touched again)
+
+`FollowUpTaskService` is now additionally exported from `PastoralCareModule`
+(previously only `PoimenEnrollmentService` was) - see
+`apps/api/src/modules/gatherings/GATHERINGS_DESIGN_NOTES.md`. Gatherings'
+`VisitorIntakeService` consumes it for US-A1/FR-GTH-04's automatic
+Follow-up task, reusing FR-PC-03/04's SLA-computation and persistence logic
+unchanged rather than a second Follow-up-task writer inside Gatherings (which
+would also violate schema ownership - `pastoral_care.follow_up_tasks`
+belongs to this module, not Gatherings). No change to `FollowUpTaskService`
+itself was required; every call still requires an explicit
+`assignedToPersonId`, so this milestone's own conditional-auto-creation
+logic (documented in `GATHERINGS_DESIGN_NOTES.md`) sits entirely on the
+calling side.
+
 ## Known sandbox limitation
 
 Same disclosed limitation as every prior sprint: no `tsc`/`eslint`/`jest`/
