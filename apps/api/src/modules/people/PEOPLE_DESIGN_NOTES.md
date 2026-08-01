@@ -135,6 +135,37 @@ See `apps/api/src/modules/stewardship/STEWARDSHIP_DESIGN_NOTES.md`'s
 "Cross-module consumption" section for the specifics. No module-boundary
 violation was found this time either.
 
+## Ministry milestone follow-up (this module, touched again)
+
+Like Pastoral Care and Gatherings before it, the Ministry milestone
+needed one genuinely new export - `GroupScopeService` alone was not
+enough this time:
+
+1. **`GroupRosterService` added and exported.** Three methods
+   (`countActiveMembers`, `listActiveMembers`,
+   `countActiveMinistryMembershipsForPerson`), wrapping three new
+   `GroupMembershipRepository` query methods
+   (`countActiveByGroup`/`listActiveByGroup`/
+   `countActiveMinistryMembershipsForPerson`) added alongside the
+   existing `applyChange`. Ministry's `StaffingTargetService` (FR-MIN-03's
+   adequacy ratio) and `RosterService` (FR-MIN-01's roster view, FR-MIN-04's
+   overcommitment flag) all need "which/how many Persons are actively
+   rostered" - `GroupMembership` data this module already owns, that no
+   prior export exposed a read path for. "Active" uses the exact same
+   `endedAt IS NULL` definition `GroupMembershipService` itself already
+   applies for BR-PPL-01/02 - no new activeness concept invented.
+
+Considered and rejected: adding a Basonta-Leader-lookup method to
+`GroupLeadershipService` (its one existing method,
+`getActiveBacentaLeaderPersonId`, is Bacenta-specific by name and by the
+repository call it wraps). Ministry's actual endpoints turned out not to
+need "who leads this Basonta" at all - RBAC's `OWN_GROUP` scope check
+already resolves "is the actor the leader of this specific Group" via
+`ActorContext.basontaId`/`ResourceContext.basontaId` equality, with no
+lookup required at the service layer. See
+`apps/api/src/modules/ministry/MINISTRY_DESIGN_NOTES.md` for the full
+reasoning. No module-boundary violation was found this time either.
+
 ## Known sandbox limitation
 
 Same disclosed limitation as every prior sprint: no `tsc`/`eslint`/`jest`/`prisma` execution against real `node_modules` or a live database in this environment. Verified via the same static methods used in Sprints 1.2-1.4 (brace-balance and import-resolution checks). Needs a real `pnpm install && pnpm lint && pnpm test && pnpm build` run, and ultimately exercising these endpoints against the real local Postgres from Sprint 1.3's verification, before this can be considered proven correct rather than merely reviewed.

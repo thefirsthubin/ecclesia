@@ -71,4 +71,26 @@ export class GroupMembershipRepository {
       return membership;
     });
   }
+
+  /** Ministry milestone (FR-MIN-03): "rostered workers" for a Basonta -
+   * see `GroupRosterService`'s own doc comment for why this lives here
+   * rather than as a new Ministry-owned query. */
+  countActiveByGroup(groupId: string): Promise<number> {
+    return this.prisma.groupMembership.count({ where: { groupId, endedAt: null } });
+  }
+
+  async listActiveByGroup(groupId: string): Promise<Pick<GroupMembership, 'personId' | 'startedAt'>[]> {
+    return this.prisma.groupMembership.findMany({
+      where: { groupId, endedAt: null },
+      select: { personId: true, startedAt: true },
+      orderBy: { startedAt: 'asc' },
+    });
+  }
+
+  /** Ministry milestone (FR-MIN-04): a Person's concurrent active
+   * MINISTRY-type memberships, the computable proxy for "overcommitment"
+   * - see `libs/domain/ministry`'s `overcommitment.ts` doc comment. */
+  countActiveMinistryMembershipsForPerson(personId: string): Promise<number> {
+    return this.prisma.groupMembership.count({ where: { personId, groupType: 'MINISTRY', endedAt: null } });
+  }
 }

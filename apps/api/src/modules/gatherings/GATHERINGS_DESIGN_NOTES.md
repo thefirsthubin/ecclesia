@@ -151,6 +151,22 @@ expansion algorithm can be built.
   built here (this milestone only produces the data; consuming it belongs
   to the module that owns `SilentDriftFlag`).
 
+## Ministry milestone follow-up (this module, touched again)
+
+The Ministry milestone required one small addition here - the first time
+this module exports anything. `GatheringScopeService.loadScope(gatheringId)`
+(one method, `{ branchId }`) was extracted so Ministry's
+`StaffingTargetService` (FR-MIN-02) can validate a client-supplied
+`gatheringId` exists and belongs to the correct Branch before writing a
+`StaffingTarget` row, without reaching into `GatheringRepository`/Prisma
+directly - the same schema-ownership rule every other cross-module
+consumption in this codebase already follows. Deliberately a narrower
+shape than `GroupScopeService`'s `ResourceContext` (`branchId` only, no
+`bacentaId`/`basontaId`) since it is not used for RBAC scope resolution -
+a `StaffingTarget`'s scope is its target Group, not the Gathering it
+references. See
+`apps/api/src/modules/ministry/MINISTRY_DESIGN_NOTES.md`.
+
 ## Known sandbox limitation
 
 Same disclosed limitation as every prior sprint: no `tsc`/`eslint`/`jest`/

@@ -17,6 +17,7 @@ import { RoleAssignmentRepository } from './repositories/role-assignment.reposit
 import { GroupService } from './services/group.service';
 import { GroupLeadershipService } from './services/group-leadership.service';
 import { GroupMembershipService } from './services/group-membership.service';
+import { GroupRosterService } from './services/group-roster.service';
 import { GroupScopeService } from './services/group-scope.service';
 import { PersonScopeService } from './services/person-scope.service';
 import { PersonService } from './services/person.service';
@@ -61,6 +62,7 @@ import { RoleAssignmentService } from './services/role-assignment.service';
     GroupScopeService,
     GroupLeadershipService,
     GroupMembershipService,
+    GroupRosterService,
     RoleAssignmentService,
     PersonResourceContextGuard,
     PersonCreateResourceContextGuard,
@@ -86,7 +88,13 @@ import { RoleAssignmentService } from './services/role-assignment.service';
   // `RoleAssignmentRepository` directly. `GroupScopeService` is Group's
   // analogue of `PersonScopeService`, consumed by Gatherings' own
   // resource-context guards when a Gathering/GatheringSeries names an
-  // `ownerGroupId`/`groupId`.
-  exports: [PersonScopeService, PersonService, GroupScopeService, GroupLeadershipService],
+  // `ownerGroupId`/`groupId`. `GroupRosterService` is exported for the
+  // Ministry milestone (FR-MIN-03/04) - Ministry's own
+  // `StaffingTargetService`/`RosterService` need "how many/which Persons
+  // are actively rostered in this Group" without reaching into
+  // `GroupMembershipRepository` directly, the same schema-ownership rule
+  // every prior export already follows. See
+  // `apps/api/src/modules/ministry/MINISTRY_DESIGN_NOTES.md`.
+  exports: [PersonScopeService, PersonService, GroupScopeService, GroupLeadershipService, GroupRosterService],
 })
 export class PeopleModule {}

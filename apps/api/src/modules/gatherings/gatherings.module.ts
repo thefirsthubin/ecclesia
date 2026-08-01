@@ -22,6 +22,7 @@ import { VisitorIntakeRepository } from './repositories/visitor-intake.repositor
 import { AttendanceRecordService } from './services/attendance-record.service';
 import { GatheringService } from './services/gathering.service';
 import { GatheringSeriesService } from './services/gathering-series.service';
+import { GatheringScopeService } from './services/gathering-scope.service';
 import { VisitorIntakeService } from './services/visitor-intake.service';
 
 /**
@@ -36,6 +37,14 @@ import { VisitorIntakeService } from './services/visitor-intake.service';
  * which need each other's services and therefore import each other,
  * neither People nor Pastoral Care needs anything from Gatherings, so
  * there is no cycle here to break.
+ *
+ * **Exports `GatheringScopeService`** (Ministry milestone) - the first
+ * time this module exports anything. `StaffingTargetService`
+ * (`apps/api/src/modules/ministry`, FR-MIN-02) needs to validate that a
+ * client-supplied `gatheringId` exists and belongs to the same Branch as
+ * the target Basonta before writing a `StaffingTarget` row. See
+ * `MinistryModule`'s own doc comment and
+ * `apps/api/src/modules/ministry/MINISTRY_DESIGN_NOTES.md`.
  */
 @Module({
   imports: [DatabaseModule, RbacPlatformModule, PeopleModule, PastoralCareModule],
@@ -47,6 +56,7 @@ import { VisitorIntakeService } from './services/visitor-intake.service';
     VisitorIntakeRepository,
     GatheringSeriesService,
     GatheringService,
+    GatheringScopeService,
     AttendanceRecordService,
     VisitorIntakeService,
     GatheringSeriesCreateResourceContextGuard,
@@ -56,5 +66,6 @@ import { VisitorIntakeService } from './services/visitor-intake.service';
     AttendanceResourceContextGuard,
     VisitorIntakeResourceContextGuard,
   ],
+  exports: [GatheringScopeService],
 })
 export class GatheringsModule {}

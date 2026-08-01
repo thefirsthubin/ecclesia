@@ -16865,6 +16865,11 @@
       },
       {
         "source": "api",
+        "target": "domain-ministry",
+        "type": "static"
+      },
+      {
+        "source": "api",
         "target": "domain-pastoral-care",
         "type": "static"
       },

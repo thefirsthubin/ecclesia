@@ -488,6 +488,39 @@ const BASE_MATRIX: PermissionRule[] = [
   { role: 'ASSISTANT_PASTOR', action: 'insights.alert.resolve', effect: 'ALLOW', scope: 'CLUSTER' },
   { role: 'BACENTA_LEADER', action: 'insights.alert.resolve', effect: 'ALLOW', scope: 'OWN_GROUP' },
 
+  // --- Ministry: staffing targets (FR-MIN-02/03, [INFERRED]) -------------------
+  // No ASSISTANT_PASTOR CLUSTER row here, deliberately - `evaluate.ts`'s
+  // CLUSTER case tests `resource.bacentaId` membership only;
+  // `GroupScopeService` populates `basontaId` (not `bacentaId`) for a
+  // MINISTRY-type Group, so a CLUSTER row on any Basonta-scoped action
+  // could never actually match. See MINISTRY_DESIGN_NOTES.md.
+  {
+    role: 'BASONTA_LEADER',
+    action: 'ministry.staffing_target.create',
+    effect: 'ALLOW',
+    scope: 'OWN_GROUP',
+    reason: 'FR-MIN-02 - also covers re-setting an existing target (upsert)',
+  },
+  { role: 'BASONTA_LEADER', action: 'ministry.staffing_target.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'RESIDENT_PASTOR', action: 'ministry.staffing_target.read', effect: 'ALLOW', scope: 'BRANCH' },
+
+  // --- Ministry: worker availability self-service (§16.3 H2, [INFERRED]) -------
+  // §16.3's own key-surfaces table names "Worker/Member" as this
+  // surface's persona - a Basonta Leader can also personally serve, so
+  // they hold the same SELF grant as any other server.
+  { role: 'WORKER', action: 'ministry.worker_availability.create', effect: 'ALLOW', scope: 'SELF' },
+  { role: 'WORKER', action: 'ministry.worker_availability.read', effect: 'ALLOW', scope: 'SELF' },
+  { role: 'MEMBER', action: 'ministry.worker_availability.create', effect: 'ALLOW', scope: 'SELF' },
+  { role: 'MEMBER', action: 'ministry.worker_availability.read', effect: 'ALLOW', scope: 'SELF' },
+  { role: 'BASONTA_LEADER', action: 'ministry.worker_availability.create', effect: 'ALLOW', scope: 'SELF' },
+  { role: 'BASONTA_LEADER', action: 'ministry.worker_availability.read', effect: 'ALLOW', scope: 'SELF' },
+
+  // --- Ministry: roster view + overcommitment flag (FR-MIN-01/04, [INFERRED]) --
+  { role: 'BASONTA_LEADER', action: 'ministry.roster.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'RESIDENT_PASTOR', action: 'ministry.roster.read', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'BASONTA_LEADER', action: 'ministry.roster.overcommitment.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'RESIDENT_PASTOR', action: 'ministry.roster.overcommitment.read', effect: 'ALLOW', scope: 'BRANCH' },
+
   // --- Configuration: gathering/role/group types ---------------------------------
   { role: 'RESIDENT_PASTOR', action: 'platform.configuration.read', effect: 'ALLOW', scope: 'BRANCH' },
   { role: 'ASSISTANT_PASTOR', action: 'platform.configuration.read', effect: 'ALLOW', scope: 'CLUSTER' },

@@ -142,6 +142,24 @@ export const ACTIONS = [
   'insights.alert.read',
   'insights.alert.resolve',
 
+  // [INFERRED - no PRD §17.3 row covers this] Ministry: staffing targets,
+  // roster, worker availability (FR-MIN-01 through 04). §17.3's matrix
+  // predates the Ministry domain's own capabilities entirely - the only
+  // §17.3 rows that mention Basonta Leader at all belong to *other*
+  // domains' actions (Person/Group/Gathering/Attendance/Expense), the
+  // same gap category as Stewardship's Project/Pledge and Insights' Alert
+  // inbox. See MINISTRY_DESIGN_NOTES.md. No separate `.update` action -
+  // `staffing_target.create` is an upsert keyed on the (gatheringId,
+  // groupId) unique pair, the same "re-recording is a correction, not a
+  // duplicate" precedent `gatherings.attendance.create` already
+  // established for `AttendanceRecordRepository.upsert()`.
+  'ministry.staffing_target.create',
+  'ministry.staffing_target.read',
+  'ministry.worker_availability.create',
+  'ministry.worker_availability.read',
+  'ministry.roster.read',
+  'ministry.roster.overcommitment.read',
+
   // Configuration (row: "Configuration: gathering/role/group types")
   'platform.configuration.create',
   'platform.configuration.update',

@@ -5,24 +5,27 @@ one NestJS module per bounded context (Blueprint Ch.1 §4.2 / Ch.2 §6.4):
 `people`, `pastoral-care`, `ministry`, `gatherings`, `stewardship`,
 `insights`, `platform`.
 
-**Status (Insights domain milestone):** `platform` provides a real
-database connection and Cognito JWT authentication (Sprint 1.4, verified
-for real: `pnpm install`/`lint`/`test`/`build` all pass; only integration
-against a real, provisioned Cognito User Pool remains unverified).
-`modules/people/`, `modules/pastoral-care/`, `modules/gatherings/`,
-`modules/stewardship/`, and `modules/insights/` are the first five
-bounded-context modules built on top of it. People and Pastoral Care
-import each other (`forwardRef`) for a genuine bidirectional
+**Status (Ministry domain milestone - all six bounded-context modules
+built):** `platform` provides a real database connection and Cognito JWT
+authentication (Sprint 1.4, verified for real: `pnpm install`/`lint`/
+`test`/`build` all pass; only integration against a real, provisioned
+Cognito User Pool remains unverified). `modules/people/`,
+`modules/pastoral-care/`, `modules/gatherings/`, `modules/stewardship/`,
+`modules/insights/`, and `modules/ministry/` are all six bounded-context
+modules named in Blueprint §4.2's module inventory. People and Pastoral
+Care import each other (`forwardRef`) for a genuine bidirectional
 public-service dependency; Gatherings, Stewardship, and Insights each
 import People normally, consuming its exported services without either
-needing anything back - see `modules/people/PEOPLE_DESIGN_NOTES.md`,
+needing anything back; Ministry imports both People and Gatherings
+normally - see `modules/people/PEOPLE_DESIGN_NOTES.md`,
 `modules/pastoral-care/PASTORAL_CARE_DESIGN_NOTES.md`,
 `modules/gatherings/GATHERINGS_DESIGN_NOTES.md`,
-`modules/stewardship/STEWARDSHIP_DESIGN_NOTES.md`, and
-`modules/insights/INSIGHTS_DESIGN_NOTES.md`. Insights is also, so far,
-the only module that *exports* something for a still-hypothetical future
-consumer (`EngagementSignalService` - see its design notes for why).
-`src/platform/` holds:
+`modules/stewardship/STEWARDSHIP_DESIGN_NOTES.md`,
+`modules/insights/INSIGHTS_DESIGN_NOTES.md`, and
+`modules/ministry/MINISTRY_DESIGN_NOTES.md`. Insights and Gatherings both
+*export* something for cross-module consumption beyond People
+(`EngagementSignalService`, `GatheringScopeService` respectively) - see
+their own design notes for why. `src/platform/` holds:
 
 | File | Purpose |
 |---|---|
@@ -52,4 +55,6 @@ consumer (`EngagementSignalService` - see its design notes for why).
 
 **`modules/insights/`** (PRD §13.6) is the fifth bounded-context module: the Church Pulse weighted-scoring model computed on read for Branch and Bacenta/cluster scope (FR-INS-01, BR-INS-01, `libs/domain/insights`'s `computeChurchPulseScore()`), trend-decline alerting (FR-INS-03, `evaluatePulseTrend()`), role-scoped dashboards (FR-INS-04: `branch-dashboard`, `bacenta-dashboard/:groupId`, `cluster-dashboard/:groupId`), and Alert act/dismiss resolution (FR-INS-05) - consuming People's already-exported `GroupScopeService` unchanged, the third consumer after Gatherings and Stewardship. Unlike every prior module, `InsightsModule` *exports* `EngagementSignalService` - the landing point for a future `apps/worker` Engagement Signal consumer that does not exist yet (Blueprint Ch.4/§10.6's EventBridge/SQS bus is entirely unbuilt in this codebase; this milestone deliberately does not invent a synchronous substitute wiring the other four domains directly into it). NFR-PRIV-02's Person-level-scoring gate is enforced structurally: `PulseScoreService` has no method capable of computing a Person-scoped score. Imports `PeopleModule` as an ordinary import (no `forwardRef`). See `modules/insights/INSIGHTS_DESIGN_NOTES.md` for the full citation breakdown, including why the cluster dashboard is a single-Bacenta drill-down rather than a true ranked list (the same `ResourceContext` structural limitation already disclosed for People's deferred search/directory) and why the Alert inbox is served per-dashboard rather than as a separate cross-cutting list endpoint.
 
-One bounded-context module remains unbuilt: ministry.
+**`modules/ministry/`** (PRD §13.3) is the sixth and last bounded-context module: staffing targets set/corrected via upsert with live-computed adequacy on every read (FR-MIN-02/03), a Basonta roster view and overcommitment flag list (FR-MIN-01/04), and worker availability self-service (§16.3, H2) - consuming People's already-exported `GroupScopeService` plus a newly-exported `GroupRosterService` (three methods: `countActiveMembers`/`listActiveMembers`/`countActiveMinistryMembershipsForPerson`, wrapping three new `GroupMembershipRepository` queries), and, for the first time in this codebase, a service exported from Gatherings (`GatheringScopeService.loadScope()`, validating a Staffing Target's `gatheringId` reference belongs to the correct Branch). Basonta creation (FR-MIN-01) and roster add/remove needed no new code at all - both were already fully functional through People's existing Group/GroupMembership CRUD, discovered on inspection. `ministry.staffing_target.create` doubles as update via upsert (keyed on the schema's own `@@unique([gatheringId, groupId])`), the same "re-recording is a correction" precedent `gatherings.attendance.create` already established - no separate `.update` action exists. Imports `PeopleModule` and `GatheringsModule` as ordinary imports (no `forwardRef`). See `modules/ministry/MINISTRY_DESIGN_NOTES.md` for the full citation breakdown, including why FR-MIN-04's overcommitment flag measures concurrent active Basonta memberships rather than the PRD's literal concurrent-Gathering-commitments wording (no per-Gathering roster-assignment entity exists in the schema), and why no `ASSISTANT_PASTOR` `CLUSTER`-scoped row exists on any Ministry action (`evaluate.ts`'s CLUSTER check only ever consults `resource.bacentaId`, never `resource.basontaId` - a structural gap, not an oversight).
+
+All six bounded-context modules named in Blueprint §4.2's module inventory are now built.

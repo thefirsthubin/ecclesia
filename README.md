@@ -248,10 +248,49 @@ citation breakdown. Worth flagging:
   `.resolve`, since §17.3 predates the Alert-inbox surface entirely) —
   see the design notes for the full reasoning.
 
-Next: a real `pnpm install && pnpm lint && pnpm test && pnpm build` run on
-the user's machine to confirm all five milestones, then Ministry — the
-one remaining bounded-context module before the locked roadmap's domain
-build-out is complete.
+**Ministry domain — built.** `apps/api/src/modules/ministry` is the
+sixth and last bounded-context module in the locked roadmap: staffing
+targets set/corrected via upsert and read with a live-computed adequacy
+ratio (FR-MIN-02/03), a Basonta roster view and overcommitment flag list
+(FR-MIN-01/04), and worker availability self-service (§16.3 H2) —
+consuming People's already-exported `GroupScopeService` plus a
+newly-exported `GroupRosterService`, and, for the first time in this
+codebase, a service exported from Gatherings (`GatheringScopeService`,
+validating a Staffing Target's Gathering reference). Basonta
+create/configure (FR-MIN-01) and roster add/remove needed **no new code
+at all** — both were already fully functional through People's existing
+Group/GroupMembership CRUD, discovered on inspection rather than assumed.
+See `apps/api/src/modules/ministry/MINISTRY_DESIGN_NOTES.md` for the full
+citation breakdown. Worth flagging:
+
+- **"Rostered" means active `GroupMembership`, not a per-Gathering
+  assignment** — `db/schema.prisma`'s `ministry` schema has no "who is
+  assigned to serve at this specific Gathering" entity, only a target
+  count. FR-MIN-03's own acceptance criterion ("a ratio... updating as
+  workers are added to the roster") confirms this reading.
+- **FR-MIN-04's overcommitment flag is a disclosed proxy, not the literal
+  acceptance criterion** — the PRD describes concurrent *Gathering*
+  commitments; the schema only supports counting a Person's concurrent
+  active *Basonta memberships*, a related but different measurement. True
+  Gathering-level overlap detection needs a schema addition, the same
+  "needs a schema change, not an engineering guess" framing as
+  Stewardship's FR-STW-07 gap.
+- **No `ASSISTANT_PASTOR` `CLUSTER` row on any Ministry action** —
+  `evaluate.ts`'s CLUSTER scope check only ever consults
+  `resource.bacentaId`, never `resource.basontaId`; a CLUSTER row on a
+  Basonta-scoped action could never actually match. A genuine structural
+  gap (Assistant Pastors have no cluster-oversight mechanism over
+  Basontas today), flagged rather than papered over with a
+  never-functional row.
+- No scheduler exists for the staffing-gap alert ahead of a major
+  Gathering (§16.3, H2) — same disclosed gap category as every other
+  module's missing scheduler/event-bus infrastructure.
+
+All six bounded-context modules named in Blueprint §4.2's module
+inventory are now built. Next: a real
+`pnpm install && pnpm lint && pnpm test && pnpm build` run on the user's
+machine to confirm this sixth milestone — after which the locked
+roadmap's domain build-out is complete.
 
 ## Prerequisites
 
