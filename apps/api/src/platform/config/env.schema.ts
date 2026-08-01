@@ -54,6 +54,30 @@ export const envSchema = z.object({
       (value) => value.startsWith('postgresql://') || value.startsWith('postgres://'),
       'DATABASE_URL must be a postgresql:// or postgres:// connection string',
     ),
+
+  /**
+   * Cognito User Pool ID (Sprint 1.4, Blueprint §8.1 ADR-004). Required,
+   * no default, same "fail fast" reasoning as `DATABASE_URL`: a process
+   * that cannot verify access tokens should refuse to boot, not start and
+   * fail confusingly on the first authenticated request. Format is
+   * `<region>_<9 alphanumeric chars>` (e.g. `us-east-1_AbC123dEf`) - Cognito's
+   * own ID format, validated loosely here since Cognito itself is the
+   * source of truth for whether a given ID is real.
+   */
+  COGNITO_USER_POOL_ID: z
+    .string()
+    .min(1, 'COGNITO_USER_POOL_ID is required')
+    .regex(/^[\w-]+_[0-9a-zA-Z]+$/, 'COGNITO_USER_POOL_ID must look like <region>_<poolId>'),
+
+  /** Cognito App Client ID (Sprint 1.4) - the `aud`/`client_id` claim access tokens must carry. */
+  COGNITO_CLIENT_ID: z.string().min(1, 'COGNITO_CLIENT_ID is required'),
+
+  /**
+   * AWS region the User Pool lives in (Sprint 1.4) - used to construct the
+   * issuer URL (`https://cognito-idp.<region>.amazonaws.com/<userPoolId>`,
+   * Blueprint §8.1) that `aws-jwt-verify` uses to fetch the JWKS.
+   */
+  COGNITO_REGION: z.string().min(1, 'COGNITO_REGION is required'),
 });
 
 export type EnvConfig = z.infer<typeof envSchema>;

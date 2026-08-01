@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { PeopleModule } from '../modules/people/people.module';
 import { PlatformModule } from '../platform/platform.module';
 
 /**
@@ -10,14 +11,16 @@ import { PlatformModule } from '../platform/platform.module';
  * GatheringsModule, StewardshipModule, InsightsModule, PlatformModule)
  * are registered in `imports` here as each is built.
  *
- * `PlatformModule` (Sprint 1.2) is the first: config, structured logging,
- * the `/health` endpoint, and the workspace-wide exception filter. The
- * remaining six are still unbuilt - People and the rest land after
- * Sprints 1.3 (database) and 1.4 (authentication), per the locked
- * roadmap.
+ * `PlatformModule` (Sprint 1.2) is the foundation: config, structured
+ * logging, the `/health` endpoint, database, authentication, and the
+ * workspace-wide exception filter. `PeopleModule` (People domain
+ * milestone) is the first bounded-context module built on top of it -
+ * see `apps/api/src/modules/people/PEOPLE_DESIGN_NOTES.md`. The
+ * remaining five (Pastoral Care, Ministry, Gatherings, Stewardship,
+ * Insights) are still unbuilt.
  */
 @Module({
-  imports: [PlatformModule],
+  imports: [PlatformModule, PeopleModule],
   controllers: [AppController],
   providers: [AppService],
 })

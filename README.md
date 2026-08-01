@@ -60,11 +60,60 @@ database) have been run against a real local Postgres; `prisma migrate
 diff` comes back empty and `pnpm db:seed` succeeds — see
 `db/migrations/README.md` for exactly what those three follow-ups fixed.
 
-Next: Sprint 1.4 (Cognito authentication) — before the first business
-domain (People) is implemented, per Blueprint §15.4. Sprint 1.3's
-remaining open questions (see `db/DESIGN_NOTES.md`) should be resolved
-before or alongside People, since that domain's controllers are the
-schema's first real consumer.
+**Sprint 1.4 — Cognito authentication: complete and verified against real
+tooling** (`pnpm install`/`lint`/`test`/`build` all pass on the user's
+machine, `aws-jwt-verify` installs cleanly) — **not yet verified against a
+real Cognito User Pool**, since none is provisioned. `apps/api/src/platform/auth` implements the
+piece `libs/rbac/src/lib/request-context.ts` explicitly called out as
+missing: verifying an incoming Cognito access token (`aws-jwt-verify`,
+`tokenUse: 'access'`, Blueprint §8.3) and resolving it through
+`platform.users` → `people.persons` → active `people.role_assignments`
+into the `ActorContext` shape `RbacGuard` consumes. Applied globally as
+`AuthGuard` (`APP_GUARD`) — every route requires a verified identity by
+default, opt out via `@Public()` (used only by `GET /health`, since
+infrastructure health checks can't present a token). A shared
+`platform.audit_log` writer (`AuditModule`) logs authentication failures
+per Blueprint §8.5. See `apps/api/src/platform/auth/AUTH_DESIGN_NOTES.md`
+for the full breakdown of what's Blueprint-exact vs. inferred, and — most
+importantly — **two real, unresolved gaps found while building this**:
+`libs/rbac`'s `CLUSTER` scope has no schema-backed identifier to compare
+against (Assistant Pastor's cluster-scoped grants will always evaluate to
+DENY until this is resolved), and a Person holding more than one
+concurrently active Role Assignment has no defined resolution (the
+resolver throws rather than guessing). Like Sprint 1.3's `DATABASE_URL`,
+`COGNITO_USER_POOL_ID`/`COGNITO_CLIENT_ID`/`COGNITO_REGION` require a real,
+already-provisioned resource — verification against real Cognito is still
+outstanding; everything short of that (install, lint, unit tests, build)
+is green.
+
+**People domain — built, not yet verified against real tooling.**
+`apps/api/src/modules/people` is the first bounded-context module: Person
+create/read/update with FR-PPL-02 duplicate detection, the FR-PPL-03
+lifecycle-stage state machine, Bacenta/Basonta assignment (FR-PPL-04/05,
+including PRD §19.1 step 6's automatic lifecycle side effect), and Role
+Assignment grants (including the Poimen gate, PRD §24 OQ-02) — the first
+real consumer of both `AuthGuard`'s `ActorContext` and `libs/rbac`'s
+`RbacGuard`/`RecordLevelPolicyGuard` (built Sprint 1.1, unwired until
+now). See `apps/api/src/modules/people/PEOPLE_DESIGN_NOTES.md` for the
+full citation breakdown. Three items worth flagging up front:
+
+- The two Sprint 1.4 open questions (CLUSTER scope, multi-Role-Assignment
+  Persons) are still unresolved and now have concrete consequences here —
+  an Assistant Pastor acting outside a Bacenta they personally lead will
+  be denied by every People endpoint until the CLUSTER-scope gap is
+  resolved.
+- Row-Level Security (Blueprint §7.3) is still not wired — this module's
+  repositories rely entirely on explicit `branchId` filtering in
+  application code as the *only* current Branch-isolation enforcement,
+  not merely the intended backstop layer under it.
+- PRD §16.1's persistent Admin-facing "duplicate resolution queue" isn't
+  built (no backing table in the Sprint 1.3 schema); FR-PPL-02 is
+  implemented as a narrower synchronous check-and-reject instead.
+
+Next: resolve the two Sprint 1.4 open questions (needed before Pastoral
+Care's Assistant Pastor persona can work at all), then the Pastoral Care
+domain's first controllers (Bacenta configuration, Follow-up tasks,
+silent-drift detection).
 
 ## Prerequisites
 

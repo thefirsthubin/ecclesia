@@ -4,11 +4,14 @@ import { APP_FILTER } from '@nestjs/core';
 import { TerminusModule } from '@nestjs/terminus';
 import { LoggerModule } from 'nestjs-pino';
 
+import { AuditModule } from './audit/audit.module';
+import { AuthModule } from './auth/auth.module';
 import { validateEnv } from './config/env.schema';
 import type { EnvConfig } from './config/env.schema';
 import { DatabaseModule } from './database/database.module';
 import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 import { HealthController } from './health/health.controller';
+import { RbacPlatformModule } from './rbac/rbac-platform.module';
 
 /**
  * PlatformModule (Sprint 1.2) - the module named but not yet built in
@@ -55,6 +58,9 @@ import { HealthController } from './health/health.controller';
     }),
     TerminusModule,
     DatabaseModule,
+    AuditModule,
+    AuthModule,
+    RbacPlatformModule,
   ],
   controllers: [HealthController],
   providers: [
@@ -63,6 +69,6 @@ import { HealthController } from './health/health.controller';
       useClass: AllExceptionsFilter,
     },
   ],
-  exports: [ConfigModule, DatabaseModule],
+  exports: [ConfigModule, DatabaseModule, AuditModule, AuthModule, RbacPlatformModule],
 })
 export class PlatformModule {}

@@ -1,18 +1,51 @@
 {
   "run": {
     "command": "nx run-many --target=build --all",
-    "startTime": "2026-08-01T03:52:36.262Z",
-    "endTime": "2026-08-01T03:52:40.811Z",
+    "startTime": "2026-08-01T10:40:11.908Z",
+    "endTime": "2026-08-01T10:40:12.108Z",
     "inner": false
   },
   "tasks": [
+    {
+      "taskId": "rbac:build",
+      "target": "build",
+      "projectName": "rbac",
+      "hash": "10185276740071192844",
+      "startTime": "2026-08-01T10:40:11.950Z",
+      "endTime": "2026-08-01T10:40:11.960Z",
+      "params": "",
+      "cacheStatus": "local-cache-hit",
+      "status": 0
+    },
+    {
+      "taskId": "domain-people:build",
+      "target": "build",
+      "projectName": "domain-people",
+      "hash": "10264077726551653869",
+      "startTime": "2026-08-01T10:40:11.952Z",
+      "endTime": "2026-08-01T10:40:11.964Z",
+      "params": "",
+      "cacheStatus": "local-cache-hit",
+      "status": 0
+    },
+    {
+      "taskId": "contracts:build",
+      "target": "build",
+      "projectName": "contracts",
+      "hash": "10827795757694920667",
+      "startTime": "2026-08-01T10:40:11.953Z",
+      "endTime": "2026-08-01T10:40:11.969Z",
+      "params": "",
+      "cacheStatus": "local-cache-hit",
+      "status": 0
+    },
     {
       "taskId": "mobile:build",
       "target": "build",
       "projectName": "mobile",
       "hash": "17101743259137518128",
-      "startTime": "2026-08-01T03:52:36.291Z",
-      "endTime": "2026-08-01T03:52:36.298Z",
+      "startTime": "2026-08-01T10:40:11.978Z",
+      "endTime": "2026-08-01T10:40:11.992Z",
       "params": "",
       "cacheStatus": "local-cache-hit",
       "status": 0
@@ -22,19 +55,19 @@
       "target": "build",
       "projectName": "web-admin",
       "hash": "12662421456436019702",
-      "startTime": "2026-08-01T03:52:36.292Z",
-      "endTime": "2026-08-01T03:52:36.302Z",
+      "startTime": "2026-08-01T10:40:11.984Z",
+      "endTime": "2026-08-01T10:40:11.997Z",
       "params": "",
       "cacheStatus": "local-cache-hit",
       "status": 0
     },
     {
-      "taskId": "rbac:build",
+      "taskId": "api:build:production",
       "target": "build",
-      "projectName": "rbac",
-      "hash": "10185276740071192844",
-      "startTime": "2026-08-01T03:52:36.305Z",
-      "endTime": "2026-08-01T03:52:36.312Z",
+      "projectName": "api",
+      "hash": "9011687626212753274",
+      "startTime": "2026-08-01T10:40:11.991Z",
+      "endTime": "2026-08-01T10:40:12.005Z",
       "params": "",
       "cacheStatus": "local-cache-hit",
       "status": 0
@@ -44,30 +77,8 @@
       "target": "build",
       "projectName": "worker",
       "hash": "13099319157601412145",
-      "startTime": "2026-08-01T03:52:36.309Z",
-      "endTime": "2026-08-01T03:52:36.316Z",
-      "params": "",
-      "cacheStatus": "local-cache-hit",
-      "status": 0
-    },
-    {
-      "taskId": "domain-people:build",
-      "target": "build",
-      "projectName": "domain-people",
-      "hash": "12480172252810530802",
-      "startTime": "2026-08-01T03:52:36.321Z",
-      "endTime": "2026-08-01T03:52:36.329Z",
-      "params": "",
-      "cacheStatus": "local-cache-hit",
-      "status": 0
-    },
-    {
-      "taskId": "contracts:build",
-      "target": "build",
-      "projectName": "contracts",
-      "hash": "3765080437685047003",
-      "startTime": "2026-08-01T03:52:36.325Z",
-      "endTime": "2026-08-01T03:52:36.333Z",
+      "startTime": "2026-08-01T10:40:12.008Z",
+      "endTime": "2026-08-01T10:40:12.022Z",
       "params": "",
       "cacheStatus": "local-cache-hit",
       "status": 0
@@ -77,8 +88,8 @@
       "target": "build",
       "projectName": "testing",
       "hash": "9115354834162166023",
-      "startTime": "2026-08-01T03:52:36.339Z",
-      "endTime": "2026-08-01T03:52:36.348Z",
+      "startTime": "2026-08-01T10:40:12.011Z",
+      "endTime": "2026-08-01T10:40:12.027Z",
       "params": "",
       "cacheStatus": "local-cache-hit",
       "status": 0
@@ -88,8 +99,8 @@
       "target": "build",
       "projectName": "domain-gatherings",
       "hash": "7204244274899921214",
-      "startTime": "2026-08-01T03:52:36.343Z",
-      "endTime": "2026-08-01T03:52:36.353Z",
+      "startTime": "2026-08-01T10:40:12.017Z",
+      "endTime": "2026-08-01T10:40:12.034Z",
       "params": "",
       "cacheStatus": "local-cache-hit",
       "status": 0
@@ -99,8 +110,8 @@
       "target": "build",
       "projectName": "config",
       "hash": "6806288739665366003",
-      "startTime": "2026-08-01T03:52:36.359Z",
-      "endTime": "2026-08-01T03:52:36.367Z",
+      "startTime": "2026-08-01T10:40:12.039Z",
+      "endTime": "2026-08-01T10:40:12.058Z",
       "params": "",
       "cacheStatus": "local-cache-hit",
       "status": 0
@@ -110,8 +121,8 @@
       "target": "build",
       "projectName": "domain-stewardship",
       "hash": "6828341173145031687",
-      "startTime": "2026-08-01T03:52:36.363Z",
-      "endTime": "2026-08-01T03:52:36.371Z",
+      "startTime": "2026-08-01T10:40:12.043Z",
+      "endTime": "2026-08-01T10:40:12.064Z",
       "params": "",
       "cacheStatus": "local-cache-hit",
       "status": 0
@@ -121,8 +132,8 @@
       "target": "build",
       "projectName": "domain-ministry",
       "hash": "4675757298032542450",
-      "startTime": "2026-08-01T03:52:36.377Z",
-      "endTime": "2026-08-01T03:52:36.384Z",
+      "startTime": "2026-08-01T10:40:12.054Z",
+      "endTime": "2026-08-01T10:40:12.072Z",
       "params": "",
       "cacheStatus": "local-cache-hit",
       "status": 0
@@ -132,8 +143,8 @@
       "target": "build",
       "projectName": "domain-pastoral-care",
       "hash": "11706896419182814638",
-      "startTime": "2026-08-01T03:52:36.381Z",
-      "endTime": "2026-08-01T03:52:36.390Z",
+      "startTime": "2026-08-01T10:40:12.077Z",
+      "endTime": "2026-08-01T10:40:12.091Z",
       "params": "",
       "cacheStatus": "local-cache-hit",
       "status": 0
@@ -143,21 +154,10 @@
       "target": "build",
       "projectName": "domain-insights",
       "hash": "11262473739849769972",
-      "startTime": "2026-08-01T03:52:36.397Z",
-      "endTime": "2026-08-01T03:52:36.405Z",
+      "startTime": "2026-08-01T10:40:12.081Z",
+      "endTime": "2026-08-01T10:40:12.096Z",
       "params": "",
       "cacheStatus": "local-cache-hit",
-      "status": 0
-    },
-    {
-      "taskId": "api:build:production",
-      "target": "build",
-      "projectName": "api",
-      "hash": "2330617103499641142",
-      "startTime": "2026-08-01T03:52:36.292Z",
-      "endTime": "2026-08-01T03:52:40.810Z",
-      "params": "",
-      "cacheStatus": "cache-miss",
       "status": 0
     }
   ]

@@ -3,6 +3,7 @@ import type { HealthCheckResult } from '@nestjs/terminus';
 import { HealthCheck, HealthCheckService, MemoryHealthIndicator } from '@nestjs/terminus';
 
 import { DatabaseHealthIndicator } from '../database/database-health.indicator';
+import { Public } from '../auth/decorators/public.decorator';
 
 const HEAP_THRESHOLD_BYTES = 300 * 1024 * 1024;
 // RSS needs meaningfully more headroom than heap: it also covers V8
@@ -27,6 +28,12 @@ const RSS_THRESHOLD_BYTES = 512 * 1024 * 1024;
  * `DatabaseHealthIndicator` so the check reflects real downstream health,
  * not just "the Node process is still running" - a crashed or
  * unreachable PostgreSQL instance now fails this check.
+ *
+ * `@Public()` (Sprint 1.4): ECS/ALB health checks cannot present a
+ * Cognito access token, and `AuthGuard` is applied globally - without this
+ * opt-out, infrastructure health monitoring would itself be broken by the
+ * authentication rollout. See `Public()`'s own doc comment for why this
+ * should stay the only such exemption.
  */
 @Controller({ path: 'health', version: VERSION_NEUTRAL })
 export class HealthController {
@@ -36,6 +43,7 @@ export class HealthController {
     private readonly database: DatabaseHealthIndicator,
   ) {}
 
+  @Public()
   @Get()
   @HealthCheck()
   check(): Promise<HealthCheckResult> {

@@ -1,0 +1,74 @@
+import { Injectable } from '@nestjs/common';
+import type { Group, GroupMembership } from '@prisma/client';
+
+import { PrismaService } from '../../../platform/database/prisma.service';
+
+export interface ApplyGroupMembershipChangeInput {
+  branchId: string;
+  personId: string;
+  groupId: string;
+  groupType: 'PASTORAL_CARE' | 'MINISTRY';
+  membershipIdsToClose: string[];
+  reason?: string;
+  /**
+   * PRD §19.1 step 6: "system transitions lifecycle_stage to
+   * AssignedToBacenta and opens a GROUP_MEMBERSHIP" - one system action,
+   * not two. When set, `PersonService`'s caller (`GroupMembershipService`)
+   * has already determined this specific transition applies
+   * (`requiresGroupMembershipToTransition`); this repository performs it
+   * in the same transaction as the membership change, not as a separate
+   * follow-up write.
+   */
+  personLifecycleStageUpdate?: string;
+}
+
+/**
+ * Prisma-backed persistence for `people.groups` / `people.group_memberships`
+ * (Blueprint §6.4/§7.2). See `PersonRepository`'s doc comment for why
+ * every query below filters explicitly by `branchId` rather than relying
+ * on Row-Level Security alone.
+ */
+@Injectable()
+export class GroupMembershipRepository {
+  constructor(private readonly prisma: PrismaService) {}
+
+  findGroupById(groupId: string): Promise<Group | null> {
+    return this.prisma.group.findUnique({ where: { id: groupId } });
+  }
+
+  /**
+   * BR-PPL-01/FR-PPL-04: closing the prior active Bacenta membership and
+   * opening the new one happen in one transaction, so a failure partway
+   * through never leaves a Person with zero *or* two active Bacenta
+   * memberships. `db/schema.prisma`'s `one_active_bacenta_per_person`
+   * partial unique index (Blueprint §7.5) is the database-level backstop
+   * if this invariant is ever violated by a bug elsewhere.
+   */
+  async applyChange(input: ApplyGroupMembershipChangeInput): Promise<GroupMembership> {
+    const now = new Date();
+    return this.prisma.$transaction(async (tx) => {
+      if (input.membershipIdsToClose.length > 0) {
+        await tx.groupMembership.updateMany({
+          where: { id: { in: input.membershipIdsToClose } },
+          data: { endedAt: now, reason: input.reason },
+        });
+      }
+      const membership = await tx.groupMembership.create({
+        data: {
+          branchId: input.branchId,
+          personId: input.personId,
+          groupId: input.groupId,
+          groupType: input.groupType,
+          startedAt: now,
+        },
+      });
+      if (input.personLifecycleStageUpdate) {
+        await tx.person.update({
+          where: { id: input.personId },
+          data: { lifecycleStage: input.personLifecycleStageUpdate as never },
+        });
+      }
+      return membership;
+    });
+  }
+}
