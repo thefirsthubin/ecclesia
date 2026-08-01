@@ -1,9 +1,0 @@
-
-Linting "api"...
-
-[0m[7m[1m[31m NX [39m[22m[27m[0m  [31mESLint configuration in --config is invalid:[39m
-
-	- Property "" is the wrong type (expected object but got `"import baseConfig from '../../eslint.config.mjs';\nexport default [...baseConfig];"`).
-
-Pass --verbose to see the stacktrace.
-
