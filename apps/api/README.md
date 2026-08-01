@@ -5,20 +5,24 @@ one NestJS module per bounded context (Blueprint Ch.1 §4.2 / Ch.2 §6.4):
 `people`, `pastoral-care`, `ministry`, `gatherings`, `stewardship`,
 `insights`, `platform`.
 
-**Status (Stewardship domain milestone):** `platform` provides a real
+**Status (Insights domain milestone):** `platform` provides a real
 database connection and Cognito JWT authentication (Sprint 1.4, verified
 for real: `pnpm install`/`lint`/`test`/`build` all pass; only integration
 against a real, provisioned Cognito User Pool remains unverified).
-`modules/people/`, `modules/pastoral-care/`, `modules/gatherings/`, and
-`modules/stewardship/` are the first four bounded-context modules built on
-top of it. People and Pastoral Care import each other (`forwardRef`) for a
-genuine bidirectional public-service dependency; Gatherings and
-Stewardship both import People normally, consuming its exported services
-without either needing anything back - see
-`modules/people/PEOPLE_DESIGN_NOTES.md`,
+`modules/people/`, `modules/pastoral-care/`, `modules/gatherings/`,
+`modules/stewardship/`, and `modules/insights/` are the first five
+bounded-context modules built on top of it. People and Pastoral Care
+import each other (`forwardRef`) for a genuine bidirectional
+public-service dependency; Gatherings, Stewardship, and Insights each
+import People normally, consuming its exported services without either
+needing anything back - see `modules/people/PEOPLE_DESIGN_NOTES.md`,
 `modules/pastoral-care/PASTORAL_CARE_DESIGN_NOTES.md`,
-`modules/gatherings/GATHERINGS_DESIGN_NOTES.md`, and
-`modules/stewardship/STEWARDSHIP_DESIGN_NOTES.md`. `src/platform/` holds:
+`modules/gatherings/GATHERINGS_DESIGN_NOTES.md`,
+`modules/stewardship/STEWARDSHIP_DESIGN_NOTES.md`, and
+`modules/insights/INSIGHTS_DESIGN_NOTES.md`. Insights is also, so far,
+the only module that *exports* something for a still-hypothetical future
+consumer (`EngagementSignalService` - see its design notes for why).
+`src/platform/` holds:
 
 | File | Purpose |
 |---|---|
@@ -46,4 +50,6 @@ without either needing anything back - see
 
 **`modules/stewardship/`** (PRD §13.5) is the fourth bounded-context module: the Financial Transaction inbound sub-flow (record/read/verify/flag/escalate/reconcile, FR-STW-01 through 05/07), the Expense outbound sub-flow (request/read/approve/reject/pay/receipt, FR-STW-09), and Project/Pledge create/read/fulfill (FR-STW-08/H2) - consuming People's already-exported `GroupScopeService` (Bacenta-recorded offerings) and `PersonScopeService` (Expense requester scope) unchanged, no new People exports required. Reuses `libs/rbac`'s `DIFFERENT_ACTOR_THAN_RECORDER` record-level check for both BR-STW-04 (Financial Transaction verify) and FR-STW-09 (Expense approve) rather than inventing a parallel check, and is this codebase's first real *declarative* `@UseGuards(..., RbacGuard, RecordLevelPolicyGuard)` usage (every prior `recordLevelCheck` consumer went through an imperative `evaluate()` escape hatch instead, for reasons specific to that endpoint). Imports `PeopleModule` as an ordinary import (no `forwardRef`). See `modules/stewardship/STEWARDSHIP_DESIGN_NOTES.md` for the full citation breakdown, including why `amountMinor` travels as a decimal string (Prisma `BigInt` cannot round-trip through JSON), and what's deliberately deferred (FR-STW-07's bank-deposit comparison - no such entity exists in `db/schema.prisma`; the SLA-triggered `UnderInvestigation` transition, Mobile Money provider integration, and Pledge reminders - all need a scheduler that doesn't exist yet).
 
-Two bounded-context modules remain unbuilt: ministry, insights.
+**`modules/insights/`** (PRD §13.6) is the fifth bounded-context module: the Church Pulse weighted-scoring model computed on read for Branch and Bacenta/cluster scope (FR-INS-01, BR-INS-01, `libs/domain/insights`'s `computeChurchPulseScore()`), trend-decline alerting (FR-INS-03, `evaluatePulseTrend()`), role-scoped dashboards (FR-INS-04: `branch-dashboard`, `bacenta-dashboard/:groupId`, `cluster-dashboard/:groupId`), and Alert act/dismiss resolution (FR-INS-05) - consuming People's already-exported `GroupScopeService` unchanged, the third consumer after Gatherings and Stewardship. Unlike every prior module, `InsightsModule` *exports* `EngagementSignalService` - the landing point for a future `apps/worker` Engagement Signal consumer that does not exist yet (Blueprint Ch.4/§10.6's EventBridge/SQS bus is entirely unbuilt in this codebase; this milestone deliberately does not invent a synchronous substitute wiring the other four domains directly into it). NFR-PRIV-02's Person-level-scoring gate is enforced structurally: `PulseScoreService` has no method capable of computing a Person-scoped score. Imports `PeopleModule` as an ordinary import (no `forwardRef`). See `modules/insights/INSIGHTS_DESIGN_NOTES.md` for the full citation breakdown, including why the cluster dashboard is a single-Bacenta drill-down rather than a true ranked list (the same `ResourceContext` structural limitation already disclosed for People's deferred search/directory) and why the Alert inbox is served per-dashboard rather than as a separate cross-cutting list endpoint.
+
+One bounded-context module remains unbuilt: ministry.

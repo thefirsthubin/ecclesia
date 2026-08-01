@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { GatheringsModule } from '../modules/gatherings/gatherings.module';
+import { InsightsModule } from '../modules/insights/insights.module';
 import { PastoralCareModule } from '../modules/pastoral-care/pastoral-care.module';
 import { PeopleModule } from '../modules/people/people.module';
 import { StewardshipModule } from '../modules/stewardship/stewardship.module';
@@ -25,14 +26,16 @@ import { PlatformModule } from '../platform/platform.module';
  * `apps/api/src/modules/gatherings/GATHERINGS_DESIGN_NOTES.md`.
  * `StewardshipModule` (Stewardship domain milestone) is the fourth - see
  * `apps/api/src/modules/stewardship/STEWARDSHIP_DESIGN_NOTES.md`.
+ * `InsightsModule` (Insights domain milestone) is the fifth - see
+ * `apps/api/src/modules/insights/INSIGHTS_DESIGN_NOTES.md`.
  * `PeopleModule` and `PastoralCareModule` import each other
  * (`forwardRef`) for their bidirectional public-service dependency - see
- * both modules' own doc comments. `GatheringsModule` and
- * `StewardshipModule` each import `PeopleModule` normally (no cycle). The
- * remaining two (Ministry, Insights) are still unbuilt.
+ * both modules' own doc comments. `GatheringsModule`, `StewardshipModule`,
+ * and `InsightsModule` each import `PeopleModule` normally (no cycle).
+ * Ministry is the one remaining unbuilt module.
  */
 @Module({
-  imports: [PlatformModule, PeopleModule, PastoralCareModule, GatheringsModule, StewardshipModule],
+  imports: [PlatformModule, PeopleModule, PastoralCareModule, GatheringsModule, StewardshipModule, InsightsModule],
   controllers: [AppController],
   providers: [AppService],
 })

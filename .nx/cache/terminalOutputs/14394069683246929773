@@ -1,0 +1,13 @@
+[2m> [22mjest
+
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m rbac [39m[27m[0m [2msrc/lib/[22m[1mrecord-level-checks.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m rbac [39m[27m[0m [2msrc/lib/[22m[1mevaluate.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m rbac [39m[27m[0m [2msrc/lib/[22m[1mpermission-matrix.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m rbac [39m[27m[0m [2msrc/lib/guards/[22m[1mrecord-level-policy.guard.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m rbac [39m[27m[0m [2msrc/lib/guards/[22m[1mrbac.guard.spec.ts[22m
+
+[1mTest Suites: [22m[1m[32m5 passed[39m[22m, 5 total
+[1mTests:       [22m[1m[32m250 passed[39m[22m, 250 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        [1m[33m3.051 s[39m[22m
+[2mRan all test suites[22m[2m.[22m

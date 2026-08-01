@@ -209,9 +209,49 @@ full citation breakdown. Worth flagging:
   Pledge entirely, since §17.3 predates FR-STW-08) — see the design notes
   for the exact reasoning behind each.
 
+**Insights domain — built.** `apps/api/src/modules/insights` is the fifth
+bounded-context module: the Church Pulse weighted-scoring model
+(`libs/domain/insights/src/lib/church-pulse-scoring.ts`, BR-INS-01,
+OQ-10's equal-sixths placeholder), trend-decline evaluation
+(`pulse-trend.ts`, FR-INS-03), compute-on-read Branch/Bacenta/Cluster
+dashboards (FR-INS-01/04), and an Alert inbox with act/dismiss resolution
+(FR-INS-05) — consuming People's already-exported `GroupScopeService`
+unchanged (the third consumer, after Gatherings and Stewardship). Went
+ahead of Ministry for the same "plumbing before its first consumer"
+reason Stewardship did: its three dashboard-read permission-matrix rows
+had sat unused since Sprint 1.1, and all six Church Pulse signal sources
+already exist as a byproduct of the four domains already built. See
+`apps/api/src/modules/insights/INSIGHTS_DESIGN_NOTES.md` for the full
+citation breakdown. Worth flagging:
+
+- **The real Engagement Signal ingestion pipeline does not exist.**
+  Blueprint Ch.4/§10.6 describes an async EventBridge/SQS bus consumed by
+  `apps/worker`; neither exists anywhere in this codebase. This milestone
+  builds `EngagementSignalService.record()` completely (exported from
+  `InsightsModule`, ready for that future consumer) but deliberately does
+  not invent a synchronous substitute wiring the four other domains
+  directly into it — every dashboard is functionally correct against
+  whatever `engagement_signals` rows already exist, but none will exist
+  in a real deployment until this pipeline is built.
+- **NFR-PRIV-02's hard release gate is enforced structurally, not just by
+  policy** — `PulseScoreService` has no method, and no code path, capable
+  of computing or storing a Person-scoped Church Pulse score.
+- **No true multi-Bacenta ranked-list cluster dashboard (US-G2)** — the
+  same `ResourceContext` single-`bacentaId` limitation already disclosed
+  for People's deferred search/directory. `cluster-dashboard/:groupId` is
+  a single-Bacenta drill-down, structurally identical to
+  `bacenta-dashboard/:groupId`, differing only in RBAC action/scope.
+- **No separate cross-cutting Alert-inbox list endpoint** — served as the
+  `alerts` array already embedded in each dashboard response instead, for
+  the same structural reason as the cluster-dashboard limitation above.
+- One more `[INFERRED]` permission-matrix gap (`insights.alert.read`/
+  `.resolve`, since §17.3 predates the Alert-inbox surface entirely) —
+  see the design notes for the full reasoning.
+
 Next: a real `pnpm install && pnpm lint && pnpm test && pnpm build` run on
-the user's machine to confirm all four milestones, then Ministry or
-Insights (not yet decided).
+the user's machine to confirm all five milestones, then Ministry — the
+one remaining bounded-context module before the locked roadmap's domain
+build-out is complete.
 
 ## Prerequisites
 

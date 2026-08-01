@@ -1,0 +1,9 @@
+
+Linting "domain-people"...
+
+[0m[7m[1m[31m NX [39m[22m[27m[0m  [31mError while loading rule '@typescript-eslint/no-floating-promises': You have used a rule which requires type information, but don't have parserOptions set to generate type information for this file. See https://tseslint.com/typed-linting for enabling linting with type information.[39m
+
+Parser: typescript-eslint/parser
+Occurred while linting /Users/king/Documents/ecclesia/libs/domain/people/jest.config.ts
+Pass --verbose to see the stacktrace.
+

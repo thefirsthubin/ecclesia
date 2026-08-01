@@ -470,6 +470,24 @@ const BASE_MATRIX: PermissionRule[] = [
   },
   { role: 'BACENTA_LEADER', action: 'insights.bacenta_dashboard.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
 
+  // --- Insights: Alert inbox (FR-INS-03/05) - same scoped-leadership shape
+  // as the three dashboard-read rows above; see actions.ts's doc comment
+  // on `insights.alert.read`/`insights.alert.resolve`. ---------------------
+  { role: 'RESIDENT_PASTOR', action: 'insights.alert.read', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'ASSISTANT_PASTOR', action: 'insights.alert.read', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'BACENTA_LEADER', action: 'insights.alert.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'ADMIN', action: 'insights.alert.read', effect: 'ALLOW', scope: 'BRANCH' },
+
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'insights.alert.resolve',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason: 'FR-INS-05 - the responding user is recorded regardless of who resolves it',
+  },
+  { role: 'ASSISTANT_PASTOR', action: 'insights.alert.resolve', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'BACENTA_LEADER', action: 'insights.alert.resolve', effect: 'ALLOW', scope: 'OWN_GROUP' },
+
   // --- Configuration: gathering/role/group types ---------------------------------
   { role: 'RESIDENT_PASTOR', action: 'platform.configuration.read', effect: 'ALLOW', scope: 'BRANCH' },
   { role: 'ASSISTANT_PASTOR', action: 'platform.configuration.read', effect: 'ALLOW', scope: 'CLUSTER' },

@@ -1,0 +1,25 @@
+[2m> [22mjest
+
+[0m[7m[1m[31m FAIL [39m[22m[27m[0m [0m[7m[37m web-admin [39m[27m[0m [2msrc/app/[22m[1mapp.spec.tsx[22m
+  App
+    [31m✕[39m [2mrenders the scaffold heading (1 ms)[22m
+
+[1m[31m  [1m● [22m[1mApp › renders the scaffold heading[39m[22m
+
+    ReferenceError: React is not defined
+[2m[22m
+[2m    [0m [90m  5 |[39m describe([32m'App'[39m[33m,[39m () [33m=>[39m {[22m
+[2m     [90m  6 |[39m   it([32m'renders the scaffold heading'[39m[33m,[39m () [33m=>[39m {[22m
+[2m    [31m[1m>[22m[2m[39m[90m  7 |[39m     render([33m<[39m[33mApp[39m [33m/[39m[33m>[39m)[33m;[39m[22m
+[2m     [90m    |[39m            [31m[1m^[22m[2m[39m[22m
+[2m     [90m  8 |[39m     expect(screen[33m.[39mgetByRole([32m'heading'[39m[33m,[39m { name[33m:[39m [35m/ecclesia admin console/i[39m }))[33m.[39mtoBeInTheDocument()[33m;[39m[22m
+[2m     [90m  9 |[39m   })[33m;[39m[22m
+[2m     [90m 10 |[39m })[33m;[39m[0m[22m
+[2m[22m
+[2m      [2mat Object.<anonymous> ([22m[2m[0m[36msrc/app/app.spec.tsx[39m[0m[2m:7:12)[22m[2m[22m
+
+[1mTest Suites: [22m[1m[31m1 failed[39m[22m, 1 total
+[1mTests:       [22m[1m[31m1 failed[39m[22m, 1 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        0.919 s, estimated 1 s
+[2mRan all test suites[22m[2m.[22m

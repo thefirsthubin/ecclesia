@@ -130,6 +130,18 @@ export const ACTIONS = [
   'insights.cluster_dashboard.read',
   'insights.bacenta_dashboard.read',
 
+  // [INFERRED - no PRD §17.3 row covers this] Alert inbox (FR-INS-03/05).
+  // §17.3's matrix predates the Alert-inbox surface named in §16.6's
+  // capabilities table entirely - no row names it at all, the same gap
+  // Project/Pledge had in Stewardship. Modeled with the identical
+  // role/scope shape as the three dashboard-read rows immediately above
+  // (the same "leadership roles, scoped to their organizational
+  // responsibility" RACI, FR-INS-04/BR-INS-02) since an alert inbox is
+  // itself just another Insights-scoped read/act surface. See
+  // INSIGHTS_DESIGN_NOTES.md.
+  'insights.alert.read',
+  'insights.alert.resolve',
+
   // Configuration (row: "Configuration: gathering/role/group types")
   'platform.configuration.create',
   'platform.configuration.update',

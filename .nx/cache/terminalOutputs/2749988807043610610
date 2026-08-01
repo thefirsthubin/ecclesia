@@ -1,0 +1,19 @@
+
+Linting "domain-people"...
+[0m[0m
+[0m[4m/Users/king/Documents/ecclesia/libs/domain/people/src/lib/duplicate-detection.spec.ts[24m[0m
+[0m  [2m1:1[22m  [31merror[39m  Imports "DuplicateCandidateRecord" are only used as type  [2m@typescript-eslint/consistent-type-imports[22m[0m
+[0m[0m
+[0m[4m/Users/king/Documents/ecclesia/libs/domain/people/src/lib/group-membership-rules.spec.ts[24m[0m
+[0m  [2m1:1[22m  [31merror[39m  Imports "ActiveGroupMembershipRef" are only used as type  [2m@typescript-eslint/consistent-type-imports[22m[0m
+[0m[0m
+[0m[4m/Users/king/Documents/ecclesia/libs/domain/people/src/lib/role-assignment-eligibility.spec.ts[24m[0m
+[0m  [2m1:1[22m  [31merror[39m  Imports "GatedRole" are only used as type  [2m@typescript-eslint/consistent-type-imports[22m[0m
+[0m[0m
+[0m[31m[1m✖ 3 problems (3 errors, 0 warnings)[22m[39m[0m
+[0m[31m[1m[22m[39m[31m[1m  3 errors and 0 warnings potentially fixable with the `--fix` option.[22m[39m[0m
+[0m[31m[1m[22m[39m[0m
+✖ 3 problems (3 errors, 0 warnings)
+
+  3 errors and 0 warnings are potentially fixable with the `--fix` option.
+
