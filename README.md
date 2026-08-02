@@ -287,10 +287,212 @@ citation breakdown. Worth flagging:
   module's missing scheduler/event-bus infrastructure.
 
 All six bounded-context modules named in Blueprint §4.2's module
-inventory are now built. Next: a real
+inventory are now built, and confirmed via a real
 `pnpm install && pnpm lint && pnpm test && pnpm build` run on the user's
-machine to confirm this sixth milestone — after which the locked
-roadmap's domain build-out is complete.
+machine — the locked roadmap's domain build-out is complete.
+
+**apps/worker — first vertical slice built.** `apps/worker` was Sprint
+0 scaffolding only until this milestone (a no-op `bootstrap()`, no queue
+consumers, no scheduled jobs). Following a "Foundation + one full vertical
+slice first" phasing (user-directed), this milestone builds: the
+`platform.processed_events` idempotency table (Blueprint §10.5, one shared
+table with a `consumerName` discriminator rather than three per-consumer
+tables) and its migration; apps/worker's own platform layer (Zod-validated
+config, `nestjs-pino` logging, its own `PrismaService` — no shared
+`libs/database` exists, so this mirrors rather than imports apps/api's
+copy); an `EventBridgePublisherService` wrapping real
+`@aws-sdk/client-eventbridge`; one SQS consumer,
+`insights-consumer`, ingesting the full Engagement Signal stream into
+`insights.engagement_signals` exactly as `EngagementSignalService.record()`'s
+own doc comment anticipated; and one scheduled sweep,
+`silent-drift-sweep`, finally wiring `evaluateSilentDrift()`
+(`libs/domain/pastoral-care`, zero real callers since the Pastoral Care
+milestone) up to real `gatherings.attendance_records` data and publishing
+a synthetic `pastoral_care.silent_drift_flagged` Engagement Signal onto
+the same bus per Blueprint §10.8. `main.ts` is now a command dispatcher
+(`consume:insights` / `sweep:silent-drift`) rather than a no-op. See
+`apps/worker/WORKER_DESIGN_NOTES.md` for the full citation breakdown.
+Worth flagging:
+
+- **No "system actor" exists in `libs/rbac`.** Every write this milestone
+  performs bypasses `RbacGuard`/`RecordLevelPolicyGuard`/`AuditLogService`
+  entirely, by construction — apps/worker has no HTTP request and no
+  authenticated identity to resolve an `ActorContext` from. Worker-owned
+  repositories call Prisma directly, never fabricating an HTTP-shaped
+  actor to satisfy guards that were never designed for a non-HTTP caller.
+- **No live AWS infrastructure exists to verify against**, the same
+  disclosed-gap category Cognito (Sprint 1.4) already established a
+  precedent for — real SDK integration code, unit-tested against mocked
+  clients, not a LocalStack/BullMQ substitute (neither document names one).
+- **The user's own real `pnpm install && pnpm lint && pnpm test && pnpm
+  build` run caught two genuine bugs** (13/14 projects passed first try;
+  `worker` failed both `test` and `build`), both now fixed:
+  `worker:test` failed because `main.spec.ts` transitively imported
+  `WorkerModule`, whose `WorkerPlatformModule` calls `ConfigModule.forRoot`
+  at module-load time, forcing real `AWS_REGION`/`SQS_INSIGHTS_QUEUE_URL`
+  environment variables just to load the test file — fixed by moving
+  `parseCommand`/`runCommand` into their own `command.ts`
+  (`command.spec.ts` replaces `main.spec.ts`). `worker:build` failed with
+  `TS6059` rootDir errors — apps/worker's `build` target had used
+  `@nx/js:tsc` since Sprint 0, which breaks on any cross-library
+  TS-path-mapped import; fixed by switching to `@nx/webpack:webpack` with
+  a new `apps/worker/webpack.config.js`, mirroring `apps/api`'s own
+  working config exactly (plus adding the `src/assets/.gitkeep`
+  `apps/api` already had, which webpack's asset-copy step needs unlike
+  `@nx/js:tsc`'s). See `WORKER_DESIGN_NOTES.md`'s "Two real bugs the
+  user's own `pnpm test`/`pnpm build` run caught" section for the full
+  detail. Still needs the user's own `pnpm db:generate` (the generated
+  Prisma Client doesn't have the new `ProcessedEvent` model yet) and a
+  fresh `pnpm test && pnpm build` to confirm both fixes hold — this
+  sandbox's native `@swc/core` binding can't run Jest at all, so `command.spec.ts`
+  itself has only been statically reviewed, not executed.
+
+**apps/worker — Blueprint §10's full consumer/sweep inventory now built.**
+A follow-up milestone completing the three named SQS consumers (§10.2) and
+four scheduled sweeps (§10.8) the first vertical slice deliberately left
+for later: `notification-consumer` (an idempotency-check-and-log stub —
+still no real delivery channel is decided anywhere in the PRD/Blueprint,
+exactly as flagged in advance) and `audit-consumer` (writes every
+Engagement Signal to `platform.audit_log`, `action` = the signal's own
+`eventType`, deliberately no `actorUserId` — a signal has a
+`subjectPersonId`, not an acting `User`); `church-pulse-recompute`
+(recomputes `PulseScore`/`PulseScoreHistory` for every Branch and active
+Bacenta on a schedule, raising `PULSE_DECLINE` `Alert`s via the identical
+logic `PulseScoreService`/`AlertService` already use compute-on-read —
+the one sweep that publishes no Engagement Signal, since its `Alert`
+output is already a directly queryable resource, unlike the other
+sweeps' conditions); `follow-up-sla-sweep` and
+`attendance-completeness-sweep` (both detect a breach via an existing
+pure domain function — `isFollowUpTaskPastSla()`,
+`evaluateAttendanceCompleteness()` — and publish a synthetic signal,
+deliberately never mutating `FollowUpTask`/`Gathering` themselves, to
+avoid conflicting with `FollowUpTaskService.escalate()`'s own
+human-in-the-loop contract). See `apps/worker/WORKER_DESIGN_NOTES.md` for
+the full citation breakdown. Worth flagging:
+
+- **Automatic Follow-up task escalation-target resolution is still not
+  built** — `follow-up-sla-sweep` detects and signals SLA breaches only;
+  resolving *who* the organizational superior is remains the same
+  unresolved gap `FollowUpTaskService`'s own doc comment already named.
+- **Both new sweep jobs re-publish every run for as long as the
+  underlying condition persists** — no schema entity exists for either to
+  check "was this already signaled" against, unlike `SilentDriftFlag`'s
+  own dedup mechanism. A disclosed trade-off, not a missing feature.
+- **This sandbox's own `tsc --noEmit`, `npx nx lint worker`, and
+  `npx nx build worker` all ran to completion with zero errors this
+  round** (the prior milestone's one remaining error — a stale generated
+  Prisma Client missing `ProcessedEvent` — has since resolved). One real
+  lint error was caught and fixed (`no-empty-object-type` on an
+  interface with no new members). `npx nx test worker` still cannot run
+  in this sandbox at all (the same native `@swc/core` binding failure) —
+  needs the user's own `pnpm test`, plus a `.env` update adding
+  `SQS_NOTIFICATION_QUEUE_URL`/`SQS_AUDIT_QUEUE_URL`, to confirm.
+
+**Design System & UX Foundation v1.0 — complete (document only, no code).**
+`docs/Ecclesia_Design_System_UX_Foundation_v1.0.md` is the product design
+architecture `apps/web-admin` and `apps/mobile` will be built against —
+product philosophy and anti-goals, all eight personas the user requested
+(mapped explicitly onto PRD §11's named personas, with "Branch Pastor,"
+"Council Administrator," and "Super Administrator" flagged as not present
+in the PRD/Blueprint and either mapped to the nearest cited role or
+designed from product judgment and marked as such), separate Web Admin
+and Mobile information architectures traced back to PRD §16's own surface
+tables, the five-zone dashboard model applied to every persona, visual
+language, design tokens, a 24-component library, cross-cutting UX rules,
+the mobile offline-first experience, data-visualization standards, an AI
+Experience Part that is explicit about the gap between the PRD's actual
+(deterministic, rule-based) Insights engine and the brief's request for
+generative "AI summaries"/"conversation panels," and a governance model
+for keeping the system one system as it grows. Every design decision
+traces to a PRD/Blueprint citation or is explicitly marked
+**[Design decision — not sourced]**; a citation-accuracy pass corrected
+several section-number errors (silent-drift's decision tree is PRD §15.8,
+not §12.9; Church Pulse's computation model is §12.8; several `FR-*`
+citations had no section number and now cite PRD §13 correctly) before
+this was considered done. **Next milestone** (not yet started, per the
+user's stated sequencing): implement `apps/web-admin` and `apps/mobile`
+screen-by-screen against this document, so each screen is built once and
+consumed consistently by both platforms.
+
+**UI Foundation — tokens, theme, icons, and a 12-component base slice
+complete on both platforms (Sprint "0" for the design system).**
+`libs/ui/{tokens,core,web,native}` implement the design tokens, theme
+system, and icon strategy from the Design System document above as real
+code, plus 12 of its 23 base components (`Text`, `Heading`, `Button`,
+`Card`, `Badge`, `Avatar`, `Input`, `Divider`, `Spinner`, `Skeleton`,
+`EmptyState`, `ErrorState`) on both `@ecclesia/ui-web` (React DOM) and
+`@ecclesia/ui-native` (React Native), sharing one `Theme` object and one
+icon registry (`lucide`) so a design decision made once is correct on
+both platforms by construction. Module boundaries were tightened
+alongside this (`scope:app-backend`/`scope:app-web`/`scope:app-native`
+replacing a single `scope:app` tag) so a NestJS backend service
+structurally cannot import React/RN UI code. `apps/web-admin` and
+`apps/mobile`'s Sprint 0 placeholder screens were both updated to render
+through their platform's package (`ThemeProvider` + `Heading` + `Text` +
+`Card` + `Badge` + `Button`), proving the acceptance criterion that both
+apps consume the same tokens/primitives with platform-specific
+implementations — these are explicitly still non-product showcase
+screens, not real dashboards. **Explicitly deferred** (documented, not
+omitted): 11 base components (`TextArea`, `Checkbox`, `Radio`, `Select`,
+`Switch`, `Toast`, `Tooltip`, `Modal`, `Drawer`, `Tabs`, `Accordion`) and
+all Navigation/Data/Layout components — see
+`libs/ui/UI_DESIGN_NOTES.md` for the full inventory, planned
+composition, and rationale for sequencing them after this foundation
+slice. Verified in-sandbox via `npx tsc --noEmit` on every new package
+and both apps (all clean except the expected "module not found" for
+`lucide-react`/`lucide-react-native`, which aren't installed in this
+sandbox — no npm registry access here); `npx nx lint`/`build` could not
+be used for this sprint's later files after an `npx nx reset` made the
+Nx project graph itself unreliable in this sandbox (unrelated to the new
+code — see `libs/ui/UI_DESIGN_NOTES.md` §11).
+
+**Confirmed on the user's real machine: `pnpm lint` (18/18), `pnpm
+build` (18/18), and `pnpm test` for `ui-web` (43/43), `ui-native`
+(32/32), and `mobile` (1/1) all pass.** Getting there surfaced and fixed
+several real bugs the sandbox's `tsc --noEmit`-only verification
+couldn't catch:
+
+- `libs/ui/core` (and `ui-web`/`ui-native`, which both import it) is the
+  first library in this repo imported by *another library's* `@nx/js:tsc`
+  build, not just by an app. That executor computes each project's
+  `rootDir` from its own project directory unless a matching
+  `package.json` exists at the dependency's root (its cross-library
+  path-remapping keys off that file's `name` field, silently no-op
+  otherwise) — none of this repo's libraries had one before, since none
+  had ever been a build-time dependency of another library. Added a
+  minimal `package.json` to all four `libs/ui/*` packages; traced the
+  exact mechanism by reading `@nx/js`'s own executor source rather than
+  guessing (two earlier guesses — `buildLibsFromSource: false`, an
+  explicit tsconfig `rootDir` — were tried, confirmed ineffective by
+  reading the source, and reverted).
+- `libs/ui/native` needed its own `babel.config.js` (Babel resolves
+  config from the nearest ancestor with a `package.json`, so once that
+  package.json existed for the fix above, it stopped inheriting
+  `apps/mobile`'s config for Flow-syntax stripping in RN's own polyfills).
+- `lucide-react-native` ships ESM at the `exports` condition Jest's
+  React-Native-aware resolution picks, which RN's Jest preset transform
+  never matches by extension — added a `moduleNameMapper` redirect to
+  the package's own CJS build in both `apps/mobile` and `libs/ui/native`'s
+  jest configs.
+- Three native-component tests had real bugs: `Divider`/`Skeleton`
+  need `{ includeHiddenElements: true }` on `getByTestId` since RN
+  Testing Library excludes `accessibilityElementsHidden` elements from
+  default queries the same as it would for a screen reader; `Icon`'s
+  test asserted a single label match when lucide's SVG output legitimately
+  produces more than one; `useReducedMotion` didn't guard against
+  `AccessibilityInfo.isReduceMotionEnabled()` returning `undefined`
+  (rather than a rejected promise) under Jest's mocked RN environment.
+- Excluding `test-setup.ts` from `tsconfig.lib.json` (needed so the
+  `jest.mock(...)` call above type-checks — that file's global `jest`
+  namespace isn't declared there) orphaned it from every tsconfig's
+  `include`, which `nx build`/`tsc` tolerate but `nx lint`'s type-aware
+  ESLint parser does not ("was not found by the project service").
+  Fixed by adding it to `tsconfig.spec.json`'s `include` instead of just
+  excluding it everywhere - it now belongs to exactly one project, the
+  one that already declares `"jest"` in its `types`.
+
+**Final state, confirmed on the user's real machine: `pnpm lint`,
+`pnpm build`, and `pnpm test` all pass 18/18.**
 
 ## Prerequisites
 

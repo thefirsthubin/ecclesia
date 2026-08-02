@@ -38,6 +38,19 @@ See `db/DESIGN_NOTES.md` for exactly which parts of the schema are
 cited PRD requirement), the corrections made from the pre-Blueprint first
 draft, and the open questions that remain genuinely unresolved.
 
+**Worker milestone addition:**
+
+5. `20260801040000_add_processed_events` - adds `platform.processed_events`
+   (Blueprint §10.5's per-consumer idempotency table, one shared table with
+   a `consumer_name` discriminator rather than three near-identical
+   tables - see `db/DESIGN_NOTES.md`'s "Worker milestone" entry). Unlike
+   migrations 2-4 above, this is new schema, not a gap-closing fix -
+   hand-written the same way the init migration was, for the same sandbox
+   reason (no live database in this environment to run `prisma migrate
+   dev` against). Needs the same real-Postgres verification pass Sprint
+   1.3 gave the init migration before it can be considered proven rather
+   than merely reviewed.
+
 **Do not edit a migration.sql file after it has been applied.** Prisma
 records a checksum of each migration when it's applied; editing the file
 afterward (rather than adding a new migration) causes `prisma migrate

@@ -31,6 +31,25 @@
  * package-name-to-directory encoding (scoped packages become
  * "@scope+name@version"). Transforming everything is the standard
  * workaround and is cheap at this project's current size.
+ *
+ * `moduleNameMapper` for `lucide-react-native`: that package's own
+ * package.json declares an `exports` map where the `"react-native"`
+ * condition (which Jest's RN-aware resolution honors, matching what
+ * Metro does for the real app bundle) points at
+ * `dist/esm/lucide-react-native.mjs` - raw ESM `export` syntax, which
+ * Jest's CJS-style runtime cannot execute even with
+ * `transformIgnorePatterns: []`, because the `.mjs` extension never
+ * matches the RN preset's `transform` regex (`\.[jt]sx?$`) in the first
+ * place - no transformer ever runs on it, so it's not a
+ * transformIgnorePatterns problem at all. The package's `exports` map
+ * only declares ".", "./icons", and "./icons/*" as importable subpaths
+ * (confirmed from the installed package.json - no other deep path is
+ * exported), so a bare-specifier redirect to a `dist/cjs/...` subpath
+ * would itself be rejected by Node's exports enforcement. Redirecting
+ * via a literal `<rootDir>`-relative filesystem path, as below, bypasses
+ * `exports` resolution entirely (Jest treats a path value as a direct
+ * file reference, not a specifier to re-resolve) and lands on the CJS
+ * build the package publishes for exactly this "require" case.
  */
 export default {
   displayName: 'mobile',
@@ -39,5 +58,9 @@ export default {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   transformIgnorePatterns: [],
+  moduleNameMapper: {
+    '^lucide-react-native$':
+      '<rootDir>/../../node_modules/lucide-react-native/dist/cjs/lucide-react-native.js',
+  },
   coverageDirectory: '../../coverage/apps/mobile',
 };

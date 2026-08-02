@@ -1,0 +1,16 @@
+asset main.js 514 KiB [emitted] [big] (name: main) 1 related asset
+asset pnpm-lock.yaml 46.6 KiB [emitted]
+asset package.json 588 bytes [emitted]
+asset assets/.gitkeep 0 bytes [emitted] [from: apps/api/src/assets/.gitkeep] [copied]
+modules by path ./apps/api/src/ 367 KiB 115 modules
+modules by path ./libs/ 143 KiB
+  modules by path ./libs/domain/ 44.4 KiB 20 modules
+  modules by path ./libs/rbac/src/ 53.1 KiB 11 modules
+  modules by path ./libs/contracts/src/ 45.9 KiB 9 modules
+modules by path external "@nestjs/ 210 bytes
+  external "@nestjs/common" 42 bytes [built] [code generated]
+  external "@nestjs/core" 42 bytes [built] [code generated]
+  external "@nestjs/config" 42 bytes [built] [code generated]
+  + 2 modules
++ 6 modules
+webpack 5.109.2 compiled successfully in 34727 ms

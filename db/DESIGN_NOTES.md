@@ -72,6 +72,27 @@ table lists "representative tables," not exhaustive column lists:
 | `platform.sessions` | Named in Blueprint §7.2's table list but never given schema detail anywhere in either document — Blueprint §8.3's token strategy describes Cognito's own device tracking, which may mean this table's real purpose is narrower than "sessions" implies. Built minimally (Open Question #4) |
 | `platform.councils` | FR-ADM-03 ("Branch and Council as first-class entities from Release 1"); PRD §12.3's ERD: `COUNCIL ||--o{ BRANCH : oversees` |
 
+## Worker milestone: `platform.processed_events`
+
+Added by `db/migrations/20260801040000_add_processed_events`, alongside
+apps/worker's build-out (see `apps/worker/WORKER_DESIGN_NOTES.md`).
+**[BLUEPRINT-EXACT reasoning, PRD-DERIVED shape]**: Blueprint §10.5 states
+every consumer needs "a `processed_events` table (per consumer)" keyed on
+`eventId` to make at-least-once EventBridge/SQS delivery idempotent, but
+doesn't give a column list. Modeled as **one shared table** with a
+`consumer_name` discriminator column and a `@@unique([consumerName,
+eventId])` compound index, rather than three near-identical
+per-consumer tables (§10.2 names three consumers: `insights-consumer`,
+`notification-consumer`, `audit-consumer`) — a construction, not a
+citation, made on ordinary "don't repeat a table three times for the same
+check" grounds. `branch_id` is carried and given the same
+`ENABLE ROW LEVEL SECURITY`/`branch_isolation` policy treatment every
+other Branch-scoped table gets, since every `EngagementSignalEnvelope`
+(§10.3) already carries a `branchId` — consistent with, not an exception
+to, Open Question #3 below (RLS is still enforced only via this policy
+existing, not via the API/Worker actually setting
+`app.current_branch_id` per request/message).
+
 ## Open questions (still genuinely unresolved by the source documents)
 
 1. **Assistant Pastor "cluster" scope mechanism.** Confirmed real (PRD §17.2, §11.3, §16.2/16.6 all reference it functionally) and confirmed *not* a Group entity (see the corrections table above), but neither document specifies its schema shape beyond "cluster assignment is itself a configuration." This migration models it as `role_assignments.scope_group_ids UUID[]` (nullable, populated only for cluster-scoped Role Assignments) — a plain array is the most literal reading of "configuration, not a hard-coded structure," but this is a construction, not a citation (that part remains genuinely unresolved by the source documents - it's a reasonable schema shape, not something either document states). **The consuming-code half is now resolved** (People domain milestone, as a follow-up to Sprint 1.4): `libs/rbac`'s `ActorContext.clusterId`/`ResourceContext.clusterId` (single-value equality, unusable against this array shape) were replaced with `ActorContext.clusterBacentaIds: string[]` and a set-membership check against `ResourceContext.bacentaId`, populated directly from this column. See `apps/api/src/platform/auth/AUTH_DESIGN_NOTES.md`'s "Resolved" section.

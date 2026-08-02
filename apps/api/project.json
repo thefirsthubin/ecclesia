@@ -4,7 +4,7 @@
   "projectType": "application",
   "sourceRoot": "apps/api/src",
   "tags": [
-    "scope:app"
+    "scope:app-backend"
   ],
   "targets": {
     "build": {

@@ -4,7 +4,7 @@
   "projectType": "application",
   "sourceRoot": "apps/mobile/src",
   "tags": [
-    "scope:app"
+    "scope:app-native"
   ],
   "targets": {
     "build": {

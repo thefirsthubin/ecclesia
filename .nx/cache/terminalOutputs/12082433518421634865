@@ -1,0 +1,431 @@
+[2m> [22mjest
+
+[1m[2mDetermining test suites to run...[22m[22m[999D[K
+
+[1mTest Suites: [22m0 of 13 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        0 s, estimated 12 s
+[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Card/[22m[1mCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 13 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        0 s, estimated 12 s
+[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Card/[22m[1mCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 13 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        1 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Card/[22m[1mCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 13 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        2 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Card/[22m[1mCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 13 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        3 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Card/[22m[1mCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 13 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        4 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Card/[22m[1mCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 13 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        5 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Card/[22m[1mCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 13 total
+[1mTests:       [22m[1m[32m7 passed[39m[22m, 7 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        5 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m���[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Card/[22m[1mCard.spec.tsx[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Card/[22m[1mCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 13 total
+[1mTests:       [22m[1m[32m7 passed[39m[22m, 7 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        5 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m���[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Card/[22m[1mCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 13 total
+[1mTests:       [22m[1m[32m7 passed[39m[22m, 7 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        5 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[32m1 passed[39m[22m, 1 of 13 total
+[1mTests:       [22m[1m[32m10 passed[39m[22m, 10 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        5 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[32m1 passed[39m[22m, 1 of 13 total
+[1mTests:       [22m[1m[32m10 passed[39m[22m, 10 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        5 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[32m2 passed[39m[22m, 2 of 13 total
+[1mTests:       [22m[1m[32m11 passed[39m[22m, 11 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        5 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[32m2 passed[39m[22m, 2 of 13 total
+[1mTests:       [22m[1m[32m11 passed[39m[22m, 11 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        5 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[32m2 passed[39m[22m, 2 of 13 total
+[1mTests:       [22m[1m[32m11 passed[39m[22m, 11 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        5 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m��[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[32m2 passed[39m[22m, 2 of 13 total
+[1mTests:       [22m[1m[32m11 passed[39m[22m, 11 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        5 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[32m5 passed[39m[22m, 5 of 13 total
+[1mTests:       [22m[1m[32m20 passed[39m[22m, 20 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        5 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[32m5 passed[39m[22m, 5 of 13 total
+[1mTests:       [22m[1m[32m20 passed[39m[22m, 20 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        5 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[32m6 passed[39m[22m, 6 of 13 total
+[1mTests:       [22m[1m[32m22 passed[39m[22m, 22 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        6 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[32m6 passed[39m[22m, 6 of 13 total
+[1mTests:       [22m[1m[32m22 passed[39m[22m, 22 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        6 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[32m6 passed[39m[22m, 6 of 13 total
+[1mTests:       [22m[1m[32m22 passed[39m[22m, 22 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        6 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[32m8 passed[39m[22m, 8 of 13 total
+[1mTests:       [22m[1m[32m30 passed[39m[22m, 30 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        6 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[32m8 passed[39m[22m, 8 of 13 total
+[1mTests:       [22m[1m[32m30 passed[39m[22m, 30 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        6 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[32m9 passed[39m[22m, 9 of 13 total
+[1mTests:       [22m[1m[32m34 passed[39m[22m, 34 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        6 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[32m9 passed[39m[22m, 9 of 13 total
+[1mTests:       [22m[1m[32m34 passed[39m[22m, 34 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        6 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m���[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[32m9 passed[39m[22m, 9 of 13 total
+[1mTests:       [22m[1m[32m34 passed[39m[22m, 34 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        6 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 13 total
+[1mTests:       [22m[1m[32m39 passed[39m[22m, 39 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        6 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 13 total
+[1mTests:       [22m[1m[32m39 passed[39m[22m, 39 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        6 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-web [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 13 total
+[1mTests:       [22m[1m[32m39 passed[39m[22m, 39 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        6 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m��[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+
+[1mTest Suites: [22m[1m[32m13 passed[39m[22m, 13 total
+[1mTests:       [22m[1m[32m43 passed[39m[22m, 43 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        6 s, estimated 12 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[999D[K
+[1mTest Suites: [22m[1m[32m13 passed[39m[22m, 13 total
+[1mTests:       [22m[1m[32m43 passed[39m[22m, 43 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        6.688 s, estimated 12 s
+[2mRan all test suites[22m[2m.[22m

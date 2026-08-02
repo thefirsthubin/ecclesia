@@ -130,11 +130,50 @@ module.exports = tseslint.config(
                 'scope:domain-insights',
               ],
             },
+            // --- UI Foundation sprint additions below ---
+            // `libs/ui/*` mirrors the same "leaf library" discipline as
+            // `libs/domain/*`, but forms its own dependency chain instead
+            // of a flat set of independent leaves, because a theme
+            // genuinely is built FROM tokens, and a component genuinely
+            // is built FROM theme/shared-types - collapsing that chain
+            // into three unrelated leaves would let `ui-web` reach past
+            // `ui-core` and hand-roll its own theme logic, which is
+            // exactly the "built twice, inconsistently" failure the UI
+            // Foundation exists to prevent (Design System v1.0 Part 1.1).
             {
-              // Applications sit at the top of the graph and may depend on
-              // any library, per Blueprint Ch.1 §4.3 rule 4 (an app's
-              // module layer is where cross-domain orchestration happens).
-              sourceTag: 'scope:app',
+              // Pure token data - the one leaf with zero workspace deps.
+              sourceTag: 'scope:ui-tokens',
+              onlyDependOnLibsWithTags: [],
+            },
+            {
+              // Theme composition + shared types/icon registry - still
+              // framework-agnostic (no React/React Native import), so it
+              // depends on tokens only, never on ui-web or ui-native.
+              sourceTag: 'scope:ui-core',
+              onlyDependOnLibsWithTags: ['scope:ui-tokens'],
+            },
+            {
+              // React DOM component implementations.
+              sourceTag: 'scope:ui-web',
+              onlyDependOnLibsWithTags: ['scope:ui-tokens', 'scope:ui-core'],
+            },
+            {
+              // React Native component implementations. Never allowed to
+              // depend on `scope:ui-web` (or vice versa) - the two
+              // platform libraries are siblings, not layered on each
+              // other, so a native screen can never accidentally pull in
+              // a DOM-only component and fail at Metro-bundle time.
+              sourceTag: 'scope:ui-native',
+              onlyDependOnLibsWithTags: ['scope:ui-tokens', 'scope:ui-core'],
+            },
+            {
+              // Backend applications (apps/api, apps/worker) - split out
+              // of the former single `scope:app` specifically so a
+              // NestJS service is structurally incapable of importing a
+              // React or React Native UI library, a real bug class this
+              // rule now catches at lint time instead of at bundle time
+              // (UI Foundation sprint, see libs/ui/UI_DESIGN_NOTES.md).
+              sourceTag: 'scope:app-backend',
               onlyDependOnLibsWithTags: [
                 'scope:contracts',
                 'scope:rbac',
@@ -146,6 +185,46 @@ module.exports = tseslint.config(
                 'scope:domain-gatherings',
                 'scope:domain-stewardship',
                 'scope:domain-insights',
+              ],
+            },
+            {
+              // apps/web-admin - may depend on the shared UI foundation's
+              // web implementation, but never on ui-native.
+              sourceTag: 'scope:app-web',
+              onlyDependOnLibsWithTags: [
+                'scope:contracts',
+                'scope:rbac',
+                'scope:config',
+                'scope:testing',
+                'scope:domain-people',
+                'scope:domain-pastoral-care',
+                'scope:domain-ministry',
+                'scope:domain-gatherings',
+                'scope:domain-stewardship',
+                'scope:domain-insights',
+                'scope:ui-tokens',
+                'scope:ui-core',
+                'scope:ui-web',
+              ],
+            },
+            {
+              // apps/mobile - may depend on the shared UI foundation's
+              // native implementation, but never on ui-web.
+              sourceTag: 'scope:app-native',
+              onlyDependOnLibsWithTags: [
+                'scope:contracts',
+                'scope:rbac',
+                'scope:config',
+                'scope:testing',
+                'scope:domain-people',
+                'scope:domain-pastoral-care',
+                'scope:domain-ministry',
+                'scope:domain-gatherings',
+                'scope:domain-stewardship',
+                'scope:domain-insights',
+                'scope:ui-tokens',
+                'scope:ui-core',
+                'scope:ui-native',
               ],
             },
           ],

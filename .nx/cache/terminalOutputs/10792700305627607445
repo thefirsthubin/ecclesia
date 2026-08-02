@@ -1,0 +1,13 @@
+
+Linting "ui-web"...
+[0m[0m
+[0m[4m/Users/king/Documents/ecclesia/libs/ui/web/src/lib/Skeleton/Skeleton.tsx[24m[0m
+[0m  [2m40:9[22m  [31merror[39m  Definition for rule 'react/no-unknown-property' was not found  [2mreact/no-unknown-property[22m[0m
+[0m[0m
+[0m[4m/Users/king/Documents/ecclesia/libs/ui/web/src/lib/Spinner/Spinner.tsx[24m[0m
+[0m  [2m42:8[22m  [31merror[39m  Definition for rule 'react/no-unknown-property' was not found  [2mreact/no-unknown-property[22m[0m
+[0m[0m
+[0m[31m[1m✖ 2 problems (2 errors, 0 warnings)[22m[39m[0m
+[0m[31m[1m[22m[39m[0m
+✖ 2 problems (2 errors, 0 warnings)
+

@@ -1,0 +1,41 @@
+[2m> [22mjest
+
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-tokens [39m[27m[0m [2msrc/lib/[22m[1mtokens.spec.ts[22m
+  contrast.ts
+    [32m✓[39m [2mcomputes relative luminance of pure white as 1 and pure black as 0 (3 ms)[22m
+    [32m✓[39m [2mcomputes a contrast ratio of 21:1 between pure black and pure white[22m
+    [32m✓[39m [2mis order-independent (1 ms)[22m
+  color tokens - WCAG AA contrast (Design System §1.5, NFR-USA-02)
+    [32m✓[39m [2mtext.primary on surface.default clears 4.5:1 (light mode) (1 ms)[22m
+    [32m✓[39m [2mtext.secondary on surface.default clears 4.5:1 (light mode)[22m
+    [32m✓[39m [2mtext.primary on surface.default clears 4.5:1 (dark mode) (1 ms)[22m
+    [32m✓[39m [2mtext.secondary on surface.default clears 4.5:1 (dark mode)[22m
+    [32m✓[39m [2mwhite text on brand.light.default (the primary button fill) clears 4.5:1[22m
+    [32m✓[39m [2mwhite text on status.success.strong (solid fills) clears 4.5:1 (1 ms)[22m
+    [32m✓[39m [2mwhite text on status.warning.strong (solid fills) clears 4.5:1[22m
+    [32m✓[39m [2mwhite text on status.danger.strong (solid fills) clears 4.5:1[22m
+    [32m✓[39m [2mwhite text on status.info.strong (solid fills) clears 4.5:1[22m
+    [32m✓[39m [2mwhite text on status.neutral.strong (solid fills) clears 4.5:1[22m
+    [32m✓[39m [2mstatus.success light-mode foreground on its own background clears 4.5:1[22m
+    [32m✓[39m [2mstatus.warning light-mode foreground on its own background clears 4.5:1 (5 ms)[22m
+    [32m✓[39m [2mstatus.danger light-mode foreground on its own background clears 4.5:1[22m
+    [32m✓[39m [2mstatus.info light-mode foreground on its own background clears 4.5:1 (1 ms)[22m
+    [32m✓[39m [2mstatus.neutral light-mode foreground on its own background clears 4.5:1[22m
+    [32m✓[39m [2mstatus.success dark-mode foreground on its own background clears 4.5:1 (1 ms)[22m
+    [32m✓[39m [2mstatus.warning dark-mode foreground on its own background clears 4.5:1[22m
+    [32m✓[39m [2mstatus.danger dark-mode foreground on its own background clears 4.5:1[22m
+    [32m✓[39m [2mstatus.info dark-mode foreground on its own background clears 4.5:1 (1 ms)[22m
+    [32m✓[39m [2mstatus.neutral dark-mode foreground on its own background clears 4.5:1[22m
+  getChurchPulseBand (FR-INS-01, PRD §13; band boundaries: Design decision extending v1.0 Part 10.1)
+    [32m✓[39m [2mresolves a score of 85 to "thriving" (1 ms)[22m
+    [32m✓[39m [2mresolves a score of 70 to "healthy"[22m
+    [32m✓[39m [2mresolves a score of 50 to "attention"[22m
+    [32m✓[39m [2mresolves a score of 10 to "atRisk" (1 ms)[22m
+    [32m✓[39m [2mclamps out-of-range scores instead of throwing[22m
+    [32m✓[39m [2mbands are exhaustive and non-overlapping across [0, 100] (8 ms)[22m
+
+[1mTest Suites: [22m[1m[32m1 passed[39m[22m, 1 total
+[1mTests:       [22m[1m[32m29 passed[39m[22m, 29 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        0.429 s, estimated 1 s
+[2mRan all test suites[22m[2m.[22m

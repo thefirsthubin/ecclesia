@@ -1,0 +1,66 @@
+Compiling TypeScript files for project "ui-core"...
+[1m[31m[96mlibs/ui/core/src/lib/theme.ts[0m:[93m17[0m:[93m8[0m - [91merror[0m[90m TS6059: [0mFile '/Users/king/Documents/ecclesia/libs/ui/tokens/src/index.ts' is not under 'rootDir' '/Users/king/Documents/ecclesia/libs/ui/core'. 'rootDir' is expected to contain all source files.[39m[22m
+[1m[31m  The file is in the program because:[39m[22m
+[1m[31m    Imported via '@ecclesia/ui-tokens' from file '/Users/king/Documents/ecclesia/libs/ui/core/src/lib/theme.ts'[39m[22m
+[1m[31m    Imported via '@ecclesia/ui-tokens' from file '/Users/king/Documents/ecclesia/libs/ui/core/src/lib/types.ts'[39m[22m
+[1m[31m[39m[22m
+[1m[31m[7m17[0m } from '@ecclesia/ui-tokens';[39m[22m
+[1m[31m[7m  [0m [91m       ~~~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m  [96mlibs/ui/core/src/lib/types.ts[0m:[93m16[0m:[93m8[0m[39m[22m
+[1m[31m    [7m16[0m } from '@ecclesia/ui-tokens';[39m[22m
+[1m[31m    [7m  [0m [96m       ~~~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m    File is included via import here.[39m[22m
+[1m[31m[96mlibs/ui/tokens/src/index.ts[0m:[93m1[0m:[93m15[0m - [91merror[0m[90m TS6059: [0mFile '/Users/king/Documents/ecclesia/libs/ui/tokens/src/lib/contrast.ts' is not under 'rootDir' '/Users/king/Documents/ecclesia/libs/ui/core'. 'rootDir' is expected to contain all source files.[39m[22m
+[1m[31m  The file is in the program because:[39m[22m
+[1m[31m    Imported via './lib/contrast' from file '/Users/king/Documents/ecclesia/libs/ui/tokens/src/index.ts'[39m[22m
+[1m[31m    Imported via './contrast' from file '/Users/king/Documents/ecclesia/libs/ui/tokens/src/lib/color.ts'[39m[22m
+[1m[31m[39m[22m
+[1m[31m[7m1[0m export * from './lib/contrast';[39m[22m
+[1m[31m[7m [0m [91m              ~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m  [96mlibs/ui/tokens/src/lib/color.ts[0m:[93m1[0m:[93m31[0m[39m[22m
+[1m[31m    [7m1[0m import type { HexColor } from './contrast';[39m[22m
+[1m[31m    [7m [0m [96m                              ~~~~~~~~~~~~[0m[39m[22m
+[1m[31m    File is included via import here.[39m[22m
+[1m[31m[96mlibs/ui/tokens/src/index.ts[0m:[93m2[0m:[93m15[0m - [91merror[0m[90m TS6059: [0mFile '/Users/king/Documents/ecclesia/libs/ui/tokens/src/lib/color.ts' is not under 'rootDir' '/Users/king/Documents/ecclesia/libs/ui/core'. 'rootDir' is expected to contain all source files.[39m[22m
+[1m[31m[39m[22m
+[1m[31m[7m2[0m export * from './lib/color';[39m[22m
+[1m[31m[7m [0m [91m              ~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[96mlibs/ui/tokens/src/index.ts[0m:[93m3[0m:[93m15[0m - [91merror[0m[90m TS6059: [0mFile '/Users/king/Documents/ecclesia/libs/ui/tokens/src/lib/typography.ts' is not under 'rootDir' '/Users/king/Documents/ecclesia/libs/ui/core'. 'rootDir' is expected to contain all source files.[39m[22m
+[1m[31m[39m[22m
+[1m[31m[7m3[0m export * from './lib/typography';[39m[22m
+[1m[31m[7m [0m [91m              ~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[96mlibs/ui/tokens/src/index.ts[0m:[93m4[0m:[93m15[0m - [91merror[0m[90m TS6059: [0mFile '/Users/king/Documents/ecclesia/libs/ui/tokens/src/lib/spacing.ts' is not under 'rootDir' '/Users/king/Documents/ecclesia/libs/ui/core'. 'rootDir' is expected to contain all source files.[39m[22m
+[1m[31m[39m[22m
+[1m[31m[7m4[0m export * from './lib/spacing';[39m[22m
+[1m[31m[7m [0m [91m              ~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[96mlibs/ui/tokens/src/index.ts[0m:[93m5[0m:[93m15[0m - [91merror[0m[90m TS6059: [0mFile '/Users/king/Documents/ecclesia/libs/ui/tokens/src/lib/radius.ts' is not under 'rootDir' '/Users/king/Documents/ecclesia/libs/ui/core'. 'rootDir' is expected to contain all source files.[39m[22m
+[1m[31m[39m[22m
+[1m[31m[7m5[0m export * from './lib/radius';[39m[22m
+[1m[31m[7m [0m [91m              ~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[96mlibs/ui/tokens/src/index.ts[0m:[93m6[0m:[93m15[0m - [91merror[0m[90m TS6059: [0mFile '/Users/king/Documents/ecclesia/libs/ui/tokens/src/lib/elevation.ts' is not under 'rootDir' '/Users/king/Documents/ecclesia/libs/ui/core'. 'rootDir' is expected to contain all source files.[39m[22m
+[1m[31m[39m[22m
+[1m[31m[7m6[0m export * from './lib/elevation';[39m[22m
+[1m[31m[7m [0m [91m              ~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[96mlibs/ui/tokens/src/index.ts[0m:[93m7[0m:[93m15[0m - [91merror[0m[90m TS6059: [0mFile '/Users/king/Documents/ecclesia/libs/ui/tokens/src/lib/breakpoints.ts' is not under 'rootDir' '/Users/king/Documents/ecclesia/libs/ui/core'. 'rootDir' is expected to contain all source files.[39m[22m
+[1m[31m[39m[22m
+[1m[31m[7m7[0m export * from './lib/breakpoints';[39m[22m
+[1m[31m[7m [0m [91m              ~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[96mlibs/ui/tokens/src/index.ts[0m:[93m8[0m:[93m15[0m - [91merror[0m[90m TS6059: [0mFile '/Users/king/Documents/ecclesia/libs/ui/tokens/src/lib/motion.ts' is not under 'rootDir' '/Users/king/Documents/ecclesia/libs/ui/core'. 'rootDir' is expected to contain all source files.[39m[22m
+[1m[31m[39m[22m
+[1m[31m[7m8[0m export * from './lib/motion';[39m[22m
+[1m[31m[7m [0m [91m              ~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[96mlibs/ui/tokens/src/index.ts[0m:[93m9[0m:[93m15[0m - [91merror[0m[90m TS6059: [0mFile '/Users/king/Documents/ecclesia/libs/ui/tokens/src/lib/z-index.ts' is not under 'rootDir' '/Users/king/Documents/ecclesia/libs/ui/core'. 'rootDir' is expected to contain all source files.[39m[22m
+[1m[31m[39m[22m
+[1m[31m[7m9[0m export * from './lib/z-index';[39m[22m
+[1m[31m[7m [0m [91m              ~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[96mlibs/ui/tokens/src/index.ts[0m:[93m10[0m:[93m15[0m - [91merror[0m[90m TS6059: [0mFile '/Users/king/Documents/ecclesia/libs/ui/tokens/src/lib/opacity.ts' is not under 'rootDir' '/Users/king/Documents/ecclesia/libs/ui/core'. 'rootDir' is expected to contain all source files.[39m[22m
+[1m[31m[39m[22m
+[1m[31m[7m10[0m export * from './lib/opacity';[39m[22m
+[1m[31m[7m  [0m [91m              ~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[96mlibs/ui/tokens/src/index.ts[0m:[93m11[0m:[93m15[0m - [91merror[0m[90m TS6059: [0mFile '/Users/king/Documents/ecclesia/libs/ui/tokens/src/lib/sizing.ts' is not under 'rootDir' '/Users/king/Documents/ecclesia/libs/ui/core'. 'rootDir' is expected to contain all source files.[39m[22m
+[1m[31m[39m[22m
+[1m[31m[7m11[0m export * from './lib/sizing';[39m[22m
+[1m[31m[7m  [0m [91m              ~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
