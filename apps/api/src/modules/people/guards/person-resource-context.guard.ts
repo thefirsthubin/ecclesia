@@ -4,6 +4,7 @@ import type { ActorContext, ResourceContext } from '@ecclesia/rbac';
 import { BranchConfigurationService } from '../../../platform/rbac/branch-configuration.service';
 import { EcclesiaContextGuardBase } from '../../../platform/rbac/ecclesia-context.guard-base';
 import type { RequestWithActorContext } from '../../../platform/auth/auth.guard';
+import { GroupScopeService } from '../services/group-scope.service';
 import { PersonScopeService } from '../services/person-scope.service';
 
 /**
@@ -50,5 +51,33 @@ export class PersonCreateResourceContextGuard extends EcclesiaContextGuardBase {
 
   protected async loadResource(_request: RequestWithActorContext, actor: ActorContext): Promise<ResourceContext> {
     return { branchId: actor.branchId };
+  }
+}
+
+/**
+ * `GET /people` (People Web Admin sprint - PRD §16.1's "Search &
+ * directory"). `groupId` present means an OWN_GROUP/CLUSTER-scoped actor
+ * named their own group - resolved via `GroupScopeService`, the same
+ * pattern `GatheringListResourceContextGuard` already established.
+ * `groupId` absent falls back to the actor's own Branch (unlike
+ * Gatherings' list guard, which has no such fallback - `GET /gatherings`
+ * has no BRANCH-scoped "list everything" case, but People's does: PRD
+ * §16.1 explicitly names "an Admin searches the whole Branch").
+ */
+@Injectable()
+export class PersonListResourceContextGuard extends EcclesiaContextGuardBase {
+  constructor(
+    branchConfigurationService: BranchConfigurationService,
+    private readonly groupScopeService: GroupScopeService,
+  ) {
+    super(branchConfigurationService);
+  }
+
+  protected loadResource(request: RequestWithActorContext, actor: ActorContext): Promise<ResourceContext> {
+    const groupId = (request.query as Record<string, string>).groupId;
+    if (groupId) {
+      return this.groupScopeService.loadResourceContext(groupId);
+    }
+    return Promise.resolve({ branchId: actor.branchId });
   }
 }

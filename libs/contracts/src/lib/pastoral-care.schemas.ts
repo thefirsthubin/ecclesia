@@ -95,6 +95,89 @@ export const followUpTaskResponseSchema = z.object({
 export type FollowUpTaskResponseDto = z.infer<typeof followUpTaskResponseSchema>;
 
 /**
+ * `GET /pastoral-care/groups/:groupId/follow-up-tasks` (§16.2's
+ * "Follow-up task queue... sorted by SLA urgency" surface -
+ * [Gap, Shepherd Dashboard sprint]: no list endpoint existed before this
+ * sprint, only single-task CRUD by id - see
+ * `apps/mobile/.../ShepherdDashboard/SHEPHERD_DASHBOARD_DESIGN_NOTES.md`
+ * STEP 6). `status` accepts a comma-separated list so a caller can ask
+ * for "everything still open" (`OPEN,ESCALATED`, this endpoint's default)
+ * in one round trip rather than one request per status value.
+ */
+export const listFollowUpTasksQuerySchema = z.object({
+  status: z
+    .string()
+    .trim()
+    .min(1)
+    .optional()
+    .transform((value) => (value ? value.split(',').map((entry) => entry.trim()) : undefined))
+    .pipe(z.array(followUpTaskStatusSchema).optional()),
+});
+export type ListFollowUpTasksQuery = z.infer<typeof listFollowUpTasksQuerySchema>;
+
+/**
+ * `GET /pastoral-care/follow-up-tasks` (Pastoral Care Web Admin sprint).
+ * The group-scoped route above has no BRANCH-wide equivalent, the same
+ * gap `listPeopleQuerySchema`/`GET /people` closed for the People module -
+ * a BRANCH-scoped actor (Resident Pastor, Admin) holds
+ * `pastoral_care.followup_task.read` at BRANCH scope but had no route
+ * that could ever satisfy it without already knowing every Group id in
+ * the Branch. `groupId` mirrors `listPeopleQuerySchema`'s own field
+ * exactly: present for OWN_GROUP/CLUSTER-scoped actors naming their own
+ * Group, absent for BRANCH-scoped actors to see the whole Branch.
+ */
+export const listFollowUpTasksForActorQuerySchema = listFollowUpTasksQuerySchema.extend({
+  groupId: z.string().uuid().optional(),
+});
+export type ListFollowUpTasksForActorQuery = z.infer<typeof listFollowUpTasksForActorQuerySchema>;
+
+/**
+ * FR-PC-05/§15.8's decision tree output. `SilentDriftFlag` rows have
+ * been written by `apps/worker`'s nightly `SilentDriftSweepJob` since the
+ * Insights milestone (`db/schema.prisma`'s `silent_drift_flags` table),
+ * but no HTTP surface read them until this sprint - see
+ * `SHEPHERD_DASHBOARD_DESIGN_NOTES.md` STEP 6. `attendanceMissedCount`/
+ * `bacentaMissedCount` (against their respective thresholds) are the
+ * literal "specific pattern" US-G3 requires be shown instead of a generic
+ * "at risk" label.
+ */
+export const SILENT_DRIFT_STATUS_VALUES = ['FLAGGED', 'RESOLVED', 'ESCALATED'] as const;
+export const silentDriftStatusSchema = z.enum(SILENT_DRIFT_STATUS_VALUES);
+export type SilentDriftStatusDto = z.infer<typeof silentDriftStatusSchema>;
+
+export const silentDriftFlagResponseSchema = z.object({
+  id: z.string().uuid(),
+  branchId: z.string().uuid(),
+  groupId: z.string().uuid(),
+  personId: z.string().uuid(),
+  attendanceMissedCount: z.number().int(),
+  attendanceThreshold: z.number().int(),
+  bacentaMissedCount: z.number().int(),
+  bacentaThreshold: z.number().int(),
+  status: silentDriftStatusSchema,
+  assignedShepherdPersonId: z.string().uuid().nullable(),
+  resolvedAt: z.string().nullable(),
+  escalatedAt: z.string().nullable(),
+  createdAt: z.string(),
+});
+export type SilentDriftFlagResponseDto = z.infer<typeof silentDriftFlagResponseSchema>;
+
+/** `GET /pastoral-care/groups/:groupId/silent-drift-flags`. Same
+ * comma-separated-list convention as `listFollowUpTasksQuerySchema`;
+ * defaults to the two still-open statuses (`FLAGGED,ESCALATED`) at the
+ * service layer, not here, so the schema stays a pure shape check. */
+export const listSilentDriftFlagsQuerySchema = z.object({
+  status: z
+    .string()
+    .trim()
+    .min(1)
+    .optional()
+    .transform((value) => (value ? value.split(',').map((entry) => entry.trim()) : undefined))
+    .pipe(z.array(silentDriftStatusSchema).optional()),
+});
+export type ListSilentDriftFlagsQuery = z.infer<typeof listSilentDriftFlagsQuerySchema>;
+
+/**
  * §16.2's pastoral notes capability, NFR-PRIV-01 permission-sensitive
  * (`pastoral_care.notes.*` explicitly DENIES ADMIN in
  * `libs/rbac/src/lib/permission-matrix.ts`, "configuration authority does

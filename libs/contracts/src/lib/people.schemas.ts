@@ -108,6 +108,25 @@ export const personResponseSchema = z.object({
 });
 export type PersonResponseDto = z.infer<typeof personResponseSchema>;
 
+/**
+ * `GET /people` (People Web Admin sprint - see `PEOPLE_DESIGN_NOTES.md`
+ * and `apps/web-admin/.../PEOPLE_PAGE_DESIGN_NOTES.md`). PRD §16.1's
+ * "Search & directory" capability: "Role-scoped search (a Shepherd
+ * searches within their Bacenta context by default; an Admin searches the
+ * whole Branch)." `groupId` mirrors `listGatheringsQuerySchema`'s own
+ * `ownerGroupId` pattern - required for OWN_GROUP/CLUSTER-scoped roles
+ * (a Bacenta/Basonta Leader or Assistant Pastor must name their own
+ * group), omitted by BRANCH-scoped roles (Resident Pastor/Admin/
+ * Treasurer) to search the whole Branch. `search` is a plain
+ * case-insensitive name substring match, not a PRD-specified search
+ * algorithm - `[Design Decision]`.
+ */
+export const listPeopleQuerySchema = z.object({
+  groupId: z.string().uuid().optional(),
+  search: z.string().trim().min(1).optional(),
+});
+export type ListPeopleQuery = z.infer<typeof listPeopleQuerySchema>;
+
 export const duplicateCandidateResponseSchema = z.object({
   candidateId: z.string().uuid(),
   matchedOn: z.enum(['NAME_AND_PHONE', 'NAME_AND_BACENTA_AND_APPROXIMATE_AGE']),
@@ -212,6 +231,22 @@ export const updateGroupSchema = z
   })
   .refine((value) => Object.keys(value).length > 0, { message: 'At least one field must be provided' });
 export type UpdateGroupInput = z.infer<typeof updateGroupSchema>;
+
+/**
+ * `GET /groups` (Ministry Web Admin sprint). There was previously no way
+ * to enumerate Groups at all - only single-record CRUD by id existed.
+ * `type` lets a caller ask for Basontas only (`MINISTRY`) or Bacentas
+ * only (`PASTORAL_CARE`) rather than always getting both kinds mixed
+ * together; omitted, both types are returned. See
+ * `apps/web-admin/.../Ministry/MINISTRY_PAGE_DESIGN_NOTES.md` for why
+ * this sprint needed a Basonta directory it couldn't previously build at
+ * all (no way to list Basontas branch-wide, unlike People's `groupId`
+ * pattern which always assumed the caller already knew one).
+ */
+export const listGroupsQuerySchema = z.object({
+  type: groupTypeSchema.optional(),
+});
+export type ListGroupsQuery = z.infer<typeof listGroupsQuerySchema>;
 
 export const groupResponseSchema = z.object({
   id: z.string().uuid(),

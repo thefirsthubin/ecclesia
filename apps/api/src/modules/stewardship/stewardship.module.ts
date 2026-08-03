@@ -3,11 +3,20 @@ import { Module } from '@nestjs/common';
 import { DatabaseModule } from '../../platform/database/database.module';
 import { RbacPlatformModule } from '../../platform/rbac/rbac-platform.module';
 import { PeopleModule } from '../people/people.module';
+import { BankDepositConfirmationController } from './controllers/bank-deposit-confirmation.controller';
 import { ExpenseController } from './controllers/expense.controller';
 import { FinancialTransactionController } from './controllers/financial-transaction.controller';
 import { PledgeController } from './controllers/pledge.controller';
 import { ProjectController } from './controllers/project.controller';
-import { ExpenseCreateResourceContextGuard, ExpenseResourceContextGuard } from './guards/expense-resource-context.guard';
+import {
+  BankDepositConfirmationCreateResourceContextGuard,
+  BankDepositConfirmationListResourceContextGuard,
+} from './guards/bank-deposit-confirmation-resource-context.guard';
+import {
+  ExpenseCreateResourceContextGuard,
+  ExpenseListResourceContextGuard,
+  ExpenseResourceContextGuard,
+} from './guards/expense-resource-context.guard';
 import {
   FinancialTransactionCreateResourceContextGuard,
   FinancialTransactionListResourceContextGuard,
@@ -15,10 +24,12 @@ import {
 } from './guards/financial-transaction-resource-context.guard';
 import { PledgeCreateResourceContextGuard, PledgeResourceContextGuard } from './guards/pledge-resource-context.guard';
 import { ProjectCreateResourceContextGuard, ProjectResourceContextGuard } from './guards/project-resource-context.guard';
+import { BankDepositConfirmationRepository } from './repositories/bank-deposit-confirmation.repository';
 import { ExpenseRepository } from './repositories/expense.repository';
 import { FinancialTransactionRepository } from './repositories/financial-transaction.repository';
 import { PledgeRepository } from './repositories/pledge.repository';
 import { ProjectRepository } from './repositories/project.repository';
+import { BankDepositConfirmationService } from './services/bank-deposit-confirmation.service';
 import { ExpenseService } from './services/expense.service';
 import { FinancialTransactionService } from './services/financial-transaction.service';
 import { PledgeService } from './services/pledge.service';
@@ -42,25 +53,30 @@ import { ProjectService } from './services/project.service';
  */
 @Module({
   imports: [DatabaseModule, RbacPlatformModule, PeopleModule],
-  controllers: [FinancialTransactionController, ExpenseController, ProjectController, PledgeController],
+  controllers: [FinancialTransactionController, ExpenseController, ProjectController, PledgeController, BankDepositConfirmationController],
   providers: [
     FinancialTransactionRepository,
     ExpenseRepository,
     ProjectRepository,
     PledgeRepository,
+    BankDepositConfirmationRepository,
     FinancialTransactionService,
     ExpenseService,
     ProjectService,
     PledgeService,
+    BankDepositConfirmationService,
     FinancialTransactionCreateResourceContextGuard,
     FinancialTransactionResourceContextGuard,
     FinancialTransactionListResourceContextGuard,
     ExpenseCreateResourceContextGuard,
     ExpenseResourceContextGuard,
+    ExpenseListResourceContextGuard,
     ProjectCreateResourceContextGuard,
     ProjectResourceContextGuard,
     PledgeCreateResourceContextGuard,
     PledgeResourceContextGuard,
+    BankDepositConfirmationCreateResourceContextGuard,
+    BankDepositConfirmationListResourceContextGuard,
   ],
 })
 export class StewardshipModule {}

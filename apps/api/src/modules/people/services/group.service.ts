@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import type { CreateGroupInput, GroupResponseDto, UpdateGroupInput } from '@ecclesia/contracts';
+import type { CreateGroupInput, GroupResponseDto, ListGroupsQuery, UpdateGroupInput } from '@ecclesia/contracts';
 import type { ActorContext } from '@ecclesia/rbac';
 import type { Group } from '@prisma/client';
 
@@ -41,6 +41,17 @@ export class GroupService {
       category: input.category,
     });
     return toResponseDto(group);
+  }
+
+  /** `GET /groups` (Ministry Web Admin sprint) - branch-wide listing,
+   * optionally narrowed to one `type`. Resource-context resolution is
+   * always the actor's own Branch (`GroupListResourceContextGuard`) - see
+   * that guard's own doc comment for why this deliberately does not
+   * attempt an OWN_GROUP/CLUSTER case the way `PersonListResourceContextGuard`
+   * does for `GET /people`. */
+  async list(actor: ActorContext, query: ListGroupsQuery): Promise<GroupResponseDto[]> {
+    const groups = await this.groupRepository.findByBranch(actor.branchId, query.type);
+    return groups.map(toResponseDto);
   }
 
   async getById(id: string): Promise<GroupResponseDto> {

@@ -1,4 +1,5 @@
 export * from './lib/contracts';
+export * from './lib/auth.schemas';
 export * from './lib/event-bus.schemas';
 export * from './lib/gatherings.schemas';
 export * from './lib/insights.schemas';

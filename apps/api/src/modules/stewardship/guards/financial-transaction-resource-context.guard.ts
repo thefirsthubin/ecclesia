@@ -82,12 +82,20 @@ export class FinancialTransactionResourceContextGuard extends EcclesiaContextGua
 
 /**
  * `GET /v1/financial-transactions` (the verification/discrepancy queue,
- * FR-STW-03/04). Always resolves to just the actor's own Branch - the
- * `BRANCH`-scoped rows (`RESIDENT_PASTOR`/`ASSISTANT_PASTOR`/`TREASURER`)
- * are this endpoint's intended consumers. A `BACENTA_LEADER`'s own
- * `OWN_GROUP`-scoped `.read` grant cannot be satisfied by a Branch-wide
- * list resource - they use `GET /v1/financial-transactions/:id` for
- * individual records instead. See `STEWARDSHIP_DESIGN_NOTES.md`.
+ * FR-STW-03/04). Resolves `branchId` unconditionally (the `BRANCH`-scoped
+ * rows - `RESIDENT_PASTOR`/`TREASURER` - are this endpoint's primary
+ * consumers) and now also `bacentaId: actor.bacentaId`
+ * (`[Stewardship gaps sprint]`), so a `BACENTA_LEADER`'s `OWN_GROUP`-scoped
+ * `.read` grant can be satisfied too - `evaluate.ts`'s OWN_GROUP check
+ * compares `resource.bacentaId === actor.bacentaId`, which this always
+ * trivially satisfies for a Bacenta Leader, the same "the guard commits
+ * this endpoint to the actor's own scope, by construction" pattern already
+ * used for `branchId` above (not a per-resource ownership check the way
+ * `FinancialTransactionResourceContextGuard`'s single-record guard below
+ * is). `FinancialTransactionService.listByBranch` is what actually narrows
+ * the query to `sourceGroupId: actor.bacentaId` when present - this guard
+ * only makes the authorization decision reachable, it doesn't itself
+ * filter data. See `STEWARDSHIP_DESIGN_NOTES.md`.
  */
 @Injectable()
 export class FinancialTransactionListResourceContextGuard extends EcclesiaContextGuardBase {
@@ -96,6 +104,6 @@ export class FinancialTransactionListResourceContextGuard extends EcclesiaContex
   }
 
   protected async loadResource(_request: RequestWithActorContext, actor: ActorContext): Promise<ResourceContext> {
-    return { branchId: actor.branchId };
+    return { branchId: actor.branchId, bacentaId: actor.bacentaId };
   }
 }

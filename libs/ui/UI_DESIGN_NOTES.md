@@ -136,7 +136,7 @@ accessibility-relevant behavior.
 | `EmptyState` | "No content" designed state (Design System §7.18) | `tone: 'neutral' \| 'positive'` — an empty priority zone is good news, not an error; the component supports reading that way. |
 | `ErrorState` | Recoverable-error designed state | Web: `role="alert"`. Native: `accessibilityLiveRegion="assertive"` (RN's ARIA-alert analogue). Optional `onRetry` renders a secondary `Button`. |
 
-## 5. Base components — deferred (11 of 23)
+## 5. Base components — deferred (10 of 23, `[Stewardship gaps sprint]`: 1 of the original 11 resolved)
 
 Explicitly out of scope for this sprint, not omitted by oversight —
 same "foundation slice first" phasing this project used for
@@ -144,17 +144,59 @@ same "foundation slice first" phasing this project used for
 it, then extend):
 
 `TextArea`, `Checkbox`, `Radio`, `Select`, `Switch`, `Toast`,
-`Tooltip`, `Modal`, `Drawer`, `Tabs`, `Accordion`.
+`Tooltip`, `Drawer`, `Tabs`, `Accordion`.
 
 Planned composition when built: `TextArea`/`Checkbox`/`Radio`/`Select`/
 `Switch` follow `Input`'s established pattern (label association +
 error/helper text, token-driven styling, no new architectural
-decisions needed). `Toast`/`Tooltip`/`Modal`/`Drawer` all need a
-portal/overlay strategy — web via a portal to `document.body` plus
-`zIndex` tokens (already exported, unused until now); native via RN's
-`Modal` primitive. `Tabs`/`Accordion` are the two components that need
-a small amount of shared state-management logic (active tab/expanded
-panel) beyond what any component built so far required.
+decisions needed). `Toast`/`Tooltip`/`Drawer` need the same
+portal/overlay strategy `Modal` (below) now proves out — web via a
+portal to `document.body` plus `zIndex` tokens; native via RN's own
+primitives (`Modal` already showed the pattern; `Toast`/`Tooltip` have
+no single RN built-in equivalent and will need more design work).
+`Tabs`/`Accordion` are the two components that need a small amount of
+shared state-management logic (active tab/expanded panel) beyond what
+any component built so far required.
+
+### `Modal` — resolved (`[Stewardship gaps sprint]`)
+
+Built on both platforms, matching `libs/ui/UI_DESIGN_NOTES.md`'s own
+plan above exactly: `libs/ui/{web,native}/src/lib/Modal/Modal.tsx`,
+exported from both barrels. Picked as the one component to build out of
+the deferred eleven — not an arbitrary pick, the same "one full,
+reviewable vertical slice, not all eleven at once" phasing this
+project used for `apps/worker`'s own two-milestone rollout. It was also
+the single most-cited real blocker across prior sprints:
+`STEWARDSHIP_PAGE_DESIGN_NOTES.md` names pages building inline
+`Input`+`Button` workarounds specifically because no `Modal` existed.
+
+- **Web**: portals to `document.body` (`createPortal`), using the
+  previously-exported-but-unused `zIndex.overlay`/`zIndex.modal`
+  tokens. Implements Design System v1.0 Part 7.8's full behavior spec:
+  `role="dialog"`/`aria-modal="true"`/`aria-labelledby`, a minimal
+  dependency-free focus trap (cycles `Tab`/`Shift+Tab` between the
+  dialog's own focusable elements), focus returned to the triggering
+  element on close, and `dismissible={false}` for the "destructive
+  dialog needs an explicit button press, never a dismiss-by-accident
+  path" rule (disables `Esc`/scrim-click).
+- **Native**: built on RN's own `Modal` primitive, exactly as
+  `UI_DESIGN_NOTES.md`'s own plan already named ("native via RN's
+  `Modal` primitive") — not a from-scratch portal reimplementation.
+  `accessibilityViewIsModal` is RN's platform mechanism for
+  VoiceOver/TalkBack focus-trapping; there is no manual Tab-trap
+  concept on this platform (RN has no keyboard-Tab navigation model).
+  **Not** Part 7.8's `bottom-sheet` variant (Mobile's own distinct,
+  slides-from-bottom, one-handed-reachability presentation) — that
+  remains unbuilt, disclosed on the component's own doc comment.
+- Both platforms support `variant: 'modal' | 'dialog'` (Part 7.8's two
+  web-equivalent variants) and an optional `footer` slot for action
+  buttons.
+- `tsc --noEmit` ran clean in this sandbox for all four
+  `libs/ui/{web,native}` `tsconfig.{lib,spec}.json` configs. Actual
+  Jest execution still needs the user's own `pnpm test` — this
+  sandbox's disclosed Jest-execution limitations (native `@swc/core`
+  binding failures) apply here too, not newly introduced by this
+  component.
 
 ## 6. Navigation / Data / Layout components — not started
 

@@ -6,7 +6,7 @@ describe('GatheringController', () => {
   const actor: ActorContext = { personId: 'ap-1', role: 'ASSISTANT_PASTOR', branchId: 'branch-1' };
 
   function buildController() {
-    const gatheringService = { create: jest.fn(), getById: jest.fn(), update: jest.fn() };
+    const gatheringService = { create: jest.fn(), getById: jest.fn(), update: jest.fn(), list: jest.fn() };
     const controller = new GatheringController(gatheringService as never);
     return { controller, gatheringService };
   }
@@ -35,5 +35,14 @@ describe('GatheringController', () => {
     await controller.update('g-1', body);
 
     expect(gatheringService.update).toHaveBeenCalledWith('g-1', body);
+  });
+
+  it('list() delegates to GatheringService.list with the current actor and parsed query (Gatherings Web Admin sprint)', async () => {
+    const { controller, gatheringService } = buildController();
+    const query = { ownerGroupId: 'bacenta-1' } as never;
+
+    await controller.list(actor, query);
+
+    expect(gatheringService.list).toHaveBeenCalledWith(actor, query);
   });
 });

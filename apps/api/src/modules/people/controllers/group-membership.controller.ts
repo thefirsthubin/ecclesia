@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { RbacGuard, RequirePermission } from '@ecclesia/rbac';
 import { createGroupMembershipRequestSchema } from '@ecclesia/contracts';
 import type { CreateGroupMembershipRequestInput } from '@ecclesia/contracts';
@@ -25,5 +25,16 @@ export class GroupMembershipController {
     @Body(new ZodValidationPipe(createGroupMembershipRequestSchema)) body: CreateGroupMembershipRequestInput,
   ) {
     return this.groupMembershipService.assign(personId, body);
+  }
+
+  /** FR-PPL-07's Bacenta/Basonta membership history read - see
+   * `libs/rbac/src/lib/actions.ts`'s `people.group_membership.read` doc
+   * comment. Reuses the same resource-context guard as the `POST` above,
+   * unmodified - both act on "this Person's own scope." */
+  @Get()
+  @RequirePermission('people.group_membership.read')
+  @UseGuards(GroupMembershipResourceContextGuard, RbacGuard)
+  listForPerson(@Param('personId') personId: string) {
+    return this.groupMembershipService.listForPerson(personId);
   }
 }

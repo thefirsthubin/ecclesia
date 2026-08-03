@@ -233,6 +233,7 @@ model Branch {
   gatherings                Gathering[]
   visitorIntakeSubmissions  VisitorIntakeSubmission[]
   financialTransactions     FinancialTransaction[]
+  bankDepositConfirmations  BankDepositConfirmation[]
   projects                  Project[]
   followUpTasks             FollowUpTask[]
   silentDriftFlags          SilentDriftFlag[]
@@ -407,6 +408,7 @@ model Group {
   followUpTasks            FollowUpTask[]
   silentDriftFlags         SilentDriftFlag[]
   financialTransactions    FinancialTransaction[]
+  bankDepositConfirmations BankDepositConfirmation[]
   engagementSignals        EngagementSignal[]
 
   @@index([branchId, type])
@@ -455,6 +457,7 @@ model Person {
   expensesApproved           Expense[]                  @relation("ExpenseApprovedBy")
   projectsCreated            Project[]                  @relation("ProjectCreatedBy")
   pledges                    Pledge[]
+  bankDepositConfirmationsConfirmed BankDepositConfirmation[]
   followUpTasksSubject       FollowUpTask[]              @relation("FollowUpTaskSubject")
   followUpTasksAssigned      FollowUpTask[]              @relation("FollowUpTaskAssignedTo")
   followUpTasksEscalatedTo   FollowUpTask[]              @relation("FollowUpTaskEscalatedTo")
@@ -916,6 +919,41 @@ model Pledge {
   @@index([personId])
   @@index([branchId])
   @@map("pledges")
+  @@schema("stewardship")
+}
+
+/// [PRD-DERIVED] FR-STW-07's bank-deposit comparison half: "aggregate
+/// Verified transactions into a weekly reconciliation view comparing
+/// recorded totals against confirmed bank deposits." Previously flagged in
+/// STEWARDSHIP_DESIGN_NOTES.md as "needs a schema addition, not an
+/// application-layer guess" - this model is that addition. One row per
+/// Bacenta per week (the acceptance criterion's own "per Bacenta" framing;
+/// BR-STW-09/10's weekly cadence) - recorded by a Treasurer against a
+/// physical bank-deposit slip. Not itself a FinancialTransaction state
+/// transition (`FinancialTransactionService.reconcile()` still owns each
+/// transaction's own `Verified -> Reconciled` step); a separate,
+/// aggregate-level confirmation the weekly reconciliation view compares
+/// against the SUM of that Bacenta's Verified-or-later transactions in the
+/// same week window. `weekStartDate` (a plain Date, not a Timestamptz) is
+/// the Monday that week begins - [INFERRED] no PRD section pins a
+/// week-boundary convention.
+model BankDepositConfirmation {
+  id                   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  branchId             String   @map("branch_id") @db.Uuid
+  branch               Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  groupId              String   @map("group_id") @db.Uuid
+  group                Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  weekStartDate        DateTime @db.Date @map("week_start_date")
+  depositedAmountMinor BigInt   @map("deposited_amount_minor")
+  currency             String   @default("GHS") @db.Char(3)
+  bankReference        String?  @map("bank_reference")
+  confirmedByPersonId  String   @map("confirmed_by_person_id") @db.Uuid
+  confirmedByPerson    Person   @relation(fields: [confirmedByPersonId], references: [id], onDelete: Restrict)
+  createdAt            DateTime @db.Timestamptz @default(now()) @map("created_at")
+
+  @@unique([groupId, weekStartDate])
+  @@index([branchId, weekStartDate])
+  @@map("bank_deposit_confirmations")
   @@schema("stewardship")
 }
 

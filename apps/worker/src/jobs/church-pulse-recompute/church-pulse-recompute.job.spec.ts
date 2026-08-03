@@ -3,7 +3,6 @@ import { ChurchPulseRecomputeJob } from './church-pulse-recompute.job';
 describe('ChurchPulseRecomputeJob', () => {
   function buildJob() {
     const repository = {
-      listBranches: jest.fn(),
       listActiveBacentaGroups: jest.fn(),
       countSignalsByTypeInWindow: jest.fn(),
       findChurchPulseWeights: jest.fn(),
@@ -13,14 +12,16 @@ describe('ChurchPulseRecomputeJob', () => {
       hasOpenAlert: jest.fn(),
       createAlert: jest.fn(),
     };
+    const branchDirectory = { listBranches: jest.fn() };
+    const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
     const logger = { info: jest.fn(), warn: jest.fn(), error: jest.fn() };
-    const job = new ChurchPulseRecomputeJob(repository as never, logger as never);
-    return { job, repository };
+    const job = new ChurchPulseRecomputeJob(repository as never, branchDirectory as never, prisma as never, logger as never);
+    return { job, repository, branchDirectory };
   }
 
   it('recomputes Branch scope plus every active Bacenta scope, and returns the total scope count', async () => {
-    const { job, repository } = buildJob();
-    repository.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
+    const { job, repository, branchDirectory } = buildJob();
+    branchDirectory.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
     repository.listActiveBacentaGroups.mockResolvedValue([{ id: 'group-1' }, { id: 'group-2' }]);
     repository.countSignalsByTypeInWindow.mockResolvedValue([{ signalType: 'ATTENDANCE', count: 5 }]);
     repository.findChurchPulseWeights.mockResolvedValue(null);
@@ -44,8 +45,8 @@ describe('ChurchPulseRecomputeJob', () => {
   });
 
   it('creates a PULSE_DECLINE alert when the trend has declined and none is already open', async () => {
-    const { job, repository } = buildJob();
-    repository.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
+    const { job, repository, branchDirectory } = buildJob();
+    branchDirectory.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
     repository.listActiveBacentaGroups.mockResolvedValue([]);
     repository.countSignalsByTypeInWindow.mockResolvedValue([]);
     repository.findChurchPulseWeights.mockResolvedValue(null);
@@ -65,8 +66,8 @@ describe('ChurchPulseRecomputeJob', () => {
   });
 
   it('does not create a duplicate alert when one is already open', async () => {
-    const { job, repository } = buildJob();
-    repository.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
+    const { job, repository, branchDirectory } = buildJob();
+    branchDirectory.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
     repository.listActiveBacentaGroups.mockResolvedValue([]);
     repository.countSignalsByTypeInWindow.mockResolvedValue([]);
     repository.findChurchPulseWeights.mockResolvedValue(null);

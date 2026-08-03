@@ -9,12 +9,14 @@ describe('InsightsConsumer', () => {
     const processedEventRepository = { tryRecord: jest.fn() };
     const logger = { info: jest.fn(), warn: jest.fn(), error: jest.fn() };
     const engagementSignalRepository = { create: jest.fn() };
+    const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
     const consumer = new InsightsConsumer(
       sqsClient as never,
       configService as never,
       processedEventRepository as never,
       logger as never,
       engagementSignalRepository as never,
+      prisma as never,
     );
     return { consumer, engagementSignalRepository };
   }

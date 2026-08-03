@@ -6,8 +6,8 @@ class TestConsumer extends SqsConsumerBase {
   handled: EngagementSignalEnvelope[] = [];
   shouldThrow = false;
 
-  constructor(sqsClient: unknown, processedEventRepository: unknown, logger: unknown) {
-    super(sqsClient as never, 'https://sqs.example/queue', 'test-consumer', processedEventRepository as never, logger as never);
+  constructor(sqsClient: unknown, processedEventRepository: unknown, logger: unknown, prisma: unknown) {
+    super(sqsClient as never, 'https://sqs.example/queue', 'test-consumer', processedEventRepository as never, logger as never, prisma as never);
   }
 
   protected async handle(envelope: EngagementSignalEnvelope): Promise<void> {
@@ -32,8 +32,14 @@ describe('SqsConsumerBase', () => {
     const sqsClient = { send: jest.fn() };
     const processedEventRepository = { tryRecord: jest.fn() };
     const logger = { info: jest.fn(), warn: jest.fn(), error: jest.fn() };
-    const consumer = new TestConsumer(sqsClient, processedEventRepository, logger);
-    return { consumer, sqsClient, processedEventRepository, logger };
+    // `[Row-Level Security sprint]` A minimal fake, not a real transaction -
+    // just runs `fn` directly, so every existing assertion below (about
+    // `handle()`/`tryRecord` being called, message deletion, etc.) still
+    // holds unchanged. `runInBranchScope`'s own transaction/`SET LOCAL`
+    // behavior is covered by `prisma.service.spec.ts` instead.
+    const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
+    const consumer = new TestConsumer(sqsClient, processedEventRepository, logger, prisma);
+    return { consumer, sqsClient, processedEventRepository, logger, prisma };
   }
 
   it('pollOnce() processes a valid, new message and deletes it', async () => {
@@ -69,7 +75,7 @@ describe('SqsConsumerBase', () => {
   });
 
   it('pollOnce() deletes a malformed message without calling handle() or the idempotency check', async () => {
-    const { consumer, sqsClient, processedEventRepository } = buildConsumer();
+    const { consumer, sqsClient, processedEventRepository, prisma } = buildConsumer();
     sqsClient.send
       .mockResolvedValueOnce({
         Messages: [{ Body: JSON.stringify({ not: 'an envelope' }), ReceiptHandle: 'receipt-1' }],
@@ -80,6 +86,7 @@ describe('SqsConsumerBase', () => {
 
     expect(consumer.handled).toEqual([]);
     expect(processedEventRepository.tryRecord).not.toHaveBeenCalled();
+    expect(prisma.runInBranchScope).not.toHaveBeenCalled();
     expect(sqsClient.send).toHaveBeenCalledTimes(2);
   });
 

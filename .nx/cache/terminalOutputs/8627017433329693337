@@ -1,0 +1,10 @@
+
+Linting "ui-web"...
+[0m[0m
+[0m[4m/Users/king/Documents/ecclesia/libs/ui/web/src/lib/Modal/Modal.tsx[24m[0m
+[0m  [2m122:8[22m  [31merror[39m  Definition for rule 'jsx-a11y/no-noninteractive-element-interactions' was not found  [2mjsx-a11y/no-noninteractive-element-interactions[22m[0m
+[0m[0m
+[0m[31m[1m✖ 1 problem (1 error, 0 warnings)[22m[39m[0m
+[0m[31m[1m[22m[39m[0m
+✖ 1 problem (1 error, 0 warnings)
+

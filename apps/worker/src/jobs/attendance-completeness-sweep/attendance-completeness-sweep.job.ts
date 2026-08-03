@@ -5,6 +5,8 @@ import { evaluateAttendanceCompleteness } from '@ecclesia/domain-gatherings';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { AttendanceCompletenessSweepRepository } from './attendance-completeness-sweep.repository';
+import { BranchDirectoryRepository } from '../../platform/database/branch-directory.repository';
+import { PrismaService } from '../../platform/database/prisma.service';
 import { EventBridgePublisherService } from '../../platform/events/eventbridge-publisher.service';
 
 /** How far back the sweep looks for Gatherings to re-examine (see
@@ -51,16 +53,18 @@ export class AttendanceCompletenessSweepJob {
 
   constructor(
     private readonly repository: AttendanceCompletenessSweepRepository,
+    private readonly branchDirectory: BranchDirectoryRepository,
+    private readonly prisma: PrismaService,
     private readonly publisher: EventBridgePublisherService,
     @InjectPinoLogger(AttendanceCompletenessSweepJob.name) private readonly logger: PinoLogger,
   ) {}
 
   /** Returns the number of incomplete Gatherings signaled. */
   async run(): Promise<number> {
-    const branches = await this.repository.listBranches();
+    const branches = await this.branchDirectory.listBranches();
     let incompleteCount = 0;
     for (const branch of branches) {
-      incompleteCount += await this.sweepBranch(branch.id);
+      incompleteCount += await this.prisma.runInBranchScope(branch.id, () => this.sweepBranch(branch.id));
     }
     return incompleteCount;
   }

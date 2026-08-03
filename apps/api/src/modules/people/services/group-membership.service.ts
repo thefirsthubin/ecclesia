@@ -78,4 +78,11 @@ export class GroupMembershipService {
 
     return toResponseDto(membership);
   }
+
+  /** FR-PPL-07: full Bacenta/Basonta membership history for a Person,
+   * including closed/past memberships. */
+  async listForPerson(personId: string): Promise<GroupMembershipResponseDto[]> {
+    const memberships = await this.groupMembershipRepository.listByPerson(personId);
+    return memberships.map(toResponseDto);
+  }
 }

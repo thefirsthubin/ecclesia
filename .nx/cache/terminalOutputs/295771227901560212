@@ -1,0 +1,21 @@
+[2m> [22mjest
+
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m ([0m[1m[41m9.035 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m ([0m[1m[41m9.031 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m ([0m[1m[41m9.003 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m ([0m[1m[41m9.098 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m ([0m[1m[41m9.035 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m ([0m[1m[41m9.193 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m ([0m[1m[41m9.313 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Card/[22m[1mCard.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m ([0m[1m[41m22.526 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m ([0m[1m[41m23.25 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m ([0m[1m[41m24.27 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m ([0m[1m[41m24.859 s[49m[22m[0m)
+
+[1mTest Suites: [22m[1m[32m13 passed[39m[22m, 13 total
+[1mTests:       [22m[1m[32m32 passed[39m[22m, 32 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        [1m[33m28.964 s[39m[22m
+[2mRan all test suites[22m[2m.[22m

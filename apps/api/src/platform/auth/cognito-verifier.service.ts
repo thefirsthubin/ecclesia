@@ -33,6 +33,24 @@ export class CognitoVerifierService {
     const clientId = configService.get('COGNITO_CLIENT_ID', { infer: true });
     const region = configService.get('COGNITO_REGION', { infer: true });
 
+    // Development Authentication sprint made these three fields
+    // conditionally required (`env.schema.ts`'s `.superRefine`, only
+    // enforced when `AUTH_MODE=cognito`), so their type is now
+    // `string | undefined` here even though `auth.module.ts` only ever
+    // constructs this service at all when `AUTH_MODE=cognito` - at which
+    // point `env.schema.ts` has already guaranteed they're present. This
+    // is a defensive, should-never-fire guard (the two checks living in
+    // different files means TypeScript can't see that guarantee), not a
+    // new runtime possibility - the same "fail fast, don't let `undefined`
+    // reach `CognitoJwtVerifier.create()` and produce a confusing
+    // library-internal error" reasoning as everywhere else in this file.
+    if (!userPoolId || !clientId || !region) {
+      throw new Error(
+        'CognitoVerifierService constructed without COGNITO_USER_POOL_ID/COGNITO_CLIENT_ID/COGNITO_REGION - this ' +
+          'should be unreachable when AUTH_MODE=cognito, since env.schema.ts requires all three in that mode. See auth.module.ts.',
+      );
+    }
+
     // Defensive cross-check, not something aws-jwt-verify itself needs:
     // CognitoJwtVerifier derives the JWKS region from the User Pool ID's
     // own `<region>_<poolId>` prefix (Cognito's ID format), so

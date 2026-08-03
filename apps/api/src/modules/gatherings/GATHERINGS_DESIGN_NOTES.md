@@ -167,6 +167,49 @@ a `StaffingTarget`'s scope is its target Group, not the Gathering it
 references. See
 `apps/api/src/modules/ministry/MINISTRY_DESIGN_NOTES.md`.
 
+## Resolved (Gatherings Web Admin sprint)
+
+Building `apps/web-admin`'s Gathering calendar (§16.4's "upcoming and
+past Gatherings, filterable by type and Group... All operator roles")
+surfaced two real gaps:
+
+1. **`GET /gatherings` had no BRANCH-wide case at all.** `ownerGroupId`
+   was required, so a BRANCH-scoped actor (Resident Pastor, and now
+   Admin - see below) had no way to list Gatherings without already
+   knowing a specific Bacenta/Basonta's id, and a Branch-wide Gathering
+   (Sunday Service, `ownerGroupId` null) could never appear in any list
+   result at all. The identical shape of gap `GET /people`,
+   `GET /pastoral-care/follow-up-tasks`, and `GET /groups` each already
+   closed for their own domains. Made `ownerGroupId` optional
+   (`listGatheringsQuerySchema`); its absence now falls back to
+   `GatheringRepository.listByBranchAndRange` (new), resolved via
+   `GatheringListResourceContextGuard`'s new Branch fallback branch (same
+   shape as `PersonListResourceContextGuard`). Also added an optional
+   `type` exact-match filter - the other half of §16.4's "filterable by
+   type and Group" - to both `listByGroupAndRange` and the new
+   `listByBranchAndRange`. `GatheringController.listForGroup`/
+   `GatheringService.listForGroup` were renamed to `list`/`list(actor,
+   query)` since the method no longer only serves the Group-scoped case;
+   `GET /gatherings?ownerGroupId=...` callers (the Shepherd Dashboard's
+   Today's-Meeting/Attendance-Summary cards) are unaffected - same URL,
+   same response shape.
+2. **[Bug fix]** `gatherings.gathering.read` and `gatherings.attendance.read`
+   both had RESIDENT_PASTOR create/read parity but **no ADMIN row at
+   all**, even though ADMIN already held `.create`/`.update` on both
+   actions - the same class of gap the Shepherd Dashboard sprint fixed
+   for BACENTA_LEADER on these same two actions (see those rows'
+   own `reason` fields, immediately above the new ADMIN ones). Added
+   matching ADMIN BRANCH rows to both - needed so the web-admin calendar
+   can show per-Gathering attendance-completeness status
+   (`GET .../attendance-records/completeness`) for an Admin, not only a
+   Resident Pastor.
+
+See `apps/web-admin/src/app/pages/Gatherings/GATHERINGS_PAGE_DESIGN_NOTES.md`
+for the client side, including why Attendance Capture and Visitor Intake
+are not built on web-admin this pass (both are Usher-primary flows, and
+the "Usher role gap" this file already discloses above blocks them
+structurally, not just by choice).
+
 ## Known sandbox limitation
 
 Same disclosed limitation as every prior sprint: no `tsc`/`eslint`/`jest`/

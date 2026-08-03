@@ -11,6 +11,7 @@ describe('PersonController', () => {
       getById: jest.fn(),
       update: jest.fn(),
       transitionLifecycleStage: jest.fn(),
+      list: jest.fn(),
     };
     const controller = new PersonController(personService as never);
     return { controller, personService };
@@ -49,5 +50,14 @@ describe('PersonController', () => {
     await controller.transitionLifecycleStage('person-1', body);
 
     expect(personService.transitionLifecycleStage).toHaveBeenCalledWith('person-1', body);
+  });
+
+  it('list() delegates to PersonService.list with the current actor and query', async () => {
+    const { controller, personService } = buildController();
+    const query = { search: 'Owusu' } as never;
+
+    await controller.list(actor, query);
+
+    expect(personService.list).toHaveBeenCalledWith(actor, query);
   });
 });

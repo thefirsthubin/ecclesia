@@ -41,4 +41,17 @@ export class GroupRepository {
   update(id: string, input: UpdateGroupRecord): Promise<Group> {
     return this.prisma.group.update({ where: { id }, data: input });
   }
+
+  /** `GET /groups` (Ministry Web Admin sprint) - there was previously no
+   * list query on this repository at all, only `findById`. `type` narrows
+   * to Basontas (`MINISTRY`) or Bacentas (`PASTORAL_CARE`) when supplied;
+   * omitted, returns both. Same explicit-`branchId`-filtering rationale as
+   * every other Branch-scoped query in this repository/`PersonRepository`
+   * (RLS not yet wired). Ordered by name for a stable, predictable list. */
+  findByBranch(branchId: string, type?: GroupType): Promise<Group[]> {
+    return this.prisma.group.findMany({
+      where: { branchId, ...(type ? { type } : {}) },
+      orderBy: { name: 'asc' },
+    });
+  }
 }

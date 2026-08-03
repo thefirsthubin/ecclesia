@@ -129,4 +129,13 @@ export class RoleAssignmentService {
 
     return toResponseDto(created);
   }
+
+  /** FR-PPL-07: full Role Assignment history for a Person, including
+   * closed/past assignments. Declarative RBAC (`people.role_assignment.read`)
+   * is sufficient here, unlike `grant()` above - reading history has no
+   * data-dependent action selection to make. */
+  async listForPerson(personId: string): Promise<RoleAssignmentResponseDto[]> {
+    const assignments = await this.roleAssignmentRepository.listByPerson(personId);
+    return assignments.map(toResponseDto);
+  }
 }

@@ -3,7 +3,6 @@ import { SilentDriftSweepJob } from './silent-drift-sweep.job';
 describe('SilentDriftSweepJob', () => {
   function buildJob() {
     const repository = {
-      listBranches: jest.fn(),
       getThresholds: jest.fn(),
       listActiveBacentaMemberships: jest.fn(),
       listRecentMainServiceGatheringIds: jest.fn(),
@@ -12,15 +11,19 @@ describe('SilentDriftSweepJob', () => {
       findOpenFlag: jest.fn(),
       createFlag: jest.fn(),
     };
+    const branchDirectory = { listBranches: jest.fn() };
+    // `[Row-Level Security sprint]` A fake that just runs `fn` directly -
+    // see `sqs-consumer.base.spec.ts`'s identical fake for why.
+    const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
     const publisher = { publish: jest.fn() };
     const logger = { info: jest.fn(), warn: jest.fn(), error: jest.fn() };
-    const job = new SilentDriftSweepJob(repository as never, publisher as never, logger as never);
-    return { job, repository, publisher };
+    const job = new SilentDriftSweepJob(repository as never, branchDirectory as never, prisma as never, publisher as never, logger as never);
+    return { job, repository, branchDirectory, publisher };
   }
 
   it('flags a person who cleared attendance but missed Bacenta, writes the flag, and publishes a synthetic signal', async () => {
-    const { job, repository, publisher } = buildJob();
-    repository.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
+    const { job, repository, branchDirectory, publisher } = buildJob();
+    branchDirectory.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
     repository.getThresholds.mockResolvedValue({ n: 3, m: 3 });
     repository.listActiveBacentaMemberships.mockResolvedValue([{ personId: 'person-1', groupId: 'group-1' }]);
     repository.listRecentMainServiceGatheringIds.mockResolvedValue(['g-1', 'g-2', 'g-3']);
@@ -67,8 +70,8 @@ describe('SilentDriftSweepJob', () => {
   });
 
   it('does not create a duplicate flag or publish when an open flag already exists', async () => {
-    const { job, repository, publisher } = buildJob();
-    repository.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
+    const { job, repository, branchDirectory, publisher } = buildJob();
+    branchDirectory.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
     repository.getThresholds.mockResolvedValue({ n: 3, m: 3 });
     repository.listActiveBacentaMemberships.mockResolvedValue([{ personId: 'person-1', groupId: 'group-1' }]);
     repository.listRecentMainServiceGatheringIds.mockResolvedValue(['g-1', 'g-2', 'g-3']);
@@ -84,8 +87,8 @@ describe('SilentDriftSweepJob', () => {
   });
 
   it('does not flag a person who is healthy on both counts', async () => {
-    const { job, repository, publisher } = buildJob();
-    repository.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
+    const { job, repository, branchDirectory, publisher } = buildJob();
+    branchDirectory.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
     repository.getThresholds.mockResolvedValue({ n: 3, m: 3 });
     repository.listActiveBacentaMemberships.mockResolvedValue([{ personId: 'person-1', groupId: 'group-1' }]);
     repository.listRecentMainServiceGatheringIds.mockResolvedValue(['g-1', 'g-2', 'g-3']);
@@ -101,8 +104,8 @@ describe('SilentDriftSweepJob', () => {
   });
 
   it('sweeps every branch returned by listBranches()', async () => {
-    const { job, repository } = buildJob();
-    repository.listBranches.mockResolvedValue([{ id: 'branch-1' }, { id: 'branch-2' }]);
+    const { job, repository, branchDirectory } = buildJob();
+    branchDirectory.listBranches.mockResolvedValue([{ id: 'branch-1' }, { id: 'branch-2' }]);
     repository.getThresholds.mockResolvedValue({ n: 3, m: 3 });
     repository.listActiveBacentaMemberships.mockResolvedValue([]);
     repository.listRecentMainServiceGatheringIds.mockResolvedValue([]);

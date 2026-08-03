@@ -166,6 +166,63 @@ lookup required at the service layer. See
 `apps/api/src/modules/ministry/MINISTRY_DESIGN_NOTES.md` for the full
 reasoning. No module-boundary violation was found this time either.
 
+## Resolved (People Web Admin sprint)
+
+Building `apps/web-admin`'s People directory/profile pages surfaced three
+real read-path gaps this module's write side already anticipated but
+never exposed over HTTP:
+
+1. **No `GET /people` at all.** PRD §16.1's "Search & directory"
+   capability ("a Shepherd searches within their Bacenta context by
+   default; an Admin searches the whole Branch") had no backing route.
+   Added `GET /people` (`PersonController.list`), reusing the existing
+   `people.person.read` action/scope rows unchanged - `groupId` query
+   param (OWN_GROUP/CLUSTER-scoped roles, resolved via `GroupScopeService`
+   and, for the actual roster, `GroupRosterService.listActiveMembers` -
+   People's own already-exported service) or its absence (BRANCH-scoped
+   roles, falls back to the actor's Branch) selects which. `search` is a
+   plain case-insensitive first/last-name substring match -
+   `[Design Decision]`, not a PRD-specified algorithm.
+2. **`GET /people/:personId/group-memberships` and
+   `GET /people/:personId/role-assignments` didn't exist** - both
+   controllers had a `POST` (write) only. FR-PPL-07 explicitly requires
+   "a complete, queryable history... including closed/past ones" for
+   both record types, and PRD §16.1's Person profile view names "role
+   history" as a shown field. Added both as ordinary declaratively-RBAC'd
+   `GET` routes; `people.group_membership.read` is a brand-new action
+   (mirroring `.update`'s existing scope rows exactly), and
+   `people.role_assignment.read` already existed but only had an ADMIN
+   row.
+3. **[Bug fix]** `people.role_assignment.read` granted only ADMIN, even
+   though RESIDENT_PASTOR/ASSISTANT_PASTOR both hold
+   `.grant`/`.update` for the same resource. Added matching `.read` rows
+   at the same scopes (BRANCH/CLUSTER) - a role able to grant/update a
+   Role Assignment being unable to read what it granted is inconsistent
+   with every other grant+read pairing already in the matrix. Also added
+   WORKER/MEMBER SELF-scope rows to both new `.read` actions, matching
+   `people.person.read`'s existing SELF rows for those two roles.
+
+See `libs/rbac/src/lib/permission-matrix.ts`'s own inline comments at
+each new row, and `apps/web-admin/src/app/pages/People/PEOPLE_PAGE_DESIGN_NOTES.md`
+for the client side of this.
+
+## Ministry Web Admin sprint follow-up (this module, touched again)
+
+Building the Ministry web-admin page's Basonta directory surfaced a real
+gap: `GroupRepository`/`GroupService`/`GroupController` had `create`,
+`getById`, and `update` but **no way to list Groups at all** - a caller
+had to already know a specific Group id. Added `GET /groups`
+(`GroupController.list`, `GroupListResourceContextGuard`,
+`GroupRepository.findByBranch`, `listGroupsQuerySchema`'s optional `type`
+filter), reusing the existing `people.group.read` action/scope rows
+unchanged. Deliberately always resolves to the actor's own Branch (no
+OWN_GROUP/CLUSTER case, unlike `GET /people`'s `groupId`-driven branching)
+- see `GroupListResourceContextGuard`'s own doc comment for why a
+*listing* route has no single Group to resolve an OWN_GROUP/CLUSTER scope
+from, and `apps/api/src/modules/ministry/MINISTRY_DESIGN_NOTES.md`'s
+"Resolved (Ministry Web Admin sprint)" section for the Ministry-side
+reasoning this served.
+
 ## Known sandbox limitation
 
 Same disclosed limitation as every prior sprint: no `tsc`/`eslint`/`jest`/`prisma` execution against real `node_modules` or a live database in this environment. Verified via the same static methods used in Sprints 1.2-1.4 (brace-balance and import-resolution checks). Needs a real `pnpm install && pnpm lint && pnpm test && pnpm build` run, and ultimately exercising these endpoints against the real local Postgres from Sprint 1.3's verification, before this can be considered proven correct rather than merely reviewed.

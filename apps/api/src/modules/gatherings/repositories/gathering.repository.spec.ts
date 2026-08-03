@@ -3,7 +3,7 @@ import { GatheringRepository } from './gathering.repository';
 describe('GatheringRepository', () => {
   function buildRepository() {
     const prisma = {
-      gathering: { create: jest.fn(), findUnique: jest.fn(), update: jest.fn() },
+      gathering: { create: jest.fn(), findUnique: jest.fn(), update: jest.fn(), findMany: jest.fn() },
     };
     const repository = new GatheringRepository(prisma as never);
     return { repository, prisma };
@@ -43,5 +43,65 @@ describe('GatheringRepository', () => {
 
     expect(prisma.gathering.update).toHaveBeenCalledWith({ where: { id: 'g-1' }, data: { status: 'CANCELLED' } });
     expect(result).toEqual({ id: 'g-1', status: 'CANCELLED' });
+  });
+
+  describe('listByGroupAndRange', () => {
+    it('queries by ownerGroupId and an inclusive scheduledStart range, sorted earliest-first', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.gathering.findMany.mockResolvedValue([{ id: 'g-1' }]);
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-08-08T00:00:00.000Z');
+
+      const result = await repository.listByGroupAndRange('bacenta-1', from, to);
+
+      expect(prisma.gathering.findMany).toHaveBeenCalledWith({
+        where: { ownerGroupId: 'bacenta-1', scheduledStart: { gte: from, lte: to } },
+        orderBy: { scheduledStart: 'asc' },
+      });
+      expect(result).toEqual([{ id: 'g-1' }]);
+    });
+
+    it('narrows to an exact type match when supplied (Gatherings Web Admin sprint)', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.gathering.findMany.mockResolvedValue([]);
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-08-08T00:00:00.000Z');
+
+      await repository.listByGroupAndRange('bacenta-1', from, to, 'BACENTA_MEETING');
+
+      expect(prisma.gathering.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { ownerGroupId: 'bacenta-1', scheduledStart: { gte: from, lte: to }, type: 'BACENTA_MEETING' } }),
+      );
+    });
+  });
+
+  describe('listByBranchAndRange (Gatherings Web Admin sprint)', () => {
+    it('queries by branchId and an inclusive scheduledStart range, sorted earliest-first', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.gathering.findMany.mockResolvedValue([{ id: 'g-1' }]);
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-08-08T00:00:00.000Z');
+
+      const result = await repository.listByBranchAndRange('branch-1', from, to);
+
+      expect(prisma.gathering.findMany).toHaveBeenCalledWith({
+        where: { branchId: 'branch-1', scheduledStart: { gte: from, lte: to } },
+        orderBy: { scheduledStart: 'asc' },
+      });
+      expect(result).toEqual([{ id: 'g-1' }]);
+    });
+
+    it('narrows to an exact type match when supplied', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.gathering.findMany.mockResolvedValue([]);
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-08-08T00:00:00.000Z');
+
+      await repository.listByBranchAndRange('branch-1', from, to, 'SUNDAY_SERVICE');
+
+      expect(prisma.gathering.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { branchId: 'branch-1', scheduledStart: { gte: from, lte: to }, type: 'SUNDAY_SERVICE' } }),
+      );
+    });
   });
 });

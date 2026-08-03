@@ -4,7 +4,9 @@ import { InsightsConsumer } from './consumers/insights/insights.consumer';
 import { NotificationConsumer } from './consumers/notification/notification.consumer';
 import { AttendanceCompletenessSweepJob } from './jobs/attendance-completeness-sweep/attendance-completeness-sweep.job';
 import { ChurchPulseRecomputeJob } from './jobs/church-pulse-recompute/church-pulse-recompute.job';
+import { FlaggedTransactionSlaSweepJob } from './jobs/flagged-transaction-sla-sweep/flagged-transaction-sla-sweep.job';
 import { FollowUpSlaSweepJob } from './jobs/follow-up-sla-sweep/follow-up-sla-sweep.job';
+import { PledgeReminderSweepJob } from './jobs/pledge-reminder-sweep/pledge-reminder-sweep.job';
 import { SilentDriftSweepJob } from './jobs/silent-drift-sweep/silent-drift-sweep.job';
 
 describe('parseCommand()', () => {
@@ -16,6 +18,8 @@ describe('parseCommand()', () => {
     'sweep:church-pulse-recompute',
     'sweep:follow-up-sla',
     'sweep:attendance-completeness',
+    'sweep:flagged-transaction-sla',
+    'sweep:pledge-reminder',
   ] as const)('accepts %s', (command) => {
     expect(parseCommand(['node', 'main.js', command])).toBe(command);
   });
@@ -60,6 +64,8 @@ describe('runCommand()', () => {
       ['sweep:church-pulse-recompute', ChurchPulseRecomputeJob, 5, 'recomputed 5 scope(s)'],
       ['sweep:follow-up-sla', FollowUpSlaSweepJob, 2, 'signaled 2 breach(es)'],
       ['sweep:attendance-completeness', AttendanceCompletenessSweepJob, 1, 'signaled 1 incomplete Gathering(s)'],
+      ['sweep:flagged-transaction-sla', FlaggedTransactionSlaSweepJob, 4, 'signaled 4 breach(es)'],
+      ['sweep:pledge-reminder', PledgeReminderSweepJob, 6, 'signaled 6 reminder(s)'],
     ] as const)('%s', async (command, jobType, count, expectedLogFragment) => {
       const run = jest.fn().mockResolvedValue(count);
       const { app, log } = buildAppMock(jobType, { run });

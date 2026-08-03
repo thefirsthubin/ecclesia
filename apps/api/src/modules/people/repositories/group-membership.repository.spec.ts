@@ -126,4 +126,19 @@ describe('GroupMembershipRepository', () => {
       expect(result).toBe(2);
     });
   });
+
+  describe('People Web Admin sprint additions (FR-PPL-07)', () => {
+    it('listByPerson() returns every membership (active and ended) for the Person, newest first', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.groupMembership.findMany.mockResolvedValue([{ id: 'm2' }, { id: 'm1' }]);
+
+      const result = await repository.listByPerson('person-1');
+
+      expect(prisma.groupMembership.findMany).toHaveBeenCalledWith({
+        where: { personId: 'person-1' },
+        orderBy: { startedAt: 'desc' },
+      });
+      expect(result).toEqual([{ id: 'm2' }, { id: 'm1' }]);
+    });
+  });
 });

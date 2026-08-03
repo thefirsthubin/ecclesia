@@ -120,6 +120,42 @@ trade-off, not a missing feature; a future iteration could add a
 `lastSignaledAt`-style column to reduce signal volume, but that's a
 schema change outside this milestone's scope.
 
+### `[Stewardship gaps sprint]` `flagged-transaction-sla-sweep` and `pledge-reminder-sweep`: same shape, one new wrinkle
+
+Two more scheduled sweeps, added after this milestone's original seven,
+closing gaps `STEWARDSHIP_DESIGN_NOTES.md`'s own "what this milestone
+deliberately does not build" section named (`Flagged -> UnderInvestigation`'s
+automatic SLA trigger, Pledge reminder delivery). `command.ts`'s
+`WorkerCommand` union grew from 7 to 9 values; `worker.module.ts` now
+imports ten consumer/job modules unconditionally.
+
+- **`flagged-transaction-sla-sweep`** follows `follow-up-sla-sweep`'s exact
+  "detect and signal, never mutate" shape - and for the identical
+  underlying reason. `FinancialTransactionEvent.actorUserId` is a
+  `NOT NULL` FK to `platform.users` ("No 'system actor'" above already
+  establishes no such row exists), so appending the
+  `FLAGGED -> UNDER_INVESTIGATION` event automatically is not an option
+  without either fabricating an actor or violating the schema constraint -
+  the same "the real mutation needs human-supplied data this sweep doesn't
+  have" blocker `follow-up-sla-sweep` hits for its own `escalatedToPersonId`
+  requirement, just from a different root cause (an FK constraint instead
+  of a business-logic parameter). Publishes
+  `stewardship.flagged_transaction_sla_breached` and re-signals every run,
+  same disclosed no-dedup-marker trade-off as `follow-up-sla-sweep`/
+  `attendance-completeness-sweep`.
+- **`pledge-reminder-sweep`** is the first sweep job added since the
+  original seven that *does* mutate - and the first to do so safely.
+  `Pledge.reminderSentAt` is a plain nullable `DateTime?` column with no
+  actor FK at all (unlike `FinancialTransactionEvent`, it isn't part of an
+  append-only audited log), so marking it needs no fabricated actor, only
+  a timestamp. This also gives it a real persisted dedup marker the other
+  sweeps lack: once `reminderSentAt` is set, `PledgeReminderSweepRepository.
+  listReminderCandidates()`'s own `reminderSentAt: null` filter excludes
+  that Pledge from every future run - a true single send, matching OQ-07's
+  "never a repeated... sequence" requirement exactly, not the "re-publish
+  every run" behavior every other detect-and-signal sweep in this codebase
+  has to settle for.
+
 ## No LocalStack / docker-compose AWS emulation - real SDK code instead
 
 Confirmed via an explicit grep across both source documents: **zero

@@ -6,6 +6,7 @@ import type { EngagementSignalEnvelope } from '@ecclesia/contracts';
 
 import { WorkerAuditLogRepository } from './audit-log.repository';
 import type { EnvConfig } from '../../platform/config/env.schema';
+import { PrismaService } from '../../platform/database/prisma.service';
 import { ProcessedEventRepository } from '../../platform/events/processed-event.repository';
 import { SQS_CLIENT } from '../../platform/events/sqs-client.provider';
 import { SqsConsumerBase } from '../../platform/events/sqs-consumer.base';
@@ -40,8 +41,16 @@ export class AuditConsumer extends SqsConsumerBase {
     processedEventRepository: ProcessedEventRepository,
     @InjectPinoLogger(AuditConsumer.name) logger: PinoLogger,
     private readonly auditLogRepository: WorkerAuditLogRepository,
+    prisma: PrismaService,
   ) {
-    super(sqsClient, configService.get('SQS_AUDIT_QUEUE_URL', { infer: true }), AuditConsumer.CONSUMER_NAME, processedEventRepository, logger);
+    super(
+      sqsClient,
+      configService.get('SQS_AUDIT_QUEUE_URL', { infer: true }),
+      AuditConsumer.CONSUMER_NAME,
+      processedEventRepository,
+      logger,
+      prisma,
+    );
   }
 
   protected async handle(envelope: EngagementSignalEnvelope): Promise<void> {

@@ -5,6 +5,8 @@ import { evaluateSilentDrift } from '@ecclesia/domain-pastoral-care';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { SilentDriftSweepRepository } from './silent-drift-sweep.repository';
+import { BranchDirectoryRepository } from '../../platform/database/branch-directory.repository';
+import { PrismaService } from '../../platform/database/prisma.service';
 import { EventBridgePublisherService } from '../../platform/events/eventbridge-publisher.service';
 
 /**
@@ -36,17 +38,27 @@ export class SilentDriftSweepJob {
 
   constructor(
     private readonly repository: SilentDriftSweepRepository,
+    private readonly branchDirectory: BranchDirectoryRepository,
+    private readonly prisma: PrismaService,
     private readonly publisher: EventBridgePublisherService,
     @InjectPinoLogger(SilentDriftSweepJob.name) private readonly logger: PinoLogger,
   ) {}
 
   /** Runs the sweep across every Branch. Returns the number of new flags
-   * raised, the unit `main.ts`'s dispatcher logs on completion. */
+   * raised, the unit `main.ts`'s dispatcher logs on completion.
+   *
+   * `[Row-Level Security sprint]` `listBranches()` is the one unscoped
+   * call (`BranchDirectoryRepository`, the `PrismaRootService`-backed
+   * bootstrap) - every Branch's own `sweepBranch` call then runs inside
+   * that one Branch's `runInBranchScope`, including the
+   * `EventBridgePublisherService.publish()` call partway through it (the
+   * disclosed "external I/O inside the transaction" tradeoff,
+   * `db/ROW_LEVEL_SECURITY_DESIGN_NOTES.md` §5). */
   async run(): Promise<number> {
-    const branches = await this.repository.listBranches();
+    const branches = await this.branchDirectory.listBranches();
     let flaggedCount = 0;
     for (const branch of branches) {
-      flaggedCount += await this.sweepBranch(branch.id);
+      flaggedCount += await this.prisma.runInBranchScope(branch.id, () => this.sweepBranch(branch.id));
     }
     return flaggedCount;
   }

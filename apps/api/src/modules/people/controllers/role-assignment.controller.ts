@@ -1,10 +1,12 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { RbacGuard, RequirePermission } from '@ecclesia/rbac';
 import type { ActorContext } from '@ecclesia/rbac';
 import { createRoleAssignmentRequestSchema } from '@ecclesia/contracts';
 import type { CreateRoleAssignmentRequestInput } from '@ecclesia/contracts';
 
 import { CurrentActor } from '../../../platform/auth/decorators/current-actor.decorator';
 import { ZodValidationPipe } from '../../../platform/pipes/zod-validation.pipe';
+import { RoleAssignmentResourceContextGuard } from '../guards/role-assignment-resource-context.guard';
 import { RoleAssignmentService } from '../services/role-assignment.service';
 
 /**
@@ -29,5 +31,15 @@ export class RoleAssignmentController {
     @Body(new ZodValidationPipe(createRoleAssignmentRequestSchema)) body: CreateRoleAssignmentRequestInput,
   ) {
     return this.roleAssignmentService.grant(actor, personId, body);
+  }
+
+  /** FR-PPL-07's role-assignment history read - see
+   * `RoleAssignmentResourceContextGuard`'s doc comment for why this route,
+   * unlike `grant()` above, uses the ordinary declarative RBAC pattern. */
+  @Get()
+  @RequirePermission('people.role_assignment.read')
+  @UseGuards(RoleAssignmentResourceContextGuard, RbacGuard)
+  listForPerson(@Param('personId') personId: string) {
+    return this.roleAssignmentService.listForPerson(personId);
   }
 }

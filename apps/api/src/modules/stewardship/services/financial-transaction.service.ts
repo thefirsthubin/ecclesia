@@ -78,12 +78,27 @@ export class FinancialTransactionService {
     return toResponseDto(transaction, recordedByPersonId ?? null);
   }
 
-  /** FR-STW-03/04's verification-queue/discrepancy-queue read. See
+  /**
+   * FR-STW-03/04's verification-queue/discrepancy-queue read. See
    * `FinancialTransactionRepository.findManyByBranch`'s doc comment for
    * why `recordedByPersonId` is left `null` in list results (avoiding an
-   * N+1 join per row for a minimal queue view). */
+   * N+1 join per row for a minimal queue view).
+   *
+   * `[Stewardship gaps sprint]` When `actor.bacentaId` is set (a
+   * BACENTA_LEADER's own single-Bacenta scope), the list narrows to just
+   * that Bacenta's own recorded offerings - closes the "no Bacenta
+   * Leader list view" gap `STEWARDSHIP_DESIGN_NOTES.md` flagged
+   * (previously they could only fetch a transaction by an already-known
+   * id, never list what they themselves recorded).
+   * `FinancialTransactionListResourceContextGuard` now also populates
+   * `resource.bacentaId` from the same fact, so RBAC's OWN_GROUP scope
+   * check (`stewardship.transaction.read`'s BACENTA_LEADER row) actually
+   * passes for this endpoint - see that guard's own doc comment.
+   */
   async listByBranch(actor: ActorContext, currentState?: string): Promise<FinancialTransactionResponseDto[]> {
-    const transactions = await this.financialTransactionRepository.findManyByBranch(actor.branchId, currentState);
+    const transactions = actor.bacentaId
+      ? await this.financialTransactionRepository.findManyByBranch(actor.branchId, currentState, undefined, actor.bacentaId)
+      : await this.financialTransactionRepository.findManyByBranch(actor.branchId, currentState);
     return transactions.map((transaction) => toResponseDto(transaction, null));
   }
 

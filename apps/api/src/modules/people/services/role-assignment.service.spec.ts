@@ -10,6 +10,7 @@ describe('RoleAssignmentService', () => {
       findUserIdByPersonId: jest.fn().mockResolvedValue('user-1'),
       findActiveBacentaLeader: jest.fn().mockResolvedValue(null),
       createWithSuccession: jest.fn(),
+      listByPerson: jest.fn(),
     };
     const personRepository = { findById: jest.fn() };
     const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
@@ -173,5 +174,22 @@ describe('RoleAssignmentService', () => {
     expect(roleAssignmentRepository.findActiveBacentaLeader).not.toHaveBeenCalled();
     expect(roleAssignmentRepository.createWithSuccession).not.toHaveBeenCalled();
     expect(roleAssignmentRepository.create).toHaveBeenCalled();
+  });
+
+  describe('listForPerson (FR-PPL-07)', () => {
+    it('maps every Role Assignment returned by the repository to a response DTO', async () => {
+      const { service, roleAssignmentRepository } = buildService();
+      roleAssignmentRepository.listByPerson.mockResolvedValue([
+        roleAssignmentRow,
+        { ...roleAssignmentRow, id: 'ra-2', role: 'BACENTA_LEADER', effectiveTo: new Date('2026-03-01T00:00:00Z') },
+      ]);
+
+      const result = await service.listForPerson('person-1');
+
+      expect(roleAssignmentRepository.listByPerson).toHaveBeenCalledWith('person-1');
+      expect(result).toHaveLength(2);
+      expect(result[0].id).toBe('ra-1');
+      expect(result[1].effectiveTo).toBe('2026-03-01T00:00:00.000Z');
+    });
   });
 });

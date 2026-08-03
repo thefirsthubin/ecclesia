@@ -8,7 +8,7 @@ describe('FinancialTransactionRepository', () => {
     };
     const prisma = {
       $transaction: jest.fn((fn: (tx: typeof txClient) => unknown) => fn(txClient)),
-      financialTransaction: { findUnique: jest.fn(), findMany: jest.fn() },
+      financialTransaction: { findUnique: jest.fn(), findMany: jest.fn(), groupBy: jest.fn() },
       financialTransactionEvent: { findFirst: jest.fn() },
       user: { findUnique: jest.fn() },
     };
@@ -83,6 +83,61 @@ describe('FinancialTransactionRepository', () => {
       where: { branchId: 'branch-1', currentState: 'FLAGGED' },
       orderBy: { createdAt: 'desc' },
     });
+  });
+
+  it('findManyByBranch() also filters by type when given (Stewardship Web Admin sprint)', async () => {
+    const { repository, prisma } = buildRepository();
+    prisma.financialTransaction.findMany.mockResolvedValue([]);
+
+    await repository.findManyByBranch('branch-1', 'REQUESTED', 'EXPENSE');
+
+    expect(prisma.financialTransaction.findMany).toHaveBeenCalledWith({
+      where: { branchId: 'branch-1', currentState: 'REQUESTED', type: 'EXPENSE' },
+      orderBy: { createdAt: 'desc' },
+    });
+  });
+
+  it('[Stewardship gaps sprint] findManyByBranch() also filters by sourceGroupId when given', async () => {
+    const { repository, prisma } = buildRepository();
+    prisma.financialTransaction.findMany.mockResolvedValue([]);
+
+    await repository.findManyByBranch('branch-1', 'RECORDED', undefined, 'bacenta-1');
+
+    expect(prisma.financialTransaction.findMany).toHaveBeenCalledWith({
+      where: { branchId: 'branch-1', currentState: 'RECORDED', sourceGroupId: 'bacenta-1' },
+      orderBy: { createdAt: 'desc' },
+    });
+  });
+
+  it('[Stewardship gaps sprint] sumVerifiedAmountByGroupForWeek() groups by sourceGroupId, filters VERIFIED/RECONCILED within the window, and defaults a null sum to 0n', async () => {
+    const { repository, prisma } = buildRepository();
+    prisma.financialTransaction.groupBy.mockResolvedValue([
+      { sourceGroupId: 'bacenta-1', _sum: { amountMinor: 5000n } },
+      { sourceGroupId: null, _sum: { amountMinor: 100n } },
+      { sourceGroupId: 'bacenta-2', _sum: { amountMinor: null } },
+    ]);
+    const weekStart = new Date('2026-08-03T00:00:00.000Z');
+    const weekEnd = new Date('2026-08-10T00:00:00.000Z');
+
+    const result = await repository.sumVerifiedAmountByGroupForWeek('branch-1', weekStart, weekEnd);
+
+    expect(prisma.financialTransaction.groupBy).toHaveBeenCalledWith({
+      by: ['sourceGroupId'],
+      where: {
+        branchId: 'branch-1',
+        sourceGroupId: { not: null },
+        currentState: { in: ['VERIFIED', 'RECONCILED'] },
+        createdAt: { gte: weekStart, lt: weekEnd },
+      },
+      _sum: { amountMinor: true },
+    });
+    // The `sourceGroupId: null` row is filtered out (it should never occur
+    // given the `where` clause above already excludes it, but the
+    // repository's own defensive filter is exercised here regardless).
+    expect(result).toEqual([
+      { sourceGroupId: 'bacenta-1', totalAmountMinor: 5000n },
+      { sourceGroupId: 'bacenta-2', totalAmountMinor: 0n },
+    ]);
   });
 
   it('findFirstEventByToState() orders by occurredAt ascending to find the first entry into that state', async () => {

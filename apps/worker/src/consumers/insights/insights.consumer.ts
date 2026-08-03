@@ -7,6 +7,7 @@ import type { Prisma } from '@prisma/client';
 
 import { WorkerEngagementSignalRepository } from './engagement-signal.repository';
 import type { EnvConfig } from '../../platform/config/env.schema';
+import { PrismaService } from '../../platform/database/prisma.service';
 import { ProcessedEventRepository } from '../../platform/events/processed-event.repository';
 import { SQS_CLIENT } from '../../platform/events/sqs-client.provider';
 import { SqsConsumerBase } from '../../platform/events/sqs-consumer.base';
@@ -34,8 +35,16 @@ export class InsightsConsumer extends SqsConsumerBase {
     processedEventRepository: ProcessedEventRepository,
     @InjectPinoLogger(InsightsConsumer.name) logger: PinoLogger,
     private readonly engagementSignalRepository: WorkerEngagementSignalRepository,
+    prisma: PrismaService,
   ) {
-    super(sqsClient, configService.get('SQS_INSIGHTS_QUEUE_URL', { infer: true }), InsightsConsumer.CONSUMER_NAME, processedEventRepository, logger);
+    super(
+      sqsClient,
+      configService.get('SQS_INSIGHTS_QUEUE_URL', { infer: true }),
+      InsightsConsumer.CONSUMER_NAME,
+      processedEventRepository,
+      logger,
+      prisma,
+    );
   }
 
   protected async handle(envelope: EngagementSignalEnvelope): Promise<void> {

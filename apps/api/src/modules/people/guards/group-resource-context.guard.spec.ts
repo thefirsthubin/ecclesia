@@ -4,6 +4,7 @@ import type { ActorContext } from '@ecclesia/rbac';
 
 import {
   GroupCreateResourceContextGuard,
+  GroupListResourceContextGuard,
   GroupResourceContextGuard,
 } from './group-resource-context.guard';
 import type { RequestWithActorContext } from '../../../platform/auth/auth.guard';
@@ -48,6 +49,21 @@ describe('GroupCreateResourceContextGuard', () => {
     const guard = new GroupCreateResourceContextGuard(branchConfigurationService as never);
     const actor: ActorContext = { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' };
     const request: Partial<RequestWithActorContext> = { actorContext: actor } as never;
+
+    await guard.canActivate(buildContext(request));
+
+    expect((request as Record<string, unknown>)[ECCLESIA_REQUEST_CONTEXT_KEY]).toMatchObject({
+      resource: { branchId: 'branch-1' },
+    });
+  });
+});
+
+describe('GroupListResourceContextGuard (Ministry Web Admin sprint)', () => {
+  it('resolves the resource as the actor\'s own Branch, with no database read', async () => {
+    const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+    const guard = new GroupListResourceContextGuard(branchConfigurationService as never);
+    const actor: ActorContext = { personId: 'rp-1', role: 'RESIDENT_PASTOR', branchId: 'branch-1' };
+    const request: Partial<RequestWithActorContext> = { actorContext: actor, query: {} } as never;
 
     await guard.canActivate(buildContext(request));
 

@@ -13,6 +13,8 @@ import type { PulseScoreScopeType } from '@prisma/client';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { ChurchPulseRecomputeRepository } from './church-pulse-recompute.repository';
+import { BranchDirectoryRepository } from '../../platform/database/branch-directory.repository';
+import { PrismaService } from '../../platform/database/prisma.service';
 
 /** FR-INS-03's one alert type - identical constant to
  * `apps/api/src/modules/insights/services/alert.service.ts`'s own
@@ -64,22 +66,38 @@ function toWeightsRecord(raw: Record<string, number> | null): Partial<Record<Chu
 export class ChurchPulseRecomputeJob {
   constructor(
     private readonly repository: ChurchPulseRecomputeRepository,
+    private readonly branchDirectory: BranchDirectoryRepository,
+    private readonly prisma: PrismaService,
     @InjectPinoLogger(ChurchPulseRecomputeJob.name) private readonly logger: PinoLogger,
   ) {}
 
-  /** Returns the number of scopes (Branch + every active Bacenta) recomputed. */
+  /** Returns the number of scopes (Branch + every active Bacenta) recomputed.
+   *
+   * `[Row-Level Security sprint]` `listBranches()` is the one unscoped
+   * call; everything for one Branch - its own `computeAndStore` plus every
+   * active Bacenta's `computeAndStore` inside it - runs inside that one
+   * Branch's single `runInBranchScope` transaction, not a separate
+   * transaction per scope. Unlike the other three sweep jobs, this one has
+   * no single `sweepBranch` method to wrap - the whole per-branch block
+   * below is wrapped inline instead. */
   async run(): Promise<number> {
-    const branches = await this.repository.listBranches();
+    const branches = await this.branchDirectory.listBranches();
     let scopeCount = 0;
     for (const branch of branches) {
-      await this.computeAndStore(branch.id, 'BRANCH', branch.id, undefined);
-      scopeCount += 1;
+      scopeCount += await this.prisma.runInBranchScope(branch.id, () => this.recomputeBranch(branch.id));
+    }
+    return scopeCount;
+  }
 
-      const groups = await this.repository.listActiveBacentaGroups(branch.id);
-      for (const group of groups) {
-        await this.computeAndStore(branch.id, 'GROUP', group.id, group.id);
-        scopeCount += 1;
-      }
+  private async recomputeBranch(branchId: string): Promise<number> {
+    let scopeCount = 0;
+    await this.computeAndStore(branchId, 'BRANCH', branchId, undefined);
+    scopeCount += 1;
+
+    const groups = await this.repository.listActiveBacentaGroups(branchId);
+    for (const group of groups) {
+      await this.computeAndStore(branchId, 'GROUP', group.id, group.id);
+      scopeCount += 1;
     }
     return scopeCount;
   }

@@ -193,6 +193,43 @@ their declaration site in `actions.ts` and summarized here:
 - **The `ASSISTANT_PASTOR` cluster-oversight gap.** See its own section
   above - needs a scope-model extension, not built here.
 
+## Resolved (Ministry Web Admin sprint)
+
+Building `apps/web-admin`'s Ministry page (a Basonta directory + roster
+view) surfaced two real gaps:
+
+1. **[Bug fix]** None of the seven `ministry.*` actions had an ADMIN row
+   at any scope, even though every other domain's BRANCH-scoped read
+   action (`people.person.read`, `pastoral_care.followup_task.read`, ...)
+   grants ADMIN the same BRANCH row RESIDENT_PASTOR holds. Nothing in
+   this file argues Admin should be excluded from Ministry oversight -
+   this was an oversight carried from this module's original build, not a
+   deliberate exclusion. Added matching ADMIN BRANCH rows to
+   `ministry.roster.read`, `ministry.roster.overcommitment.read`, and
+   `ministry.staffing_target.read` (the three read actions a web-admin
+   oversight page actually needs; `.create` actions were left alone -
+   Admin initiating a staffing target or worker-availability entry on
+   someone else's behalf was never in scope for this fix).
+2. **No way to enumerate Basontas branch-wide.** `RESIDENT_PASTOR`
+   already held `ministry.roster.read` at BRANCH scope, but every roster
+   route (`GET /ministry/groups/:groupId/roster`) requires already
+   knowing a specific `groupId` - and there was no endpoint anywhere in
+   the codebase to list Groups at all, Basonta or otherwise (People's own
+   `GroupController` only ever had single-record CRUD by id). A
+   BRANCH-scoped web-admin user had permission to read every roster in
+   the Branch but no way to discover which Basontas exist. Fixed in the
+   People module, not here - `GET /groups?type=MINISTRY` (see
+   `PEOPLE_DESIGN_NOTES.md`'s "Ministry Web Admin sprint follow-up"
+   section for the full reasoning) - reused as-is rather than duplicating
+   a parallel Basonta-listing endpoint inside Ministry itself, the same
+   "don't own what another module already owns" boundary this module's
+   own doc comment states at the top ("FR-MIN-01 is *not* reimplemented
+   here").
+
+See `apps/web-admin/src/app/pages/Ministry/MINISTRY_PAGE_DESIGN_NOTES.md`
+for the client side, including why Staffing Targets and Worker
+Availability self-service are still not surfaced on web-admin this pass.
+
 ## Known sandbox limitation
 
 Same disclosed limitation as every prior sprint: no `tsc`/`eslint`/`jest`/

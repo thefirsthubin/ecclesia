@@ -205,5 +205,15 @@ describe('FinancialTransactionService', () => {
       expect(financialTransactionRepository.findManyByBranch).toHaveBeenCalledWith('branch-1', 'RECORDED');
       expect(result[0].recordedByPersonId).toBeNull();
     });
+
+    it('[Stewardship gaps sprint] narrows to the actor\'s own Bacenta when actor.bacentaId is set (BACENTA_LEADER list view)', async () => {
+      const { service, financialTransactionRepository } = buildService();
+      const bacentaLeaderWithGroup: ActorContext = { ...bacentaLeader, bacentaId: 'bacenta-1' };
+      financialTransactionRepository.findManyByBranch.mockResolvedValue([buildTransaction()]);
+
+      await service.listByBranch(bacentaLeaderWithGroup, 'RECORDED');
+
+      expect(financialTransactionRepository.findManyByBranch).toHaveBeenCalledWith('branch-1', 'RECORDED', undefined, 'bacenta-1');
+    });
   });
 });

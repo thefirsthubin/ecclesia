@@ -30,6 +30,7 @@
     "db:migrate:deploy": "prisma migrate deploy",
     "db:migrate:status": "prisma migrate status",
     "db:seed": "prisma db seed",
+    "db:seed:dev": "node -r @swc-node/register db/seed-dev-users.ts",
     "db:studio": "prisma studio"
   },
   "dependencies": {

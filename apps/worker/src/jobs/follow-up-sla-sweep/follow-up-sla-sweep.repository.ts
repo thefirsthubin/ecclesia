@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { Branch, FollowUpTask } from '@prisma/client';
+import type { FollowUpTask } from '@prisma/client';
 
 import { PrismaService } from '../../platform/database/prisma.service';
 
@@ -14,9 +14,8 @@ import { PrismaService } from '../../platform/database/prisma.service';
 export class FollowUpSlaSweepRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  listBranches(): Promise<Pick<Branch, 'id'>[]> {
-    return this.prisma.branch.findMany({ select: { id: true } });
-  }
+  // `[Row-Level Security sprint]` `listBranches()` moved to
+  // `BranchDirectoryRepository` - see that class's own doc comment.
 
   /** Every `OPEN` Follow-up task in a Branch with a `dueAt` set - the
    * candidate population `isFollowUpTaskPastSla()` evaluates. Tasks with

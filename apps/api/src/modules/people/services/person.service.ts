@@ -1,10 +1,11 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { checkLifecycleTransition, findDuplicateCandidates, requiresGroupMembershipToTransition } from '@ecclesia/domain-people';
-import type { CreatePersonInput, LifecycleTransitionRequestInput, PersonResponseDto, UpdatePersonInput } from '@ecclesia/contracts';
+import type { CreatePersonInput, LifecycleTransitionRequestInput, ListPeopleQuery, PersonResponseDto, UpdatePersonInput } from '@ecclesia/contracts';
 import type { ActorContext } from '@ecclesia/rbac';
 import type { Person } from '@prisma/client';
 
 import { PersonRepository } from '../repositories/person.repository';
+import { GroupRosterService } from './group-roster.service';
 
 function toResponseDto(person: Person): PersonResponseDto {
   return {
@@ -34,7 +35,36 @@ function toResponseDto(person: Person): PersonResponseDto {
  */
 @Injectable()
 export class PersonService {
-  constructor(private readonly personRepository: PersonRepository) {}
+  constructor(
+    private readonly personRepository: PersonRepository,
+    private readonly groupRosterService: GroupRosterService,
+  ) {}
+
+  /**
+   * `GET /people` (PRD §16.1's "Search & directory" capability). Scope is
+   * already enforced by `PersonListResourceContextGuard`/`RbacGuard`
+   * before this runs - `query.groupId` set means the actor's role is
+   * OWN_GROUP/CLUSTER-scoped and named their own group; absent means a
+   * BRANCH-scoped role (Resident Pastor/Admin/Treasurer) searching the
+   * whole Branch. Group-scoped listing goes through `GroupRosterService`
+   * (People's own "active roster" service, already built for the
+   * Ministry milestone) rather than a bespoke query, so "who is
+   * currently in this group" has exactly one definition across the
+   * module.
+   */
+  async list(actor: ActorContext, query: ListPeopleQuery): Promise<PersonResponseDto[]> {
+    if (query.groupId) {
+      const roster = await this.groupRosterService.listActiveMembers(query.groupId);
+      const persons = await this.personRepository.findByIds(
+        roster.map((member) => member.personId),
+        query.search,
+      );
+      return persons.map(toResponseDto);
+    }
+
+    const persons = await this.personRepository.findByBranch(actor.branchId, query.search);
+    return persons.map(toResponseDto);
+  }
 
   /**
    * FR-PPL-01 (create) + FR-PPL-02 (duplicate detection "on every

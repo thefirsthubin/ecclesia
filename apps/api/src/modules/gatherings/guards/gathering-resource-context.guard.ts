@@ -63,3 +63,35 @@ export class GatheringResourceContextGuard extends EcclesiaContextGuardBase {
     return { branchId: gathering.branchId };
   }
 }
+
+/**
+ * `GET /gatherings?ownerGroupId=...` (Shepherd Dashboard sprint's
+ * Today's-Meeting/Attendance-Summary cards - [Gap], see
+ * `SHEPHERD_DASHBOARD_DESIGN_NOTES.md` STEP 6). Group-scoped via
+ * `GroupScopeService` when `ownerGroupId` is supplied, the identical
+ * pattern `GatheringCreateResourceContextGuard` already uses for the
+ * request body's `ownerGroupId`.
+ *
+ * `ownerGroupId` is now optional (Gatherings Web Admin sprint) - its
+ * absence falls back to the actor's own Branch, the same shape
+ * `PersonListResourceContextGuard`/`FollowUpTaskListForActorResourceContextGuard`
+ * already established for their own BRANCH-scoped list cases. See
+ * `apps/web-admin/.../Gatherings/GATHERINGS_PAGE_DESIGN_NOTES.md`.
+ */
+@Injectable()
+export class GatheringListResourceContextGuard extends EcclesiaContextGuardBase {
+  constructor(
+    branchConfigurationService: BranchConfigurationService,
+    private readonly groupScopeService: GroupScopeService,
+  ) {
+    super(branchConfigurationService);
+  }
+
+  protected loadResource(request: RequestWithActorContext, actor: ActorContext): Promise<ResourceContext> {
+    const ownerGroupId = (request.query as Record<string, string>).ownerGroupId;
+    if (ownerGroupId) {
+      return this.groupScopeService.loadResourceContext(ownerGroupId);
+    }
+    return Promise.resolve({ branchId: actor.branchId });
+  }
+}

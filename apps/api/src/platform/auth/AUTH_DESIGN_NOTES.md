@@ -6,6 +6,14 @@ sprint fulfills the `actor` half of). Same discipline as every prior
 sprint: every design choice below cites the Blueprint/PRD section it
 comes from, or is explicitly flagged as inferred/unresolved.
 
+**Production authentication, as designed below, is unchanged by the later
+Development Authentication sprint.** That sprint adds a second,
+local-only `TokenVerifierService` implementation (`DevAuthService`) that
+`AuthGuard` can be wired to *instead of* `CognitoVerifierService` — never
+both, never in production. See
+`DEVELOPMENT_AUTHENTICATION_GUIDE.md` for that design; everything below
+this line describes the original, still-current production path.
+
 ## What this sprint builds
 
 `apps/api` is a pure OIDC resource server (Blueprint §8.1: "integrated ...
@@ -31,6 +39,22 @@ already-built guards (Sprint 1.1) consume.
 - **Cognito Lambda triggers or any AWS infrastructure.** Nothing in this sandbox can provision or call real AWS services. `COGNITO_USER_POOL_ID`/`COGNITO_CLIENT_ID`/`COGNITO_REGION` must point at a real, already-provisioned User Pool before any of this can be end-to-end tested - same category of limitation as `DATABASE_URL` in Sprint 1.3, disclosed the same way.
 - **§8.5's full event list** (login, MFA challenge outcome, token refresh, token revocation). See Open Question #3 below - this sprint only logs token-verification failures at the API boundary, which is the one auth event this API layer can actually observe on its own.
 - **Closing the pre-existing §9.6 gap** (RBAC DENY decisions from `RbacGuard`/`RecordLevelPolicyGuard`, built Sprint 1.1, are still never written to `platform.audit_log` - that table didn't exist until Sprint 1.3). Investigated during this sprint; not fixed, because doing it properly requires either extending `AllExceptionsFilter` to special-case guard-thrown `ForbiddenException`s carrying a decision, or a Person→User reverse lookup for every denial, both of which are real enough pieces of design that they deserve their own reviewed change rather than a bolt-on here. Flagged as a recommended near-term follow-up, not silently dropped.
+
+## Resolved (Application Shell sprint)
+
+**No route ever returned a client's own `ActorContext` - now fixed.**
+`ActorContextResolverService.resolve()` computes role/scope entirely
+server-side per-request; nothing in Cognito's token claims carries it
+(confirmed - `CognitoVerifierService` only verifies `tokenUse: 'access'`,
+which has no custom role claim configured anywhere in this codebase or
+its env schema). `apps/web-admin`'s Application Shell sprint needed a way
+for a freshly-authenticated client to learn its own role for nav/dashboard
+routing and found no existing endpoint for it. Added `GET /auth/me`
+(`controllers/auth.controller.ts`) - a direct, no-new-logic read of the
+`ActorContext` `@CurrentActor()` already exposes, protected by the same
+global `AuthGuard` as everything else. See
+`apps/web-admin/src/app/APPLICATION_SHELL_DESIGN_NOTES.md` §3 for the
+client side of this.
 
 ## Resolved (People domain milestone)
 

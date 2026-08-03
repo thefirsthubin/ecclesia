@@ -50,6 +50,7 @@ describe('ExpenseService', () => {
       createWithEvent: jest.fn(),
       findById: jest.fn(),
       appendEvent: jest.fn(),
+      findManyByBranch: jest.fn(),
     };
     const service = new ExpenseService(expenseRepository as never, financialTransactionRepository as never);
     return { service, expenseRepository, financialTransactionRepository };
@@ -79,6 +80,32 @@ describe('ExpenseService', () => {
       await expect(service.request(requester, { amountMinor: '20000', description: 'x' } as never)).rejects.toThrow(
         ConflictException,
       );
+    });
+  });
+
+  describe('list (Stewardship Web Admin sprint)', () => {
+    it('lists EXPENSE-type transactions for the branch and joins each with its Expense extension row', async () => {
+      const { service, expenseRepository, financialTransactionRepository } = buildService();
+      financialTransactionRepository.findManyByBranch.mockResolvedValue([buildTransaction({ id: 'ft-1' })]);
+      expenseRepository.findByTransactionId.mockResolvedValue(buildExpense({ transactionId: 'ft-1' }));
+
+      const result = await service.list(approver, 'REQUESTED');
+
+      expect(financialTransactionRepository.findManyByBranch).toHaveBeenCalledWith('branch-1', 'REQUESTED', 'EXPENSE');
+      expect(expenseRepository.findByTransactionId).toHaveBeenCalledWith('ft-1');
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('exp-1');
+    });
+
+    it('filters out any transaction with no matching Expense extension row', async () => {
+      const { service, expenseRepository, financialTransactionRepository } = buildService();
+      financialTransactionRepository.findManyByBranch.mockResolvedValue([buildTransaction({ id: 'ft-1' })]);
+      expenseRepository.findByTransactionId.mockResolvedValue(null);
+
+      const result = await service.list(approver);
+
+      expect(financialTransactionRepository.findManyByBranch).toHaveBeenCalledWith('branch-1', undefined, 'EXPENSE');
+      expect(result).toEqual([]);
     });
   });
 

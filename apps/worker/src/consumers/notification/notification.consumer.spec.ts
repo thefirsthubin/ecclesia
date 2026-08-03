@@ -8,7 +8,14 @@ describe('NotificationConsumer', () => {
     const configService = { get: jest.fn().mockReturnValue('https://sqs.example/notification-consumer') };
     const processedEventRepository = { tryRecord: jest.fn() };
     const logger = { info: jest.fn(), warn: jest.fn(), error: jest.fn() };
-    const consumer = new NotificationConsumer(sqsClient as never, configService as never, processedEventRepository as never, logger as never);
+    const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
+    const consumer = new NotificationConsumer(
+      sqsClient as never,
+      configService as never,
+      processedEventRepository as never,
+      logger as never,
+      prisma as never,
+    );
     return { consumer, logger };
   }
 

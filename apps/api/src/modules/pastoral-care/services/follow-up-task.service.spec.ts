@@ -27,7 +27,13 @@ describe('FollowUpTaskService', () => {
   const actor: ActorContext = { personId: 'ap-1', role: 'ASSISTANT_PASTOR', branchId: 'branch-1' };
 
   function buildService() {
-    const followUpTaskRepository = { create: jest.fn(), findById: jest.fn(), update: jest.fn() };
+    const followUpTaskRepository = {
+      create: jest.fn(),
+      findById: jest.fn(),
+      update: jest.fn(),
+      listByGroup: jest.fn(),
+      listByBranch: jest.fn(),
+    };
     const personScopeService = {
       loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', ownerId: 'person-1' }),
     };
@@ -65,6 +71,52 @@ describe('FollowUpTaskService', () => {
       expect(followUpTaskRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({ dueAt: new Date(override) }),
       );
+    });
+  });
+
+  describe('listForGroup (§16.2 "sorted by SLA urgency" queue)', () => {
+    it('maps repository rows to response DTOs, delegating status filtering to the repository', async () => {
+      const { service, followUpTaskRepository } = buildService();
+      followUpTaskRepository.listByGroup.mockResolvedValue([buildTask({ id: 'ft-1' }), buildTask({ id: 'ft-2' })]);
+
+      const result = await service.listForGroup('bacenta-1', ['OPEN', 'ESCALATED']);
+
+      expect(followUpTaskRepository.listByGroup).toHaveBeenCalledWith('bacenta-1', ['OPEN', 'ESCALATED']);
+      expect(result).toHaveLength(2);
+      expect(result[0].id).toBe('ft-1');
+    });
+
+    it('passes undefined through to the repository when no status filter is supplied, letting it apply its own default', async () => {
+      const { service, followUpTaskRepository } = buildService();
+      followUpTaskRepository.listByGroup.mockResolvedValue([]);
+
+      await service.listForGroup('bacenta-1');
+
+      expect(followUpTaskRepository.listByGroup).toHaveBeenCalledWith('bacenta-1', undefined);
+    });
+  });
+
+  describe('list (Pastoral Care Web Admin sprint - GET /pastoral-care/follow-up-tasks)', () => {
+    it('delegates to listByGroup when query.groupId is present', async () => {
+      const { service, followUpTaskRepository } = buildService();
+      followUpTaskRepository.listByGroup.mockResolvedValue([buildTask({ id: 'ft-1' })]);
+
+      const result = await service.list(actor, { groupId: 'bacenta-1', status: ['OPEN'] } as never);
+
+      expect(followUpTaskRepository.listByGroup).toHaveBeenCalledWith('bacenta-1', ['OPEN']);
+      expect(followUpTaskRepository.listByBranch).not.toHaveBeenCalled();
+      expect(result).toHaveLength(1);
+    });
+
+    it('falls back to listByBranch against the actor\'s own Branch when query.groupId is absent', async () => {
+      const { service, followUpTaskRepository } = buildService();
+      followUpTaskRepository.listByBranch.mockResolvedValue([buildTask({ id: 'ft-1' })]);
+
+      const result = await service.list(actor, {} as never);
+
+      expect(followUpTaskRepository.listByBranch).toHaveBeenCalledWith('branch-1', undefined);
+      expect(followUpTaskRepository.listByGroup).not.toHaveBeenCalled();
+      expect(result).toHaveLength(1);
     });
   });
 

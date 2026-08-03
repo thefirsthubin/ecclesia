@@ -13,9 +13,14 @@ describe('PersonService', () => {
       findById: jest.fn(),
       update: jest.fn(),
       updateLifecycleStage: jest.fn(),
+      findByBranch: jest.fn().mockResolvedValue([]),
+      findByIds: jest.fn().mockResolvedValue([]),
     };
-    const service = new PersonService(personRepository as never);
-    return { service, personRepository };
+    const groupRosterService = {
+      listActiveMembers: jest.fn().mockResolvedValue([]),
+    };
+    const service = new PersonService(personRepository as never, groupRosterService as never);
+    return { service, personRepository, groupRosterService };
   }
 
   const personRow = {
@@ -155,6 +160,43 @@ describe('PersonService', () => {
       await expect(service.transitionLifecycleStage('missing', { toStage: 'MEMBER' })).rejects.toThrow(
         NotFoundException,
       );
+    });
+  });
+
+  describe('list', () => {
+    it('searches the whole Branch when no groupId is given', async () => {
+      const { service, personRepository, groupRosterService } = buildService();
+      personRepository.findByBranch.mockResolvedValue([personRow]);
+
+      const result = await service.list(actor, {});
+
+      expect(personRepository.findByBranch).toHaveBeenCalledWith('branch-1', undefined);
+      expect(groupRosterService.listActiveMembers).not.toHaveBeenCalled();
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('person-1');
+    });
+
+    it('passes the search term through to findByBranch', async () => {
+      const { service, personRepository } = buildService();
+
+      await service.list(actor, { search: 'Owusu' });
+
+      expect(personRepository.findByBranch).toHaveBeenCalledWith('branch-1', 'Owusu');
+    });
+
+    it('resolves a group-scoped roster via GroupRosterService when groupId is given', async () => {
+      const { service, personRepository, groupRosterService } = buildService();
+      groupRosterService.listActiveMembers.mockResolvedValue([
+        { personId: 'person-1', startedAt: new Date() },
+        { personId: 'person-2', startedAt: new Date() },
+      ]);
+      personRepository.findByIds.mockResolvedValue([personRow]);
+
+      await service.list(actor, { groupId: 'bacenta-1', search: 'Ama' });
+
+      expect(groupRosterService.listActiveMembers).toHaveBeenCalledWith('bacenta-1');
+      expect(personRepository.findByIds).toHaveBeenCalledWith(['person-1', 'person-2'], 'Ama');
+      expect(personRepository.findByBranch).not.toHaveBeenCalled();
     });
   });
 });

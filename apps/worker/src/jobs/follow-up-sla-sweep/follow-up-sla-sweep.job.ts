@@ -5,6 +5,8 @@ import { isFollowUpTaskPastSla } from '@ecclesia/domain-pastoral-care';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { FollowUpSlaSweepRepository } from './follow-up-sla-sweep.repository';
+import { BranchDirectoryRepository } from '../../platform/database/branch-directory.repository';
+import { PrismaService } from '../../platform/database/prisma.service';
 import { EventBridgePublisherService } from '../../platform/events/eventbridge-publisher.service';
 
 /**
@@ -50,16 +52,18 @@ export class FollowUpSlaSweepJob {
 
   constructor(
     private readonly repository: FollowUpSlaSweepRepository,
+    private readonly branchDirectory: BranchDirectoryRepository,
+    private readonly prisma: PrismaService,
     private readonly publisher: EventBridgePublisherService,
     @InjectPinoLogger(FollowUpSlaSweepJob.name) private readonly logger: PinoLogger,
   ) {}
 
   /** Returns the number of SLA breaches signaled. */
   async run(): Promise<number> {
-    const branches = await this.repository.listBranches();
+    const branches = await this.branchDirectory.listBranches();
     let breachedCount = 0;
     for (const branch of branches) {
-      breachedCount += await this.sweepBranch(branch.id);
+      breachedCount += await this.prisma.runInBranchScope(branch.id, () => this.sweepBranch(branch.id));
     }
     return breachedCount;
   }

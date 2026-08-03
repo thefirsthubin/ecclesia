@@ -2,16 +2,24 @@ import { AttendanceCompletenessSweepJob } from './attendance-completeness-sweep.
 
 describe('AttendanceCompletenessSweepJob', () => {
   function buildJob() {
-    const repository = { listBranches: jest.fn(), listRecentlyEndedGatherings: jest.fn(), hasAttendanceRecorded: jest.fn() };
+    const repository = { listRecentlyEndedGatherings: jest.fn(), hasAttendanceRecorded: jest.fn() };
+    const branchDirectory = { listBranches: jest.fn() };
+    const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
     const publisher = { publish: jest.fn() };
     const logger = { info: jest.fn(), warn: jest.fn(), error: jest.fn() };
-    const job = new AttendanceCompletenessSweepJob(repository as never, publisher as never, logger as never);
-    return { job, repository, publisher };
+    const job = new AttendanceCompletenessSweepJob(
+      repository as never,
+      branchDirectory as never,
+      prisma as never,
+      publisher as never,
+      logger as never,
+    );
+    return { job, repository, branchDirectory, publisher };
   }
 
   it('publishes a synthetic signal for a Gathering past its completeness window with no attendance', async () => {
-    const { job, repository, publisher } = buildJob();
-    repository.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
+    const { job, repository, branchDirectory, publisher } = buildJob();
+    branchDirectory.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
     repository.listRecentlyEndedGatherings.mockResolvedValue([
       { id: 'gathering-1', branchId: 'branch-1', ownerGroupId: 'group-1', scheduledEnd: new Date('2026-07-25T00:00:00.000Z') },
     ]);
@@ -32,8 +40,8 @@ describe('AttendanceCompletenessSweepJob', () => {
   });
 
   it('does not publish when attendance has already been recorded', async () => {
-    const { job, repository, publisher } = buildJob();
-    repository.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
+    const { job, repository, branchDirectory, publisher } = buildJob();
+    branchDirectory.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
     repository.listRecentlyEndedGatherings.mockResolvedValue([
       { id: 'gathering-1', branchId: 'branch-1', ownerGroupId: null, scheduledEnd: new Date('2026-07-25T00:00:00.000Z') },
     ]);
@@ -46,8 +54,8 @@ describe('AttendanceCompletenessSweepJob', () => {
   });
 
   it('does not publish for a Gathering still within its completeness window', async () => {
-    const { job, repository, publisher } = buildJob();
-    repository.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
+    const { job, repository, branchDirectory, publisher } = buildJob();
+    branchDirectory.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
     repository.listRecentlyEndedGatherings.mockResolvedValue([
       { id: 'gathering-1', branchId: 'branch-1', ownerGroupId: null, scheduledEnd: new Date(Date.now() - 60 * 60 * 1000) },
     ]);

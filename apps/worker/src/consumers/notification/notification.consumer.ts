@@ -5,6 +5,7 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import type { EngagementSignalEnvelope } from '@ecclesia/contracts';
 
 import type { EnvConfig } from '../../platform/config/env.schema';
+import { PrismaService } from '../../platform/database/prisma.service';
 import { ProcessedEventRepository } from '../../platform/events/processed-event.repository';
 import { SQS_CLIENT } from '../../platform/events/sqs-client.provider';
 import { SqsConsumerBase } from '../../platform/events/sqs-consumer.base';
@@ -40,6 +41,7 @@ export class NotificationConsumer extends SqsConsumerBase {
     configService: ConfigService<EnvConfig, true>,
     processedEventRepository: ProcessedEventRepository,
     @InjectPinoLogger(NotificationConsumer.name) private readonly notificationLogger: PinoLogger,
+    prisma: PrismaService,
   ) {
     super(
       sqsClient,
@@ -47,6 +49,7 @@ export class NotificationConsumer extends SqsConsumerBase {
       NotificationConsumer.CONSUMER_NAME,
       processedEventRepository,
       notificationLogger,
+      prisma,
     );
   }
 

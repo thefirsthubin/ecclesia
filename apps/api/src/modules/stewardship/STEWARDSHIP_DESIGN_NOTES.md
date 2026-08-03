@@ -34,6 +34,7 @@ The fourth bounded-context module (PRD §13.5's Stewardship domain).
 | Expense request/read/approve/reject/pay/receipt | `controllers/expense.controller.ts` + `services/expense.service.ts` | FR-STW-09, BR-STW-07/08 |
 | Project create/read | `controllers/project.controller.ts` + `services/project.service.ts` | FR-STW-08/H2 |
 | Pledge create/read/fulfill | `controllers/pledge.controller.ts` + `services/pledge.service.ts` | FR-STW-08/H2, OQ-07 |
+| Bank-deposit confirm/reconciliation `[Stewardship gaps sprint]` | `controllers/bank-deposit-confirmation.controller.ts` + `services/bank-deposit-confirmation.service.ts` | FR-STW-07 |
 
 ## Cross-module consumption (Blueprint §7.2), not duplication
 
@@ -126,45 +127,121 @@ and `permission-matrix.ts`, summarized here:
 
 ## What this milestone deliberately does not build
 
-- **FR-STW-07's bank-deposit comparison half.** "Aggregate `Verified`
-  transactions into a weekly reconciliation view comparing recorded totals
-  against confirmed bank deposits." `db/schema.prisma` has no
-  bank-deposit-confirmation entity at all - `FinancialTransactionService.reconcile()`
-  records the `Verified -> Reconciled` state transition itself (the half
-  that *is* buildable against the existing schema), but the "compiled
-  automatically... against bank deposit" comparison view needs a schema
-  addition outside an application-layer milestone's scope, the same
-  "needs a schema change, not an engineering guess" framing the People
-  milestone used for PRD §16.1's persistent duplicate-resolution queue.
-- **The `Flagged -> UnderInvestigation` automatic SLA trigger.** PRD
-  §12.7's "discrepancy unresolved past SLA" names no concrete duration
-  anywhere, and no scheduler exists in this codebase yet (the same gap
-  already flagged for Pastoral Care's silent-drift sweep and Gatherings'
-  attendance-completeness sweep). `FinancialTransactionService.escalate()`
-  exists as a manual transition a Treasurer/Admin invokes; nothing calls
-  it automatically.
 - **NFR-INT-01's Mobile Money provider integration.** H2 priority -
   `channel: MOBILE_MONEY` is recorded as a plain fact on every inbound
   transaction (FR-STW-05), but no MTN MoMo (or equivalent) API integration
   exists to auto-confirm those transactions.
-- **Pledge reminder delivery.** `reminderOptIn` is accepted and stored
-  (OQ-07's resolution: "a single, opt-in, gentle notice... never a
-  repeated or pressuring sequence"), but no scheduler exists to actually
-  send it - the same "no scheduler" gap as the SLA trigger above.
-- **Project progress aggregation.** FR-STW-08's acceptance criterion
-  ("shows total pledged, total received, and progress against a stated
-  target") needs a `SUM(...)` aggregate query across a Project's Pledges
-  and their fulfilling transactions - straightforward to add on top of
-  `PledgeRepository`/`FinancialTransactionRepository` but left out to keep
-  this milestone's surface reviewable, the same "flagged as a near-term,
-  low-risk follow-up, not a design gap" framing the People milestone used
-  for the full Person profile view.
-- **A Bacenta Leader's Financial-Transaction list/queue view.** The
-  `GET /v1/financial-transactions` list endpoint is Branch-scoped only
-  (`FinancialTransactionListResourceContextGuard`) - a `BACENTA_LEADER`'s
-  own `OWN_GROUP`-scoped `.read` grant cannot be satisfied by a
-  Branch-wide list resource today; they use `GET /v1/financial-transactions/:id`
-  for individual records they already know the id of instead.
+
+The six gaps originally listed here (FR-STW-07's bank-deposit comparison
+half, the `Flagged -> UnderInvestigation` automatic SLA trigger, Pledge
+reminder delivery, Project progress aggregation, a Bacenta Leader's
+Financial-Transaction list view) are now closed - see "Resolved
+(Stewardship gaps sprint)" below.
+
+## Resolved (Stewardship gaps sprint)
+
+- **FR-STW-07's bank-deposit comparison half.** `db/schema.prisma` gained
+  `BankDepositConfirmation` (`db/migrations/20260801060000_bank_deposit_confirmations`),
+  one row per Bacenta per week (`@@unique([groupId, weekStartDate])`).
+  `BankDepositConfirmationController`/`Service`/`Repository`
+  (`stewardship.bank_deposit.confirm`/`.read`, TREASURER-scoped BRANCH)
+  expose `POST /bank-deposit-confirmations` and `GET
+  /bank-deposit-confirmations/reconciliation?weekStartDate=...`, which
+  merges `FinancialTransactionRepository.sumVerifiedAmountByGroupForWeek()`
+  (Verified/Reconciled inbound totals, grouped by `sourceGroupId`) against
+  each Bacenta's confirmed deposit for that week, in memory (no direct DB
+  relation exists between the two tables - only a shared `groupId` + week -
+  and the data volume, one Branch's one week of Bacentas, doesn't need a
+  SQL-level join). `groupId` is required (not nullable) on
+  `BankDepositConfirmation`, matching FR-STW-07's own "per Bacenta"
+  framing - direct (ungrouped) Mobile Money transactions are outside this
+  reconciliation view's scope, an `[INFERRED]` scope choice.
+- **The `Flagged -> UnderInvestigation` automatic SLA trigger.**
+  `apps/worker`'s `flagged-transaction-sla-sweep`
+  (`FlaggedTransactionSlaSweepJob`, `sweep:flagged-transaction-sla`)
+  detects every `FLAGGED` transaction past a `DEFAULT_FLAGGED_SLA_HOURS`
+  (72h, `[INFERRED]` - PRD §12.7 names no concrete duration) window and
+  publishes a `stewardship.flagged_transaction_sla_breached` Engagement
+  Signal. **It still does not auto-mutate** `FinancialTransaction` -
+  `FinancialTransactionEvent.actorUserId` is a `NOT NULL` FK to
+  `platform.users`, and no "system actor" row exists anywhere in this
+  codebase for an automated sweep to attribute the transition to (the
+  same architectural gap `ROW_LEVEL_SECURITY_DESIGN_NOTES.md` already
+  flags as a future need). `FinancialTransactionService.escalate()`
+  remains the manual transition a Treasurer/Admin invokes, now prompted by
+  this sweep's signal rather than found by manual review alone. See that
+  job's own doc comment for the full reasoning.
+- **Pledge reminder delivery.** `apps/worker`'s `pledge-reminder-sweep`
+  (`PledgeReminderSweepJob`, `sweep:pledge-reminder`) finds every
+  `reminderOptIn: true`, not-yet-`reminderSentAt`, unfulfilled Pledge older
+  than `DEFAULT_PLEDGE_REMINDER_DELAY_DAYS` (14 days, `[INFERRED]`),
+  publishes a `stewardship.pledge_reminder_due` Engagement Signal, and
+  marks `reminderSentAt` - unlike the SLA sweep above, this one *does*
+  mutate (`Pledge.reminderSentAt` has no actor FK, only a timestamp), which
+  is also what makes OQ-07's "never a repeated... sequence" guarantee real:
+  once sent, `reminderSentAt` excludes that Pledge from every future sweep
+  run.
+- **Project progress aggregation.** `PledgeRepository.sumByProject()`
+  (two parallel `aggregate()` calls: all pledges vs. only
+  `fulfilledTransactionId: { not: null }`) feeds
+  `ProjectService.computeProgressPercent()`, exposed on
+  `projectResponseSchema` as `totalPledgedMinor`/`totalReceivedMinor`/
+  `progressPercent`. `progressPercent` is `null` when `targetAmountMinor`
+  is `0n`; otherwise `Math.round((received/target)*100)`, uncapped (a
+  Project can show >100% if it's over-subscribed). "Received" is a Pledge's
+  own `pledgedAmountMinor` once `fulfilledTransactionId` is set, not the
+  linked transaction's own (possibly different) `amountMinor` - an
+  `[INFERRED]` simplification documented on the schema itself.
+- **A Bacenta Leader's Financial-Transaction list/queue view.**
+  `FinancialTransactionListResourceContextGuard` now also resolves
+  `resource.bacentaId: actor.bacentaId`, and
+  `FinancialTransactionService.listByBranch()` narrows to
+  `findManyByBranch(..., sourceGroupId: actor.bacentaId)` when set -
+  closing the gap without adding a new endpoint, the same "the guard
+  commits this endpoint to the actor's own scope, by construction" pattern
+  already used for `branchId`.
+
+## Resolved (Stewardship Web Admin sprint)
+
+- **`GET /expenses` (Expense approval queue).** Mirrors the branch-wide
+  list gap fixed once per prior sprint (`GET /people`, `GET
+  /pastoral-care/follow-up-tasks`, `GET /groups`, `GET /gatherings`'s
+  BRANCH fallback). `ExpenseController.list` -> `ExpenseService.list(actor,
+  state?)` -> `FinancialTransactionRepository.findManyByBranch(branchId,
+  state, 'EXPENSE')`, joined per-row with `ExpenseRepository.findByTransactionId`
+  since the Expense extension table (`description`, `category`,
+  `requestedByPersonId`, ...) has no Branch-wide list method of its own.
+  `ExpenseListResourceContextGuard` always resolves `{ branchId:
+  actor.branchId }`, the identical shape `FinancialTransactionListResourceContextGuard`
+  already established - so this endpoint inherits that guard's same
+  disclosed limitation: an `ASSISTANT_PASTOR`'s `CLUSTER`-scoped `.read`
+  grant cannot be satisfied by a Branch-wide list resource. Declared
+  before `:id`, consistent with every other module.
+
+- **[Design Decision] No ADMIN row added.** Every prior sprint's backend
+  gap-filling step included at least one `[Bug fix, <sprint> sprint]` ADMIN
+  permission row (Ministry: `ministry.staffing_target.read`,
+  `ministry.roster.read`, `ministry.roster.overcommitment.read`;
+  Gatherings: `gatherings.gathering.read`, `gatherings.attendance.read`;
+  Pastoral Care: `pastoral_care.followup_task.read` for ASSISTANT_PASTOR).
+  Auditing `permission-matrix.ts`'s full Stewardship section this sprint
+  found **ADMIN holds zero rows anywhere in the Stewardship domain** - no
+  `stewardship.transaction.*`, no `stewardship.expense.*`, no
+  `stewardship.project.*`, no `stewardship.pledge.*`. Unlike the prior
+  sprints' asymmetric create/update-but-not-read gaps (which read as
+  oversights), this is a *total* absence across every Stewardship action,
+  which reads instead as a deliberate separation-of-duties boundary:
+  Blueprint §9.3 already establishes precedent for excluding ADMIN from a
+  domain's content on principle (`pastoral_care.notes.*` denies ADMIN
+  outright - "configuration authority does not imply pastoral-content
+  access"). The same reasoning extends naturally to financial records:
+  configuration/administrative authority over the platform should not
+  imply visibility into or control over a Branch's money. This sprint
+  therefore does **not** add an ADMIN row to Stewardship, breaking from
+  the mechanical "add the missing ADMIN `.read` row" pattern used in every
+  prior sprint - a deliberate, reasoned divergence, not an oversight of
+  omission. If this reasoning is wrong, it should be corrected by an
+  explicit product decision, not a code-review-driven guess.
 
 ## Known sandbox limitation
 

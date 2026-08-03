@@ -1,12 +1,16 @@
-import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { RbacGuard, RequirePermission } from '@ecclesia/rbac';
 import type { ActorContext } from '@ecclesia/rbac';
-import { createGroupSchema, updateGroupSchema } from '@ecclesia/contracts';
-import type { CreateGroupInput, UpdateGroupInput } from '@ecclesia/contracts';
+import { createGroupSchema, listGroupsQuerySchema, updateGroupSchema } from '@ecclesia/contracts';
+import type { CreateGroupInput, ListGroupsQuery, UpdateGroupInput } from '@ecclesia/contracts';
 
 import { CurrentActor } from '../../../platform/auth/decorators/current-actor.decorator';
 import { ZodValidationPipe } from '../../../platform/pipes/zod-validation.pipe';
-import { GroupCreateResourceContextGuard, GroupResourceContextGuard } from '../guards/group-resource-context.guard';
+import {
+  GroupCreateResourceContextGuard,
+  GroupListResourceContextGuard,
+  GroupResourceContextGuard,
+} from '../guards/group-resource-context.guard';
 import { GroupService } from '../services/group.service';
 
 /**
@@ -24,6 +28,16 @@ export class GroupController {
   @UseGuards(GroupCreateResourceContextGuard, RbacGuard)
   create(@CurrentActor() actor: ActorContext, @Body(new ZodValidationPipe(createGroupSchema)) body: CreateGroupInput) {
     return this.groupService.create(actor, body);
+  }
+
+  /** `GET /groups` (Ministry Web Admin sprint's Basonta directory).
+   * Declared before `:id`, same readability convention `PersonController.list`
+   * already follows - not required for correctness. */
+  @Get()
+  @RequirePermission('people.group.read')
+  @UseGuards(GroupListResourceContextGuard, RbacGuard)
+  list(@CurrentActor() actor: ActorContext, @Query(new ZodValidationPipe(listGroupsQuerySchema)) query: ListGroupsQuery) {
+    return this.groupService.list(actor, query);
   }
 
   @Get(':id')

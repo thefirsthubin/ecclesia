@@ -3,6 +3,12 @@ import type { FollowUpTask, FollowUpTaskStatus } from '@prisma/client';
 
 import { PrismaService } from '../../../platform/database/prisma.service';
 
+/** §16.2's "sorted by SLA urgency" - open tasks with the soonest `dueAt`
+ * first; tasks with no `dueAt` (should not occur in practice given
+ * `FollowUpTaskService.create`'s always-computed default, but the column
+ * is nullable) sort last rather than first. */
+const DEFAULT_STATUSES: FollowUpTaskStatus[] = ['OPEN', 'ESCALATED'];
+
 export interface CreateFollowUpTaskRecord {
   branchId: string;
   personId: string;
@@ -42,6 +48,27 @@ export class FollowUpTaskRepository {
 
   findById(id: string): Promise<FollowUpTask | null> {
     return this.prisma.followUpTask.findUnique({ where: { id } });
+  }
+
+  /** `GET /pastoral-care/groups/:groupId/follow-up-tasks` (Shepherd
+   * Dashboard sprint - see this file's own repository doc comment; no
+   * caller before this sprint needed a list, only single-task CRUD). */
+  listByGroup(groupId: string, statuses: FollowUpTaskStatus[] = DEFAULT_STATUSES): Promise<FollowUpTask[]> {
+    return this.prisma.followUpTask.findMany({
+      where: { groupId, status: { in: statuses } },
+      orderBy: [{ dueAt: { sort: 'asc', nulls: 'last' } }, { createdAt: 'asc' }],
+    });
+  }
+
+  /** `GET /pastoral-care/follow-up-tasks` with no `groupId` (Pastoral Care
+   * Web Admin sprint) - the BRANCH-wide counterpart to `listByGroup`, for
+   * a BRANCH-scoped actor (Resident Pastor, Admin) who has no single
+   * Group to name. Same default-statuses/ordering as `listByGroup`. */
+  listByBranch(branchId: string, statuses: FollowUpTaskStatus[] = DEFAULT_STATUSES): Promise<FollowUpTask[]> {
+    return this.prisma.followUpTask.findMany({
+      where: { branchId, status: { in: statuses } },
+      orderBy: [{ dueAt: { sort: 'asc', nulls: 'last' } }, { createdAt: 'asc' }],
+    });
   }
 
   update(id: string, input: UpdateFollowUpTaskRecord): Promise<FollowUpTask> {

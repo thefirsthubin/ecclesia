@@ -3,7 +3,7 @@ import { RoleAssignmentRepository } from './role-assignment.repository';
 describe('RoleAssignmentRepository', () => {
   function buildRepository() {
     const prisma = {
-      roleAssignment: { create: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
+      roleAssignment: { create: jest.fn(), findFirst: jest.fn(), findMany: jest.fn(), update: jest.fn() },
       user: { findUnique: jest.fn() },
       $transaction: jest.fn(async (fn: (tx: unknown) => unknown) => fn(prisma)),
     };
@@ -87,5 +87,18 @@ describe('RoleAssignmentRepository', () => {
     );
 
     expect(prisma.roleAssignment.update).not.toHaveBeenCalled();
+  });
+
+  it('listByPerson() returns every Role Assignment (active and past) for the Person, newest first', async () => {
+    const { repository, prisma } = buildRepository();
+    prisma.roleAssignment.findMany.mockResolvedValue([{ id: 'ra-2' }, { id: 'ra-1' }]);
+
+    const result = await repository.listByPerson('person-1');
+
+    expect(prisma.roleAssignment.findMany).toHaveBeenCalledWith({
+      where: { personId: 'person-1' },
+      orderBy: { effectiveFrom: 'desc' },
+    });
+    expect(result).toEqual([{ id: 'ra-2' }, { id: 'ra-1' }]);
   });
 });

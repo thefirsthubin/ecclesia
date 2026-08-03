@@ -102,6 +102,33 @@ export const gatheringResponseSchema = z.object({
 });
 export type GatheringResponseDto = z.infer<typeof gatheringResponseSchema>;
 
+/**
+ * `GET /gatherings?ownerGroupId=...` (Shepherd Dashboard sprint -
+ * [Gap]: only `GET /gatherings/:id` existed before, no way to find "my
+ * Bacenta's next/last meeting" without already knowing its id. See
+ * `apps/mobile/.../ShepherdDashboard/SHEPHERD_DASHBOARD_DESIGN_NOTES.md`
+ * STEP 6). `from`/`to` default to "now through 30 days out" at the
+ * service layer, not here.
+ *
+ * `ownerGroupId` was originally required - the Gatherings Web Admin
+ * sprint made it optional to close a second gap: PRD §16.4's "Gathering
+ * calendar... upcoming and past Gatherings, filterable by type and
+ * Group" names a BRANCH-wide browse case this endpoint could not satisfy
+ * at all (a BRANCH-scoped actor had no `ownerGroupId` to supply, and a
+ * Branch-wide Gathering like Sunday Service has none to supply either).
+ * Omitted, the service lists across the whole Branch instead - see
+ * `apps/web-admin/.../Gatherings/GATHERINGS_PAGE_DESIGN_NOTES.md`.
+ * `type` is a new optional exact-match filter, the other half of §16.4's
+ * "filterable by type and Group."
+ */
+export const listGatheringsQuerySchema = z.object({
+  ownerGroupId: z.string().uuid().optional(),
+  type: z.string().trim().min(1).optional(),
+  from: z.string().datetime().optional(),
+  to: z.string().datetime().optional(),
+});
+export type ListGatheringsQuery = z.infer<typeof listGatheringsQuerySchema>;
+
 /** FR-GTH-03. One record per Person per Gathering instance
  * (`db/schema.prisma`'s `@@unique([gatheringId, personId])`) - recording
  * again for the same pair overwrites the prior status (a correction, e.g.

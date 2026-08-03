@@ -7,9 +7,18 @@ import { GroupController } from './controllers/group.controller';
 import { GroupMembershipController } from './controllers/group-membership.controller';
 import { PersonController } from './controllers/person.controller';
 import { RoleAssignmentController } from './controllers/role-assignment.controller';
-import { GroupCreateResourceContextGuard, GroupResourceContextGuard } from './guards/group-resource-context.guard';
+import {
+  GroupCreateResourceContextGuard,
+  GroupListResourceContextGuard,
+  GroupResourceContextGuard,
+} from './guards/group-resource-context.guard';
 import { GroupMembershipResourceContextGuard } from './guards/group-membership-resource-context.guard';
-import { PersonCreateResourceContextGuard, PersonResourceContextGuard } from './guards/person-resource-context.guard';
+import {
+  PersonCreateResourceContextGuard,
+  PersonListResourceContextGuard,
+  PersonResourceContextGuard,
+} from './guards/person-resource-context.guard';
+import { RoleAssignmentResourceContextGuard } from './guards/role-assignment-resource-context.guard';
 import { GroupRepository } from './repositories/group.repository';
 import { GroupMembershipRepository } from './repositories/group-membership.repository';
 import { PersonRepository } from './repositories/person.repository';
@@ -66,9 +75,12 @@ import { RoleAssignmentService } from './services/role-assignment.service';
     RoleAssignmentService,
     PersonResourceContextGuard,
     PersonCreateResourceContextGuard,
+    PersonListResourceContextGuard,
     GroupResourceContextGuard,
     GroupCreateResourceContextGuard,
+    GroupListResourceContextGuard,
     GroupMembershipResourceContextGuard,
+    RoleAssignmentResourceContextGuard,
   ],
   // `PersonScopeService` is People's public service interface (Blueprint
   // §7.2) for other bounded-context modules whose resources reference a

@@ -2,7 +2,10 @@ import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import type { PinoLogger } from 'nestjs-pino';
 
 import { ActorContextResolverService } from './actor-context-resolver.service';
-import type { PrismaService } from '../database/prisma.service';
+// `[Row-Level Security sprint]` `PrismaRootService`, not `PrismaService` -
+// the service under test now injects the unscoped root client (see its
+// own doc comment). Mocked the same way either type would be.
+import type { PrismaRootService } from '../database/prisma-root.service';
 
 function buildLogger(): PinoLogger {
   return { info: jest.fn(), warn: jest.fn(), error: jest.fn() } as unknown as PinoLogger;
@@ -11,7 +14,7 @@ function buildLogger(): PinoLogger {
 function buildPrisma(overrides: {
   user?: unknown;
   roleAssignments?: unknown[];
-}): PrismaService {
+}): PrismaRootService {
   return {
     user: {
       findUnique: jest.fn().mockResolvedValue(overrides.user ?? null),
@@ -19,7 +22,7 @@ function buildPrisma(overrides: {
     roleAssignment: {
       findMany: jest.fn().mockResolvedValue(overrides.roleAssignments ?? []),
     },
-  } as unknown as PrismaService;
+  } as unknown as PrismaRootService;
 }
 
 const PERSON_ID = 'person-1';

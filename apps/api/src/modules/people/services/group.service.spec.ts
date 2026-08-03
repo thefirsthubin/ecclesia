@@ -25,7 +25,7 @@ describe('GroupService', () => {
   const actor: ActorContext = { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' };
 
   function buildService() {
-    const groupRepository = { create: jest.fn(), findById: jest.fn(), update: jest.fn() };
+    const groupRepository = { create: jest.fn(), findById: jest.fn(), update: jest.fn(), findByBranch: jest.fn() };
     const service = new GroupService(groupRepository as never);
     return { service, groupRepository };
   }
@@ -45,6 +45,28 @@ describe('GroupService', () => {
       category: undefined,
     });
     expect(result).toMatchObject({ id: 'group-1', branchId: 'branch-1', type: 'PASTORAL_CARE' });
+  });
+
+  describe('list (Ministry Web Admin sprint - GET /groups)', () => {
+    it('delegates to findByBranch with the actor\'s own Branch and the given type filter', async () => {
+      const { service, groupRepository } = buildService();
+      groupRepository.findByBranch.mockResolvedValue([buildGroup({ type: 'MINISTRY' })]);
+
+      const result = await service.list(actor, { type: 'MINISTRY' });
+
+      expect(groupRepository.findByBranch).toHaveBeenCalledWith('branch-1', 'MINISTRY');
+      expect(result).toHaveLength(1);
+      expect(result[0].type).toBe('MINISTRY');
+    });
+
+    it('passes undefined through when no type filter is given', async () => {
+      const { service, groupRepository } = buildService();
+      groupRepository.findByBranch.mockResolvedValue([]);
+
+      await service.list(actor, {});
+
+      expect(groupRepository.findByBranch).toHaveBeenCalledWith('branch-1', undefined);
+    });
   });
 
   it('getById() throws NotFoundException when the Group does not exist', async () => {

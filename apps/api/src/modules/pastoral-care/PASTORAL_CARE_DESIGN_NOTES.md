@@ -144,15 +144,22 @@ declaration sites in `libs/rbac/src/lib/actions.ts` and
   `escalatedToPersonId` explicitly rather than inventing that resolution.
   `libs/domain/pastoral-care`'s `isFollowUpTaskPastSla()` is ready to
   consume once both a scheduler and this resolution exist.
-- **The automatic silent-drift sweep itself (§19.3's "scheduled evaluation
-  run, e.g. nightly").** `evaluateSilentDrift()` (`libs/domain/pastoral-care`)
-  is a pure function ready to consume attendance *counts* as input - but
-  the actual source of those counts, `gatherings.attendance_records`,
-  does not exist yet (the Gatherings domain is unbuilt). No
-  `SilentDriftFlag` repository/service/controller is built this milestone
-  for the same reason: there is nothing real to trigger it against yet.
-  This is a genuine cross-domain dependency gap, not an oversight -
-  revisit once Gatherings exists.
+- **[Superseded - see below]** ~~The automatic silent-drift sweep itself
+  (§19.3's "scheduled evaluation run, e.g. nightly")... No
+  `SilentDriftFlag` repository/service/controller is built this
+  milestone...~~ This was true when this milestone shipped (Gatherings
+  did not exist yet). Both halves of this gap have since closed: the
+  Gatherings domain now exists and `apps/worker`'s
+  `SilentDriftSweepJob` (`apps/worker/src/jobs/silent-drift-sweep`) runs
+  `evaluateSilentDrift()` against real attendance counts and writes
+  `SilentDriftFlag` rows. What remained true until the Shepherd Dashboard
+  sprint: **no HTTP surface read those rows back** - `apps/api`'s
+  `pastoral-care` module had no `SilentDriftFlagRepository`/`Service`/
+  `Controller` of its own. That sprint added
+  `GET /pastoral-care/groups/:groupId/silent-drift-flags`
+  (`repositories/services/controllers/guards/silent-drift-flag.*`) - see
+  `apps/mobile/src/app/screens/ShepherdDashboard/SHEPHERD_DASHBOARD_DESIGN_NOTES.md`
+  STEP 6 for the full spec.
 - **FR-PC-06's hard-gate-vs-soft-input UI surface** for viewing "all
   Poimen-eligible candidates for Shepherd appointment" (H2 priority per
   PRD §13.2's own acceptance criteria) - the underlying data
@@ -182,6 +189,41 @@ itself was required; every call still requires an explicit
 `assignedToPersonId`, so this milestone's own conditional-auto-creation
 logic (documented in `GATHERINGS_DESIGN_NOTES.md`) sits entirely on the
 calling side.
+
+## Resolved (Pastoral Care Web Admin sprint)
+
+Building `apps/web-admin`'s Follow-up Task Queue page (§16.2's "Follow-up
+task queue... sorted by SLA urgency" surface, primary personas "Shepherd,
+Assistant Pastor (escalations)") surfaced two real gaps:
+
+1. **[Bug fix]** `pastoral_care.followup_task.read` granted
+   RESIDENT_PASTOR/BACENTA_LEADER/ADMIN but had **no ASSISTANT_PASTOR
+   row at all**, even though that role already holds `.create`/`.update`
+   at CLUSTER scope - the identical class of bug the Shepherd Dashboard
+   sprint fixed for BACENTA_LEADER (see that row's own `reason` field
+   just above this one in `permission-matrix.ts`). An Assistant Pastor -
+   the persona PRD §16.2 itself names for this exact surface - could
+   create and update a Follow-up task but never `GET` it back, single or
+   list. Added the matching CLUSTER-scope `.read` row.
+2. **No BRANCH-wide listing endpoint.** `GET /pastoral-care/groups/:groupId/follow-up-tasks`
+   (Shepherd Dashboard sprint) is Group-scoped only - a BRANCH-scoped
+   actor (Resident Pastor, Admin) holds `.read` at BRANCH scope but had
+   no route that could satisfy it without already knowing every Group id
+   in the Branch. This is the identical shape of gap `GET /people` closed
+   for the People module the sprint before this one. Added
+   `GET /pastoral-care/follow-up-tasks` (`FollowUpTaskController.list`,
+   `FollowUpTaskListForActorResourceContextGuard`,
+   `FollowUpTaskRepository.listByBranch`,
+   `listFollowUpTasksForActorQuerySchema`) - an optional `groupId` query
+   param selects Group-scoped (reusing `listForGroup`'s existing logic)
+   vs. its absence falling back to the actor's own Branch, mirroring
+   `PersonListResourceContextGuard`'s shape field-for-field.
+
+See `apps/web-admin/src/app/pages/PastoralCare/PASTORAL_CARE_PAGE_DESIGN_NOTES.md`
+for the client side of this, including why the page reads but does not
+yet write (Complete is built; Escalate is deferred pending a Person
+picker) and why Silent-drift flags/Pastoral notes/Poimen tracker are not
+part of this pass.
 
 ## Known sandbox limitation
 

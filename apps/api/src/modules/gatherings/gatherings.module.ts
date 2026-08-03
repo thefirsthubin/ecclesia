@@ -9,7 +9,11 @@ import { GatheringController } from './controllers/gathering.controller';
 import { GatheringSeriesController } from './controllers/gathering-series.controller';
 import { VisitorIntakeController } from './controllers/visitor-intake.controller';
 import { AttendanceResourceContextGuard } from './guards/attendance-resource-context.guard';
-import { GatheringCreateResourceContextGuard, GatheringResourceContextGuard } from './guards/gathering-resource-context.guard';
+import {
+  GatheringCreateResourceContextGuard,
+  GatheringListResourceContextGuard,
+  GatheringResourceContextGuard,
+} from './guards/gathering-resource-context.guard';
 import {
   GatheringSeriesCreateResourceContextGuard,
   GatheringSeriesResourceContextGuard,
@@ -63,6 +67,7 @@ import { VisitorIntakeService } from './services/visitor-intake.service';
     GatheringSeriesResourceContextGuard,
     GatheringCreateResourceContextGuard,
     GatheringResourceContextGuard,
+    GatheringListResourceContextGuard,
     AttendanceResourceContextGuard,
     VisitorIntakeResourceContextGuard,
   ],

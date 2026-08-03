@@ -1,0 +1,95 @@
+import type { ReactNode } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+
+/**
+ * `[Design Decision, Mobile Shell + Attendance Capture sprint]` A minimal,
+ * dependency-free stack navigator for `apps/mobile` — the real-navigation
+ * gap `SHEPHERD_DASHBOARD_DESIGN_NOTES.md` §0/§11 explicitly flagged as
+ * out of scope for that sprint ("Real navigation. The single largest
+ * structural gap... once a navigator is installed, QuickActionsRow's two
+ * stub callbacks... are the integration points").
+ *
+ * No `react-navigation` (or any navigation library) exists anywhere in
+ * this workspace's `package.json`, and this sandbox has no
+ * package-registry network access to add one (confirmed during the
+ * Sprint Review task and again during the Development Authentication
+ * sprint — `npm install` 403s). `apps/web-admin`'s own hand-built router
+ * (`apps/web-admin/src/app/router/router.tsx`) set the precedent for
+ * this project's response to "no routing library, no network access to
+ * add one": build the minimal thing the actual screens need, not a
+ * general-purpose router. This is the React Native equivalent of that
+ * decision — a state-based screen stack, since React Native has no
+ * `window.history`/URL to drive navigation from the way the web version
+ * does. No deep-linking, no back-button-hardware wiring (Android's
+ * hardware back button is not intercepted) — both real, disclosed
+ * limitations of a hand-built stack this minimal, not silently assumed
+ * to work.
+ *
+ * Screen params are a plain untyped `Record<string, string>` (mirroring
+ * `router.tsx`'s own `:param` extraction shape) rather than a typed
+ * per-screen params map — with only two screens this sprint, the
+ * type-safety a full typed navigator (React Navigation's own approach)
+ * would buy isn't worth building from scratch.
+ */
+
+export type ScreenName = 'dashboard' | 'attendance-capture';
+
+interface NavigationEntry {
+  screen: ScreenName;
+  params: Record<string, string>;
+}
+
+interface NavigationContextValue {
+  current: NavigationEntry;
+  navigate: (screen: ScreenName, params?: Record<string, string>) => void;
+  goBack: () => void;
+  canGoBack: boolean;
+}
+
+const NavigationContext = createContext<NavigationContextValue | undefined>(undefined);
+
+export function NavigationProvider({ children }: { children: ReactNode }) {
+  const [stack, setStack] = useState<NavigationEntry[]>([{ screen: 'dashboard', params: {} }]);
+
+  const navigate = useCallback((screen: ScreenName, params: Record<string, string> = {}) => {
+    setStack((prev) => [...prev, { screen, params }]);
+  }, []);
+
+  const goBack = useCallback(() => {
+    setStack((prev) => (prev.length > 1 ? prev.slice(0, -1) : prev));
+  }, []);
+
+  const value = useMemo<NavigationContextValue>(
+    () => ({
+      current: stack[stack.length - 1],
+      navigate,
+      goBack,
+      canGoBack: stack.length > 1,
+    }),
+    [stack, navigate, goBack],
+  );
+
+  return <NavigationContext.Provider value={value}>{children}</NavigationContext.Provider>;
+}
+
+function useNavigationContext(): NavigationContextValue {
+  const context = useContext(NavigationContext);
+  if (!context) {
+    throw new Error('useNavigate/useCurrentScreen/useGoBack must be used within a NavigationProvider');
+  }
+  return context;
+}
+
+export function useNavigate(): (screen: ScreenName, params?: Record<string, string>) => void {
+  return useNavigationContext().navigate;
+}
+
+export function useGoBack(): { goBack: () => void; canGoBack: boolean } {
+  const { goBack, canGoBack } = useNavigationContext();
+  return { goBack, canGoBack };
+}
+
+export function useCurrentScreen(): { screen: ScreenName; params: Record<string, string> } {
+  const { current } = useNavigationContext();
+  return current;
+}

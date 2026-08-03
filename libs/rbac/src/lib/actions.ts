@@ -35,6 +35,13 @@ export const ACTIONS = [
 
   // Bacenta/Basonta (row: "Bacenta/Basonta: reassign member")
   'people.group_membership.update',
+  // FR-PPL-07 ("maintain a complete, queryable history of a Person's
+  // GROUP_MEMBERSHIP... records"). §17.3's row only names "reassign
+  // member," but FR-PPL-07 explicitly requires this history be viewable -
+  // a real gap between the two source documents, same category as the
+  // `people.group.*` gap above, not a transcription omission. Added during
+  // the People Web Admin sprint - see PEOPLE_DESIGN_NOTES.md.
+  'people.group_membership.read',
 
   // [INFERRED - no PRD §17.3 row covers this] Group (Bacenta/Basonta)
   // creation/configuration itself (FR-PC-01, FR-MIN-01). §17.3's table
@@ -108,6 +115,17 @@ export const ACTIONS = [
   'stewardship.pledge.read',
   'stewardship.pledge.fulfill',
 
+  // [INFERRED - no PRD §17.3 row covers this] Bank Deposit Confirmation
+  // (FR-STW-07's previously-unbuilt bank-deposit comparison half, closed
+  // in the Stewardship gaps sprint). Modeled with the same role/scope
+  // shape as `stewardship.transaction.reconcile` (a Finance Team
+  // record-keeping action against a Verified transaction) - `confirm` and
+  // `read` are both Treasurer/BRANCH by default, with `read` additionally
+  // open to the same Pastor roles who already read Financial Transactions.
+  // See STEWARDSHIP_DESIGN_NOTES.md.
+  'stewardship.bank_deposit.confirm',
+  'stewardship.bank_deposit.read',
+
   // Follow-up task (row: "Follow-up task: create/assign")
   'pastoral_care.followup_task.create',
   'pastoral_care.followup_task.update',
@@ -124,6 +142,20 @@ export const ACTIONS = [
   'pastoral_care.poimen_enrollment.create',
   'pastoral_care.poimen_enrollment.update',
   'pastoral_care.poimen_enrollment.read',
+
+  // [INFERRED - no PRD §17.3 row covers this] Silent-drift flag reads
+  // (FR-PC-05, §15.8's decision tree). §17.3's matrix predates the
+  // Shepherd Dashboard sprint that first reads `SilentDriftFlag` rows
+  // through an HTTP endpoint - the worker's nightly sweep
+  // (`apps/worker/src/jobs/silent-drift-sweep`) has written them since
+  // the Insights milestone, but no controller in this codebase exposed
+  // them until now. Modeled with the identical role/scope shape as
+  // `insights.alert.read` (the same "leadership roles, scoped to their
+  // organizational responsibility" RACI, FR-INS-04/BR-INS-02, applied to
+  // a Pastoral Care - not Insights - owned resource) since a silent-drift
+  // flag is exactly the kind of scoped, actionable alert that surface
+  // already models. See SHEPHERD_DASHBOARD_DESIGN_NOTES.md.
+  'pastoral_care.silent_drift_flag.read',
 
   // Insights (rows: Branch / cluster / own-Bacenta dashboards)
   'insights.branch_dashboard.read',

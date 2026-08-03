@@ -14,3 +14,4 @@ export * from './lib/Spinner';
 export * from './lib/Skeleton';
 export * from './lib/EmptyState';
 export * from './lib/ErrorState';
+export * from './lib/Modal';

@@ -9,8 +9,8 @@ import type { AuditLogService } from '../audit/audit-log.service';
 import type { ActorContextResolverService } from './actor-context-resolver.service';
 import { AuthGuard } from './auth.guard';
 import type { RequestWithActorContext } from './auth.guard';
-import type { CognitoVerifierService } from './cognito-verifier.service';
 import { Public } from './decorators/public.decorator';
+import type { TokenVerifierService } from './token-verifier.interface';
 
 function buildContext(request: Partial<RequestWithActorContext>, handler: () => void = () => undefined): ExecutionContext {
   return {
@@ -24,13 +24,17 @@ function buildContext(request: Partial<RequestWithActorContext>, handler: () => 
 
 describe('AuthGuard', () => {
   const actor: ActorContext = { personId: 'person-1', role: 'MEMBER', branchId: 'branch-1' };
-  let cognitoVerifier: jest.Mocked<Pick<CognitoVerifierService, 'verifyAccessToken'>>;
+  // Named generically, not `cognitoVerifier` - `AuthGuard` depends on the
+  // `TokenVerifierService` abstraction (Development Authentication sprint),
+  // never a concrete implementation, so these tests exercise the guard's
+  // behavior against *any* conforming verifier, not specifically Cognito's.
+  let tokenVerifier: jest.Mocked<TokenVerifierService>;
   let actorContextResolver: jest.Mocked<Pick<ActorContextResolverService, 'resolve'>>;
   let auditLog: jest.Mocked<Pick<AuditLogService, 'record'>>;
   let reflector: Reflector;
 
   beforeEach(() => {
-    cognitoVerifier = { verifyAccessToken: jest.fn() };
+    tokenVerifier = { verifyAccessToken: jest.fn() };
     actorContextResolver = { resolve: jest.fn() };
     auditLog = { record: jest.fn().mockResolvedValue(undefined) };
     reflector = new Reflector();
@@ -38,7 +42,7 @@ describe('AuthGuard', () => {
 
   function buildGuard(): AuthGuard {
     return new AuthGuard(
-      cognitoVerifier as unknown as CognitoVerifierService,
+      tokenVerifier,
       actorContextResolver as unknown as ActorContextResolverService,
       auditLog as unknown as AuditLogService,
       reflector,
@@ -56,7 +60,7 @@ describe('AuthGuard', () => {
     const context = buildContext({ headers: {} }, new Controller().handler);
 
     await expect(guard.canActivate(context)).resolves.toBe(true);
-    expect(cognitoVerifier.verifyAccessToken).not.toHaveBeenCalled();
+    expect(tokenVerifier.verifyAccessToken).not.toHaveBeenCalled();
   });
 
   it('rejects a request with no Authorization header and logs the failure', async () => {
@@ -79,21 +83,21 @@ describe('AuthGuard', () => {
   });
 
   it('verifies the token, resolves the actor, and attaches it to the request on success', async () => {
-    cognitoVerifier.verifyAccessToken.mockResolvedValue({ sub: 'cognito-sub-1' } as never);
+    tokenVerifier.verifyAccessToken.mockResolvedValue({ sub: 'cognito-sub-1' });
     actorContextResolver.resolve.mockResolvedValue(actor);
     const guard = buildGuard();
     const request: Partial<RequestWithActorContext> = { headers: { authorization: 'Bearer valid.jwt.token' } };
     const context = buildContext(request);
 
     await expect(guard.canActivate(context)).resolves.toBe(true);
-    expect(cognitoVerifier.verifyAccessToken).toHaveBeenCalledWith('valid.jwt.token');
+    expect(tokenVerifier.verifyAccessToken).toHaveBeenCalledWith('valid.jwt.token');
     expect(actorContextResolver.resolve).toHaveBeenCalledWith('cognito-sub-1');
     expect(request.actorContext).toEqual(actor);
     expect(auditLog.record).not.toHaveBeenCalled();
   });
 
   it('logs and rethrows when token verification fails', async () => {
-    cognitoVerifier.verifyAccessToken.mockRejectedValue(new UnauthorizedException('Token expired'));
+    tokenVerifier.verifyAccessToken.mockRejectedValue(new UnauthorizedException('Token expired'));
     const guard = buildGuard();
     const request: Partial<RequestWithActorContext> = { headers: { authorization: 'Bearer expired.jwt.token' } };
     const context = buildContext(request);

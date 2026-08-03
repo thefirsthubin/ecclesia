@@ -179,6 +179,24 @@ export const projectResponseSchema = z.object({
   createdByPersonId: z.string().uuid(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
+  /**
+   * FR-STW-08's own acceptance criterion: "shows total pledged, total
+   * received, and progress against a stated target" - previously flagged
+   * in `STEWARDSHIP_DESIGN_NOTES.md` as a near-term follow-up, now closed.
+   * `totalPledgedMinor` sums every Pledge's own `pledgedAmountMinor`
+   * regardless of fulfillment state; `totalReceivedMinor` sums only the
+   * fulfilled ones ([INFERRED] using each Pledge's own pledged amount, not
+   * its linked FinancialTransaction's actual amount - this schema has no
+   * partial-payment tracking, only a fulfilled/not-fulfilled link, so
+   * "received" here means "fulfilled," not a possibly-different actual
+   * transaction total). `progressPercent` is `null` when
+   * `targetAmountMinor` is `0` (nothing to divide by), otherwise
+   * `totalReceivedMinor / targetAmountMinor * 100`, rounded, uncapped
+   * (a Project can be over-funded).
+   */
+  totalPledgedMinor: amountMinorSchema,
+  totalReceivedMinor: amountMinorSchema,
+  progressPercent: z.number().nullable(),
 });
 export type ProjectResponseDto = z.infer<typeof projectResponseSchema>;
 
@@ -220,3 +238,60 @@ export const pledgeResponseSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 export type PledgeResponseDto = z.infer<typeof pledgeResponseSchema>;
+
+/**
+ * FR-STW-07's bank-deposit comparison half - previously flagged in
+ * `STEWARDSHIP_DESIGN_NOTES.md` as "needs a schema addition, not an
+ * application-layer guess." `weekStartDate` is a date-only string (the
+ * Monday a week begins, [INFERRED] - no PRD section pins a week-boundary
+ * convention), matching `dateOfBirth`'s own `z.string().date()` precedent
+ * in `people.schemas.ts` rather than a full datetime.
+ */
+export const confirmBankDepositSchema = z.object({
+  groupId: z.string().uuid(),
+  weekStartDate: z.string().date(),
+  depositedAmountMinor: amountMinorSchema,
+  currency: currencySchema.optional(),
+  bankReference: z.string().trim().min(1).optional(),
+});
+export type ConfirmBankDepositInput = z.infer<typeof confirmBankDepositSchema>;
+
+export const bankDepositConfirmationResponseSchema = z.object({
+  id: z.string().uuid(),
+  branchId: z.string().uuid(),
+  groupId: z.string().uuid(),
+  weekStartDate: z.string().date(),
+  depositedAmountMinor: amountMinorSchema,
+  currency: z.string().length(3),
+  bankReference: z.string().nullable(),
+  confirmedByPersonId: z.string().uuid(),
+  createdAt: z.string().datetime(),
+});
+export type BankDepositConfirmationResponseDto = z.infer<typeof bankDepositConfirmationResponseSchema>;
+
+/**
+ * FR-STW-07's own acceptance criterion: "showing, per Bacenta, total
+ * verified offerings against the corresponding bank deposit confirmation."
+ * One row per Bacenta that has *either* a Verified-or-later inbound
+ * transaction *or* a bank deposit confirmation in the requested week - a
+ * Bacenta with neither has nothing to reconcile, so it's omitted rather
+ * than padded in with zeros. `depositedAmountMinor`/`bankReference` are
+ * `null` when no confirmation has been recorded yet for that Bacenta/week;
+ * `matched` is `true` only when a confirmation exists and its amount
+ * equals the verified total exactly.
+ */
+export const reconciliationRowSchema = z.object({
+  groupId: z.string().uuid(),
+  verifiedTotalMinor: amountMinorSchema,
+  depositedAmountMinor: amountMinorSchema.nullable(),
+  bankReference: z.string().nullable(),
+  matched: z.boolean(),
+});
+export type ReconciliationRowDto = z.infer<typeof reconciliationRowSchema>;
+
+export const weeklyReconciliationResponseSchema = z.object({
+  branchId: z.string().uuid(),
+  weekStartDate: z.string().date(),
+  rows: z.array(reconciliationRowSchema),
+});
+export type WeeklyReconciliationResponseDto = z.infer<typeof weeklyReconciliationResponseSchema>;

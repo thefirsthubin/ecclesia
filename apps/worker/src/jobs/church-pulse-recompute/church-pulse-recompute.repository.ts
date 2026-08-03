@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { Alert, Branch, PulseScore, PulseScoreHistory, PulseScoreScopeType } from '@prisma/client';
+import type { Alert, PulseScore, PulseScoreHistory, PulseScoreScopeType } from '@prisma/client';
 
 import { PrismaService } from '../../platform/database/prisma.service';
 
@@ -41,9 +41,8 @@ export interface CreateAlertRecord {
 export class ChurchPulseRecomputeRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  listBranches(): Promise<Pick<Branch, 'id'>[]> {
-    return this.prisma.branch.findMany({ select: { id: true } });
-  }
+  // `[Row-Level Security sprint]` `listBranches()` moved to
+  // `BranchDirectoryRepository` - see that class's own doc comment.
 
   /** Every currently-`ACTIVE` Bacenta (`GroupType.PASTORAL_CARE`) in a
    * Branch - `PulseScoreService.computeAndStoreGroupScore`'s own

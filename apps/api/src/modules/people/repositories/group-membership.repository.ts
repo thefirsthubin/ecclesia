@@ -93,4 +93,17 @@ export class GroupMembershipRepository {
   countActiveMinistryMembershipsForPerson(personId: string): Promise<number> {
     return this.prisma.groupMembership.count({ where: { personId, groupType: 'MINISTRY', endedAt: null } });
   }
+
+  /**
+   * FR-PPL-07: "a complete, queryable history... including closed/past
+   * ones" - unlike `findActiveGroupMemberships` (`PersonRepository`,
+   * active-only, no dates, used only for scope resolution),
+   * this returns every membership a Person has ever held, newest first.
+   */
+  listByPerson(personId: string): Promise<GroupMembership[]> {
+    return this.prisma.groupMembership.findMany({
+      where: { personId },
+      orderBy: { startedAt: 'desc' },
+    });
+  }
 }

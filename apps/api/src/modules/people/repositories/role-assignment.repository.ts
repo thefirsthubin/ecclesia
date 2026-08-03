@@ -111,6 +111,17 @@ export class RoleAssignmentRepository {
     return user?.id;
   }
 
+  /**
+   * FR-PPL-07: "a complete, queryable history of a Person's... Role
+   * Assignment records, including closed/past ones," newest first.
+   */
+  listByPerson(personId: string): Promise<RoleAssignment[]> {
+    return this.prisma.roleAssignment.findMany({
+      where: { personId },
+      orderBy: { effectiveFrom: 'desc' },
+    });
+  }
+
   // `findPoimenStatus` used to live here, querying `prisma.poimenEnrollment`
   // directly - a `pastoral_care`-schema table this module does not own
   // (Blueprint §7.2). That was a module-boundary violation introduced

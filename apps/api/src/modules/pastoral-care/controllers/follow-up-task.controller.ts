@@ -1,13 +1,25 @@
-import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { RbacGuard, RequirePermission } from '@ecclesia/rbac';
 import type { ActorContext } from '@ecclesia/rbac';
-import { createFollowUpTaskSchema, escalateFollowUpTaskSchema } from '@ecclesia/contracts';
-import type { CreateFollowUpTaskInput, EscalateFollowUpTaskInput } from '@ecclesia/contracts';
+import {
+  createFollowUpTaskSchema,
+  escalateFollowUpTaskSchema,
+  listFollowUpTasksForActorQuerySchema,
+  listFollowUpTasksQuerySchema,
+} from '@ecclesia/contracts';
+import type {
+  CreateFollowUpTaskInput,
+  EscalateFollowUpTaskInput,
+  ListFollowUpTasksForActorQuery,
+  ListFollowUpTasksQuery,
+} from '@ecclesia/contracts';
 
 import { CurrentActor } from '../../../platform/auth/decorators/current-actor.decorator';
 import { ZodValidationPipe } from '../../../platform/pipes/zod-validation.pipe';
 import {
   FollowUpTaskCreateResourceContextGuard,
+  FollowUpTaskListForActorResourceContextGuard,
+  FollowUpTaskListResourceContextGuard,
   FollowUpTaskResourceContextGuard,
 } from '../guards/follow-up-task-resource-context.guard';
 import { FollowUpTaskService } from '../services/follow-up-task.service';
@@ -26,6 +38,35 @@ export class FollowUpTaskController {
     @Body(new ZodValidationPipe(createFollowUpTaskSchema)) body: CreateFollowUpTaskInput,
   ) {
     return this.followUpTaskService.create(actor, personId, body);
+  }
+
+  /** §16.2's "Follow-up task queue... sorted by SLA urgency" - Shepherd
+   * Dashboard sprint's Priority card. See
+   * `SHEPHERD_DASHBOARD_DESIGN_NOTES.md` STEP 6 for why this endpoint did
+   * not exist before this sprint. */
+  @Get('pastoral-care/groups/:groupId/follow-up-tasks')
+  @RequirePermission('pastoral_care.followup_task.read')
+  @UseGuards(FollowUpTaskListResourceContextGuard, RbacGuard)
+  listForGroup(
+    @Param('groupId') groupId: string,
+    @Query(new ZodValidationPipe(listFollowUpTasksQuerySchema)) query: ListFollowUpTasksQuery,
+  ) {
+    return this.followUpTaskService.listForGroup(groupId, query.status);
+  }
+
+  /** `GET /pastoral-care/follow-up-tasks` (Pastoral Care Web Admin sprint)
+   * - the BRANCH-wide/optional-`groupId` counterpart to `listForGroup`
+   * above, mirroring `PersonController.list`'s `GET /people` exactly. See
+   * `PASTORAL_CARE_DESIGN_NOTES.md`'s "Resolved (Pastoral Care Web Admin
+   * sprint)" section. */
+  @Get('pastoral-care/follow-up-tasks')
+  @RequirePermission('pastoral_care.followup_task.read')
+  @UseGuards(FollowUpTaskListForActorResourceContextGuard, RbacGuard)
+  list(
+    @CurrentActor() actor: ActorContext,
+    @Query(new ZodValidationPipe(listFollowUpTasksForActorQuerySchema)) query: ListFollowUpTasksForActorQuery,
+  ) {
+    return this.followUpTaskService.list(actor, query);
   }
 
   @Get('follow-up-tasks/:id')

@@ -5,7 +5,9 @@ import { InsightsConsumerModule } from '../consumers/insights/insights-consumer.
 import { NotificationConsumerModule } from '../consumers/notification/notification-consumer.module';
 import { AttendanceCompletenessSweepModule } from '../jobs/attendance-completeness-sweep/attendance-completeness-sweep.module';
 import { ChurchPulseRecomputeModule } from '../jobs/church-pulse-recompute/church-pulse-recompute.module';
+import { FlaggedTransactionSlaSweepModule } from '../jobs/flagged-transaction-sla-sweep/flagged-transaction-sla-sweep.module';
 import { FollowUpSlaSweepModule } from '../jobs/follow-up-sla-sweep/follow-up-sla-sweep.module';
+import { PledgeReminderSweepModule } from '../jobs/pledge-reminder-sweep/pledge-reminder-sweep.module';
 import { SilentDriftSweepModule } from '../jobs/silent-drift-sweep/silent-drift-sweep.module';
 import { WorkerPlatformModule } from '../platform/platform.module';
 
@@ -36,6 +38,8 @@ import { WorkerPlatformModule } from '../platform/platform.module';
     ChurchPulseRecomputeModule,
     FollowUpSlaSweepModule,
     AttendanceCompletenessSweepModule,
+    FlaggedTransactionSlaSweepModule,
+    PledgeReminderSweepModule,
   ],
 })
 export class WorkerModule {}

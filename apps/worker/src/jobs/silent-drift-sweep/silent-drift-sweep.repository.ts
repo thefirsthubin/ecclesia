@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { Branch, SilentDriftFlag } from '@prisma/client';
+import type { SilentDriftFlag } from '@prisma/client';
 
 import { PrismaService } from '../../platform/database/prisma.service';
 
@@ -33,9 +33,11 @@ export const DEFAULT_SILENT_DRIFT_THRESHOLDS: SilentDriftThresholds = { n: 3, m:
 export class SilentDriftSweepRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  listBranches(): Promise<Pick<Branch, 'id'>[]> {
-    return this.prisma.branch.findMany({ select: { id: true } });
-  }
+  // `[Row-Level Security sprint]` `listBranches()` moved to
+  // `BranchDirectoryRepository` (`platform/database`) - it needs the
+  // unscoped `PrismaRootService`, which does not belong on a repository
+  // whose every other method now runs inside a branch-scoped transaction.
+  // See that class's own doc comment.
 
   /**
    * PRD §15.8's own N/M thresholds (see `libs/domain/pastoral-care`'s

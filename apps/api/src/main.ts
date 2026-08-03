@@ -18,6 +18,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';
 
 import { AppModule } from './app/app.module';
+import { computeCorsOrigins } from './platform/config/cors';
 import type { EnvConfig } from './platform/config/env.schema';
 
 async function bootstrap() {
@@ -34,6 +35,22 @@ async function bootstrap() {
   // matters" - `HealthController` opts out via `VERSION_NEUTRAL` since it
   // is an infrastructure endpoint, not a client-facing one.
   app.enableVersioning({ type: VersioningType.URI, defaultVersion: '1' });
+
+  // `[Bug fix, Development Authentication sprint]` Discovered live: with no
+  // CORS configuration at all, a browser blocks `apps/web-admin` (a
+  // different origin, `http://localhost:4200`) from reading any response
+  // from this API - not a 401/403 from this codebase's own logic, a
+  // same-origin-policy failure the browser enforces before the request
+  // even leaves it in some cases, and before the response body is ever
+  // exposed to client JS in every case. See `platform/config/cors.ts` and
+  // `CORS_ORIGIN`'s own doc comment in `env.schema.ts` for the full story.
+  const corsOrigins = computeCorsOrigins({
+    CORS_ORIGIN: configService.get('CORS_ORIGIN', { infer: true }),
+    NODE_ENV: configService.get('NODE_ENV', { infer: true }),
+  });
+  if (corsOrigins) {
+    app.enableCors({ origin: corsOrigins, credentials: false });
+  }
 
   const docsEnabled = configService.get('API_DOCS_ENABLED', { infer: true });
   if (docsEnabled) {

@@ -1,9 +1,14 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { computeFollowUpTaskDueAt } from '@ecclesia/domain-pastoral-care';
 import type { FollowUpTaskTrigger } from '@ecclesia/domain-pastoral-care';
-import type { CreateFollowUpTaskInput, FollowUpTaskResponseDto } from '@ecclesia/contracts';
+import type {
+  CreateFollowUpTaskInput,
+  FollowUpTaskResponseDto,
+  FollowUpTaskStatusDto,
+  ListFollowUpTasksForActorQuery,
+} from '@ecclesia/contracts';
 import type { ActorContext } from '@ecclesia/rbac';
-import type { FollowUpTask } from '@prisma/client';
+import type { FollowUpTask, FollowUpTaskStatus } from '@prisma/client';
 
 import { PersonScopeService } from '../../people/services/person-scope.service';
 import { FollowUpTaskRepository } from '../repositories/follow-up-task.repository';
@@ -78,6 +83,28 @@ export class FollowUpTaskService {
       createdByPersonId: actor.personId,
     });
     return toResponseDto(task);
+  }
+
+  /** `GET /pastoral-care/groups/:groupId/follow-up-tasks` (§16.2's
+   * "Follow-up task queue... sorted by SLA urgency" - Shepherd Dashboard
+   * sprint, see this class's own doc comment on what this milestone
+   * previously deliberately did not build). Defaults to the two
+   * still-open statuses when the caller supplies none. */
+  async listForGroup(groupId: string, statuses?: FollowUpTaskStatusDto[]): Promise<FollowUpTaskResponseDto[]> {
+    const tasks = await this.followUpTaskRepository.listByGroup(groupId, statuses as FollowUpTaskStatus[] | undefined);
+    return tasks.map(toResponseDto);
+  }
+
+  /** `GET /pastoral-care/follow-up-tasks` (Pastoral Care Web Admin sprint).
+   * `query.groupId` present -> same Group-scoped read `listForGroup`
+   * already does; absent -> BRANCH-wide, for the BRANCH-scoped actor
+   * `FollowUpTaskListForActorResourceContextGuard` already resolved
+   * against `actor.branchId`. */
+  async list(actor: ActorContext, query: ListFollowUpTasksForActorQuery): Promise<FollowUpTaskResponseDto[]> {
+    const tasks = query.groupId
+      ? await this.followUpTaskRepository.listByGroup(query.groupId, query.status as FollowUpTaskStatus[] | undefined)
+      : await this.followUpTaskRepository.listByBranch(actor.branchId, query.status as FollowUpTaskStatus[] | undefined);
+    return tasks.map(toResponseDto);
   }
 
   async getById(id: string): Promise<FollowUpTaskResponseDto> {

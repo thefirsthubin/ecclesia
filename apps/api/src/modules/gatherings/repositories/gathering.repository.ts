@@ -39,6 +39,32 @@ export class GatheringRepository {
     return this.prisma.gathering.findUnique({ where: { id } });
   }
 
+  /** `GET /gatherings?ownerGroupId=...` (Shepherd Dashboard sprint's
+   * Today's-Meeting/Attendance-Summary cards - see this repository's own
+   * doc comment on the gap this closes). Sorted earliest-first so the
+   * caller can pick "the first instance ≥ now" for an upcoming meeting,
+   * or "the last instance < now" for a just-happened one, from the same
+   * result set. `type` (Gatherings Web Admin sprint) narrows to an exact
+   * match when supplied - §16.4's "filterable by type." */
+  listByGroupAndRange(groupId: string, from: Date, to: Date, type?: string): Promise<Gathering[]> {
+    return this.prisma.gathering.findMany({
+      where: { ownerGroupId: groupId, scheduledStart: { gte: from, lte: to }, ...(type ? { type } : {}) },
+      orderBy: { scheduledStart: 'asc' },
+    });
+  }
+
+  /** `GET /gatherings` with no `ownerGroupId` (Gatherings Web Admin
+   * sprint) - the BRANCH-wide counterpart to `listByGroupAndRange`, for a
+   * BRANCH-scoped actor with no single Group to name, or simply to browse
+   * every Gathering (grouped and Branch-wide) in the Branch. Same
+   * range/ordering/`type`-filter shape. */
+  listByBranchAndRange(branchId: string, from: Date, to: Date, type?: string): Promise<Gathering[]> {
+    return this.prisma.gathering.findMany({
+      where: { branchId, scheduledStart: { gte: from, lte: to }, ...(type ? { type } : {}) },
+      orderBy: { scheduledStart: 'asc' },
+    });
+  }
+
   update(id: string, input: UpdateGatheringRecord): Promise<Gathering> {
     return this.prisma.gathering.update({ where: { id }, data: input });
   }

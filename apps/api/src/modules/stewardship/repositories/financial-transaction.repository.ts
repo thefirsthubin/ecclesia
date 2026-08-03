@@ -97,10 +97,29 @@ export class FinancialTransactionRepository {
    * single-Branch, single-state filter. Full pagination and the
    * multi-filter (date range, type, Bacenta) reporting surface FR-STW-07
    * eventually needs is not built here - see
+   * `STEWARDSHIP_DESIGN_NOTES.md`. `type` (Stewardship Web Admin sprint)
+   * is a second optional filter - `ExpenseService.list` uses it to
+   * narrow to `type: 'EXPENSE'` rows only, the same underlying table the
+   * inbound queue already queries (`Expense` is a 1:1 extension of this
+   * table, not a separate one - `db/DESIGN_NOTES.md` Open Question #5).
+   * `sourceGroupId` (Stewardship gaps sprint) is a third optional filter -
+   * `FinancialTransactionService.listByBranch` uses it to narrow a
+   * BACENTA_LEADER's own list to just their own Bacenta's recorded
+   * offerings, closing the "no Bacenta Leader list view" gap flagged in
    * `STEWARDSHIP_DESIGN_NOTES.md`. */
-  findManyByBranch(branchId: string, currentState?: string): Promise<FinancialTransaction[]> {
+  findManyByBranch(
+    branchId: string,
+    currentState?: string,
+    type?: FinancialTransactionType,
+    sourceGroupId?: string,
+  ): Promise<FinancialTransaction[]> {
     return this.prisma.financialTransaction.findMany({
-      where: { branchId, ...(currentState ? { currentState } : {}) },
+      where: {
+        branchId,
+        ...(currentState ? { currentState } : {}),
+        ...(type ? { type } : {}),
+        ...(sourceGroupId ? { sourceGroupId } : {}),
+      },
       orderBy: { createdAt: 'desc' },
     });
   }
@@ -148,5 +167,33 @@ export class FinancialTransactionRepository {
       return undefined;
     }
     return this.findPersonIdByUserId(recordedEvent.actorUserId);
+  }
+
+  /**
+   * FR-STW-07's weekly reconciliation comparison: for every Bacenta with
+   * at least one Verified-or-later (`VERIFIED`/`RECONCILED`) inbound
+   * transaction inside `[weekStart, weekEnd)`, the SUM of those
+   * transactions' `amountMinor`. `sourceGroupId IS NOT NULL` excludes
+   * individual Mobile Money entries (no Bacenta to reconcile against a
+   * bank deposit) - [INFERRED], consistent with FR-STW-07's own "per
+   * Bacenta" framing. See `BankDepositConfirmationService.getWeeklyReconciliation`.
+   */
+  async sumVerifiedAmountByGroupForWeek(branchId: string, weekStart: Date, weekEnd: Date): Promise<{ sourceGroupId: string; totalAmountMinor: bigint }[]> {
+    const grouped = await this.prisma.financialTransaction.groupBy({
+      by: ['sourceGroupId'],
+      where: {
+        branchId,
+        sourceGroupId: { not: null },
+        currentState: { in: ['VERIFIED', 'RECONCILED'] },
+        createdAt: { gte: weekStart, lt: weekEnd },
+      },
+      _sum: { amountMinor: true },
+    });
+    return grouped
+      .filter((row) => row.sourceGroupId !== null)
+      .map((row) => ({
+        sourceGroupId: row.sourceGroupId as string,
+        totalAmountMinor: row._sum.amountMinor ?? 0n,
+      }));
   }
 }

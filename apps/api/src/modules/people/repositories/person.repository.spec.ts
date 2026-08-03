@@ -53,4 +53,62 @@ describe('PersonRepository', () => {
     });
     expect(result).toEqual([{ id: 'm1', groupId: 'g1', groupType: 'PASTORAL_CARE' }]);
   });
+
+  it('findByBranch filters by branchId only when no search term is given', async () => {
+    const { repository, prisma } = buildRepository();
+    prisma.person.findMany.mockResolvedValue([{ id: 'p1' }]);
+
+    const result = await repository.findByBranch('branch-1');
+
+    expect(prisma.person.findMany).toHaveBeenCalledWith({
+      where: { branchId: 'branch-1' },
+      orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }],
+    });
+    expect(result).toEqual([{ id: 'p1' }]);
+  });
+
+  it('findByBranch adds a case-insensitive first/last name OR filter when search is given', async () => {
+    const { repository, prisma } = buildRepository();
+    prisma.person.findMany.mockResolvedValue([]);
+
+    await repository.findByBranch('branch-1', 'ama');
+
+    expect(prisma.person.findMany).toHaveBeenCalledWith({
+      where: {
+        branchId: 'branch-1',
+        OR: [
+          { firstName: { contains: 'ama', mode: 'insensitive' } },
+          { lastName: { contains: 'ama', mode: 'insensitive' } },
+        ],
+      },
+      orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }],
+    });
+  });
+
+  it('findByIds returns an empty array without querying prisma when given no ids', async () => {
+    const { repository, prisma } = buildRepository();
+
+    const result = await repository.findByIds([]);
+
+    expect(result).toEqual([]);
+    expect(prisma.person.findMany).not.toHaveBeenCalled();
+  });
+
+  it('findByIds filters by id membership and an optional search term', async () => {
+    const { repository, prisma } = buildRepository();
+    prisma.person.findMany.mockResolvedValue([{ id: 'p1' }]);
+
+    await repository.findByIds(['p1', 'p2'], 'owusu');
+
+    expect(prisma.person.findMany).toHaveBeenCalledWith({
+      where: {
+        id: { in: ['p1', 'p2'] },
+        OR: [
+          { firstName: { contains: 'owusu', mode: 'insensitive' } },
+          { lastName: { contains: 'owusu', mode: 'insensitive' } },
+        ],
+      },
+      orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }],
+    });
+  });
 });

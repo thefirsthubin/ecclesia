@@ -3,7 +3,11 @@ import type { ExecutionContext } from '@nestjs/common';
 import { ECCLESIA_REQUEST_CONTEXT_KEY } from '@ecclesia/rbac';
 import type { ActorContext } from '@ecclesia/rbac';
 
-import { GatheringCreateResourceContextGuard, GatheringResourceContextGuard } from './gathering-resource-context.guard';
+import {
+  GatheringCreateResourceContextGuard,
+  GatheringListResourceContextGuard,
+  GatheringResourceContextGuard,
+} from './gathering-resource-context.guard';
 import type { RequestWithActorContext } from '../../../platform/auth/auth.guard';
 
 function buildContext(request: Partial<RequestWithActorContext>): ExecutionContext {
@@ -83,6 +87,36 @@ describe('GatheringResourceContextGuard', () => {
       groupScopeService as never,
     );
     const request: Partial<RequestWithActorContext> = { actorContext: actor, params: { id: 'g-1' } } as never;
+
+    await guard.canActivate(buildContext(request));
+
+    expect(groupScopeService.loadResourceContext).not.toHaveBeenCalled();
+    expect((request as Record<string, unknown>)[ECCLESIA_REQUEST_CONTEXT_KEY]).toMatchObject({
+      resource: { branchId: 'branch-1' },
+    });
+  });
+});
+
+describe('GatheringListResourceContextGuard', () => {
+  it('resolves scope via GroupScopeService when an ownerGroupId query param is present (Shepherd Dashboard sprint)', async () => {
+    const groupScopeService = {
+      loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', bacentaId: 'bacenta-1' }),
+    };
+    const guard = new GatheringListResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
+    const request: Partial<RequestWithActorContext> = { actorContext: actor, query: { ownerGroupId: 'bacenta-1' } } as never;
+
+    await guard.canActivate(buildContext(request));
+
+    expect(groupScopeService.loadResourceContext).toHaveBeenCalledWith('bacenta-1');
+    expect((request as Record<string, unknown>)[ECCLESIA_REQUEST_CONTEXT_KEY]).toMatchObject({
+      resource: { branchId: 'branch-1', bacentaId: 'bacenta-1' },
+    });
+  });
+
+  it('falls back to the actor\'s own Branch when no ownerGroupId query param is present (Gatherings Web Admin sprint)', async () => {
+    const groupScopeService = { loadResourceContext: jest.fn() };
+    const guard = new GatheringListResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
+    const request: Partial<RequestWithActorContext> = { actorContext: actor, query: {} } as never;
 
     await guard.canActivate(buildContext(request));
 

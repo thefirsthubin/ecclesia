@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 
+import { BranchDirectoryRepository } from './branch-directory.repository';
+import { PrismaRootService } from './prisma-root.service';
 import { PrismaService } from './prisma.service';
 
 /**
@@ -12,9 +14,12 @@ import { PrismaService } from './prisma.service';
  * (see `apps/worker/src/main.ts`). Database-reachability failures here
  * surface the same way every other worker startup failure does: the
  * process refuses to boot and logs why (`PrismaService.onModuleInit`).
+ *
+ * `[Row-Level Security sprint]` `PrismaRootService`/`BranchDirectoryRepository`
+ * added - see each class's own doc comment.
  */
 @Module({
-  providers: [PrismaService],
-  exports: [PrismaService],
+  providers: [PrismaService, PrismaRootService, BranchDirectoryRepository],
+  exports: [PrismaService, PrismaRootService, BranchDirectoryRepository],
 })
 export class WorkerDatabaseModule {}

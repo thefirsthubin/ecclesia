@@ -61,3 +61,24 @@ export class ExpenseResourceContextGuard extends EcclesiaContextGuardBase {
     return { ...personScope, recordedByPersonId: expense.requestedByPersonId };
   }
 }
+
+/**
+ * `GET /v1/expenses` (Stewardship Web Admin sprint's Expense approval
+ * queue). Always resolves to just the actor's own Branch, the identical
+ * shape `FinancialTransactionListResourceContextGuard` already
+ * established for `GET /v1/financial-transactions` - the `BRANCH`-scoped
+ * rows (`RESIDENT_PASTOR`/`TREASURER`) are this endpoint's intended
+ * consumers; `ASSISTANT_PASTOR`'s own `CLUSTER`-scoped `.read` grant
+ * cannot be satisfied by a Branch-wide list resource, the same disclosed
+ * limitation the Financial Transaction list guard already carries.
+ */
+@Injectable()
+export class ExpenseListResourceContextGuard extends EcclesiaContextGuardBase {
+  constructor(branchConfigurationService: BranchConfigurationService) {
+    super(branchConfigurationService);
+  }
+
+  protected async loadResource(_request: RequestWithActorContext, actor: ActorContext): Promise<ResourceContext> {
+    return { branchId: actor.branchId };
+  }
+}

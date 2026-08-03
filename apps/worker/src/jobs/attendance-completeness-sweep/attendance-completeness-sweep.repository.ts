@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { Branch, Gathering } from '@prisma/client';
+import type { Gathering } from '@prisma/client';
 
 import { PrismaService } from '../../platform/database/prisma.service';
 
@@ -13,9 +13,8 @@ import { PrismaService } from '../../platform/database/prisma.service';
 export class AttendanceCompletenessSweepRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  listBranches(): Promise<Pick<Branch, 'id'>[]> {
-    return this.prisma.branch.findMany({ select: { id: true } });
-  }
+  // `[Row-Level Security sprint]` `listBranches()` moved to
+  // `BranchDirectoryRepository` - see that class's own doc comment.
 
   /**
    * Every non-cancelled Gathering in a Branch whose `scheduledEnd` has

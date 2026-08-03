@@ -194,20 +194,27 @@ full citation breakdown. Worth flagging:
   Prisma `BigInt` cannot round-trip through `JSON.stringify`, and a JS
   `number` loses precision past 2^53. Documented at the schema layer, not
   an incidental choice.
-- **FR-STW-07's bank-deposit comparison is not built** — `db/schema.prisma`
-  has no bank-deposit-confirmation entity at all; only the `Verified ->
-  Reconciled` state transition itself is buildable against the existing
-  schema. Needs a schema change, not an engineering guess — the same
-  framing as PRD §16.1's duplicate-resolution queue gap from the People
-  milestone.
-- **No scheduler exists** for the `Flagged -> UnderInvestigation` SLA
-  trigger, Mobile Money provider confirmation (NFR-INT-01, H2), or Pledge
-  reminder delivery (OQ-07) — same disclosed gap category as Pastoral
-  Care's silent-drift sweep and Gatherings' completeness sweep.
 - Three more `[INFERRED]` permission-matrix gaps (Expense pay/receipt/read,
   Financial Transaction read for Treasurer/Bacenta Leader, and Project/
   Pledge entirely, since §17.3 predates FR-STW-08) — see the design notes
   for the exact reasoning behind each.
+- **`[Stewardship gaps sprint]` Five originally-disclosed gaps are now
+  resolved**: FR-STW-07's bank-deposit comparison (new
+  `BankDepositConfirmation` entity + weekly reconciliation endpoint), the
+  `Flagged -> UnderInvestigation` SLA trigger (`apps/worker`'s
+  `flagged-transaction-sla-sweep` detects and signals a breach — it still
+  can't auto-mutate the transaction, since `FinancialTransactionEvent.
+  actorUserId` is a `NOT NULL` FK and no "system actor" exists anywhere in
+  this codebase), Pledge reminder delivery (`pledge-reminder-sweep`,
+  which *does* safely mutate `Pledge.reminderSentAt` — a plain column with
+  no actor FK — giving OQ-07's "never repeated" guarantee a real dedup
+  marker), Project progress aggregation (`totalPledgedMinor`/
+  `totalReceivedMinor`/`progressPercent` on the Project response), and a
+  Bacenta Leader's own Financial-Transaction list view (the list guard now
+  also resolves `bacentaId`). Mobile Money provider confirmation
+  (NFR-INT-01, H2) remains the one undecided scheduler-adjacent gap left in
+  this domain. See `STEWARDSHIP_DESIGN_NOTES.md`'s "Resolved (Stewardship
+  gaps sprint)" section for the full breakdown.
 
 **Insights domain — built.** `apps/api/src/modules/insights` is the fifth
 bounded-context module: the Church Pulse weighted-scoring model
@@ -387,6 +394,16 @@ the full citation breakdown. Worth flagging:
   in this sandbox at all (the same native `@swc/core` binding failure) —
   needs the user's own `pnpm test`, plus a `.env` update adding
   `SQS_NOTIFICATION_QUEUE_URL`/`SQS_AUDIT_QUEUE_URL`, to confirm.
+- **`[Stewardship gaps sprint]` Two more sweeps added**:
+  `flagged-transaction-sla-sweep` (`sweep:flagged-transaction-sla`, same
+  "detect and signal, never mutate" shape as `follow-up-sla-sweep` — the
+  same underlying reason, an FK constraint this time rather than a missing
+  business parameter) and `pledge-reminder-sweep`
+  (`sweep:pledge-reminder` — the first sweep in this codebase that safely
+  mutates, since `Pledge.reminderSentAt` has no actor FK, giving it a real
+  persisted dedup marker the other sweeps lack). `tsc --noEmit` (both app
+  and spec configs) ran clean in this sandbox for both. See
+  `WORKER_DESIGN_NOTES.md`'s own new section for the full reasoning.
 
 **Design System & UX Foundation v1.0 — complete (document only, no code).**
 `docs/Ecclesia_Design_System_UX_Foundation_v1.0.md` is the product design
@@ -438,7 +455,15 @@ omitted): 11 base components (`TextArea`, `Checkbox`, `Radio`, `Select`,
 all Navigation/Data/Layout components — see
 `libs/ui/UI_DESIGN_NOTES.md` for the full inventory, planned
 composition, and rationale for sequencing them after this foundation
-slice. Verified in-sandbox via `npx tsc --noEmit` on every new package
+slice. **`[Stewardship gaps sprint]` `Modal` is now built** (both
+platforms, `libs/ui/{web,native}/src/lib/Modal`) — picked as the one
+component to build out of the deferred eleven, the most-cited real
+blocker (Stewardship's own pages had resorted to inline `Input`+`Button`
+workarounds for lack of it). `tsc --noEmit` ran clean on all four
+`libs/ui/{web,native}` configs. The remaining 10 base components and
+every Navigation/Data/Layout component are still deferred — see
+`UI_DESIGN_NOTES.md`'s own "Modal — resolved" section for the full
+citation. Verified in-sandbox via `npx tsc --noEmit` on every new package
 and both apps (all clean except the expected "module not found" for
 `lucide-react`/`lucide-react-native`, which aren't installed in this
 sandbox — no npm registry access here); `npx nx lint`/`build` could not
@@ -493,6 +518,438 @@ couldn't catch:
 
 **Final state, confirmed on the user's real machine: `pnpm lint`,
 `pnpm build`, and `pnpm test` all pass 18/18.**
+
+**Shepherd Dashboard — the first complete vertical slice (product
+screen, not a component showcase).** `apps/mobile`'s root now renders
+the Shepherd's Bacenta dashboard (PRD §16.2: *"the single most important
+screen in the product"*), built end-to-end — real API integration, real
+loading/empty/error states per card, real tests — rather than a
+tokens/components acceptance demo. Full spec (user story, information
+architecture, component tree, data requirements, API integration, UX/
+responsive spec) lives in
+`apps/mobile/src/app/screens/ShepherdDashboard/SHEPHERD_DASHBOARD_DESIGN_NOTES.md`.
+Composed entirely from the 12 `@ecclesia/ui-native` components that
+actually exist (not the 23 the sprint brief assumed — see that file's
+§0) — Church Pulse, active follow-ups + silent-drift flags ("needs your
+attention," §16.2's own framing), next Bacenta Meeting, last meeting's
+attendance, the two NFR-PERF-01 quick actions, notifications, and
+recent activity, each card fetching, loading, and failing independently.
+
+Real backend gaps surfaced and fixed, not worked around: three
+`BACENTA_LEADER`/`OWN_GROUP` permission-matrix rows existed for
+create/update but not read (`gatherings.gathering.read`,
+`gatherings.attendance.read`, `pastoral_care.followup_task.read`) — a
+Shepherd could record data but never read it back through those routes.
+Three endpoints the PRD names as surfaces but that never existed were
+added, following existing module conventions exactly (repository →
+service → guard → controller, Zod contracts, `[INFERRED]`-disclosed RBAC
+rows): `GET /pastoral-care/groups/:groupId/silent-drift-flags` (this
+codebase's first HTTP read path for `SilentDriftFlag` rows, which
+`apps/worker`'s nightly sweep has written since the Insights milestone),
+`GET /pastoral-care/groups/:groupId/follow-up-tasks` (§16.2's "sorted by
+SLA urgency" queue), and `GET /gatherings?ownerGroupId=...` (no prior way
+to find "my Bacenta's next meeting" without already knowing its id).
+
+No new `libs/ui/native` base component was added (the brief's own "do
+not recreate components" rule) and no navigation library or sign-in flow
+was built (out of scope — "do not build anything except the Shepherd
+Dashboard"); both are disclosed, scoped-out gaps with a stub seam
+(`lib/session.ts`, `QuickActionsRow`'s `onPress` callbacks) ready for a
+future sprint, not silently missing functionality. Verified in-sandbox
+via `npx tsc --noEmit` across every changed/new project (`libs/contracts`,
+`libs/rbac`, `apps/api` app + spec, `apps/mobile` app + spec) — all
+clean, including one genuine pre-existing, unrelated type error in
+`apps/api/src/modules/people/repositories/role-assignment.repository.spec.ts`
+(confirmed via `git status` to predate this sprint, left as-is). Needs
+the user's real machine for `pnpm lint`/`pnpm test`/`pnpm build` and, for
+the dashboard's data to actually populate, a running `apps/api` +
+`apps/worker` + Postgres stack — this sprint did not touch the
+Engagement Signal ingestion gap `INSIGHTS_DESIGN_NOTES.md` already
+discloses.
+
+**Application Shell — `apps/web-admin` is now the real product, not the
+UI Foundation showcase.** The showcase entry page is gone; `/` now
+redirects to a real login screen or the Resident Pastor's Branch
+dashboard, behind a persistent sidebar/top-bar application shell
+(`AppShell`, `libs/ui/web`'s new `Sidebar`/`TopBar`/`Breadcrumbs`/
+`UserMenu`/`NotificationBell`). Full reasoning, including every
+`[Design Decision]`, lives in
+`apps/web-admin/src/app/APPLICATION_SHELL_DESIGN_NOTES.md`.
+
+No routing library or Cognito client SDK exists anywhere in this
+workspace and none could be installed (confirmed: no package-registry
+network access in this sandbox) — both are hand-built on raw `fetch`/the
+History API (`app/router/router.tsx`, `app/auth/cognito-client.ts`),
+mirroring `apps/mobile`'s own no-dependency `api-client.ts` precedent.
+Login is email + password + mandatory TOTP MFA (Blueprint §8.2's
+documented method for Web Admin's real primary personas — Treasurer,
+Assistant Pastor, Resident Pastor, Admin), not the Shepherd's phone+OTP;
+the Shepherd's own dashboard stays on mobile, with a web-admin visitor
+who holds that role pointed there instead of shown a fabricated screen.
+
+One real backend gap was found and fixed: no route ever returned a
+client's own resolved `ActorContext` (Cognito's tokens carry no role
+claim in this system — `ActorContextResolverService` computes it entirely
+server-side per-request). Added `GET /auth/me` — a direct read of the
+same `ActorContext` `@CurrentActor()` already exposes everywhere else, no
+new business logic, protected by the existing global `AuthGuard`.
+
+Only the Resident Pastor's Branch dashboard is fully built this sprint
+(Design System §4.3's own spec for that persona, reusing the
+already-existing `GET /insights/branch-dashboard` and
+`PATCH /insights/alerts/:id/resolve`); every other domain route
+(People, Pastoral Care, Ministry, Gatherings, Stewardship, Insights) is
+an explicitly-labelled stub reachable from the real sidebar, and
+Configuration is further gated to Admin/Council Overseer roles. The
+spec's "forward alert to Assistant Pastor" quick action has no backing
+endpoint anywhere in `apps/api` and was deliberately not built rather
+than faked. Needs the user's real machine for `pnpm lint`/`pnpm test`/
+`pnpm build` (not yet run anywhere this sprint) and a real, provisioned
+Cognito User Pool before the login screen can be exercised end-to-end.
+
+**People — the first domain page built on the Application Shell.** The
+`/people` stub is replaced with a real, role-scoped directory
+(`PeopleListPage`, search + list) and a Person profile view
+(`PersonDetailPage`, current fields + full Bacenta/Basonta and
+Role-Assignment history — FR-PPL-07's "complete, queryable history...
+including closed/past ones"). Full reasoning, including every
+`[Design Decision]`, lives in
+`apps/web-admin/src/app/pages/People/PEOPLE_PAGE_DESIGN_NOTES.md`; the
+backend-side gaps it depends on are documented in
+`apps/api/src/modules/people/PEOPLE_DESIGN_NOTES.md`'s "Resolved (People
+Web Admin sprint)" section.
+
+Three real backend read-path gaps were found and fixed, not worked
+around: `GET /people` (PRD §16.1's "Search & directory" capability had no
+backing route at all), `GET /people/:personId/group-memberships`, and
+`GET /people/:personId/role-assignments` (both controllers previously had
+a write-only `POST`). One RBAC bug fix rode along —
+`people.role_assignment.read` granted ADMIN only, even though
+RESIDENT_PASTOR/ASSISTANT_PASTOR both already hold `.grant`/`.update` for
+the same resource; matching `.read` rows were added at the same scopes.
+
+The hand-built client-side router (`app/router/router.tsx`, no
+`react-router-dom` available in this workspace) gained its first dynamic
+path segment — `/people/:id` — via a new `matchPath`/`useParams`
+extension, kept deliberately minimal (one `:param` per path, no nesting,
+no wildcards). `ProtectedRoute` was refactored to derive its own current
+path via `useLocation()` instead of taking a hardcoded `path` prop, fixing
+a post-login-redirect bug a param route would otherwise have hit (a
+literal, non-existent `/people/:id` URL rather than the real
+`/people/abc-123` the user actually requested).
+
+This sprint is read-only: no New Person intake form, no duplicate
+resolution queue UI, no Bacenta/Basonta reassignment flow — all explicitly
+deferred (`PEOPLE_PAGE_DESIGN_NOTES.md` §9). Needs the user's real machine
+for `pnpm lint`/`pnpm test`/`pnpm build` (not yet run anywhere this
+sprint).
+
+**Pastoral Care — the Follow-up Task Queue.** The `/pastoral-care` stub
+is replaced with `FollowUpTaskQueuePage` (PRD §16.2's "Follow-up task
+queue... sorted by SLA urgency" surface), role-scoped the same way
+People's directory is, with subject/assignee names resolved per row and a
+**Complete** quick action (`PATCH /follow-up-tasks/:id/complete`, the
+same no-payload-`PATCH` pattern the Resident Pastor dashboard's alert
+**Resolve** action already established). Full reasoning lives in
+`apps/web-admin/src/app/pages/PastoralCare/PASTORAL_CARE_PAGE_DESIGN_NOTES.md`.
+
+Two real backend gaps were found and fixed: `pastoral_care.followup_task.read`
+had create/update rows for ASSISTANT_PASTOR but no read row at all — the
+exact persona PRD §16.2 names for this surface could never `GET` a task
+back, single or list — and `GET /pastoral-care/groups/:groupId/follow-up-tasks`
+was Group-scoped only, with no BRANCH-wide route for RESIDENT_PASTOR/ADMIN
+to list against, the identical shape of gap the People sprint closed for
+`GET /people`. Added the missing RBAC row and a new
+`GET /pastoral-care/follow-up-tasks` endpoint (optional `groupId`, BRANCH
+fallback when absent).
+
+Escalate, Silent-drift flags, Pastoral notes, and the Poimen tracker are
+explicitly out of scope this pass — Escalate needs a Person picker that
+doesn't exist yet, and the rest belong to a different surface or sprint
+(`PASTORAL_CARE_PAGE_DESIGN_NOTES.md` §9). Needs the user's real machine
+for `pnpm lint`/`pnpm test`/`pnpm build` (not yet run anywhere this
+sprint).
+
+**Ministry — the Basonta directory and roster view.** The `/ministry`
+stub is replaced with a role-routed page (`MinistryPage`): a Basonta
+Leader goes straight to their own roster, while Resident Pastor/Admin see
+a new Basonta directory (`BasontaDirectoryPage`) that drills into any
+Basonta's roster at `/ministry/:groupId` (`BasontaRosterView`) — current
+workers plus an inline "Overcommitted" badge (FR-MIN-01/FR-MIN-04). Full
+reasoning lives in
+`apps/web-admin/src/app/pages/Ministry/MINISTRY_PAGE_DESIGN_NOTES.md`.
+
+Two real backend gaps were found and fixed: none of the seven `ministry.*`
+actions had an ADMIN row at any scope, even though every other domain
+grants ADMIN the same BRANCH row Resident Pastor holds — added it to the
+three read actions this page needs. And there was no way to enumerate
+Groups at all — every roster route requires an already-known `groupId`,
+and no endpoint could list one. Added `GET /groups` (optional `type`
+filter) to the People module, since Groups are People-schema-owned —
+reused by Ministry rather than duplicated.
+
+Staffing Targets and Worker Availability self-service are explicitly out
+of scope this pass — targets are keyed to a specific Gathering with no
+Gathering picker built yet, and availability is a `SELF`-scoped
+self-service flow for Workers/Members, not this oversight-role page's
+job (`MINISTRY_PAGE_DESIGN_NOTES.md` §4/§5/§10). Needs the user's real
+machine for `pnpm lint`/`pnpm test`/`pnpm build` (not yet run anywhere
+this sprint).
+
+**Gatherings — the Gathering calendar.** The `/gatherings` stub is
+replaced with `GatheringsListPage` (PRD §16.4's "upcoming and past
+Gatherings, filterable by type and Group"), role-scoped the same way the
+prior three domain pages are, with a type filter and an inline
+attendance-completeness badge (`AttendanceCompletenessBadge`) on every
+past Gathering — a per-row substitute for the Branch-wide completeness
+*report* PRD §16.4 names, since no aggregate endpoint exists yet. Full
+reasoning lives in
+`apps/web-admin/src/app/pages/Gatherings/GATHERINGS_PAGE_DESIGN_NOTES.md`.
+
+Two real backend gaps were found and fixed: `GET /gatherings` had no
+BRANCH-wide case at all (`ownerGroupId` was required, so neither a
+BRANCH-scoped actor nor a Branch-wide Gathering like Sunday Service could
+ever appear in a list) — the same shape of gap closed for `GET /people`,
+`GET /pastoral-care/follow-up-tasks`, and `GET /groups` in the three
+sprints before this one. And `gatherings.gathering.read`/
+`gatherings.attendance.read` both had ADMIN missing despite already
+holding `.create`/`.update` — the same class of bug fixed for
+BACENTA_LEADER on these same two actions back in the Shepherd Dashboard
+sprint.
+
+Attendance Capture and Visitor Intake are explicitly out of scope this
+pass — both are Usher-primary, mobile-optimized workflows, and
+`GATHERINGS_DESIGN_NOTES.md` already discloses that no `USHER` role
+exists in the RBAC catalog at all, a structural blocker a web-admin page
+can't route around (`GATHERINGS_PAGE_DESIGN_NOTES.md` §5). Needs the
+user's real machine for `pnpm lint`/`pnpm test`/`pnpm build` (not yet run
+anywhere this sprint).
+
+**Stewardship — the verification and approval queues.** The
+`/stewardship` stub is replaced with `StewardshipPage` (PRD §16.5's
+"Financial Transaction verification queue" and "Expense approval
+queue"), two `Card` sections on one page rather than the single-list
+shape every prior domain page used, since both underlying list endpoints
+resolve to the same fixed Branch-wide scope regardless of role (no
+`resolveDefaultXQuery(actor)` resolver exists here — a first for this
+sprint sequence). Verify/Flag/Escalate/Reconcile on Financial
+Transactions and Approve/Reject/Pay on Expenses are all built, gated per
+row on the transaction's own `currentState`; Flag/Reject reveal an inline
+reason field (no `Modal` component exists in `libs/ui/web`, same
+constraint every prior sprint operated under). Full reasoning lives in
+`apps/web-admin/src/app/pages/Stewardship/STEWARDSHIP_PAGE_DESIGN_NOTES.md`.
+
+One real backend gap was found and fixed: `GET /expenses` didn't exist at
+all — the same shape of gap closed for `GET /people`, `GET
+/pastoral-care/follow-up-tasks`, `GET /groups`, and `GET /gatherings`'s
+BRANCH fallback in the four sprints before this one. Unlike every one of
+those, no ADMIN permission row was added this sprint: auditing the full
+Stewardship section of `permission-matrix.ts` found ADMIN holds *zero*
+rows anywhere in the domain, which reads as a deliberate
+separation-of-duties boundary (configuration authority shouldn't imply
+visibility into a Branch's money — the same reasoning Blueprint §9.3
+already applies to `pastoral_care.notes.*`), not an oversight to
+mechanically patch. See `STEWARDSHIP_DESIGN_NOTES.md`'s "Resolved
+(Stewardship Web Admin sprint)" section for the full disclosure.
+
+Record Financial Transaction / Request Expense (both need a Group picker
+that doesn't exist), Attach Receipt (restricted to the original requester
+and needs a file-upload flow that doesn't exist anywhere in this
+codebase), and the Project/Pledge surfaces (no list endpoint exists for
+either yet) are explicitly out of scope this pass
+(`STEWARDSHIP_PAGE_DESIGN_NOTES.md` §4). Needs the user's real machine for
+`pnpm lint`/`pnpm test`/`pnpm build` (not yet run anywhere this sprint).
+
+**Insights — the sixth and final domain page.** The `/insights` stub is
+replaced with `InsightsPage`, a role router rather than a single view:
+`RESIDENT_PASTOR`/`ACTING_RESIDENT_PASTOR` reuse `ResidentPastorDashboard`
+directly (the same Branch-wide component already built for the
+`/dashboard` landing screen — PRD §16.6 and Design System §3.3 both name
+this as the same capability reachable from two nav entries, not two
+features); `ADMIN` gets a new read-only `AdminInsightsView` (Church Pulse
++ alerts with no Resolve action, since `permission-matrix.ts` grants
+Admin `insights.alert.read` but not `.resolve`); `ASSISTANT_PASTOR` gets
+a new `ClusterInsightsView` with a Bacenta-picker chip row built from
+`ActorContext.clusterBacentaIds` (no new picker component needed — the
+full list was already on the actor); `BACENTA_LEADER`/`BASONTA_LEADER`
+see the same "lives on mobile" message `/dashboard` already uses for
+them, per Design System §3.3 placing the Shepherd's Bacenta pulse view on
+mobile only; every other role sees an honest "not available" message.
+Full reasoning lives in
+`apps/web-admin/src/app/pages/Insights/INSIGHTS_PAGE_DESIGN_NOTES.md`.
+
+Unlike every prior sprint, **no backend gap-filling was needed** —
+`apps/api/src/modules/insights` (branch/cluster/bacenta dashboards, alert
+read/resolve, every RBAC row) was already fully built and wired before
+this sprint started. This was a frontend-only sprint: two small,
+backward-compatible prop additions (`ChurchPulseCard.scopeLabel`,
+`AlertPriorityCard.readOnly`, both defaulting to preserve
+`ResidentPastorDashboard`'s existing behavior exactly) let the new views
+reuse the existing dashboard cards instead of duplicating them.
+
+FR-INS-02's weight-configuration screen (H2, no backend endpoint exists
+to write it), a true multi-Bacenta ranked-list cluster view (US-G2, the
+backend has no such endpoint), and Person-level Church Pulse (NFR-PRIV-02
+hard gate) are explicitly out of scope, all already-disclosed backend
+limitations with nothing new for this page to add
+(`INSIGHTS_PAGE_DESIGN_NOTES.md` §7). Needs the user's real machine for
+`pnpm lint`/`pnpm test`/`pnpm build` (not yet run anywhere this sprint).
+
+This completes all six PRD §16 domain pages in `apps/web-admin`
+(People, Pastoral Care, Ministry, Gatherings, Stewardship, Insights).
+Configuration was already built in an earlier sprint.
+
+**Development Authentication — a local-only bypass for AWS Cognito, not a
+change to production auth.** With every backend module, RBAC, and every
+Web Admin page built, there was still no practical way to log in and
+exercise any of it: no Cognito User Pool/App Client/seeded users have
+ever been provisioned (`AUTH_DESIGN_NOTES.md`'s long-standing "known
+sandbox limitation"). This sprint adds a second `TokenVerifierService`
+implementation, `DevAuthService` (`apps/api/src/platform/auth`), that
+`AuthGuard` can be wired to instead of `CognitoVerifierService` — never
+both, never as a fallback, selected once at boot by `AUTH_MODE`
+(`auth-mode.ts`'s `computeAuthMode`/`assertAuthModeIsSafe`, defaulting to
+`development` locally and `cognito` in production, and structurally
+refusing to boot with `AUTH_MODE=development` when `NODE_ENV=production`
+even if explicitly set). `AuthModule` is now a dynamic module
+(`AuthModule.register()`) so the *unchosen* mode's provider/controller
+are never even added to the DI container or HTTP router — in
+`AUTH_MODE=cognito`, `DevAuthController`'s routes 404 the same way a
+route that was never written would, satisfying "the development provider
+must disappear completely" structurally, not just behaviorally.
+
+Six seeded personas (`dev-users.ts`'s `DEV_USER_SEEDS`, matching the
+brief's own roster: Resident Pastor, Assistant Pastor, Treasurer, Basonta
+Leader, Council Administrator → `COUNCIL_OVERSEER`, Super Administrator →
+`ADMIN`) are real `Person`/`User`/`RoleAssignment` rows
+(`db/seed-dev-users.ts`, run via `pnpm db:seed:dev`, refuses to run when
+`NODE_ENV=production`) — every request they make still passes through the
+same `ActorContextResolverService.resolve()` → RBAC → permission-matrix
+pipeline a real Cognito-authenticated request does. `LoginPage` renders a
+password-less role picker instead of the Cognito form only when
+`GET /auth/mode` (new, `@Public()`) reports `development` — a fact the
+client reads, never sets. Also fixed as an in-scope prerequisite: every
+existing `apps/web-admin` API call was missing the `/v1` URI-versioning
+prefix `main.ts` requires of every route (`api-client.ts`'s
+`API_BASE_URL`), which meant no frontend request had ever actually
+reached a real running backend before this sprint. Full design,
+environment variables, and how to switch back to Cognito:
+`apps/api/src/platform/auth/DEVELOPMENT_AUTHENTICATION_GUIDE.md`.
+
+**A CORS bug, found live.** With `apps/web-admin` and `apps/api` both
+actually running for the first time (Development Authentication sprint), the
+login page silently fell back to the Cognito form instead of the development
+role picker — not an RBAC or auth-mode bug, but `apps/api` having no CORS
+configuration at all, so the browser blocked every cross-origin response
+(including `GET /auth/mode` itself) before any application code ever ran.
+Fixed with `computeCorsOrigins()` (`apps/api/src/platform/config/cors.ts`),
+wired into `main.ts`'s `app.enableCors()`: a new optional `CORS_ORIGIN` env
+var, defaulting to `http://localhost:4200` when unset and `NODE_ENV=development`,
+required explicitly for any other environment. No PRD/Blueprint section names
+CORS at all — a genuine, undocumented gap, disclosed in
+`apps/api/src/platform/auth/DEVELOPMENT_AUTHENTICATION_GUIDE.md`'s own new
+section rather than silently patched.
+
+**Mobile Application Shell + Attendance Capture — `apps/mobile` is now a
+real multi-screen app, not one hardcoded screen.** The Shepherd Dashboard
+sprint explicitly scoped out navigation, sign-in, and every screen beyond the
+dashboard itself. Reaching the dashboard's own "Take Attendance" quick action
+for real required closing all three at once — mirroring `apps/web-admin`'s
+own "Application Shell" sprint before any domain page was built on it. Full
+reasoning lives in
+`apps/mobile/src/app/screens/AttendanceCapture/ATTENDANCE_CAPTURE_DESIGN_NOTES.md`.
+
+A minimal dependency-free stack navigator (`app/navigation/Navigator.tsx`) and
+a Development-Auth-only sign-in flow (`app/auth/AuthContext.tsx` +
+`app/screens/Login/LoginScreen.tsx`, reusing the same `/auth/dev/*` routes
+`apps/web-admin` already uses in development) replace the placeholder
+`lib/session.ts` the Shepherd Dashboard sprint left in place — exactly the
+seam that sprint's own design notes predicted a real sign-in flow would
+replace. No `react-navigation` or Cognito/phone+OTP UI exists in this app;
+both are disclosed gaps, not silent substitutions (pointed at a Cognito-mode
+API, the app shows an explanatory screen, not a broken form). `api-client.ts`
+gained its first `POST` support and the same `/v1` URI-versioning prefix fix
+`apps/web-admin` needed in the Development Authentication sprint.
+
+Attendance Capture itself needed **zero new backend endpoints** — an early
+research pass concluded a new roster endpoint was needed, corrected on direct
+inspection: `GET /people?groupId=` (People Web Admin sprint) already returns
+full roster data with names, and `BACENTA_LEADER` already holds
+`people.person.read` at `OWN_GROUP` scope. Every read and the record-save
+action reuse existing, unmodified endpoints; N parallel single-record
+`POST /gatherings/:id/attendance-records` calls (keyed on the DB's own
+`@@unique([gatheringId, personId])`) replace what would otherwise have been a
+new bulk-record endpoint. Verified in-sandbox via `npx tsc --noEmit` across
+`apps/mobile/tsconfig.app.json` and `tsconfig.spec.json` — both clean;
+`eslint`/`jest` could not run in this sandbox (pre-existing, disclosed
+limitations — see the design notes' own §7). Needs the user's real machine
+for `pnpm lint`/`pnpm test`/`pnpm build`.
+
+**Row-Level Security — activated, closing Open Question #3.** Blueprint
+§7.3's RLS policies (`db/migrations/20260801000000_.../migration.sql`) have
+existed since the Database Foundation milestone but never enforced
+anything at runtime — every connection so far used `ecclesia`, the
+table-owning role, and Postgres always lets an owner bypass RLS. This
+milestone closes both gaps a real enforcing setup needs: a new migration
+(`20260801050000_row_level_security_enforcement`) creates `ecclesia_app`, a
+non-owner Postgres role with ordinary CRUD grants and no `BYPASSRLS`; and
+both `apps/api` and `apps/worker` now connect their everyday `PrismaService`
+via that role (`APP_DATABASE_URL`, new required env var) instead of
+`DATABASE_URL`, wrapping every unit of work — one HTTP request
+(`apps/api`'s new `BranchScopeInterceptor`, this codebase's first
+`NestInterceptor`), one SQS message, or one Branch inside a nightly sweep
+— in a Prisma interactive transaction that runs `SET LOCAL
+app.current_branch_id = '<uuid>'` before anything else, the session
+variable every RLS policy's `USING` clause reads. **Zero repository files
+change** — every existing `this.prisma.<model>.<method>(...)` call
+transparently starts resolving to the branch-scoped transaction via an
+`Object.defineProperty` redirect on `PrismaService`'s own model-delegate
+properties (deliberately not a whole-instance `Proxy` — a real,
+empirically-confirmed risk with recent Prisma Client versions' internal
+use of private class fields). A new, narrowly-scoped `PrismaRootService`
+(reusing the unchanged, owner-role `DATABASE_URL`) covers the three
+call sites that structurally cannot know a Branch in advance because
+discovering it *is* their job: `ActorContextResolverService`/`DevAuthService`
+(`apps/api`, resolving `cognitoSub` → Person → Branch pre-authentication)
+and every sweep job's `listBranches()` (`apps/worker`, via a new
+`BranchDirectoryRepository`). Full design in
+`db/ROW_LEVEL_SECURITY_DESIGN_NOTES.md`. Worth flagging:
+
+- **Built and `tsc --noEmit`-verified in a sandbox with no PostgreSQL, no
+  Docker, and no working Jest for either app** (`@swc/core`'s native
+  binding fails to load here — pre-existing, same limitation
+  `WORKER_DESIGN_NOTES.md` already discloses). Every architectural
+  decision — the `Object.defineProperty`-not-`Proxy` choice, the
+  `PrismaRootService` bootstrap split — was verified against this exact
+  installed Prisma Client version's real property shapes via direct
+  in-sandbox Node scripting, not assumed. **None of this has run against a
+  real database.** `db/ROW_LEVEL_SECURITY_DESIGN_NOTES.md` §8 is an 8-step
+  manual verification procedure — including a `psql`-direct proof that an
+  unscoped query against `ecclesia_app` genuinely fails — that must be run
+  on the user's own machine before this is trusted anywhere real.
+- **A latent DI-reachability bug predating this sprint, found and fixed
+  along the way**: three of `apps/worker`'s sweep repositories already
+  injected `PrismaService` from a Nest module that could never actually
+  resolve it (their module only imported `EventsModule`, which never
+  re-exported `WorkerDatabaseModule`) — a runtime-only failure `tsc`
+  cannot detect, invisible until an actual app boot. Fixed by having
+  `EventsModule` re-export `WorkerDatabaseModule` as a whole, which this
+  sprint's own new `SqsConsumerBase` → `PrismaService` wiring needed
+  anyway.
+- **No `GLOBAL`-scope carve-out built** — confirmed via a grep of the live
+  `libs/rbac/src/lib/permission-matrix.ts` that zero rows use `scope:
+  'GLOBAL'` today, so scoping every request to `actor.branchId` is
+  unconditionally correct against everything the RBAC layer can currently
+  grant. Flagged as a known follow-up for whenever a real GLOBAL-scoped
+  rule is added (`COUNCIL_OVERSEER` exists as a persona but has no
+  permission-matrix rows at all yet).
+- **A disclosed tradeoff, not a bug**: wrapping a whole unit of work in one
+  transaction means external I/O inside it (e.g.
+  `EventBridgePublisherService.publish()` mid-sweep) happens while a
+  Postgres transaction is open. Mitigated with a 15-second transaction
+  timeout (Prisma's default is 5s); the structural fix — narrowing
+  transactions to only their DB statements — would need per-handler
+  restructuring across roughly 40 endpoints and is out of scope here.
 
 ## Prerequisites
 

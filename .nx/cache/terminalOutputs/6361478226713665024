@@ -1,0 +1,121 @@
+[2m> [22mjest
+
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/platform/config/[22m[1mcors.spec.ts[22m ([0m[1m[41m11.33 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/platform/auth/[22m[1mdev-auth.service.spec.ts[22m ([0m[1m[41m18.257 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/platform/auth/controllers/[22m[1mdev-auth.controller.spec.ts[22m ([0m[1m[41m22.899 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/platform/auth/[22m[1mauth-mode.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/people/guards/[22m[1mrole-assignment-resource-context.guard.spec.ts[22m ([0m[1m[41m28.126 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/stewardship/controllers/[22m[1mfinancial-transaction.controller.spec.ts[22m ([0m[1m[41m28.671 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/platform/auth/controllers/[22m[1mauth.controller.spec.ts[22m ([0m[1m[41m28.485 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/ministry/controllers/[22m[1mstaffing-target.controller.spec.ts[22m ([0m[1m[41m29.356 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/ministry/controllers/[22m[1mworker-availability.controller.spec.ts[22m ([0m[1m[41m29.358 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/platform/auth/[22m[1mauth.module.spec.ts[22m ([0m[1m[41m29.977 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/insights/controllers/[22m[1malert.controller.spec.ts[22m ([0m[1m[41m29.798 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/ministry/guards/[22m[1mstaffing-target-resource-context.guard.spec.ts[22m ([0m[1m[41m12.541 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/pastoral-care/controllers/[22m[1msilent-drift-flag.controller.spec.ts[22m ([0m[1m[41m19.151 s[49m[22m[0m)
+[31m[Nest] 82685  - [39m08/03/2026, 3:52:36 PM [31m  ERROR[39m [38;5;3m[Testing] [39m[31mHealth Check has failed! {"memory_rss":{"status":"down","message":"Used rss exceeded the set threshold"}}[39m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/platform/health/[22m[1mhealth.controller.spec.ts[22m ([0m[1m[41m32.231 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/people/controllers/[22m[1mperson.controller.spec.ts[22m ([0m[1m[41m7.6 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/gatherings/controllers/[22m[1mattendance-record.controller.spec.ts[22m ([0m[1m[41m5.841 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/platform/auth/[22m[1mauth.guard.spec.ts[22m ([0m[1m[41m5.738 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/platform/database/[22m[1mdatabase-health.indicator.spec.ts[22m ([0m[1m[41m7.711 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/ministry/guards/[22m[1mworker-availability-resource-context.guard.spec.ts[22m ([0m[1m[41m10.67 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/people/controllers/[22m[1mgroup-membership.controller.spec.ts[22m ([0m[1m[41m7.008 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/gatherings/controllers/[22m[1mgathering-series.controller.spec.ts[22m ([0m[1m[41m7.317 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/stewardship/controllers/[22m[1mproject.controller.spec.ts[22m ([0m[1m[41m7.17 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/people/services/[22m[1mrole-assignment.service.spec.ts[22m ([0m[1m[41m6.515 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/people/controllers/[22m[1mgroup.controller.spec.ts[22m ([0m[1m[41m6.995 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/gatherings/controllers/[22m[1mgathering.controller.spec.ts[22m ([0m[1m[41m7.843 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/gatherings/guards/[22m[1mgathering-resource-context.guard.spec.ts[22m ([0m[1m[41m5.578 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/ministry/controllers/[22m[1mroster.controller.spec.ts[22m ([0m[1m[41m5.948 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/pastoral-care/guards/[22m[1mpastoral-note-resource-context.guard.spec.ts[22m ([0m[1m[41m5.866 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/stewardship/controllers/[22m[1mpledge.controller.spec.ts[22m ([0m[1m[41m6.32 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/insights/controllers/[22m[1mdashboard.controller.spec.ts[22m ([0m[1m[41m6.79 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/stewardship/guards/[22m[1mfinancial-transaction-resource-context.guard.spec.ts[22m ([0m[1m[41m6.648 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/gatherings/services/[22m[1mgathering-scope.service.spec.ts[22m ([0m[1m[41m5.604 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/pastoral-care/guards/[22m[1msilent-drift-flag-resource-context.guard.spec.ts[22m ([0m[1m[41m6.402 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/pastoral-care/controllers/[22m[1mpastoral-note.controller.spec.ts[22m ([0m[1m[41m7.23 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/people/controllers/[22m[1mrole-assignment.controller.spec.ts[22m ([0m[1m[41m7.047 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/platform/filters/[22m[1mall-exceptions.filter.spec.ts[22m ([0m[1m[41m5.106 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/people/services/[22m[1mgroup-leadership.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/pastoral-care/repositories/[22m[1mpastoral-note.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/insights/guards/[22m[1minsights-dashboard-resource-context.guard.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/pastoral-care/guards/[22m[1mpoimen-enrollment-resource-context.guard.spec.ts[22m ([0m[1m[41m5.727 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/stewardship/guards/[22m[1mpledge-resource-context.guard.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/stewardship/controllers/[22m[1mexpense.controller.spec.ts[22m ([0m[1m[41m6.336 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/platform/auth/[22m[1mactor-context-resolver.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/people/guards/[22m[1mgroup-membership-resource-context.guard.spec.ts[22m ([0m[1m[41m5.227 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/pastoral-care/guards/[22m[1mfollow-up-task-resource-context.guard.spec.ts[22m ([0m[1m[41m5.323 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/stewardship/guards/[22m[1mproject-resource-context.guard.spec.ts[22m ([0m[1m[41m5.759 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/ministry/guards/[22m[1mroster-resource-context.guard.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/ministry/services/[22m[1mstaffing-target.service.spec.ts[22m ([0m[1m[41m5.091 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/platform/pipes/[22m[1mzod-validation.pipe.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/gatherings/guards/[22m[1mvisitor-intake-resource-context.guard.spec.ts[22m ([0m[1m[41m5.585 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/people/services/[22m[1mgroup-membership.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/ministry/services/[22m[1mroster.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/app/[22m[1mapp.controller.spec.ts[22m ([0m[1m[41m5.791 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/platform/rbac/[22m[1mecclesia-context.guard-base.spec.ts[22m ([0m[1m[41m5.463 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/stewardship/repositories/[22m[1mpledge.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/ministry/services/[22m[1mworker-availability.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/gatherings/repositories/[22m[1mgathering-series.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/people/guards/[22m[1mgroup-resource-context.guard.spec.ts[22m ([0m[1m[41m6.234 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/gatherings/services/[22m[1mattendance-record.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/ministry/repositories/[22m[1mworker-availability.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/pastoral-care/controllers/[22m[1mfollow-up-task.controller.spec.ts[22m ([0m[1m[41m5.564 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/ministry/repositories/[22m[1mstaffing-target.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/stewardship/guards/[22m[1mexpense-resource-context.guard.spec.ts[22m ([0m[1m[41m5.332 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/pastoral-care/controllers/[22m[1mpoimen-enrollment.controller.spec.ts[22m ([0m[1m[41m5.829 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/platform/database/[22m[1mprisma.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/insights/guards/[22m[1malert-resource-context.guard.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/people/guards/[22m[1mperson-resource-context.guard.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/people/repositories/[22m[1mgroup.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/pastoral-care/repositories/[22m[1mfollow-up-task.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/pastoral-care/services/[22m[1msilent-drift-flag.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/pastoral-care/repositories/[22m[1mpoimen-enrollment.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/gatherings/services/[22m[1mgathering-series.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/people/services/[22m[1mgroup.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/stewardship/services/[22m[1mpledge.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/stewardship/services/[22m[1mproject.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/gatherings/guards/[22m[1mgathering-series-resource-context.guard.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/insights/services/[22m[1mpulse-score.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/insights/services/[22m[1mengagement-signal.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/gatherings/guards/[22m[1mattendance-resource-context.guard.spec.ts[22m ([0m[1m[41m5.294 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/people/repositories/[22m[1mgroup-membership.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/gatherings/controllers/[22m[1mvisitor-intake.controller.spec.ts[22m ([0m[1m[41m5.14 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/pastoral-care/services/[22m[1mpoimen-enrollment.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/stewardship/repositories/[22m[1mfinancial-transaction.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/platform/auth/[22m[1mcognito-verifier.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/people/repositories/[22m[1mperson.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/platform/auth/decorators/[22m[1mcurrent-actor.decorator.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/insights/repositories/[22m[1mengagement-signal.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/pastoral-care/services/[22m[1mfollow-up-task.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/stewardship/services/[22m[1mexpense.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/gatherings/repositories/[22m[1mgathering.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/pastoral-care/repositories/[22m[1msilent-drift-flag.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/insights/services/[22m[1malert.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/people/services/[22m[1mperson.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/people/services/[22m[1mgroup-scope.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/gatherings/repositories/[22m[1mattendance-record.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/people/services/[22m[1mgroup-roster.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/gatherings/repositories/[22m[1mvisitor-intake.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/pastoral-care/services/[22m[1mpastoral-note.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/stewardship/repositories/[22m[1mexpense.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/people/services/[22m[1mperson-scope.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/insights/repositories/[22m[1mpulse-score.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/insights/repositories/[22m[1mpulse-score-history.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/stewardship/repositories/[22m[1mproject.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/people/repositories/[22m[1mrole-assignment.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/platform/config/[22m[1menv.schema.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/insights/repositories/[22m[1malert.repository.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/platform/rbac/[22m[1mbranch-configuration.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/stewardship/services/[22m[1mfinancial-transaction.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/gatherings/services/[22m[1mvisitor-intake.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/modules/gatherings/services/[22m[1mgathering.service.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m api [39m[27m[0m [2msrc/platform/audit/[22m[1maudit-log.service.spec.ts[22m
+[33mA worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that .unref() was called on them.[39m
+
+[1mTest Suites: [22m[1m[32m111 passed[39m[22m, 111 total
+[1mTests:       [22m[1m[32m488 passed[39m[22m, 488 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        [1m[33m85.049 s[39m[22m
+[2mRan all test suites[22m[2m.[22m

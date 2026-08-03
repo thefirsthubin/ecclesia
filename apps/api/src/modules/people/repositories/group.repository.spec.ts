@@ -3,7 +3,7 @@ import { GroupRepository } from './group.repository';
 describe('GroupRepository', () => {
   function buildRepository() {
     const prisma = {
-      group: { create: jest.fn(), findUnique: jest.fn(), update: jest.fn() },
+      group: { create: jest.fn(), findUnique: jest.fn(), update: jest.fn(), findMany: jest.fn() },
     };
     const repository = new GroupRepository(prisma as never);
     return { repository, prisma };
@@ -39,5 +39,32 @@ describe('GroupRepository', () => {
 
     expect(prisma.group.update).toHaveBeenCalledWith({ where: { id: 'group-1' }, data: input });
     expect(result).toEqual({ id: 'group-1', name: 'Renamed Bacenta' });
+  });
+
+  describe('findByBranch (Ministry Web Admin sprint)', () => {
+    it('lists every Group in the Branch, ordered by name, when no type is given', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.group.findMany.mockResolvedValue([{ id: 'group-1' }]);
+
+      const result = await repository.findByBranch('branch-1');
+
+      expect(prisma.group.findMany).toHaveBeenCalledWith({
+        where: { branchId: 'branch-1' },
+        orderBy: { name: 'asc' },
+      });
+      expect(result).toEqual([{ id: 'group-1' }]);
+    });
+
+    it('narrows to the given type when supplied', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.group.findMany.mockResolvedValue([]);
+
+      await repository.findByBranch('branch-1', 'MINISTRY');
+
+      expect(prisma.group.findMany).toHaveBeenCalledWith({
+        where: { branchId: 'branch-1', type: 'MINISTRY' },
+        orderBy: { name: 'asc' },
+      });
+    });
   });
 });

@@ -1,13 +1,14 @@
 import type { CanActivate, ExecutionContext } from '@nestjs/common';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import type { ActorContext } from '@ecclesia/rbac';
 import type { Request } from 'express';
 
 import { AuditLogService } from '../audit/audit-log.service';
 import { ActorContextResolverService } from './actor-context-resolver.service';
-import { CognitoVerifierService } from './cognito-verifier.service';
 import { IS_PUBLIC_KEY } from './decorators/public.decorator';
+import { TOKEN_VERIFIER } from './token-verifier.interface';
+import type { TokenVerifierService } from './token-verifier.interface';
 
 /** Property `AuthGuard` attaches the resolved actor to. */
 export const ACTOR_CONTEXT_KEY = 'actorContext' as const;
@@ -41,7 +42,14 @@ export interface RequestWithActorContext extends Request {
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-    private readonly cognitoVerifier: CognitoVerifierService,
+    // Development Authentication sprint: depends on the `TokenVerifierService`
+    // abstraction, not concretely on `CognitoVerifierService` - `auth.module.ts`
+    // binds this to whichever implementation (`CognitoVerifierService` or
+    // `DevAuthService`) matches the active `AUTH_MODE`. This guard has no
+    // way to tell which one it got, by design (`token-verifier.interface.ts`'s
+    // own comment: "swapping the identity source must not require touching
+    // authorization at all").
+    @Inject(TOKEN_VERIFIER) private readonly tokenVerifier: TokenVerifierService,
     private readonly actorContextResolver: ActorContextResolverService,
     private readonly auditLog: AuditLogService,
     private readonly reflector: Reflector,
@@ -59,7 +67,7 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<RequestWithActorContext>();
     try {
       const token = this.extractBearerToken(request);
-      const payload = await this.cognitoVerifier.verifyAccessToken(token);
+      const payload = await this.tokenVerifier.verifyAccessToken(token);
       const actor = await this.actorContextResolver.resolve(payload.sub);
       request[ACTOR_CONTEXT_KEY] = actor;
       return true;

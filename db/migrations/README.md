@@ -51,6 +51,33 @@ draft, and the open questions that remain genuinely unresolved.
    1.3 gave the init migration before it can be considered proven rather
    than merely reviewed.
 
+**Row-Level Security sprint addition:**
+
+6. `20260801050000_row_level_security_enforcement` - creates `ecclesia_app`,
+   the non-owner Postgres role Blueprint §7.3 calls for ("the application
+   must connect as a different, non-owner Postgres role") so the existing
+   RLS policies (migration 1) finally do something at runtime instead of
+   being silently bypassed by the table-owning `ecclesia` role every
+   connection has used until now. Role + grants only - no policy changes.
+   See `db/ROW_LEVEL_SECURITY_DESIGN_NOTES.md` for the full design,
+   including the application-side half (Prisma/`AsyncLocalStorage`
+   plumbing in `apps/api`/`apps/worker`) this migration alone doesn't
+   activate anything without. Hand-written for the same sandbox reason as
+   every migration above; needs the same real-Postgres verification pass
+   before being trusted (design notes §8).
+
+**Stewardship gaps sprint addition:**
+
+7. `20260801060000_bank_deposit_confirmations` - adds
+   `stewardship.bank_deposit_confirmations` (FR-STW-07's previously-unbuilt
+   bank-deposit comparison half - see `STEWARDSHIP_DESIGN_NOTES.md`'s "What
+   this milestone deliberately does not build" section, now resolved). New
+   schema, not a gap-closing fix - hand-written the same way every prior
+   migration was, for the same sandbox reason. No grant statements needed -
+   the Row-Level Security migration's `ALTER DEFAULT PRIVILEGES` already
+   covers it. Needs the same real-Postgres verification pass as every
+   migration above before being trusted.
+
 **Do not edit a migration.sql file after it has been applied.** Prisma
 records a checksum of each migration when it's applied; editing the file
 afterward (rather than adding a new migration) causes `prisma migrate

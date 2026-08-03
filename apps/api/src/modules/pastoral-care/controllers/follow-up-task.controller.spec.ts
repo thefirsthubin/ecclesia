@@ -6,7 +6,14 @@ describe('FollowUpTaskController', () => {
   const actor: ActorContext = { personId: 'ap-1', role: 'ASSISTANT_PASTOR', branchId: 'branch-1' };
 
   function buildController() {
-    const followUpTaskService = { create: jest.fn(), getById: jest.fn(), complete: jest.fn(), escalate: jest.fn() };
+    const followUpTaskService = {
+      create: jest.fn(),
+      getById: jest.fn(),
+      complete: jest.fn(),
+      escalate: jest.fn(),
+      listForGroup: jest.fn(),
+      list: jest.fn(),
+    };
     const controller = new FollowUpTaskController(followUpTaskService as never);
     return { controller, followUpTaskService };
   }
@@ -43,5 +50,22 @@ describe('FollowUpTaskController', () => {
     await controller.escalate('ft-1', body);
 
     expect(followUpTaskService.escalate).toHaveBeenCalledWith('ft-1', 'ap-2');
+  });
+
+  it('listForGroup() delegates to FollowUpTaskService.listForGroup with the parsed status filter', async () => {
+    const { controller, followUpTaskService } = buildController();
+
+    await controller.listForGroup('bacenta-1', { status: ['OPEN', 'ESCALATED'] } as never);
+
+    expect(followUpTaskService.listForGroup).toHaveBeenCalledWith('bacenta-1', ['OPEN', 'ESCALATED']);
+  });
+
+  it('list() delegates to FollowUpTaskService.list with the current actor and parsed query (Pastoral Care Web Admin sprint)', async () => {
+    const { controller, followUpTaskService } = buildController();
+    const query = { groupId: 'bacenta-1', status: ['OPEN'] } as never;
+
+    await controller.list(actor, query);
+
+    expect(followUpTaskService.list).toHaveBeenCalledWith(actor, query);
   });
 });

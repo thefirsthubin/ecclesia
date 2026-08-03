@@ -59,7 +59,13 @@ import { RbacPlatformModule } from './rbac/rbac-platform.module';
     TerminusModule,
     DatabaseModule,
     AuditModule,
-    AuthModule,
+    // Development Authentication sprint: `AuthModule` is now a dynamic
+    // module (`@Module({})` + `static register()`) so its
+    // providers/controllers can differ by `AUTH_MODE` - see that file's
+    // own comment for why this couldn't be a plain `useFactory` provider
+    // instead. `.register()` re-computes and validates the mode via
+    // `assertAuthModeIsSafe` each time it's called.
+    AuthModule.register(),
     RbacPlatformModule,
   ],
   controllers: [HealthController],
@@ -69,6 +75,10 @@ import { RbacPlatformModule } from './rbac/rbac-platform.module';
       useClass: AllExceptionsFilter,
     },
   ],
+  // Re-exporting a dynamic module: Nest matches by module class regardless
+  // of the dynamic config it was imported with, so `AuthModule` (the plain
+  // class) is correct here even though `imports` above used
+  // `AuthModule.register()`.
   exports: [ConfigModule, DatabaseModule, AuditModule, AuthModule, RbacPlatformModule],
 })
 export class PlatformModule {}

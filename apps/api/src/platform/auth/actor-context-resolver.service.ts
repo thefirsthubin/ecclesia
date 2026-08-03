@@ -2,7 +2,7 @@ import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/co
 import type { ActorContext, Role } from '@ecclesia/rbac';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { PrismaService } from '../database/prisma.service';
+import { PrismaRootService } from '../database/prisma-root.service';
 
 /**
  * Resolves a verified Cognito access token's `sub` claim into the
@@ -33,11 +33,20 @@ import { PrismaService } from '../database/prisma.service';
  * the actor's `clusterBacentaIds`?) rather than equality against a
  * `clusterId` that nothing could ever populate. See `libs/rbac/src/lib/types.ts`'s
  * `ActorContext.clusterBacentaIds` doc comment for the full reasoning.
+ *
+ * `[Row-Level Security sprint]` Injects `PrismaRootService`, not
+ * `PrismaService` - this is exactly the "who am I" bootstrap case
+ * `PrismaRootService`'s own doc comment names: at this point in the
+ * request, no `ActorContext` (and therefore no `branchId` to scope by)
+ * exists yet - resolving one is this method's entire job. Using the
+ * RLS-scoped `PrismaService` here would be circular: `BranchScopeInterceptor`
+ * runs after `AuthGuard`, which is what calls this method in the first
+ * place.
  */
 @Injectable()
 export class ActorContextResolverService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma: PrismaRootService,
     @InjectPinoLogger(ActorContextResolverService.name) private readonly logger: PinoLogger,
   ) {}
 

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { RbacGuard, RecordLevelPolicyGuard, RequirePermission } from '@ecclesia/rbac';
 import type { ActorContext } from '@ecclesia/rbac';
 import { attachExpenseReceiptSchema, rejectExpenseSchema, requestExpenseSchema } from '@ecclesia/contracts';
@@ -6,7 +6,11 @@ import type { AttachExpenseReceiptInput, RejectExpenseInput, RequestExpenseInput
 
 import { CurrentActor } from '../../../platform/auth/decorators/current-actor.decorator';
 import { ZodValidationPipe } from '../../../platform/pipes/zod-validation.pipe';
-import { ExpenseCreateResourceContextGuard, ExpenseResourceContextGuard } from '../guards/expense-resource-context.guard';
+import {
+  ExpenseCreateResourceContextGuard,
+  ExpenseListResourceContextGuard,
+  ExpenseResourceContextGuard,
+} from '../guards/expense-resource-context.guard';
 import { ExpenseService } from '../services/expense.service';
 
 /** PRD §17.3's "Expense: request/approve" rows, FR-STW-09, BR-STW-07/08. */
@@ -19,6 +23,20 @@ export class ExpenseController {
   @UseGuards(ExpenseCreateResourceContextGuard, RbacGuard)
   request(@CurrentActor() actor: ActorContext, @Body(new ZodValidationPipe(requestExpenseSchema)) body: RequestExpenseInput) {
     return this.expenseService.request(actor, body);
+  }
+
+  /** `GET /expenses` (Stewardship Web Admin sprint's Expense approval
+   * queue - see `ExpenseService.list`'s own doc comment). Declared before
+   * `:id`, the same convention every other module's list + getById pair
+   * already follows. Mirrors `FinancialTransactionController.listByBranch`'s
+   * unvalidated `state` query param exactly - no `ZodValidationPipe`
+   * schema for it there either, so none is introduced here for
+   * consistency. */
+  @Get()
+  @RequirePermission('stewardship.expense.read')
+  @UseGuards(ExpenseListResourceContextGuard, RbacGuard)
+  list(@CurrentActor() actor: ActorContext, @Query('state') state?: string) {
+    return this.expenseService.list(actor, state);
   }
 
   @Get(':id')

@@ -1,16 +1,21 @@
-import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { RbacGuard, RequirePermission } from '@ecclesia/rbac';
 import type { ActorContext } from '@ecclesia/rbac';
 import {
   createPersonSchema,
   lifecycleTransitionRequestSchema,
+  listPeopleQuerySchema,
   updatePersonSchema,
 } from '@ecclesia/contracts';
-import type { CreatePersonInput, LifecycleTransitionRequestInput, UpdatePersonInput } from '@ecclesia/contracts';
+import type { CreatePersonInput, LifecycleTransitionRequestInput, ListPeopleQuery, UpdatePersonInput } from '@ecclesia/contracts';
 
 import { CurrentActor } from '../../../platform/auth/decorators/current-actor.decorator';
 import { ZodValidationPipe } from '../../../platform/pipes/zod-validation.pipe';
-import { PersonCreateResourceContextGuard, PersonResourceContextGuard } from '../guards/person-resource-context.guard';
+import {
+  PersonCreateResourceContextGuard,
+  PersonListResourceContextGuard,
+  PersonResourceContextGuard,
+} from '../guards/person-resource-context.guard';
 import { PersonService } from '../services/person.service';
 
 /**
@@ -30,6 +35,18 @@ export class PersonController {
   @UseGuards(PersonCreateResourceContextGuard, RbacGuard)
   create(@CurrentActor() actor: ActorContext, @Body(new ZodValidationPipe(createPersonSchema)) body: CreatePersonInput) {
     return this.personService.create(actor, body);
+  }
+
+  /** `GET /people` (PRD §16.1's "Search & directory"). Declared before
+   * `:id` for readability, same convention `GatheringController` follows -
+   * not required for correctness (Nest matches the path-segment-free
+   * `GET /people` here and `GET /people/:id` below regardless of
+   * declaration order). */
+  @Get()
+  @RequirePermission('people.person.read')
+  @UseGuards(PersonListResourceContextGuard, RbacGuard)
+  list(@CurrentActor() actor: ActorContext, @Query(new ZodValidationPipe(listPeopleQuerySchema)) query: ListPeopleQuery) {
+    return this.personService.list(actor, query);
   }
 
   @Get(':id')

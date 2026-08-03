@@ -1,11 +1,18 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { checkGatheringStatusTransition } from '@ecclesia/domain-gatherings';
-import type { CreateGatheringInput, GatheringResponseDto, UpdateGatheringInput } from '@ecclesia/contracts';
+import type { CreateGatheringInput, GatheringResponseDto, ListGatheringsQuery, UpdateGatheringInput } from '@ecclesia/contracts';
 import type { ActorContext } from '@ecclesia/rbac';
 import { Prisma } from '@prisma/client';
 import type { Gathering } from '@prisma/client';
 
 import { GatheringRepository } from '../repositories/gathering.repository';
+
+/** `listForGroup`'s default window when the caller supplies no explicit
+ * `from`/`to` - "now through 30 days out," wide enough to always contain
+ * the next scheduled Bacenta Meeting for any reasonable recurrence
+ * cadence (weekly at minimum, per §12.4's named gathering types) without
+ * returning unbounded history. */
+const DEFAULT_LIST_WINDOW_DAYS = 30;
 
 function toResponseDto(gathering: Gathering): GatheringResponseDto {
   return {
@@ -48,6 +55,28 @@ export class GatheringService {
       createdByPersonId: actor.personId,
     });
     return toResponseDto(gathering);
+  }
+
+  /** `GET /gatherings` (Shepherd Dashboard sprint's `ownerGroupId` case,
+   * Gatherings Web Admin sprint's BRANCH-wide case - see
+   * `GatheringRepository.listByGroupAndRange`/`listByBranchAndRange`'s own
+   * doc comments). Caller supplies an explicit `from`/`to` to look
+   * backward (e.g. "last past Bacenta Meeting," the Attendance Summary
+   * card) or forward (e.g. "next upcoming meeting," the Today's Meeting
+   * card, or the web-admin calendar's default view) - this service only
+   * fills in the default forward-looking window when neither is
+   * supplied. `query.ownerGroupId` present -> Group-scoped; absent ->
+   * BRANCH-wide against `actor.branchId`, resolved the same way
+   * `GatheringListResourceContextGuard` already decided which case this
+   * request was. */
+  async list(actor: ActorContext, query: ListGatheringsQuery): Promise<GatheringResponseDto[]> {
+    const now = new Date();
+    const from = query.from ? new Date(query.from) : now;
+    const to = query.to ? new Date(query.to) : new Date(now.getTime() + DEFAULT_LIST_WINDOW_DAYS * 24 * 60 * 60 * 1000);
+    const gatherings = query.ownerGroupId
+      ? await this.gatheringRepository.listByGroupAndRange(query.ownerGroupId, from, to, query.type)
+      : await this.gatheringRepository.listByBranchAndRange(actor.branchId, from, to, query.type);
+    return gatherings.map(toResponseDto);
   }
 
   async getById(id: string): Promise<GatheringResponseDto> {

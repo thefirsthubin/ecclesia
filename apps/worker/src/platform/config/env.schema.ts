@@ -42,6 +42,26 @@ export const envSchema = z.object({
     ),
 
   /**
+   * `[Row-Level Security sprint]` PostgreSQL connection string for
+   * `PrismaService` - identical purpose and role (`ecclesia_app`, the
+   * non-owner Postgres role `db/migrations/20260801050000_row_level_security_enforcement`
+   * creates) as apps/api's own `APP_DATABASE_URL` - see that file's doc
+   * comment and `db/ROW_LEVEL_SECURITY_DESIGN_NOTES.md` for the full
+   * reasoning. `DATABASE_URL` above is kept for `PrismaRootService`,
+   * apps/worker's own unscoped connection - here, exactly one call site:
+   * each sweep job's `listBranches()` (there is no per-request identity
+   * bootstrap in a worker process, but the same "discover the scope before
+   * you can apply it" shape applies to listing every Branch to sweep).
+   */
+  APP_DATABASE_URL: z
+    .string()
+    .min(1, 'APP_DATABASE_URL is required')
+    .refine(
+      (value) => value.startsWith('postgresql://') || value.startsWith('postgres://'),
+      'APP_DATABASE_URL must be a postgresql:// or postgres:// connection string',
+    ),
+
+  /**
    * AWS region the EventBridge bus and SQS queues live in (Blueprint
    * §10.1/§10.2, ADR-007's EventBridge/SQS event architecture). Required,
    * no default: a Worker process that cannot reach the event bus should

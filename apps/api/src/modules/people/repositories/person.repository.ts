@@ -94,6 +94,58 @@ export class PersonRepository {
     }));
   }
 
+  /**
+   * `GET /people` with no `groupId` (BRANCH-scoped roles - Resident
+   * Pastor/Admin/Treasurer, PRD §16.1: "an Admin searches the whole
+   * Branch"). `search` is an optional case-insensitive substring match
+   * against first or last name - a deliberately simple `[Design
+   * Decision]`, not a PRD-specified search algorithm. Ordered by last
+   * name then first name for a stable, predictable directory listing.
+   */
+  findByBranch(branchId: string, search?: string): Promise<Person[]> {
+    return this.prisma.person.findMany({
+      where: {
+        branchId,
+        ...(search
+          ? {
+              OR: [
+                { firstName: { contains: search, mode: 'insensitive' } },
+                { lastName: { contains: search, mode: 'insensitive' } },
+              ],
+            }
+          : {}),
+      },
+      orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }],
+    });
+  }
+
+  /**
+   * `GET /people?groupId=...` (OWN_GROUP/CLUSTER-scoped roles) - the
+   * candidate Person set is already narrowed to a specific Group's active
+   * roster (`GroupRosterService.listActiveMembers`, resolved by
+   * `PersonListService` before calling this), `search` further narrows it
+   * the same way `findByBranch` does.
+   */
+  findByIds(ids: string[], search?: string): Promise<Person[]> {
+    if (ids.length === 0) {
+      return Promise.resolve([]);
+    }
+    return this.prisma.person.findMany({
+      where: {
+        id: { in: ids },
+        ...(search
+          ? {
+              OR: [
+                { firstName: { contains: search, mode: 'insensitive' } },
+                { lastName: { contains: search, mode: 'insensitive' } },
+              ],
+            }
+          : {}),
+      },
+      orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }],
+    });
+  }
+
   async findActiveGroupMemberships(personId: string): Promise<ActiveGroupMembershipRef[]> {
     const memberships = await this.prisma.groupMembership.findMany({
       where: { personId, endedAt: null },

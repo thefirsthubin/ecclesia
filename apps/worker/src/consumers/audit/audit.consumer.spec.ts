@@ -9,12 +9,14 @@ describe('AuditConsumer', () => {
     const processedEventRepository = { tryRecord: jest.fn() };
     const logger = { info: jest.fn(), warn: jest.fn(), error: jest.fn() };
     const auditLogRepository = { record: jest.fn() };
+    const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
     const consumer = new AuditConsumer(
       sqsClient as never,
       configService as never,
       processedEventRepository as never,
       logger as never,
       auditLogRepository as never,
+      prisma as never,
     );
     return { consumer, auditLogRepository };
   }

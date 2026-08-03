@@ -3,7 +3,11 @@ import type { ExecutionContext } from '@nestjs/common';
 import { ECCLESIA_REQUEST_CONTEXT_KEY } from '@ecclesia/rbac';
 import type { ActorContext } from '@ecclesia/rbac';
 
-import { ExpenseCreateResourceContextGuard, ExpenseResourceContextGuard } from './expense-resource-context.guard';
+import {
+  ExpenseCreateResourceContextGuard,
+  ExpenseListResourceContextGuard,
+  ExpenseResourceContextGuard,
+} from './expense-resource-context.guard';
 import type { RequestWithActorContext } from '../../../platform/auth/auth.guard';
 
 function buildContext(request: Partial<RequestWithActorContext>): ExecutionContext {
@@ -61,6 +65,19 @@ describe('ExpenseResourceContextGuard', () => {
     expect(personScopeService.loadResourceContext).toHaveBeenCalledWith('requester-1', actor);
     expect((request as Record<string, unknown>)[ECCLESIA_REQUEST_CONTEXT_KEY]).toMatchObject({
       resource: { branchId: 'branch-1', bacentaId: 'bacenta-1', recordedByPersonId: 'requester-1' },
+    });
+  });
+});
+
+describe('ExpenseListResourceContextGuard', () => {
+  it('resolves scope to just the actor\'s own Branch, with no repository call', async () => {
+    const guard = new ExpenseListResourceContextGuard(branchConfigurationService as never);
+    const request: Partial<RequestWithActorContext> = { actorContext: actor } as never;
+
+    await guard.canActivate(buildContext(request));
+
+    expect((request as Record<string, unknown>)[ECCLESIA_REQUEST_CONTEXT_KEY]).toMatchObject({
+      resource: { branchId: 'branch-1' },
     });
   });
 });

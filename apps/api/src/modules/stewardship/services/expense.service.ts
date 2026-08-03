@@ -80,6 +80,30 @@ export class ExpenseService {
     return toResponseDto(expense, transaction);
   }
 
+  /**
+   * `GET /expenses` (Stewardship Web Admin sprint's Expense approval
+   * queue - §16.5's "Expense approval queue... Approve/reject with
+   * mandatory rationale on rejection"). Unlike
+   * `FinancialTransactionService.listByBranch`'s deliberate N+1 avoidance
+   * (which leaves `recordedByPersonId` null in list results precisely to
+   * skip a per-row join), an Expense list fundamentally needs each row's
+   * own extension-table fields (`description`, `category`,
+   * `requestedByPersonId`, ...) that only live on `stewardship.expenses`,
+   * not on `FinancialTransaction` - so the per-row
+   * `ExpenseRepository.findByTransactionId` join here is unavoidable, not
+   * a missed optimization.
+   */
+  async list(actor: ActorContext, state?: string): Promise<ExpenseResponseDto[]> {
+    const transactions = await this.financialTransactionRepository.findManyByBranch(actor.branchId, state, 'EXPENSE');
+    const results = await Promise.all(
+      transactions.map(async (transaction) => {
+        const expense = await this.expenseRepository.findByTransactionId(transaction.id);
+        return expense ? toResponseDto(expense, transaction) : null;
+      }),
+    );
+    return results.filter((result): result is ExpenseResponseDto => result !== null);
+  }
+
   /** FR-STW-09: `REQUESTED -> APPROVED`, stamping `approvedByPersonId`/
    * `approvedAt` on the Expense extension row alongside the shared event
    * log entry. */

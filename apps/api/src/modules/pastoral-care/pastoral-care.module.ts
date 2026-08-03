@@ -6,18 +6,24 @@ import { PeopleModule } from '../people/people.module';
 import { FollowUpTaskController } from './controllers/follow-up-task.controller';
 import { PastoralNoteController } from './controllers/pastoral-note.controller';
 import { PoimenEnrollmentController } from './controllers/poimen-enrollment.controller';
+import { SilentDriftFlagController } from './controllers/silent-drift-flag.controller';
 import {
   FollowUpTaskCreateResourceContextGuard,
+  FollowUpTaskListForActorResourceContextGuard,
+  FollowUpTaskListResourceContextGuard,
   FollowUpTaskResourceContextGuard,
 } from './guards/follow-up-task-resource-context.guard';
 import { PastoralNoteResourceContextGuard } from './guards/pastoral-note-resource-context.guard';
 import { PoimenEnrollmentResourceContextGuard } from './guards/poimen-enrollment-resource-context.guard';
+import { SilentDriftFlagListResourceContextGuard } from './guards/silent-drift-flag-resource-context.guard';
 import { FollowUpTaskRepository } from './repositories/follow-up-task.repository';
 import { PastoralNoteRepository } from './repositories/pastoral-note.repository';
 import { PoimenEnrollmentRepository } from './repositories/poimen-enrollment.repository';
+import { SilentDriftFlagRepository } from './repositories/silent-drift-flag.repository';
 import { FollowUpTaskService } from './services/follow-up-task.service';
 import { PastoralNoteService } from './services/pastoral-note.service';
 import { PoimenEnrollmentService } from './services/poimen-enrollment.service';
+import { SilentDriftFlagService } from './services/silent-drift-flag.service';
 
 /**
  * PastoralCareModule (PRD §13.2 / Blueprint §4.2 module inventory).
@@ -44,7 +50,7 @@ import { PoimenEnrollmentService } from './services/poimen-enrollment.service';
  */
 @Module({
   imports: [DatabaseModule, RbacPlatformModule, forwardRef(() => PeopleModule)],
-  controllers: [PoimenEnrollmentController, FollowUpTaskController, PastoralNoteController],
+  controllers: [PoimenEnrollmentController, FollowUpTaskController, PastoralNoteController, SilentDriftFlagController],
   providers: [
     PoimenEnrollmentRepository,
     PoimenEnrollmentService,
@@ -53,9 +59,14 @@ import { PoimenEnrollmentService } from './services/poimen-enrollment.service';
     FollowUpTaskService,
     FollowUpTaskCreateResourceContextGuard,
     FollowUpTaskResourceContextGuard,
+    FollowUpTaskListResourceContextGuard,
+    FollowUpTaskListForActorResourceContextGuard,
     PastoralNoteRepository,
     PastoralNoteService,
     PastoralNoteResourceContextGuard,
+    SilentDriftFlagRepository,
+    SilentDriftFlagService,
+    SilentDriftFlagListResourceContextGuard,
   ],
   // `FollowUpTaskService` is additionally exported (Gatherings milestone)
   // so `VisitorIntakeService` (FR-GTH-04) can auto-create a Follow-up task

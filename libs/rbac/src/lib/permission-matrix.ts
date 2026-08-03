@@ -93,6 +93,24 @@ const BASE_MATRIX: PermissionRule[] = [
     scope: 'BRANCH',
     reason: 'PRD §17.3 - read only, no grant authority',
   },
+  // [Bug fix, People Web Admin sprint] RESIDENT_PASTOR/ASSISTANT_PASTOR
+  // both hold `people.role_assignment.grant`/`.update` above, but had no
+  // `.read` row at all - only ADMIN did. A role that can grant/update a
+  // Role Assignment being unable to read the ones it already granted (or
+  // any other in its own scope) is inconsistent with every other
+  // grant+read pairing in this matrix (e.g. `people.group_membership.update`
+  // above), and blocks PRD §16.1's "Person profile view... role history"
+  // surface for the very personas §16.1 names it for ("All operator
+  // roles"). Scopes mirror the existing `.grant`/`.update` rows exactly.
+  { role: 'RESIDENT_PASTOR', action: 'people.role_assignment.read', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'ASSISTANT_PASTOR', action: 'people.role_assignment.read', effect: 'ALLOW', scope: 'CLUSTER' },
+  // FR-PPL-07 covers Role Assignment history symmetrically with Group
+  // Membership history (same requirement, same sentence) - a Worker/
+  // Member can view their own role history, same SELF-scope pattern
+  // `people.person.read` and the new `people.group_membership.read` rows
+  // both already grant these two roles.
+  { role: 'WORKER', action: 'people.role_assignment.read', effect: 'ALLOW', scope: 'SELF' },
+  { role: 'MEMBER', action: 'people.role_assignment.read', effect: 'ALLOW', scope: 'SELF' },
 
   // --- Bacenta/Basonta: reassign member -----------------------------
   { role: 'RESIDENT_PASTOR', action: 'people.group_membership.update', effect: 'ALLOW', scope: 'BRANCH' },
@@ -117,6 +135,20 @@ const BASE_MATRIX: PermissionRule[] = [
     scope: 'BRANCH',
     reason: 'PRD §17.3 - admin correction only',
   },
+
+  // --- FR-PPL-07: Bacenta/Basonta membership history (read) ------------
+  // See `libs/rbac/src/lib/actions.ts`'s `people.group_membership.read`
+  // doc comment - §17.3 has no row for this, FR-PPL-07 requires it.
+  // Scopes mirror the `.update` rows immediately above exactly (the same
+  // actor set that can change a Person's group membership can view its
+  // history for Persons in their own scope).
+  { role: 'RESIDENT_PASTOR', action: 'people.group_membership.read', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'ASSISTANT_PASTOR', action: 'people.group_membership.read', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'BACENTA_LEADER', action: 'people.group_membership.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BASONTA_LEADER', action: 'people.group_membership.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'ADMIN', action: 'people.group_membership.read', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'WORKER', action: 'people.group_membership.read', effect: 'ALLOW', scope: 'SELF' },
+  { role: 'MEMBER', action: 'people.group_membership.read', effect: 'ALLOW', scope: 'SELF' },
 
   // --- [INFERRED, no PRD §17.3 row] Group (Bacenta/Basonta): create/read/update ---
   // FR-PC-01/FR-MIN-01 require this capability to exist; §17.3's matrix
@@ -157,10 +189,25 @@ const BASE_MATRIX: PermissionRule[] = [
   { role: 'ASSISTANT_PASTOR', action: 'gatherings.gathering.update', effect: 'ALLOW', scope: 'CLUSTER' },
   { role: 'BACENTA_LEADER', action: 'gatherings.gathering.create', effect: 'ALLOW', scope: 'OWN_GROUP' },
   { role: 'BACENTA_LEADER', action: 'gatherings.gathering.update', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  {
+    role: 'BACENTA_LEADER',
+    action: 'gatherings.gathering.read',
+    effect: 'ALLOW',
+    scope: 'OWN_GROUP',
+    reason: '[Bug fix, Shepherd Dashboard sprint] a Shepherd could create/update their own Bacenta Meetings but had no matching read grant, so GET /gatherings/:id and the new GET /gatherings list endpoint were unreachable for this role until now',
+  },
   { role: 'BASONTA_LEADER', action: 'gatherings.gathering.create', effect: 'ALLOW', scope: 'OWN_GROUP' },
   { role: 'BASONTA_LEADER', action: 'gatherings.gathering.update', effect: 'ALLOW', scope: 'OWN_GROUP' },
   { role: 'ADMIN', action: 'gatherings.gathering.create', effect: 'ALLOW', scope: 'BRANCH' },
   { role: 'ADMIN', action: 'gatherings.gathering.update', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'ADMIN',
+    action: 'gatherings.gathering.read',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason:
+      '[Bug fix, Gatherings Web Admin sprint] same class of gap the Shepherd Dashboard sprint already fixed for BACENTA_LEADER above - ADMIN held create/update here but no read at all, an oversight rather than a deliberate exclusion.',
+  },
 
   // --- Attendance: record ---------------------------------------------
   { role: 'RESIDENT_PASTOR', action: 'gatherings.attendance.read', effect: 'ALLOW', scope: 'BRANCH' },
@@ -172,6 +219,13 @@ const BASE_MATRIX: PermissionRule[] = [
     reason: 'PRD §17.3 - any Gathering within their cluster',
   },
   { role: 'BACENTA_LEADER', action: 'gatherings.attendance.create', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  {
+    role: 'BACENTA_LEADER',
+    action: 'gatherings.attendance.read',
+    effect: 'ALLOW',
+    scope: 'OWN_GROUP',
+    reason: '[Bug fix, Shepherd Dashboard sprint] same gap as gatherings.gathering.read above - a Shepherd could record attendance but not read it back, blocking the dashboard\'s Attendance Summary card',
+  },
   { role: 'BASONTA_LEADER', action: 'gatherings.attendance.create', effect: 'ALLOW', scope: 'OWN_GROUP' },
   {
     role: 'ADMIN',
@@ -179,6 +233,14 @@ const BASE_MATRIX: PermissionRule[] = [
     effect: 'ALLOW',
     scope: 'BRANCH',
     reason: 'PRD §17.3 - support cases only',
+  },
+  {
+    role: 'ADMIN',
+    action: 'gatherings.attendance.read',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason:
+      '[Bug fix, Gatherings Web Admin sprint] same class of gap as gatherings.gathering.read\'s ADMIN row above - needed so the web-admin Gathering calendar can show per-Gathering attendance-completeness status (GET .../attendance-records/completeness) for an Admin, not just Resident Pastor.',
   },
 
   // --- [INFERRED - no PRD §17.3 row covers this] Digital visitor capture
@@ -345,6 +407,24 @@ const BASE_MATRIX: PermissionRule[] = [
     reason: 'Linking a Pledge to its fulfilling transaction is a Finance Team record-keeping action, mirroring stewardship.transaction.reconcile',
   },
 
+  // --- Bank Deposit Confirmation (both [INFERRED], see actions.ts) --------
+  {
+    role: 'TREASURER',
+    action: 'stewardship.bank_deposit.confirm',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason: 'Recording a bank deposit confirmation is a Finance Team record-keeping action, mirroring stewardship.transaction.reconcile',
+  },
+  { role: 'TREASURER', action: 'stewardship.bank_deposit.read', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'RESIDENT_PASTOR', action: 'stewardship.bank_deposit.read', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'ASSISTANT_PASTOR', action: 'stewardship.bank_deposit.read', effect: 'ALLOW', scope: 'CLUSTER' },
+  // No BACENTA_LEADER row: the weekly reconciliation view is a
+  // Branch-wide aggregate (BankDepositConfirmationListResourceContextGuard
+  // always resolves { branchId: actor.branchId }), the same disclosed
+  // limitation stewardship.transaction.read's own list endpoint already
+  // has - an OWN_GROUP-scoped grant cannot satisfy a BRANCH-scoped
+  // resource. See STEWARDSHIP_DESIGN_NOTES.md.
+
   // --- Follow-up task: create/assign --------------------------------------
   { role: 'RESIDENT_PASTOR', action: 'pastoral_care.followup_task.read', effect: 'ALLOW', scope: 'BRANCH' },
   { role: 'RESIDENT_PASTOR', action: 'pastoral_care.followup_task.update', effect: 'ALLOW', scope: 'BRANCH' },
@@ -361,6 +441,14 @@ const BASE_MATRIX: PermissionRule[] = [
     scope: 'CLUSTER',
   },
   {
+    role: 'ASSISTANT_PASTOR',
+    action: 'pastoral_care.followup_task.read',
+    effect: 'ALLOW',
+    scope: 'CLUSTER',
+    reason:
+      "[Bug fix, Pastoral Care Web Admin sprint] create/update existed for this role but read did not - the exact same class of gap the Shepherd Dashboard sprint fixed for BACENTA_LEADER two rows below. PRD §16.2's own Key Surfaces table names 'Assistant Pastor (escalations)' as a primary persona of the Follow-up task queue - that persona could create and update a task but never GET it back (single or list).",
+  },
+  {
     role: 'BACENTA_LEADER',
     action: 'pastoral_care.followup_task.create',
     effect: 'ALLOW',
@@ -372,7 +460,20 @@ const BASE_MATRIX: PermissionRule[] = [
     effect: 'ALLOW',
     scope: 'OWN_GROUP',
   },
+  {
+    role: 'BACENTA_LEADER',
+    action: 'pastoral_care.followup_task.read',
+    effect: 'ALLOW',
+    scope: 'OWN_GROUP',
+    reason: '[Bug fix, Shepherd Dashboard sprint] create/update existed for this role but read did not, so a Shepherd could never GET a Follow-up task (single or list) they themselves created or were assigned - the exact gap the dashboard\'s Priority card surfaced',
+  },
   { role: 'ADMIN', action: 'pastoral_care.followup_task.read', effect: 'ALLOW', scope: 'BRANCH' },
+
+  // --- Silent-drift flag: read (FR-PC-05, §15.8) - [INFERRED], see actions.ts ---
+  { role: 'RESIDENT_PASTOR', action: 'pastoral_care.silent_drift_flag.read', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'ASSISTANT_PASTOR', action: 'pastoral_care.silent_drift_flag.read', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'BACENTA_LEADER', action: 'pastoral_care.silent_drift_flag.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'ADMIN', action: 'pastoral_care.silent_drift_flag.read', effect: 'ALLOW', scope: 'BRANCH' },
 
   // --- Pastoral notes: view/create ------------------------------------------
   {
@@ -503,6 +604,14 @@ const BASE_MATRIX: PermissionRule[] = [
   },
   { role: 'BASONTA_LEADER', action: 'ministry.staffing_target.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
   { role: 'RESIDENT_PASTOR', action: 'ministry.staffing_target.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'ADMIN',
+    action: 'ministry.staffing_target.read',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason:
+      '[Bug fix, Ministry Web Admin sprint] every other domain\'s BRANCH-scoped read action (people.person.read, pastoral_care.followup_task.read, ...) grants ADMIN the same BRANCH row RESIDENT_PASTOR holds - no ministry.* action had one at all before this sprint, an oversight rather than a deliberate exclusion (nothing in MINISTRY_DESIGN_NOTES.md argues ADMIN should be denied this).',
+  },
 
   // --- Ministry: worker availability self-service (§16.3 H2, [INFERRED]) -------
   // §16.3's own key-surfaces table names "Worker/Member" as this
@@ -518,8 +627,22 @@ const BASE_MATRIX: PermissionRule[] = [
   // --- Ministry: roster view + overcommitment flag (FR-MIN-01/04, [INFERRED]) --
   { role: 'BASONTA_LEADER', action: 'ministry.roster.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
   { role: 'RESIDENT_PASTOR', action: 'ministry.roster.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'ADMIN',
+    action: 'ministry.roster.read',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason: '[Bug fix, Ministry Web Admin sprint] see ministry.staffing_target.read\'s ADMIN row just above for the full reasoning - same class of gap, same fix.',
+  },
   { role: 'BASONTA_LEADER', action: 'ministry.roster.overcommitment.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
   { role: 'RESIDENT_PASTOR', action: 'ministry.roster.overcommitment.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'ADMIN',
+    action: 'ministry.roster.overcommitment.read',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason: '[Bug fix, Ministry Web Admin sprint] same class of gap as the two ADMIN rows above.',
+  },
 
   // --- Configuration: gathering/role/group types ---------------------------------
   { role: 'RESIDENT_PASTOR', action: 'platform.configuration.read', effect: 'ALLOW', scope: 'BRANCH' },

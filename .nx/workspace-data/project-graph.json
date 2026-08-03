@@ -17455,6 +17455,26 @@
       },
       {
         "source": "web-admin",
+        "target": "contracts",
+        "type": "static"
+      },
+      {
+        "source": "web-admin",
+        "target": "ui-tokens",
+        "type": "static"
+      },
+      {
+        "source": "web-admin",
+        "target": "rbac",
+        "type": "static"
+      },
+      {
+        "source": "web-admin",
+        "target": "ui-core",
+        "type": "static"
+      },
+      {
+        "source": "web-admin",
         "target": "npm:react-dom",
         "type": "static"
       },
@@ -17501,12 +17521,22 @@
       },
       {
         "source": "mobile",
+        "target": "ui-native",
+        "type": "static"
+      },
+      {
+        "source": "mobile",
         "target": "npm:react",
         "type": "static"
       },
       {
         "source": "mobile",
-        "target": "ui-native",
+        "target": "contracts",
+        "type": "static"
+      },
+      {
+        "source": "mobile",
+        "target": "ui-tokens",
         "type": "static"
       }
     ],
@@ -17524,6 +17554,11 @@
       {
         "source": "ui-web",
         "target": "npm:react",
+        "type": "static"
+      },
+      {
+        "source": "ui-web",
+        "target": "npm:react-dom",
         "type": "static"
       },
       {
@@ -17715,6 +17750,11 @@
       {
         "source": "api",
         "target": "npm:zod",
+        "type": "static"
+      },
+      {
+        "source": "api",
+        "target": "npm:rxjs",
         "type": "static"
       },
       {

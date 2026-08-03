@@ -7,6 +7,7 @@ describe('GroupMembershipService', () => {
     const groupMembershipRepository = {
       findGroupById: jest.fn(),
       applyChange: jest.fn(),
+      listByPerson: jest.fn(),
     };
     const personRepository = {
       findById: jest.fn(),
@@ -105,5 +106,19 @@ describe('GroupMembershipService', () => {
     expect(groupMembershipRepository.applyChange).toHaveBeenCalledWith(
       expect.objectContaining({ personLifecycleStageUpdate: undefined }),
     );
+  });
+
+  describe('listForPerson (FR-PPL-07)', () => {
+    it('maps every membership returned by the repository to a response DTO', async () => {
+      const { service, groupMembershipRepository } = buildService();
+      groupMembershipRepository.listByPerson.mockResolvedValue([membershipRow, { ...membershipRow, id: 'membership-2', endedAt: new Date('2026-02-01T00:00:00Z') }]);
+
+      const result = await service.listForPerson('person-1');
+
+      expect(groupMembershipRepository.listByPerson).toHaveBeenCalledWith('person-1');
+      expect(result).toHaveLength(2);
+      expect(result[0].id).toBe('membership-1');
+      expect(result[1].endedAt).toBe('2026-02-01T00:00:00.000Z');
+    });
   });
 });

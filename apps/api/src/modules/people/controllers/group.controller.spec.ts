@@ -6,7 +6,7 @@ describe('GroupController', () => {
   const actor: ActorContext = { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' };
 
   function buildController() {
-    const groupService = { create: jest.fn(), getById: jest.fn(), update: jest.fn() };
+    const groupService = { create: jest.fn(), getById: jest.fn(), update: jest.fn(), list: jest.fn() };
     const controller = new GroupController(groupService as never);
     return { controller, groupService };
   }
@@ -18,6 +18,15 @@ describe('GroupController', () => {
     await controller.create(actor, body);
 
     expect(groupService.create).toHaveBeenCalledWith(actor, body);
+  });
+
+  it('list() delegates to GroupService.list with the current actor and parsed query (Ministry Web Admin sprint)', async () => {
+    const { controller, groupService } = buildController();
+    const query = { type: 'MINISTRY' } as never;
+
+    await controller.list(actor, query);
+
+    expect(groupService.list).toHaveBeenCalledWith(actor, query);
   });
 
   it('getById() delegates to GroupService.getById', async () => {

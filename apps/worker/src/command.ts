@@ -28,7 +28,9 @@ import { InsightsConsumer } from './consumers/insights/insights.consumer';
 import { NotificationConsumer } from './consumers/notification/notification.consumer';
 import { AttendanceCompletenessSweepJob } from './jobs/attendance-completeness-sweep/attendance-completeness-sweep.job';
 import { ChurchPulseRecomputeJob } from './jobs/church-pulse-recompute/church-pulse-recompute.job';
+import { FlaggedTransactionSlaSweepJob } from './jobs/flagged-transaction-sla-sweep/flagged-transaction-sla-sweep.job';
 import { FollowUpSlaSweepJob } from './jobs/follow-up-sla-sweep/follow-up-sla-sweep.job';
+import { PledgeReminderSweepJob } from './jobs/pledge-reminder-sweep/pledge-reminder-sweep.job';
 import { SilentDriftSweepJob } from './jobs/silent-drift-sweep/silent-drift-sweep.job';
 
 export type WorkerCommand =
@@ -38,7 +40,9 @@ export type WorkerCommand =
   | 'sweep:silent-drift'
   | 'sweep:church-pulse-recompute'
   | 'sweep:follow-up-sla'
-  | 'sweep:attendance-completeness';
+  | 'sweep:attendance-completeness'
+  | 'sweep:flagged-transaction-sla'
+  | 'sweep:pledge-reminder';
 
 const VALID_COMMANDS: WorkerCommand[] = [
   'consume:insights',
@@ -48,6 +52,8 @@ const VALID_COMMANDS: WorkerCommand[] = [
   'sweep:church-pulse-recompute',
   'sweep:follow-up-sla',
   'sweep:attendance-completeness',
+  'sweep:flagged-transaction-sla',
+  'sweep:pledge-reminder',
 ];
 
 /**
@@ -107,5 +113,9 @@ export async function runCommand(command: WorkerCommand, app: INestApplicationCo
       return runSweep(app, FollowUpSlaSweepJob, (count) => `follow-up-sla-sweep signaled ${count} breach(es)`);
     case 'sweep:attendance-completeness':
       return runSweep(app, AttendanceCompletenessSweepJob, (count) => `attendance-completeness-sweep signaled ${count} incomplete Gathering(s)`);
+    case 'sweep:flagged-transaction-sla':
+      return runSweep(app, FlaggedTransactionSlaSweepJob, (count) => `flagged-transaction-sla-sweep signaled ${count} breach(es)`);
+    case 'sweep:pledge-reminder':
+      return runSweep(app, PledgeReminderSweepJob, (count) => `pledge-reminder-sweep signaled ${count} reminder(s)`);
   }
 }

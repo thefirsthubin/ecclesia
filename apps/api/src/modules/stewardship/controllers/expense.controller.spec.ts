@@ -8,6 +8,7 @@ describe('ExpenseController', () => {
   function buildController() {
     const expenseService = {
       request: jest.fn(),
+      list: jest.fn(),
       getById: jest.fn(),
       approve: jest.fn(),
       reject: jest.fn(),
@@ -25,6 +26,14 @@ describe('ExpenseController', () => {
     await controller.request(actor, body);
 
     expect(expenseService.request).toHaveBeenCalledWith(actor, body);
+  });
+
+  it('list() delegates to ExpenseService.list with the current actor and optional state', async () => {
+    const { controller, expenseService } = buildController();
+
+    await controller.list(actor, 'REQUESTED');
+
+    expect(expenseService.list).toHaveBeenCalledWith(actor, 'REQUESTED');
   });
 
   it('getById() delegates to ExpenseService.getById', async () => {
