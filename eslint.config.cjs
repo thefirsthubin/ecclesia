@@ -272,5 +272,21 @@ module.exports = tseslint.config(
       '@nx/enforce-module-boundaries': 'off',
     },
   },
-  eslintConfigPrettier,
+  // `eslint-config-prettier` ships no `.d.ts` at all (confirmed - no
+  // `index.d.ts`/`package.json` `types` field in the installed 9.1.2).
+  // With this file's own `// @ts-check` enabled, TS falls back to
+  // inferring a structural type straight from the plain object the
+  // package's JS source exports - every rule value widens to `string`
+  // (e.g. `"off"`), which doesn't satisfy `tseslint.config()`'s expected
+  // `RuleEntry` type (`0 | 1 | 2 | "off" | "warn" | "error"`, literal
+  // unions, not `string`). This is a real gap in that third-party
+  // package's own type declarations, not a bug in this workspace's rules
+  // - the object's actual runtime values are exactly the same, only its
+  // *inferred* type is too wide. An inline JSDoc cast is the standard,
+  // minimal-footprint fix for exactly this situation (a config value from
+  // an untyped/loosely-typed package being passed to a strictly-typed
+  // API), rather than hand-writing a full type declaration for a package
+  // this workspace doesn't own.
+  /** @type {import('typescript-eslint').ConfigWithExtends} */
+  (eslintConfigPrettier),
 );
