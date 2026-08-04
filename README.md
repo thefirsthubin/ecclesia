@@ -663,12 +663,33 @@ to list against, the identical shape of gap the People sprint closed for
 `GET /pastoral-care/follow-up-tasks` endpoint (optional `groupId`, BRANCH
 fallback when absent).
 
-Escalate, Silent-drift flags, Pastoral notes, and the Poimen tracker are
-explicitly out of scope this pass — Escalate needs a Person picker that
-doesn't exist yet, and the rest belong to a different surface or sprint
+Silent-drift flags, Pastoral notes, and the Poimen tracker are explicitly
+out of scope this pass — they belong to a different surface or sprint
 (`PASTORAL_CARE_PAGE_DESIGN_NOTES.md` §9). Needs the user's real machine
 for `pnpm lint`/`pnpm test`/`pnpm build` (not yet run anywhere this
 sprint).
+
+**`[Stewardship gaps sprint]` Escalate — built.** Originally deferred
+above for lack of a Person picker; once `RecordPicker` was built in
+`libs/ui/{web,native}` (see the UI Foundation entry below), Escalate was
+picked as the single most shovel-ready flow it unblocked — the backend
+endpoint (`PATCH /follow-up-tasks/:id/escalate`) and its RBAC already
+existed with zero gaps, and it's `RecordPicker`'s cleanest validation
+case (a mandatory, single-field Person-select), unlike Stewardship's
+Record Transaction (an optional Group field) or People's New Person
+intake (no real picker dependency at all, despite how it read at first
+glance). Clicking **Escalate** reveals an inline `RecordPicker` below the
+row — same "inline reveal" pattern `StewardshipPage`'s Flag/Reject reason
+field already established — with an explicit **Submit escalation** button
+disabled until a target is chosen. Reuses `GET /people?search=` (no new
+backend route); a disclosed, known limitation carries over from that
+reuse — the search is scoped to the *acting* user's own
+`people.person.read` grant, so an `OWN_GROUP`-scoped `BACENTA_LEADER`
+can't find an escalation target outside their own Bacenta this way. Full
+reasoning: `PASTORAL_CARE_PAGE_DESIGN_NOTES.md` §4/§9. `tsc --noEmit` ran
+clean in this sandbox for `apps/web-admin`'s `tsconfig.app.json`/
+`tsconfig.spec.json`; needs the user's real machine for `pnpm lint`/
+`pnpm test`/`pnpm build`.
 
 **Ministry — the Basonta directory and roster view.** The `/ministry`
 stub is replaced with a role-routed page (`MinistryPage`): a Basonta
@@ -885,6 +906,119 @@ new bulk-record endpoint. Verified in-sandbox via `npx tsc --noEmit` across
 limitations — see the design notes' own §7). Needs the user's real machine
 for `pnpm lint`/`pnpm test`/`pnpm build`.
 
+**`[Stewardship gaps sprint]` Offering Recording — the Shepherd's second
+mobile screen.** `QuickActionsRow`'s "Record Offering" quick action was
+the one remaining stub from the Shepherd Dashboard sprint; this closes it,
+the same way Attendance Capture closed "Take Attendance." Full reasoning:
+`apps/mobile/src/app/screens/OfferingRecording/OFFERING_RECORDING_DESIGN_NOTES.md`.
+
+Also **zero new backend endpoints** — `POST /financial-transactions`
+already existed with `BACENTA_LEADER` already holding
+`stewardship.transaction.record` at `OWN_GROUP` scope. The one real
+correctness detail: the screen always sends `sourceGroupId:
+session.bacentaGroupId` — omitting it (the schema marks it optional)
+would make the resource guard resolve a personal, `SELF`-scoped gift
+instead, a scope `BACENTA_LEADER` holds no grant for at all, so every
+submission would 403. `amountMinor` is converted from a typed major-unit
+amount via string manipulation (`parseAmountToMinorUnits`, its own unit
+test suite), never a JS `number`, for the same float-precision reason
+`stewardship.schemas.ts` already documents. A successful submission shows
+a confirmation with **Record another** (stays on-screen — a Shepherd may
+record more than one entry in one sitting) and **Done** (returns to the
+Dashboard), unlike Attendance Capture's single-batch auto-navigate-away.
+Verified in-sandbox via `npx tsc --noEmit` across
+`apps/mobile/tsconfig.app.json`/`tsconfig.spec.json` — both clean; needs
+the user's real machine for `pnpm lint`/`pnpm test`/`pnpm build`.
+
+This closes the Shepherd's Dashboard/Attendance/Offering trio from the
+Design System's own persona tab-bar spec (§3.2); Follow-ups and a real
+persistent bottom tab bar (this app still navigates via the dashboard's
+own quick actions, not a tab bar — `BottomNav` exists in `libs/ui/native`
+but isn't wired into `apps/mobile` yet) remain open.
+
+**`[Stewardship gaps sprint]` Follow-up Queue — the Shepherd's third mobile
+screen, closing the tab-bar trio.** Full reasoning:
+`apps/mobile/src/app/screens/FollowUpQueue/FOLLOW_UP_QUEUE_DESIGN_NOTES.md`.
+
+Reuses `PriorityCard`'s own `useOpenFollowUpTasks`/`PersonNameText` — no
+duplicate data-fetching hook — and, unlike Offering Recording, ships with
+**full parity** to `apps/web-admin`'s own Follow-up queue page (Complete
+*and* Escalate), not a reduced subset: by the time this screen was built,
+both actions' backend endpoints, RBAC rows, and the `RecordPicker`
+component Escalate needs already existed from the immediately-prior
+sprints. This app's **first `PATCH` support** (`apiPatch` added to
+`api-client.ts`, mirroring `apps/web-admin`'s own). Escalate carries
+forward the same disclosed limitation the web version has — the target
+search is scoped to the acting Shepherd's own `OWN_GROUP` `people.person.read`
+grant, so it can't find a target outside their own Bacenta.
+
+Reached from a new **"View Follow-up queue"** button on `PriorityCard`
+(a new optional `onViewFollowUps` prop), not a third `QuickActionsRow`
+button — that row stays scoped to NFR-PERF-01's two named, time-boxed
+critical actions; a queue to review isn't one of them. This is also the
+"see all" affordance Design System §4.2 always specified for a capped
+Priority-zone list, built for the first time here since it never had a
+real destination before.
+
+**Unlike every prior sprint's in-sandbox `tsc --noEmit` pass, this one
+could not be completed here** — six consecutive attempts against
+`apps/mobile/tsconfig.app.json` each hit this sandbox's 45-second
+per-command ceiling with zero output (not an error, just never finishing
+in time; `libs/ui/native`'s own `tsconfig.lib.json` checked clean in the
+same session immediately after, confirming this isn't a general sandbox
+slowdown). Every new type here mirrors an already-verified-clean pattern
+exactly (`OfferingRecordingScreen`'s screen/hook shape, `apps/web-admin`'s
+own `escalateFollowUpTask`/`searchPeopleForEscalation`, `RecordPicker`'s
+already-tested integration shape) and was reviewed by hand line-by-line,
+but that is not a substitute for a real compile. Needs the user's real
+machine for `npx tsc --noEmit` (or `pnpm build`) before this is trusted,
+in addition to `pnpm lint`/`pnpm test`.
+
+With Dashboard, Attendance, Offering, and now Follow-ups all real
+screens, the Shepherd persona's remaining mobile gap is genuinely just
+the tab-bar chrome itself (§3.2's literal bottom tab bar, `BottomNav`
+still unwired) — not any missing screen content.
+
+**Real bottom tab bar wired in, plus the Profile screen — closes out the
+Shepherd mobile shell for real.** `libs/ui/native`'s `BottomNav`
+component (built during the UI-library work but never wired into
+`apps/mobile`) now lives in a new `AppShell`, rendered around every
+authenticated screen: Dashboard · Attendance · Follow-ups · Offering ·
+Profile, matching Design System §3.2 literally for the first time. Full
+reasoning: `apps/mobile/src/app/navigation/APP_SHELL_DESIGN_NOTES.md`.
+
+A new `switchTab()` navigation primitive (`Navigator.tsx`) resets the
+whole screen stack to one entry — deliberately kept alongside the
+existing `navigate`/`goBack` push-stack, not replacing it, since Design
+System §3.2 itself still names a real future "Tab → Detail" push case.
+Every pre-existing screen's own `SafeAreaView` and "Back" button chrome
+was removed (each is now a top-level tab destination, not a pushed
+sub-screen with a parent to return to) — `AppShell` owns the one
+`SafeAreaView` for the whole authenticated area, since RN core
+`SafeAreaView` double-pads when nested. Post-action navigation
+(Attendance's save, Offering's "Done", Dashboard's quick actions/cards)
+now calls `switchTab('dashboard')`/`switchTab(...)` instead of
+`goBack()`/`navigate()`.
+
+**Profile** is the new fifth tab: name/role (reusing
+`ShepherdDashboard`'s own `usePersonName`, no duplicate fetch), Bacenta
+name (one new hook, `useGroupName`, backed by the already-permitted
+`GET /groups/:id`, `OWN_GROUP` scope confirmed against
+`permission-matrix.ts`), and a Sign Out button — the first UI wired to
+`AuthContext`'s `logout()`, which has existed since the Mobile
+Application Shell sprint but was never reachable until now. Two new
+icons added to `ICON_REGISTRY` (`coins`, `clipboardList`), both
+confirmed to exist under those exact export names in `lucide-react` and
+`lucide-react-native` before being added.
+
+**Verified clean in-sandbox this time** — `npx tsc --noEmit` against
+both `apps/mobile/tsconfig.app.json` and `tsconfig.spec.json` completed
+with no errors (`DONE_0` on each), unlike the immediately-prior
+Follow-up Queue round's six consecutive sandbox timeouts. `jest` still
+cannot execute here at all (`@swc/core`'s native binding failure,
+unrelated to this sprint) — the user's own `pnpm lint && pnpm test &&
+pnpm build` is still the real gate before this is trusted end-to-end.
+
 **Row-Level Security — activated, closing Open Question #3.** Blueprint
 §7.3's RLS policies (`db/migrations/20260801000000_.../migration.sql`) have
 existed since the Database Foundation milestone but never enforced
@@ -950,6 +1084,41 @@ and every sweep job's `listBranches()` (`apps/worker`, via a new
   timeout (Prisma's default is 5s); the structural fix — narrowing
   transactions to only their DB statements — would need per-handler
   restructuring across roughly 40 endpoints and is out of scope here.
+
+**Web Admin's Stewardship page gains Record Transaction and Request
+Expense — the last two write-flow gaps that page's own design notes had
+open.** Full reasoning:
+`apps/web-admin/src/app/pages/Stewardship/STEWARDSHIP_PAGE_DESIGN_NOTES.md`
+§8. Both were originally deferred pending a Bacenta/Basonta `RecordPicker`
+for `sourceGroupId`; checking the actual endpoint this sprint found that
+picker was never buildable (`GET /groups` has no `search` param, and its
+guard denies `BACENTA_LEADER` from calling it at all) *or* necessary
+— `sourceGroupId` only ever matters for `BACENTA_LEADER`, who already
+knows their own Bacenta's id from `GET /auth/me`'s `bacentaId` field, the
+same fact `apps/mobile`'s Offering Recording screen already uses instead
+of a picker. `StewardshipPage` now derives `sourceGroupId` from
+`state.actor.bacentaId` directly — no picker, no new backend work.
+Request Expense needed no picker to begin with (confirmed, not just
+assumed): `requestExpenseSchema` is amount/currency/description/category,
+no Group or Person reference at all. Both forms follow this page's
+existing inline-reveal pattern (`+ Record`/`+ Request` above each queue's
+filter chips, `libs/ui/web` still has no `Modal`), and neither hides
+itself from a role that will 403 on submit — same "don't pre-empt the
+backend" precedent this page already used for queue visibility.
+
+**In-sandbox verification only partly completed.** `tsc --noEmit` against
+`apps/web-admin/tsconfig.spec.json` ran cleanly except for one unrelated,
+pre-existing `TS5095` config error in the base tsconfig (not a type error
+in anything this sprint touched). `tsconfig.app.json` — the one that
+actually covers the two changed files — could not complete here: four
+consecutive attempts each hit this sandbox's 45-second ceiling with zero
+output, the same disclosed pattern already on record for `apps/mobile`'s
+own tsconfig during the Follow-up Queue sprint. Every new type mirrors an
+already-verified-clean pattern from `apps/mobile`'s own Offering Recording
+screen (`RECORD_TRANSACTION_TYPE_OPTIONS`/`CHANNEL_OPTIONS`'s shape,
+`parseAmountToMinorUnits`'s byte-identical logic) and was reviewed by
+hand, but needs the user's own `npx tsc --noEmit`/`pnpm build`, in
+addition to `pnpm lint && pnpm test`, before being trusted.
 
 ## Prerequisites
 
