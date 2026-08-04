@@ -1,12 +1,19 @@
 import { useState } from 'react';
-import { Badge, Button, Card, Divider, EmptyState, ErrorState, Heading, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
+import { Badge, Button, Card, Divider, EmptyState, ErrorState, Heading, RecordPicker, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
+import type { RecordOption } from '@ecclesia/ui-web';
 import type { FollowUpTaskResponseDto } from '@ecclesia/contracts';
 
 import { useAuth } from '../../auth/AuthContext';
 import { Link } from '../../router/router';
 import { GroupNameText } from '../People/GroupNameText';
 import { PersonNameText } from './PersonNameText';
-import { completeFollowUpTask, resolveDefaultFollowUpTaskQuery, useFollowUpTaskQueue } from './usePastoralCareData';
+import {
+  completeFollowUpTask,
+  escalateFollowUpTask,
+  resolveDefaultFollowUpTaskQuery,
+  searchPeopleForEscalation,
+  useFollowUpTaskQueue,
+} from './usePastoralCareData';
 
 function formatDueDate(dueAt: string | null): string {
   return dueAt ? new Date(dueAt).toLocaleDateString() : 'No due date';
@@ -21,13 +28,18 @@ function isOverdue(task: FollowUpTaskResponseDto, now: Date): boolean {
  * (ordering itself comes from `FollowUpTaskRepository.listByGroup`/
  * `listByBranch` - soonest `dueAt` first, already applied server-side).
  * See `PASTORAL_CARE_PAGE_DESIGN_NOTES.md` for the full scope reasoning,
- * including why Escalate/Silent-drift flags/Pastoral notes/Poimen tracker
- * are not part of this pass.
+ * including why Silent-drift flags/Pastoral notes/Poimen tracker are
+ * still not part of this pass, and §4's own note on Escalate (built in
+ * the `[Stewardship gaps sprint]` follow-on, once `RecordPicker` existed
+ * in `libs/ui/web`).
  */
 export function FollowUpTaskQueuePage() {
   const theme = useTheme();
   const { state } = useAuth();
   const [completingId, setCompletingId] = useState<string | null>(null);
+  const [escalatingId, setEscalatingId] = useState<string | null>(null);
+  const [escalationTarget, setEscalationTarget] = useState<RecordOption | null>(null);
+  const [escalateBusy, setEscalateBusy] = useState(false);
 
   if (state.status !== 'authenticated') return null;
 
@@ -41,6 +53,26 @@ export function FollowUpTaskQueuePage() {
       queueState.refetch();
     } finally {
       setCompletingId(null);
+    }
+  };
+
+  const openEscalate = (taskId: string) => {
+    setEscalatingId(taskId);
+    setEscalationTarget(null);
+  };
+  const cancelEscalate = () => {
+    setEscalatingId(null);
+    setEscalationTarget(null);
+  };
+  const submitEscalate = async (taskId: string) => {
+    if (!escalationTarget) return;
+    setEscalateBusy(true);
+    try {
+      await escalateFollowUpTask(state.accessToken, taskId, escalationTarget.id);
+      queueState.refetch();
+      cancelEscalate();
+    } finally {
+      setEscalateBusy(false);
     }
   };
 
@@ -109,16 +141,51 @@ export function FollowUpTaskQueuePage() {
                           {formatDueDate(task.dueAt)}
                         </Text>
                       </div>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        loading={completingId === task.id}
-                        onClick={() => void complete(task.id)}
-                        accessibilityLabel={`Mark Follow-up task complete: ${task.id}`}
-                      >
-                        Complete
-                      </Button>
+                      <div style={{ display: 'flex', gap: theme.spacing[2] }}>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => openEscalate(task.id)}
+                          accessibilityLabel={`Escalate Follow-up task: ${task.id}`}
+                        >
+                          Escalate
+                        </Button>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          loading={completingId === task.id}
+                          onClick={() => void complete(task.id)}
+                          accessibilityLabel={`Mark Follow-up task complete: ${task.id}`}
+                        >
+                          Complete
+                        </Button>
+                      </div>
                     </div>
+                    {escalatingId === task.id && (
+                      <div style={{ display: 'flex', gap: theme.spacing[2], alignItems: 'flex-end', paddingTop: theme.spacing[2] }}>
+                        <div style={{ flex: 1 }}>
+                          <RecordPicker
+                            label="Escalate to"
+                            placeholder="Search for a Person…"
+                            value={escalationTarget}
+                            onChange={setEscalationTarget}
+                            onSearch={(searchQuery) => searchPeopleForEscalation(state.accessToken, searchQuery)}
+                          />
+                        </div>
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          disabled={!escalationTarget}
+                          loading={escalateBusy}
+                          onClick={() => void submitEscalate(task.id)}
+                        >
+                          Submit escalation
+                        </Button>
+                        <Button variant="secondary" size="sm" onClick={cancelEscalate}>
+                          Cancel
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 );
               })

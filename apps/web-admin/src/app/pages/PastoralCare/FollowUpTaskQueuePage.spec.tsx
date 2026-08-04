@@ -151,4 +151,64 @@ describe('FollowUpTaskQueuePage', () => {
     );
     await waitFor(() => expect(screen.getByText('No open Follow-up tasks')).toBeInTheDocument());
   });
+
+  it('escalating a task searches People via RecordPicker and PATCHes /follow-up-tasks/:id/escalate with the selected target', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('ADMIN'));
+    const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
+      if (init?.method === 'PATCH' && url.includes('/follow-up-tasks/ft-1/escalate')) {
+        return Promise.resolve({ ok: true, json: async () => task({ status: 'ESCALATED', escalatedToPersonId: 'target-1' }) });
+      }
+      if (url.includes('/pastoral-care/follow-up-tasks')) {
+        return Promise.resolve({ ok: true, json: async () => [task()] });
+      }
+      if (url.includes('/people?search=')) {
+        return Promise.resolve({ ok: true, json: async () => [personResponse('target-1', 'Kojo', 'Boateng')] });
+      }
+      if (url.includes('/people/')) {
+        return Promise.resolve({ ok: true, json: async () => personResponse('subject-1', 'Ama', 'Owusu') });
+      }
+      return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
+    });
+    global.fetch = fetchMock;
+
+    renderPage();
+
+    await waitFor(() => expect(screen.getByRole('button', { name: /Escalate Follow-up task/i })).toBeInTheDocument());
+    fireEvent.click(screen.getByRole('button', { name: /Escalate Follow-up task/i }));
+
+    const input = await screen.findByLabelText('Escalate to');
+    fireEvent.change(input, { target: { value: 'Kojo' } });
+
+    await waitFor(() => expect(screen.getByText('Kojo Boateng')).toBeInTheDocument());
+    fireEvent.click(screen.getByText('Kojo Boateng'));
+
+    const submitButton = await screen.findByRole('button', { name: 'Submit escalation' });
+    expect(submitButton).toBeEnabled();
+    fireEvent.click(submitButton);
+
+    await waitFor(() =>
+      expect(fetchMock).toHaveBeenCalledWith(
+        expect.stringContaining('/follow-up-tasks/ft-1/escalate'),
+        expect.objectContaining({ method: 'PATCH', body: JSON.stringify({ escalatedToPersonId: 'target-1' }) }),
+      ),
+    );
+  });
+
+  it('the Submit escalation action is disabled until a target Person is selected', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('ADMIN'));
+    global.fetch = jest.fn().mockImplementation((url: string) => {
+      if (url.includes('/pastoral-care/follow-up-tasks')) {
+        return Promise.resolve({ ok: true, json: async () => [task()] });
+      }
+      return Promise.resolve({ ok: true, json: async () => personResponse('subject-1', 'Ama', 'Owusu') });
+    });
+
+    renderPage();
+
+    await waitFor(() => expect(screen.getByRole('button', { name: /Escalate Follow-up task/i })).toBeInTheDocument());
+    fireEvent.click(screen.getByRole('button', { name: /Escalate Follow-up task/i }));
+
+    const submitButton = await screen.findByRole('button', { name: 'Submit escalation' });
+    expect(submitButton).toBeDisabled();
+  });
 });

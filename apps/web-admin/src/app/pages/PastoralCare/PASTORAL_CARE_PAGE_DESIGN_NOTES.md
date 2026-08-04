@@ -49,7 +49,7 @@ through to the `{}` default and gets a 403 from the backend rather than a
 client-side pre-emptive block — same precedent `resolveDefaultPeopleQuery`
 already set for roles with no scoping story of their own.
 
-## 4. Why Complete is built and Escalate is not
+## 4. Complete and Escalate
 
 `PATCH /follow-up-tasks/:id/complete` takes no body — a direct fit for
 the `AlertPriorityCard`'s existing "Resolve" quick-action pattern
@@ -59,11 +59,36 @@ success). Wired in exactly that shape.
 `PATCH /follow-up-tasks/:id/escalate` requires a caller-supplied
 `escalatedToPersonId` (BR-PC-04 — see `PASTORAL_CARE_DESIGN_NOTES.md`'s
 own note that automatic organizational-superior resolution isn't
-buildable from anything in the schema). Escalating from this page would
-need a Person picker/search control that doesn't exist anywhere in
-`libs/ui/web` yet — building one is a real, separate piece of work, not a
-one-line addition. `[Design Decision]` deferred rather than built with a
-half-considered UI (§9).
+buildable from anything in the schema). This sprint's own first pass
+deferred Escalate for exactly that reason — no Person picker/search
+control existed anywhere in `libs/ui/web` yet.
+
+**`[Stewardship gaps sprint]` Escalate — now built.** Once `RecordPicker`
+was built in `libs/ui/{web,native}` (an async-searchable single-select
+Person/Group picker — see `libs/ui/UI_DESIGN_NOTES.md`), Escalate became
+the single most shovel-ready flow it unblocked across the app: the
+backend endpoint and RBAC already existed with zero gaps, and it is
+`RecordPicker`'s cleanest validation case — a genuinely mandatory,
+single-field Person-select dependency (unlike, say, Stewardship's Record
+Transaction, where the Group field the same picker would fill is
+optional). Clicking **Escalate** on a row reveals an inline `RecordPicker`
+below it (same "inline reveal, not a route or `Modal`" pattern
+`StewardshipPage`'s Flag/Reject reason field already established), with
+an explicit **Submit escalation** button — disabled until a target Person
+is selected — rather than auto-submitting on selection, matching that
+same precedent's discipline of a deliberate, separate submit step.
+
+`searchPeopleForEscalation` (`usePastoralCareData.ts`) reuses `GET
+/people?search=`, the exact endpoint People's own directory search
+already calls — no new backend route. **A disclosed, known limitation,
+not a silent gap**: this search is scoped by the *acting* user's own
+`people.person.read` grant, same as every other `GET /people` call in
+this app. A `BACENTA_LEADER` (`OWN_GROUP` scope) can therefore only find
+escalation targets inside their own Bacenta — not the Assistant Pastor
+above them an escalation is usually meant for. Fixing this needs either a
+broader-than-`OWN_GROUP` search grant or a dedicated "escalation
+targets"/org-hierarchy-resolution endpoint, neither of which exists yet
+— tracked in §9, not worked around here.
 
 ## 5. Person/Group name resolution
 
@@ -96,15 +121,20 @@ replacing the `StubPage`.
 
 **Components** (`apps/web-admin/src/app/pages/PastoralCare/`):
 - `FollowUpTaskQueuePage.tsx` — the queue: role-scoped list, per-row
-  subject/assignee names, status/overdue `Badge`, due date, Complete
-  action.
+  subject/assignee names, status/overdue `Badge`, due date, Complete and
+  Escalate actions.
 - `PersonNameText.tsx` — id→name resolver, §5.
 - `usePastoralCareData.ts` — `resolveDefaultFollowUpTaskQuery`,
-  `useFollowUpTaskQueue`, `completeFollowUpTask`, `usePersonName`.
+  `useFollowUpTaskQueue`, `completeFollowUpTask`, `usePersonName`,
+  `escalateFollowUpTask`, `searchPeopleForEscalation` (`[Stewardship gaps
+  sprint]`, §4).
 
-**No new `libs/ui/web` primitives needed** — `Badge`, `Button`, `Card`,
-`Divider`, `EmptyState`, `ErrorState`, `Heading`, `Skeleton`, `Text` all
-already existed.
+**No new `libs/ui/web` primitives needed at this pass's original scope**
+— `Badge`, `Button`, `Card`, `Divider`, `EmptyState`, `ErrorState`,
+`Heading`, `Skeleton`, `Text` all already existed. Escalate's later
+addition (§4) reuses `RecordPicker`, itself built in a separate,
+dedicated UI-library sprint (`libs/ui/UI_DESIGN_NOTES.md`) rather than
+one-off here.
 
 ## 8. Data fetching
 
@@ -113,7 +143,10 @@ no new HTTP client or async-state abstraction.
 
 ## 9. Deferred / explicitly out of scope this pass
 
-- Escalate action — needs a Person picker, §4.
+- Escalate action's target search is scoped to the acting user's own
+  `people.person.read` grant — an `OWN_GROUP`-scoped `BACENTA_LEADER`
+  cannot find a target outside their own Bacenta (e.g. their own
+  Assistant Pastor) this way. `[Stewardship gaps sprint]`, §4.
 - Silent-drift flags — same class of BRANCH-wide-listing gap as Follow-up
   tasks had (`GET /pastoral-care/groups/:groupId/silent-drift-flags` is
   Group-scoped only, no BRANCH-wide route exists yet either); not fixed
