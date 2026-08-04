@@ -1,8 +1,12 @@
 import type {
   ExpenseResponseDto,
+  FinancialTransactionChannelDto,
   FinancialTransactionResponseDto,
+  FinancialTransactionTypeDto,
   FlagFinancialTransactionInput,
+  RecordFinancialTransactionInput,
   RejectExpenseInput,
+  RequestExpenseInput,
 } from '@ecclesia/contracts';
 
 import { apiGet, apiPost } from '../../lib/api-client';
@@ -93,6 +97,82 @@ export function rejectExpense(accessToken: string, id: string, input: RejectExpe
 /** `POST /expenses/:id/pay` (APPROVED -> PAID). */
 export function payExpense(accessToken: string, id: string): Promise<ExpenseResponseDto> {
   return apiPost<ExpenseResponseDto>(`/expenses/${id}/pay`, {}, { authToken: accessToken });
+}
+
+/**
+ * `POST /financial-transactions` (`recordFinancialTransactionSchema`) -
+ * the create-shaped endpoint `STEWARDSHIP_PAGE_DESIGN_NOTES.md` §4
+ * originally deferred pending a Group picker that turned out not to be
+ * buildable *or* necessary: `GET /groups` has no `search` parameter, and
+ * `BACENTA_LEADER` can't call it at all (`GroupListResourceContextGuard`
+ * only ever resolves a Branch-wide resource, denying every role but
+ * `RESIDENT_PASTOR`/`ADMIN`). The only role that ever needs
+ * `sourceGroupId` (`BACENTA_LEADER`, `OWN_GROUP` scope - `TREASURER`/
+ * `MEMBER` hold `SELF` and must omit it entirely, see the schema's own
+ * doc comment) already knows their own Bacenta's id from `GET /auth/me`'s
+ * `bacentaId` field - the exact same "no search needed, the actor already
+ * knows their own group" shape `apps/mobile`'s Offering Recording screen
+ * uses via `session.bacentaGroupId`. `StewardshipPage` derives
+ * `sourceGroupId` from `state.actor.bacentaId` accordingly, not a picker.
+ */
+export function recordTransaction(accessToken: string, input: RecordFinancialTransactionInput): Promise<FinancialTransactionResponseDto> {
+  return apiPost<FinancialTransactionResponseDto>('/financial-transactions', input, { authToken: accessToken });
+}
+
+/** All five types `recordFinancialTransactionSchema` accepts (every
+ * `FinancialTransactionTypeDto` value except `EXPENSE`, which is
+ * `requestExpenseSchema`'s own separate flow below) - unlike
+ * `apps/mobile`'s Offering Recording screen (Bacenta-Shepherd-scoped,
+ * intentionally limited to Offering/Tithe/Special Offering), this page is
+ * the general Stewardship surface every eligible role uses, including a
+ * `TREASURER`/`MEMBER` recording a personal Pledge payment or Donation
+ * (PRD §13.5's "a Pledge's payment is recorded through this same inbound
+ * flow" reuse the schema's own doc comment names) - so all five are
+ * offered here. */
+export const RECORD_TRANSACTION_TYPE_OPTIONS: { value: Exclude<FinancialTransactionTypeDto, 'EXPENSE'>; label: string }[] = [
+  { value: 'OFFERING', label: 'Offering' },
+  { value: 'TITHE', label: 'Tithe' },
+  { value: 'SPECIAL_OFFERING', label: 'Special Offering' },
+  { value: 'PLEDGE', label: 'Pledge' },
+  { value: 'DONATION', label: 'Donation' },
+];
+
+export const RECORD_TRANSACTION_CHANNEL_OPTIONS: { value: FinancialTransactionChannelDto; label: string }[] = [
+  { value: 'CASH', label: 'Cash' },
+  { value: 'MOBILE_MONEY', label: 'Mobile Money' },
+];
+
+/** `POST /expenses` (`requestExpenseSchema`) - the other create-shaped
+ * endpoint `STEWARDSHIP_PAGE_DESIGN_NOTES.md` §4 deferred, but genuinely
+ * had no picker dependency at all per that note - just a plain form
+ * (amount/currency/description/category). */
+export function requestExpense(accessToken: string, input: RequestExpenseInput): Promise<ExpenseResponseDto> {
+  return apiPost<ExpenseResponseDto>('/expenses', input, { authToken: accessToken });
+}
+
+/**
+ * Converts a user-typed amount in major currency units (e.g. "50.5") into
+ * the integer-minor-unit decimal string both `recordFinancialTransactionSchema`
+ * and `requestExpenseSchema` require (`amountMinor`, e.g. "5050"). A
+ * direct duplicate of `apps/mobile`'s own `parseAmountToMinorUnits`
+ * (`OfferingRecording/hooks/useOfferingRecordingData.ts`) - the same
+ * "small per-app glue, not worth extracting into a shared lib" precedent
+ * already applied to `apiPost`/`apiPatch` and `ROLE_LABELS` elsewhere in
+ * this codebase, not an oversight. Via string manipulation, never a JS
+ * `number` multiplication, for the exact float-precision reason
+ * `stewardship.schemas.ts`'s own doc comment gives for why `amountMinor`
+ * is a decimal string on the wire at all. Returns `null` for anything
+ * that isn't a positive amount with at most 2 decimal places.
+ */
+export function parseAmountToMinorUnits(raw: string): string | null {
+  const trimmed = raw.trim();
+  const match = /^(\d+)(?:\.(\d{1,2}))?$/.exec(trimmed);
+  if (!match) return null;
+  const [, wholePart, fractionPart = ''] = match;
+  const paddedFraction = fractionPart.padEnd(2, '0');
+  const normalizedWhole = wholePart.replace(/^0+(?=\d)/, '');
+  const minorUnits = `${normalizedWhole}${paddedFraction}`.replace(/^0+(?=\d)/, '');
+  return minorUnits === '0' ? null : minorUnits;
 }
 
 /** `amountMinor` is a decimal string of minor currency units on the wire

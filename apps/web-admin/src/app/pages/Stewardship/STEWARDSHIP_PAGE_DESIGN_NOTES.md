@@ -82,13 +82,6 @@ the state machine either way).
 a not-yet-built picker" precedent (Pastoral Care's Escalate, Ministry's
 Staffing Target view, Gatherings' Group filter):
 
-- **Record Financial Transaction / Request Expense** (the `POST`
-  create-shaped endpoints). `recordFinancialTransactionSchema`'s optional
-  `sourceGroupId` would ideally be a Bacenta/Basonta picker for a Treasurer
-  recording on behalf of a Group rather than themselves — the same missing
-  picker component every prior sprint has flagged. Kept out of this pass to
-  keep the surface reviewable, same framing `STEWARDSHIP_DESIGN_NOTES.md`
-  already used for Project progress aggregation.
 - **Attach receipt** (`POST /expenses/:id/receipt`). Restricted server-side
   to the original requester (`ExpenseService.attachReceipt`), not the
   approver/Treasurer audience this page is built for — and needs a file
@@ -138,11 +131,84 @@ future refactor target (promote both to a shared location; not done this
 sprint either, to avoid a drive-by refactor unrelated to this page's own
 scope).
 
-## 8. Known sandbox limitation
+## 8. Record Transaction / Request Expense (`[Stewardship gaps sprint]`)
 
-Same as every prior sprint: no `pnpm`/`tsc`/`eslint`/`jest` execution in
-this environment. Reviewed statically (import resolution, JSX balance,
-prop shapes cross-checked against `libs/ui/web`'s actual component
-source). Needs a real `pnpm install && pnpm lint && pnpm test && pnpm build`
-run before this can be considered proven correct rather than merely
-reviewed.
+Both create-shaped endpoints §4 originally deferred, now built — and both
+turned out to need less than the original framing assumed.
+
+**Record Transaction never needed a Group picker.** The original plan was
+a Bacenta/Basonta `RecordPicker` for `sourceGroupId`, matching Pastoral
+Care's Escalate. Checking the actual endpoint this sprint found that
+plan was wrong on two counts: `GET /groups` has no `search` query param
+at all (`listGroupsQuerySchema` only accepts `type`), and
+`GroupListResourceContextGuard` always resolves a Branch-wide resource
+regardless of role — meaning `BACENTA_LEADER` can't call `GET /groups`
+in the first place (only `RESIDENT_PASTOR`/`ADMIN` can, per that guard's
+own doc comment). A picker was never buildable against today's backend.
+
+More importantly, it was never *necessary*: `sourceGroupId` matters to
+exactly one role. `RESIDENT_PASTOR`/`ASSISTANT_PASTOR` are denied
+`stewardship.transaction.record` outright (BR-STW-01 — pastors don't
+handle cash); `TREASURER`/`MEMBER` hold it at `SELF` scope, where
+supplying `sourceGroupId` at all would be wrong (it would attribute the
+gift to a Group, not the individual); only `BACENTA_LEADER` holds
+`OWN_GROUP`, and `FinancialTransactionCreateResourceContextGuard`
+resolves that scope from `sourceGroupId` itself — so a Bacenta Leader
+must always send their own Bacenta's id, never anyone else's. They
+already know it: `GET /auth/me`'s `bacentaId` field, the same fact
+`apps/mobile`'s Offering Recording screen already uses via
+`session.bacentaGroupId` rather than any picker. `StewardshipPage`
+derives `sourceGroupId` from `state.actor.bacentaId` when
+`state.actor.role === 'BACENTA_LEADER'`, and omits it entirely
+otherwise — no search UI, no new backend work.
+
+**Type options differ from mobile's on purpose.** Mobile's Offering
+Recording screen offers only Offering/Tithe/Special Offering (its
+Bacenta-Shepherd audience's actual job, PRD §9.2). This page is the
+general Stewardship surface every eligible role uses — including a
+Treasurer recording a personal Pledge payment or Donation — so all five
+non-`EXPENSE` `FinancialTransactionTypeDto` values are offered
+(`RECORD_TRANSACTION_TYPE_OPTIONS`).
+
+**Request Expense confirmed it had no picker dependency at all**, as §4
+already suspected: `requestExpenseSchema` is `amountMinor`/`currency`/
+`description`/`category`, no Group or Person reference anywhere.
+`category` is free text (no enum in the schema), so the form is a plain
+`Input`, not a `Select`.
+
+**Shared amount parsing, duplicated not extracted.** `parseAmountToMinorUnits`
+in `useStewardshipData.ts` is a direct copy of `apps/mobile`'s own
+function of the same name (`OfferingRecording/hooks/useOfferingRecordingData.ts`)
+— the same "small per-app glue, not worth a shared lib" precedent already
+applied to `apiPost`/`apiPatch` and `ROLE_LABELS` elsewhere in this
+codebase.
+
+**UI pattern**: both forms are an inline `+ Record`/`+ Request` reveal
+above their respective queue's filter chips — a `Card` with the form,
+Submit (disabled until valid)/Cancel — the same collapsible-inline
+pattern Flag/Reject/Escalate already used on this page, since `libs/ui/web`
+still has no `Modal`. Neither button is hidden for a role that will 403
+on submit (`RESIDENT_PASTOR` on Record Transaction, `ADMIN` on either) —
+consistent with this page's existing "don't pre-empt the backend"
+precedent for queue visibility (§2).
+
+## 9. Known sandbox limitation
+
+Same as every prior sprint: no `pnpm`/`eslint`/`jest` execution in this
+environment. `tsc --noEmit` against `tsconfig.app.json` (the tsconfig
+that actually covers `StewardshipPage.tsx`/`useStewardshipData.ts`)
+could not be completed here either — four consecutive attempts each hit
+this sandbox's 45-second per-command ceiling with zero output, the same
+disclosed pattern `FOLLOW_UP_QUEUE_DESIGN_NOTES.md` §10 recorded for
+`apps/mobile`'s own tsconfig previously (not a general sandbox outage —
+`tsconfig.spec.json` *did* complete, but hit an unrelated, pre-existing
+`TS5095` module/moduleResolution config error in the base tsconfig this
+sprint never touched, not a type error in any file this sprint changed).
+Every new type here was written to mirror already-verified-clean
+patterns — `RECORD_TRANSACTION_TYPE_OPTIONS`/`CHANNEL_OPTIONS` follow
+`OFFERING_TYPE_OPTIONS`/`CHANNEL_OPTIONS`'s exact shape from `apps/mobile`'s
+already-checked `useOfferingRecordingData.ts`, and `parseAmountToMinorUnits`
+is a byte-identical copy of that same already-verified function — and
+reviewed by hand, but genuinely needs the user's own `npx tsc --noEmit`/
+`pnpm build`, in addition to `pnpm lint && pnpm test`, before being
+trusted.
