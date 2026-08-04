@@ -8,11 +8,12 @@ export interface QuickActionsRowProps {
 
 /**
  * Design System §4.3's Quick action zone for this persona — the two
- * NFR-PERF-01/§3.3-named critical actions. `onPress` handlers are stubs
- * supplied by `ShepherdDashboardScreen` (see this screen's own
- * `SHEPHERD_DASHBOARD_DESIGN_NOTES.md` §0 — the Attendance/Offering
- * screens themselves are out of scope this sprint, and no navigator is
- * installed yet to route to them).
+ * NFR-PERF-01/§3.3-named critical actions. `onPress` handlers are supplied
+ * by `ShepherdDashboardScreen`, which now navigates both to their real
+ * screens (`AttendanceCaptureScreen`, Mobile Application Shell sprint;
+ * `OfferingRecordingScreen`, `[Stewardship gaps sprint]`) — this component
+ * itself stays a thin, screen-agnostic row that only knows about the two
+ * callbacks, not the navigator.
  */
 export function QuickActionsRow({ onTakeAttendance, onRecordOffering }: QuickActionsRowProps) {
   const theme = useTheme();

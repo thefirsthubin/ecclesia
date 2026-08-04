@@ -137,8 +137,9 @@ is deliberately **not** cleared, so the rows that did fail stay staged and
 - **Only one Gathering per day is supported** by this screen's own
   Gathering-selection logic (§3 above) — no picker exists for a Bacenta with
   more than one Gathering scheduled the same day.
-- **No Offering recording screen.** `QuickActionsRow`'s "Record Offering"
-  button remains a stub — a separate, not-yet-built screen.
+- ~~No Offering recording screen.~~ `[Stewardship gaps sprint]` Built —
+  see `../OfferingRecording/OFFERING_RECORDING_DESIGN_NOTES.md`.
+  `QuickActionsRow`'s "Record Offering" button now navigates there.
 
 ## 7. Validation
 

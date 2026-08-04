@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen } from '@testing-library/react-native';
 
 import { App } from './App';
 import * as authContext from './auth/AuthContext';
@@ -55,6 +55,18 @@ jest.mock('./screens/AttendanceCapture', () => {
   const { Text } = jest.requireActual('react-native');
   return { AttendanceCaptureScreen: () => <Text>attendance-capture-screen</Text> };
 });
+jest.mock('./screens/OfferingRecording', () => {
+  const { Text } = jest.requireActual('react-native');
+  return { OfferingRecordingScreen: () => <Text>offering-recording-screen</Text> };
+});
+jest.mock('./screens/FollowUpQueue', () => {
+  const { Text } = jest.requireActual('react-native');
+  return { FollowUpQueueScreen: () => <Text>follow-up-queue-screen</Text> };
+});
+jest.mock('./screens/Profile', () => {
+  const { Text } = jest.requireActual('react-native');
+  return { ProfileScreen: () => <Text>profile-screen</Text> };
+});
 
 describe('App / RootNavigator', () => {
   afterEach(() => {
@@ -79,7 +91,7 @@ describe('App / RootNavigator', () => {
     expect(screen.getByText('login-screen')).toBeTruthy();
   });
 
-  it('renders ShepherdDashboardScreen by default once authenticated', () => {
+  it('renders ShepherdDashboardScreen by default once authenticated, inside the real bottom tab bar', () => {
     mockedUseAuth.mockReturnValue({
       state: {
         status: 'authenticated',
@@ -92,5 +104,29 @@ describe('App / RootNavigator', () => {
     });
     render(<App />);
     expect(screen.getByText('dashboard-screen')).toBeTruthy();
+
+    // `[Stewardship gaps sprint]` AppShell's real, unmocked BottomNav -
+    // all five Design System §3.2 tabs, Dashboard active by default.
+    expect(screen.getByTestId('shepherd-bottom-nav')).toBeTruthy();
+    expect(screen.getByRole('tab', { name: 'Dashboard' }).props.accessibilityState.selected).toBe(true);
+  });
+
+  it('pressing a bottom-tab-bar item switches which screen CurrentScreen renders', () => {
+    mockedUseAuth.mockReturnValue({
+      state: {
+        status: 'authenticated',
+        accessToken: 'token-1',
+        actor: { personId: 'p-1', role: 'BACENTA_LEADER', branchId: 'b-1', bacentaId: 'bg-1' },
+      },
+      devUsers: [],
+      loginAsDevUser: jest.fn(),
+      logout: jest.fn(),
+    });
+    render(<App />);
+
+    fireEvent.press(screen.getByRole('tab', { name: 'Follow-ups' }));
+
+    expect(screen.getByText('follow-up-queue-screen')).toBeTruthy();
+    expect(screen.queryByText('dashboard-screen')).toBeNull();
   });
 });

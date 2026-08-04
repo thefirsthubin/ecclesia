@@ -10,19 +10,47 @@
  * `NavigationProvider` (`navigation/Navigator.tsx`) tracks which screen
  * is current within the authenticated app, and `RootNavigator` below is
  * the one place that reads both and decides what to show.
+ *
+ * `[Stewardship gaps sprint]` The authenticated screen switch is now
+ * wrapped in `AppShell` — the real persistent bottom tab bar Design
+ * System §3.2 always specified (`navigation/AppShell.tsx`'s own doc
+ * comment has the full reasoning). `LoginScreen`/`SessionRestoringScreen`
+ * stay outside it — there is no tab bar to show before a Shepherd is
+ * signed in.
  */
 import { ThemeProvider } from '@ecclesia/ui-native';
 
 import { AuthProvider, useAuth } from './auth/AuthContext';
+import { AppShell } from './navigation/AppShell';
 import { NavigationProvider, useCurrentScreen } from './navigation/Navigator';
 import { LoginScreen } from './screens/Login/LoginScreen';
 import { SessionRestoringScreen } from './screens/Login/SessionRestoringScreen';
 import { ShepherdDashboardScreen } from './screens/ShepherdDashboard';
 import { AttendanceCaptureScreen } from './screens/AttendanceCapture';
+import { OfferingRecordingScreen } from './screens/OfferingRecording';
+import { FollowUpQueueScreen } from './screens/FollowUpQueue';
+import { ProfileScreen } from './screens/Profile';
+
+function CurrentScreen() {
+  const { screen } = useCurrentScreen();
+
+  switch (screen) {
+    case 'attendance-capture':
+      return <AttendanceCaptureScreen />;
+    case 'offering-recording':
+      return <OfferingRecordingScreen />;
+    case 'follow-up-queue':
+      return <FollowUpQueueScreen />;
+    case 'profile':
+      return <ProfileScreen />;
+    case 'dashboard':
+    default:
+      return <ShepherdDashboardScreen />;
+  }
+}
 
 function RootNavigator() {
   const { state } = useAuth();
-  const { screen } = useCurrentScreen();
 
   if (state.status === 'restoring') {
     return <SessionRestoringScreen />;
@@ -33,13 +61,11 @@ function RootNavigator() {
     return <LoginScreen />;
   }
 
-  switch (screen) {
-    case 'attendance-capture':
-      return <AttendanceCaptureScreen />;
-    case 'dashboard':
-    default:
-      return <ShepherdDashboardScreen />;
-  }
+  return (
+    <AppShell>
+      <CurrentScreen />
+    </AppShell>
+  );
 }
 
 export function App() {

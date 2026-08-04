@@ -12,10 +12,10 @@ jest.mock('../../lib/session', () => ({
   }),
 }));
 
-const mockGoBack = jest.fn();
+const mockSwitchTab = jest.fn();
 jest.mock('../../navigation/Navigator', () => ({
   ...jest.requireActual('../../navigation/Navigator'),
-  useGoBack: () => ({ goBack: mockGoBack, canGoBack: true }),
+  useSwitchTab: () => mockSwitchTab,
 }));
 
 const GATHERING = {
@@ -52,7 +52,7 @@ function jsonResponse(body: unknown) {
 describe('AttendanceCaptureScreen', () => {
   afterEach(() => {
     jest.resetAllMocks();
-    mockGoBack.mockReset();
+    mockSwitchTab.mockReset();
   });
 
   it('loads the roster, pre-populates an existing record, and saves only the changed rows', async () => {
@@ -91,7 +91,7 @@ describe('AttendanceCaptureScreen', () => {
 
     fireEvent.press(screen.getByTestId('attendance-capture-save'));
 
-    await waitFor(() => expect(mockGoBack).toHaveBeenCalled());
+    await waitFor(() => expect(mockSwitchTab).toHaveBeenCalledWith('dashboard'));
 
     // Only the one changed row (p-2) was POSTed - Ama's unchanged PRESENT
     // status was not re-sent.

@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen } from '@testing-library/react-native';
 
 import { PriorityCard } from './PriorityCard';
 import { useOpenFollowUpTasks, usePersonName, useSilentDriftFlags } from '../hooks/useShepherdDashboardData';
@@ -83,5 +83,25 @@ describe('PriorityCard', () => {
     render(<PriorityCard />);
 
     expect(screen.getByText('Overdue')).toBeTruthy();
+  });
+
+  it('renders no "View Follow-up queue" affordance when onViewFollowUps is not supplied', () => {
+    mockUseOpenFollowUpTasks.mockReturnValue({ status: 'success', data: [], refetch: jest.fn() });
+    mockUseSilentDriftFlags.mockReturnValue({ status: 'success', data: [], refetch: jest.fn() });
+
+    render(<PriorityCard />);
+
+    expect(screen.queryByTestId('priority-card-view-follow-ups')).toBeNull();
+  });
+
+  it('calls onViewFollowUps when the "View Follow-up queue" button is pressed', () => {
+    mockUseOpenFollowUpTasks.mockReturnValue({ status: 'success', data: [], refetch: jest.fn() });
+    mockUseSilentDriftFlags.mockReturnValue({ status: 'success', data: [], refetch: jest.fn() });
+    const onViewFollowUps = jest.fn();
+
+    render(<PriorityCard onViewFollowUps={onViewFollowUps} />);
+
+    fireEvent.press(screen.getByTestId('priority-card-view-follow-ups'));
+    expect(onViewFollowUps).toHaveBeenCalledTimes(1);
   });
 });

@@ -30,9 +30,27 @@ import { createContext, useCallback, useContext, useMemo, useState } from 'react
  * per-screen params map — with only two screens this sprint, the
  * type-safety a full typed navigator (React Navigation's own approach)
  * would buy isn't worth building from scratch.
+ *
+ * `[Stewardship gaps sprint]` **`switchTab` added** alongside the
+ * original `navigate`/`goBack` push-stack pair, wiring the real bottom
+ * tab bar (`AppShell.tsx`, `@ecclesia/ui-native`'s `BottomNav`) Design
+ * System §3.2 always specified. `navigate`/`goBack` are unchanged and
+ * kept, not replaced — every one of this app's five screens is currently
+ * a flat, top-level tab destination with nothing pushed on top of it, but
+ * §3.2 itself names a real future case for a second stack level ("Tab →
+ * Detail... Attendance tab → a specific Gathering's attendance capture
+ * screen"), and `navigate`/`goBack` are exactly the already-built,
+ * already-tested mechanism for that - removing them now only to
+ * reintroduce the identical thing later would be pure churn.
+ * `switchTab` is a distinct operation, not a `navigate` variant: it
+ * *resets* the whole stack to a single entry (`canGoBack` becomes
+ * `false`), matching real tab-bar semantics (switching tabs is not
+ * "pushing a screen you can back out of") - a plain `navigate` for tab
+ * switches would instead pile up unbounded back-history behind the tab
+ * bar, which is not what any tab-bar navigation pattern does.
  */
 
-export type ScreenName = 'dashboard' | 'attendance-capture';
+export type ScreenName = 'dashboard' | 'attendance-capture' | 'offering-recording' | 'follow-up-queue' | 'profile';
 
 interface NavigationEntry {
   screen: ScreenName;
@@ -44,6 +62,7 @@ interface NavigationContextValue {
   navigate: (screen: ScreenName, params?: Record<string, string>) => void;
   goBack: () => void;
   canGoBack: boolean;
+  switchTab: (screen: ScreenName) => void;
 }
 
 const NavigationContext = createContext<NavigationContextValue | undefined>(undefined);
@@ -59,14 +78,19 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
     setStack((prev) => (prev.length > 1 ? prev.slice(0, -1) : prev));
   }, []);
 
+  const switchTab = useCallback((screen: ScreenName) => {
+    setStack([{ screen, params: {} }]);
+  }, []);
+
   const value = useMemo<NavigationContextValue>(
     () => ({
       current: stack[stack.length - 1],
       navigate,
       goBack,
       canGoBack: stack.length > 1,
+      switchTab,
     }),
-    [stack, navigate, goBack],
+    [stack, navigate, goBack, switchTab],
   );
 
   return <NavigationContext.Provider value={value}>{children}</NavigationContext.Provider>;
@@ -75,7 +99,7 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
 function useNavigationContext(): NavigationContextValue {
   const context = useContext(NavigationContext);
   if (!context) {
-    throw new Error('useNavigate/useCurrentScreen/useGoBack must be used within a NavigationProvider');
+    throw new Error('useNavigate/useCurrentScreen/useGoBack/useSwitchTab must be used within a NavigationProvider');
   }
   return context;
 }
@@ -87,6 +111,10 @@ export function useNavigate(): (screen: ScreenName, params?: Record<string, stri
 export function useGoBack(): { goBack: () => void; canGoBack: boolean } {
   const { goBack, canGoBack } = useNavigationContext();
   return { goBack, canGoBack };
+}
+
+export function useSwitchTab(): (screen: ScreenName) => void {
+  return useNavigationContext().switchTab;
 }
 
 export function useCurrentScreen(): { screen: ScreenName; params: Record<string, string> } {

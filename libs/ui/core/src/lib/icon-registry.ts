@@ -56,6 +56,16 @@ export const ICON_REGISTRY = {
   arrowRight: 'ArrowRight',
   arrowLeft: 'ArrowLeft',
   refresh: 'RefreshCw',
+  /** `[Stewardship gaps sprint]` Added for `apps/mobile`'s real bottom tab
+   * bar (`AppShell.tsx`) - `coins` (Offering tab) and `clipboardList`
+   * (Follow-ups tab) had no existing registry entry close enough in
+   * meaning to reuse (`plus`/`checkCircle` would have been a stretch).
+   * Confirmed present under these exact names in both `lucide-react` and
+   * `lucide-react-native` (both pinned to `1.28.0` in this workspace)
+   * before adding, per this file's own "confirming the same lucide export
+   * name exists in both platforms" rule above. */
+  coins: 'Coins',
+  clipboardList: 'ClipboardList',
 } as const;
 
 export type IconName = keyof typeof ICON_REGISTRY;

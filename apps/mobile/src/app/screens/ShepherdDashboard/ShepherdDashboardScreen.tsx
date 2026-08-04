@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
-import { RefreshControl, SafeAreaView, ScrollView, View } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 import { useTheme } from '@ecclesia/ui-native';
 
-import { useNavigate } from '../../navigation/Navigator';
+import { useSwitchTab } from '../../navigation/Navigator';
 import { AttendanceSummaryCard } from './components/AttendanceSummaryCard';
 import { ChurchPulseCard } from './components/ChurchPulseCard';
 import { DashboardHeader } from './components/DashboardHeader';
@@ -21,11 +21,14 @@ import { TodaysMeetingCard } from './components/TodaysMeetingCard';
  * components plus plain RN layout — no new base component.
  *
  * `[Mobile Application Shell sprint]` `onTakeAttendance` now navigates to
- * the real Attendance Capture screen (`../../navigation/Navigator`'s
- * `useNavigate`) instead of being a stub — the "no real navigation" gap
- * the comment above used to name is closed by this sprint.
- * `onRecordOffering` remains a stub: Offering recording is a separate,
- * not-yet-built screen.
+ * the real Attendance Capture screen instead of being a stub — the "no
+ * real navigation" gap the comment above used to name is closed by this
+ * sprint. `[Stewardship gaps sprint]` `onRecordOffering`/`onViewFollowUps`
+ * navigate the same way, to the real Offering Recording and Follow-up
+ * Queue screens (see each one's own design notes) — and, now that
+ * `AppShell`'s real bottom tab bar exists, all three use `switchTab`
+ * (not `navigate`) since they're jumping to a peer top-level tab, not
+ * pushing a sub-screen this screen expects to `goBack()` from.
  *
  * Each card fetches its own data independently (STEP 7) - a single pull-
  * to-refresh here re-triggers every card's own `refetch`, but a
@@ -36,10 +39,15 @@ import { TodaysMeetingCard } from './components/TodaysMeetingCard';
  * less prop plumbing, at the cost of a brief unmount/remount of each
  * card's own loading skeleton on manual refresh (acceptable - this is
  * not the initial-load path NFR-PERF-02 targets).
+ *
+ * `[Stewardship gaps sprint]` No longer wraps itself in its own
+ * `SafeAreaView` — `AppShell` now owns the one safe-area container for
+ * the whole authenticated tab area (see that file's own doc comment for
+ * why a second, nested one would double-apply the same inset).
  */
 export function ShepherdDashboardScreen() {
   const theme = useTheme();
-  const navigate = useNavigate();
+  const switchTab = useSwitchTab();
   const [refreshKey, setRefreshKey] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -54,7 +62,7 @@ export function ShepherdDashboardScreen() {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.surface.default }}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.surface.default }}>
       <ScrollView
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         contentContainerStyle={{ padding: theme.spacing[4], gap: theme.spacing[4] }}
@@ -62,21 +70,14 @@ export function ShepherdDashboardScreen() {
         <View key={refreshKey} style={{ gap: theme.spacing[4] }}>
           <DashboardHeader />
           <ChurchPulseCard />
-          <PriorityCard />
+          <PriorityCard onViewFollowUps={() => switchTab('follow-up-queue')} />
           <TodaysMeetingCard />
           <AttendanceSummaryCard />
-          <QuickActionsRow
-            onTakeAttendance={() => navigate('attendance-capture')}
-            onRecordOffering={() => {
-              // [Design Decision] stub - Offering recording is a separate,
-              // not-yet-built screen; out of scope for this sprint (see
-              // ATTENDANCE_CAPTURE_DESIGN_NOTES.md).
-            }}
-          />
+          <QuickActionsRow onTakeAttendance={() => switchTab('attendance-capture')} onRecordOffering={() => switchTab('offering-recording')} />
           <NotificationsCard />
           <RecentActivityCard />
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

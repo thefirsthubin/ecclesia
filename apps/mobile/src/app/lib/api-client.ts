@@ -91,3 +91,38 @@ export async function apiPost<T>(path: string, body: unknown, options: ApiPostOp
   }
   return (await response.json()) as T;
 }
+
+export interface ApiPatchOptions {
+  authToken?: string;
+  signal?: AbortSignal;
+}
+
+/**
+ * `[Stewardship gaps sprint]` This app's first `PATCH` support — every
+ * mutation before this sprint (Attendance Capture's records, Offering
+ * Recording's transactions) was a `POST`. The Follow-up Task Complete/
+ * Escalate actions this sprint adds are `PATCH` at the API layer
+ * (`follow-up-task.controller.ts`), not `POST` like Stewardship's
+ * verify/flag/escalate actions are — the two domains simply chose
+ * differently, not a mistake in either. Mirrors `apps/web-admin`'s own
+ * `apiPatch` exactly (same header/error-handling shape), for the same
+ * "auth-token sourcing differs enough to not share this" reasoning
+ * `apiGet`/`apiPost`'s own doc comments already give.
+ */
+export async function apiPatch<T>(path: string, body: unknown, options: ApiPatchOptions = {}): Promise<T> {
+  const headers: Record<string, string> = { Accept: 'application/json', 'Content-Type': 'application/json' };
+  if (options.authToken) {
+    headers.Authorization = `Bearer ${options.authToken}`;
+  }
+
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify(body),
+    signal: options.signal,
+  });
+  if (!response.ok) {
+    throw new ApiError(`Request to ${path} failed with status ${response.status}`, response.status);
+  }
+  return (await response.json()) as T;
+}

@@ -110,6 +110,11 @@ describe('ShepherdDashboardScreen', () => {
     expect(screen.getByTestId('quick-action-take-attendance')).toBeTruthy();
     expect(screen.getByTestId('quick-action-record-offering')).toBeTruthy();
 
+    // Priority zone's own "see all" affordance (Design System §4.2),
+    // `[Stewardship gaps sprint]` - present because `ShepherdDashboardScreen`
+    // now wires `PriorityCard.onViewFollowUps`.
+    expect(screen.getByTestId('priority-card-view-follow-ups')).toBeTruthy();
+
     // Notifications zone.
     expect(screen.getByText('No alerts')).toBeTruthy();
 

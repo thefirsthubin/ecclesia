@@ -1,27 +1,38 @@
 import { useMemo } from 'react';
-import { SafeAreaView, ScrollView, View } from 'react-native';
-import { Button, EmptyState, ErrorState, Heading, Skeleton, Text, useTheme } from '@ecclesia/ui-native';
+import { ScrollView, View } from 'react-native';
+import { EmptyState, ErrorState, Heading, Skeleton, Text, Button, useTheme } from '@ecclesia/ui-native';
 
-import { useGoBack } from '../../navigation/Navigator';
+import { useSwitchTab } from '../../navigation/Navigator';
 import { RosterRow } from './components/RosterRow';
 import { useAttendanceCaptureData } from './hooks/useAttendanceCaptureData';
 
 /**
  * Attendance Capture — PRD FR-GTH-03/FR-GTH-05, NFR-PERF-01 ("attendance
  * capture completes in under 60 seconds for up to 30 attendees"). Reached
- * from `ShepherdDashboardScreen`'s "Take Attendance" quick action. See
- * `ATTENDANCE_CAPTURE_DESIGN_NOTES.md` for the full spec, endpoint-reuse
- * rationale, and disclosed scope boundaries.
+ * from the Dashboard's "Take Attendance" quick action, or directly via
+ * `AppShell`'s Attendance tab. See `ATTENDANCE_CAPTURE_DESIGN_NOTES.md`
+ * for the full spec, endpoint-reuse rationale, and disclosed scope
+ * boundaries.
  *
  * NFR-PERF-01 is why this screen stages every tap locally
  * (`useAttendanceCaptureData`'s `pendingStatuses`) and commits with one
  * "Save attendance" action rather than firing a network request per tap:
  * a Shepherd working through 30 rows should be gated by their own
  * scrolling/tapping speed, not by 30 sequential round-trips.
+ *
+ * `[Stewardship gaps sprint]` No more "Back" button, and a successful
+ * save now calls `switchTab('dashboard')` instead of `goBack()` — now
+ * that `AppShell`'s real bottom tab bar exists, this screen is a
+ * top-level tab destination in its own right (Design System §3.2), not a
+ * pushed sub-screen with a parent to pop back to; `goBack()` would be a
+ * silent no-op here regardless (this screen is always reached with an
+ * empty back-stack once `switchTab` puts it there). No longer wraps
+ * itself in its own `SafeAreaView` either — `AppShell` now owns the one
+ * safe-area container for the whole authenticated tab area.
  */
 export function AttendanceCaptureScreen() {
   const theme = useTheme();
-  const { goBack } = useGoBack();
+  const switchTab = useSwitchTab();
   const { state, setStatus, hasUnsavedChanges, saving, saveError, save, refetch } = useAttendanceCaptureData();
 
   const summary = useMemo(() => {
@@ -33,26 +44,12 @@ export function AttendanceCaptureScreen() {
   const handleSave = async () => {
     const succeeded = await save();
     if (succeeded) {
-      goBack();
+      switchTab('dashboard');
     }
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.surface.default }}>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: theme.spacing[4],
-          paddingBottom: theme.spacing[2],
-        }}
-      >
-        <Button variant="tertiary" iconLeft="arrowLeft" onPress={goBack} testId="attendance-capture-back">
-          Back
-        </Button>
-      </View>
-
+    <View style={{ flex: 1, backgroundColor: theme.colors.surface.default }}>
       {state.status === 'loading' && (
         <View style={{ padding: theme.spacing[4], gap: theme.spacing[3] }}>
           <Skeleton height={28} width="60%" />
@@ -76,7 +73,7 @@ export function AttendanceCaptureScreen() {
 
       {state.status === 'ready' && (
         <>
-          <ScrollView contentContainerStyle={{ padding: theme.spacing[4], paddingTop: 0, gap: theme.spacing[3] }}>
+          <ScrollView contentContainerStyle={{ padding: theme.spacing[4], gap: theme.spacing[3] }}>
             <View style={{ gap: theme.spacing[1] }}>
               <Heading level={1}>Take Attendance</Heading>
               <Text variant="bodySmall" color={theme.colors.text.secondary}>
@@ -120,6 +117,6 @@ export function AttendanceCaptureScreen() {
           </View>
         </>
       )}
-    </SafeAreaView>
+    </View>
   );
 }

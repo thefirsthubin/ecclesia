@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { Badge, Divider, EmptyState, Heading, Text, useTheme } from '@ecclesia/ui-native';
+import { Badge, Button, Divider, EmptyState, Heading, Text, useTheme } from '@ecclesia/ui-native';
 import type { FollowUpTaskResponseDto, SilentDriftFlagResponseDto } from '@ecclesia/contracts';
 
 import { useOpenFollowUpTasks, useSilentDriftFlags } from '../hooks/useShepherdDashboardData';
@@ -54,6 +54,19 @@ function FollowUpTaskRow({ task }: { task: FollowUpTaskResponseDto }) {
   );
 }
 
+export interface PriorityCardProps {
+  /** `[Stewardship gaps sprint]` Design System §4.2's "never more than
+   * 5-7 items visible without a 'see all'" rule for the Priority zone -
+   * this card caps at `MAX_ROWS` combined rows, so a "See all" affordance
+   * was always spec'd, just never built until `FollowUpQueueScreen`
+   * existed to send it to. Drift flags have no equivalent full-screen
+   * destination yet (still deferred, same as the web version - see
+   * `FOLLOW_UP_QUEUE_DESIGN_NOTES.md` §9), so this only ever navigates to
+   * the Follow-up queue, not a combined one. Optional so this card still
+   * renders standalone in tests that don't wire navigation. */
+  onViewFollowUps?: () => void;
+}
+
 /**
  * Design System §4.3's Priority zone — PRD §16.2's own framing of this
  * as "the single most important screen in the product" content: active
@@ -61,7 +74,7 @@ function FollowUpTaskRow({ task }: { task: FollowUpTaskResponseDto }) {
  * Shepherd's own Bacenta, together in one card since both answer the
  * same question ("who needs a specific pastoral action today").
  */
-export function PriorityCard() {
+export function PriorityCard({ onViewFollowUps }: PriorityCardProps) {
   const theme = useTheme();
   const followUpsState = useOpenFollowUpTasks();
   const driftState = useSilentDriftFlags();
@@ -112,6 +125,11 @@ export function PriorityCard() {
                 </View>
               ))}
             </View>
+          )}
+          {onViewFollowUps && (
+            <Button variant="tertiary" size="sm" onPress={onViewFollowUps} testId="priority-card-view-follow-ups">
+              View Follow-up queue
+            </Button>
           )}
         </View>
       )}
