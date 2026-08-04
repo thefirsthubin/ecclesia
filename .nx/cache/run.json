@@ -1,208 +1,21 @@
 {
   "run": {
-    "command": "nx run-many --target=test --all",
-    "startTime": "2026-08-04T01:11:33.911Z",
-    "endTime": "2026-08-04T01:12:50.115Z",
+    "command": "nx test ui-web",
+    "startTime": "2026-08-04T08:57:48.696Z",
+    "endTime": "2026-08-04T08:58:04.911Z",
     "inner": false
   },
   "tasks": [
     {
-      "taskId": "ui-tokens:test",
-      "target": "test",
-      "projectName": "ui-tokens",
-      "hash": "3352389993155381100",
-      "startTime": "2026-08-04T01:11:34.041Z",
-      "endTime": "2026-08-04T01:11:34.049Z",
-      "params": "",
-      "cacheStatus": "local-cache-hit",
-      "status": 0
-    },
-    {
-      "taskId": "contracts:test",
-      "target": "test",
-      "projectName": "contracts",
-      "hash": "7979179726879127124",
-      "startTime": "2026-08-04T01:11:34.043Z",
-      "endTime": "2026-08-04T01:11:34.052Z",
-      "params": "",
-      "cacheStatus": "local-cache-hit",
-      "status": 0
-    },
-    {
-      "taskId": "ui-core:test",
-      "target": "test",
-      "projectName": "ui-core",
-      "hash": "13925655140661598674",
-      "startTime": "2026-08-04T01:11:34.045Z",
-      "endTime": "2026-08-04T01:11:34.054Z",
-      "params": "",
-      "cacheStatus": "local-cache-hit",
-      "status": 0
-    },
-    {
-      "taskId": "rbac:test",
-      "target": "test",
-      "projectName": "rbac",
-      "hash": "3287430289375221195",
-      "startTime": "2026-08-04T01:11:34.062Z",
-      "endTime": "2026-08-04T01:11:34.078Z",
-      "params": "",
-      "cacheStatus": "local-cache-hit",
-      "status": 0
-    },
-    {
-      "taskId": "domain-insights:test",
-      "target": "test",
-      "projectName": "domain-insights",
-      "hash": "16770956269194568852",
-      "startTime": "2026-08-04T01:11:34.067Z",
-      "endTime": "2026-08-04T01:11:34.085Z",
-      "params": "",
-      "cacheStatus": "local-cache-hit",
-      "status": 0
-    },
-    {
-      "taskId": "domain-pastoral-care:test",
-      "target": "test",
-      "projectName": "domain-pastoral-care",
-      "hash": "1714854564778957735",
-      "startTime": "2026-08-04T01:11:34.076Z",
-      "endTime": "2026-08-04T01:11:34.092Z",
-      "params": "",
-      "cacheStatus": "local-cache-hit",
-      "status": 0
-    },
-    {
-      "taskId": "domain-gatherings:test",
-      "target": "test",
-      "projectName": "domain-gatherings",
-      "hash": "12114161361686828446",
-      "startTime": "2026-08-04T01:11:34.097Z",
-      "endTime": "2026-08-04T01:11:34.134Z",
-      "params": "",
-      "cacheStatus": "local-cache-hit",
-      "status": 0
-    },
-    {
       "taskId": "ui-web:test",
       "target": "test",
       "projectName": "ui-web",
-      "hash": "16635821336017771586",
-      "startTime": "2026-08-04T01:11:34.133Z",
-      "endTime": "2026-08-04T01:11:34.136Z",
-      "params": "",
-      "cacheStatus": "local-cache-hit",
-      "status": 0
-    },
-    {
-      "taskId": "domain-people:test",
-      "target": "test",
-      "projectName": "domain-people",
-      "hash": "4312071251583275809",
-      "startTime": "2026-08-04T01:11:34.143Z",
-      "endTime": "2026-08-04T01:11:34.153Z",
-      "params": "",
-      "cacheStatus": "local-cache-hit",
-      "status": 0
-    },
-    {
-      "taskId": "domain-ministry:test",
-      "target": "test",
-      "projectName": "domain-ministry",
-      "hash": "4803667804264294787",
-      "startTime": "2026-08-04T01:11:34.151Z",
-      "endTime": "2026-08-04T01:11:34.157Z",
-      "params": "",
-      "cacheStatus": "local-cache-hit",
-      "status": 0
-    },
-    {
-      "taskId": "domain-stewardship:test",
-      "target": "test",
-      "projectName": "domain-stewardship",
-      "hash": "3352661855388617504",
-      "startTime": "2026-08-04T01:11:34.162Z",
-      "endTime": "2026-08-04T01:11:34.183Z",
-      "params": "",
-      "cacheStatus": "local-cache-hit",
-      "status": 0
-    },
-    {
-      "taskId": "web-admin:test",
-      "target": "test",
-      "projectName": "web-admin",
-      "hash": "4911118429171166704",
-      "startTime": "2026-08-04T01:11:34.192Z",
-      "endTime": "2026-08-04T01:11:34.197Z",
-      "params": "",
-      "cacheStatus": "local-cache-hit",
-      "status": 0
-    },
-    {
-      "taskId": "api:test",
-      "target": "test",
-      "projectName": "api",
-      "hash": "7878716858415051007",
-      "startTime": "2026-08-04T01:11:34.201Z",
-      "endTime": "2026-08-04T01:11:34.208Z",
-      "params": "",
-      "cacheStatus": "local-cache-hit",
-      "status": 0
-    },
-    {
-      "taskId": "worker:test",
-      "target": "test",
-      "projectName": "worker",
-      "hash": "2921640486519001895",
-      "startTime": "2026-08-04T01:11:34.217Z",
-      "endTime": "2026-08-04T01:11:34.221Z",
-      "params": "",
-      "cacheStatus": "local-cache-hit",
-      "status": 0
-    },
-    {
-      "taskId": "testing:test",
-      "target": "test",
-      "projectName": "testing",
-      "hash": "3124137464331630117",
-      "startTime": "2026-08-04T01:11:34.226Z",
-      "endTime": "2026-08-04T01:11:34.230Z",
-      "params": "",
-      "cacheStatus": "local-cache-hit",
-      "status": 0
-    },
-    {
-      "taskId": "config:test",
-      "target": "test",
-      "projectName": "config",
-      "hash": "9919625419505426317",
-      "startTime": "2026-08-04T01:11:34.234Z",
-      "endTime": "2026-08-04T01:11:34.240Z",
-      "params": "",
-      "cacheStatus": "local-cache-hit",
-      "status": 0
-    },
-    {
-      "taskId": "ui-native:test",
-      "target": "test",
-      "projectName": "ui-native",
-      "hash": "18053862838205250671",
-      "startTime": "2026-08-04T01:11:34.101Z",
-      "endTime": "2026-08-04T01:12:49.525Z",
+      "hash": "2907814190724467384",
+      "startTime": "2026-08-04T08:57:48.716Z",
+      "endTime": "2026-08-04T08:58:04.910Z",
       "params": "",
       "cacheStatus": "cache-miss",
       "status": 0
-    },
-    {
-      "taskId": "mobile:test",
-      "target": "test",
-      "projectName": "mobile",
-      "hash": "6023406451086735069",
-      "startTime": "2026-08-04T01:11:34.169Z",
-      "endTime": "2026-08-04T01:12:50.091Z",
-      "params": "",
-      "cacheStatus": "cache-miss",
-      "status": 1
     }
   ]
 }

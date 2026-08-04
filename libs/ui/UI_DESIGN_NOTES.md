@@ -186,16 +186,29 @@ the single most-cited real blocker across prior sprints:
   binding failures) apply here too, not newly introduced by this
   component.
 
-## 5. Navigation / Data / Layout components — not started
+## 5. Navigation / Data / Layout components — built
 
-Design System §7 Parts 6-8 (sidebar/tab-bar navigation, data tables,
-list rows, page/section layout primitives) are **not started**. All 23
-base components (§4) are now built, so this is the next milestone —
-deliberately sequenced last because it's the highest-leverage place for
-inconsistency to creep in if built before the base primitives were
-proven out across real screens. Concretely: `Table`, `Search`,
-`Pagination`, `Filters`, a command palette, `Charts`, mobile bottom-nav,
-and a Person/Group picker.
+Design System §7 Parts 6-8 (data tables, search/filter/pagination,
+command palette, charts, mobile bottom-nav, record pickers) - the
+milestone after all 23 base components (§4). `Sidebar`/`TopBar`/
+`Breadcrumbs`/`UserMenu`/`NotificationBell` (web-only app-shell nav)
+predate this milestone and aren't re-covered here.
+
+| Component | Platforms | Notes |
+|---|---|---|
+| `Table` | web + native | Web: real `<table>`, sortable `<th>` via `aria-sort`, optional row selection via `Checkbox` (indeterminate "select all"), `EmptyState`/`Skeleton` reused for empty/loading. Native: header `View` + RN's own `FlatList` for real virtualization (not a plain `.map`) - flex-weighted columns instead of web's pixel widths. |
+| `Search` | web + native | `Input`'s pattern plus a leading search icon, trailing clear button, and built-in debounced `onSearch` (default 300ms) so callers don't hand-roll `setTimeout`. |
+| `Pagination` | web + native | Web: numbered pages with ellipsis-truncation (always shows first/last + a window around current), `aria-current="page"` (not a disabled button) for the current page. Native: deliberately simpler - Previous/Next + "Page X of Y" text, since a row of small page-number buttons is a poor touch target on a phone. |
+| `FilterBar` | web + native | A thin, removable-chip display for *already-resolved* active filters - not a filter-builder (per-field editors are business-domain UI, out of this library's scope). A `children` slot holds the caller's own "Add filter" control. |
+| `CommandPalette` | **web only** | Cmd/Ctrl+K launcher, WAI-ARIA "editable combobox with list autocomplete" pattern (`role="combobox"`+`aria-activedescendant`, not `Modal`'s Tab-trap). Reuses `Modal`/`Drawer`'s `createPortal`+`zIndex` strategy. Does not own the global keypress listener - that's an app-shell concern. Disclosed native gap: no mobile keyboard-shortcut-launcher convention exists, so `ui-native` has no equivalent. |
+| `BarChart` / `LineChart` (`Charts`) | web + native | No charting library dependency (this repo's disclosed npm-registry/build-tooling sensitivity, §1). `BarChart`: each value is real visible text, not encoded only in bar height. `LineChart`: plain `<svg>`/`react-native-svg` polyline with a computed summarizing `aria-label`/`accessibilityLabel` ("Line chart from X to Y, trending up") - an honest, disclosed simplification, not a claim of full per-point screen-reader access; a caller needing that should pair it with a `Table`. |
+| `BottomNav` | **native only** | Persistent bottom tab bar, mobile's primary nav surface (`Sidebar`'s counterpart). `onPress(key)` callback, not `Sidebar`'s router-injecting `linkAs` - stays agnostic of whatever navigation library `apps/mobile` uses, the same way `Tabs`' `onChange` does. Does not apply its own safe-area inset (`react-native-safe-area-context` isn't a dependency of this workspace) - wrapping it in a safe-area container is the caller's job. |
+| `RecordPicker` | web + native | Async-searchable **single-select** picker for "assign a Person/Group" flows. One component for both Person and Group pickers - the caller supplies `onSearch`, since `ui-web`/`ui-native` cannot call any app's API client directly (module-boundary rule). Web: inline dropdown under the input. Native: reuses `Modal` (`variant="dialog"`) for the search+results overlay, the same choice `Select` made. Multi-select is a disclosed, deferred follow-up. |
+
+`tsc --noEmit` ran clean in this sandbox for all four
+`libs/ui/{web,native}` `tsconfig.{lib,spec}.json` configs after this
+tier. Real `pnpm test`/`pnpm lint` execution is the user's machine's
+job, per this document's own recurring sandbox-limitations note (§10).
 
 ## 6. Icons
 

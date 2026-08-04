@@ -17434,6 +17434,11 @@
         "source": "ui-native",
         "target": "ui-core",
         "type": "static"
+      },
+      {
+        "source": "ui-native",
+        "target": "npm:react-native-svg",
+        "type": "static"
       }
     ],
     "ui-tokens": [],
