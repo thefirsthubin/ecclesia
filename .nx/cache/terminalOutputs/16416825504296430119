@@ -1,0 +1,1018 @@
+[2m> [22mjest -t "renders ShepherdDashboardScreen by default"
+
+[1m[2mDetermining test suites to run...[22m[22m[999D[K
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        0 s, estimated 83 s
+[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mNavigator.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        1 s, estimated 83 s
+[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m��[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mNavigator.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        1 s, estimated 83 s
+[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m��[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mNavigator.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        2 s, estimated 83 s
+[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m��[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mNavigator.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        3 s, estimated 83 s
+[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m��[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mNavigator.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        4 s, estimated 83 s
+[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m��[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mNavigator.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        5 s, estimated 83 s
+[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m��[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mNavigator.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        6 s, estimated 83 s
+[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m��[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mNavigator.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        7 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m��[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mNavigator.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        8 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m��[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mNavigator.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        9 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m��[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mNavigator.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        10 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m���[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mNavigator.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        11 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m���[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mNavigator.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        12 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m���[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mNavigator.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        13 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m���[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mNavigator.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        14 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m���[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mNavigator.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        15 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m���[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mNavigator.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        16 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m���[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mNavigator.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        17 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m���[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mNavigator.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        18 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m���[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mNavigator.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m0 of 14 total
+[1mTests:       [22m0 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        18 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m���[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/auth/[22m[1mAuthContext.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m.../screens/ShepherdDashboard/hooks/[22m[1museAsyncData.spec.ts[22m
+
+[1mTest Suites: [22m[1m[33m1 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m5 skipped[39m[22m, 5 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        19 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m.../screens/ShepherdDashboard/hooks/[22m[1museAsyncData.spec.ts[22m
+
+[1mTest Suites: [22m[1m[33m2 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m9 skipped[39m[22m, 9 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        19 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...eringRecording/hooks/[22m[1museOfferingRecordingData.spec.ts[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m3 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m13 skipped[39m[22m, 13 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        20 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m���[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        21 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        21 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        22 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        23 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        24 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        25 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        26 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        27 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        28 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        29 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        30 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        31 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        32 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        33 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        34 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        35 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        36 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        37 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        38 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        39 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        40 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        41 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        42 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        43 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        44 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/components/[22m[1mPriorityCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m4 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m31 skipped[39m[22m, 31 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        45 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m5 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m36 skipped[39m[22m, 36 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        46 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m5 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m36 skipped[39m[22m, 36 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        46 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m5 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m36 skipped[39m[22m, 36 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        47 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m5 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m36 skipped[39m[22m, 36 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        48 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m5 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m36 skipped[39m[22m, 36 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        49 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m5 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m36 skipped[39m[22m, 36 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        50 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Profile/[22m[1mProfileScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m5 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m36 skipped[39m[22m, 36 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        51 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/OfferingRecording/[22m[1mOfferingRecordingScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m6 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m39 skipped[39m[22m, 39 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        52 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...pp/screens/FollowUpQueue/[22m[1mFollowUpQueueScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m7 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m45 skipped[39m[22m, 45 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        52 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/screens/Login/[22m[1mLoginScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/navigation/[22m[1mAppShell.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m8 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m52 skipped[39m[22m, 52 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        52 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/AttendanceCapture/[22m[1mAttendanceCaptureScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ns/ShepherdDashboard/[22m[1mShepherdDashboardScreen.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m10 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m60 skipped[39m[22m, 60 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        52 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2m...ShepherdDashboard/components/[22m[1mChurchPulseCard.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m12 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m64 skipped[39m[22m, 64 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        52 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m13 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m67 skipped[39m[22m, 67 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        53 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m13 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m67 skipped[39m[22m, 67 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        53 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m13 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m67 skipped[39m[22m, 67 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        54 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m ([0m[1m[41m44.929 s[49m[22m[0m)
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m mobile [39m[27m[0m [2msrc/app/[22m[1mApp.spec.tsx[22m
+
+[1mTest Suites: [22m[1m[33m13 skipped[39m[22m, 0 of 14 total
+[1mTests:       [22m[1m[33m67 skipped[39m[22m, 67 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        54 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
+
+[1mTest Suites: [22m[1m[33m13 skipped[39m[22m, [1m[32m1 passed[39m[22m, 1 of 14 total
+[1mTests:       [22m[1m[33m71 skipped[39m[22m, [1m[32m1 passed[39m[22m, 72 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        55 s, estimated 83 s
+[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[999D[K
+[1mTest Suites: [22m[1m[33m13 skipped[39m[22m, [1m[32m1 passed[39m[22m, 1 of 14 total
+[1mTests:       [22m[1m[33m71 skipped[39m[22m, [1m[32m1 passed[39m[22m, 72 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        55.408 s, estimated 83 s
+[2mRan all test suites[22m[2m with tests matching [22m"renders ShepherdDashboardScreen by default"[2m.[22m

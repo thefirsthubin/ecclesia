@@ -1,0 +1,1 @@
+{"version":3,"file":"useTheme.js","sourceRoot":"","sources":["../../../../../../../libs/ui/native/src/lib/ThemeProvider/useTheme.ts"],"names":[],"mappings":";;AAIA,4BAEC;AAED,wCAEC;AAVD,iCAAmC;AAEnC,iDAA8C;AAE9C,SAAgB,QAAQ;IACtB,OAAO,IAAA,kBAAU,EAAC,2BAAY,CAAC,CAAC;AAClC,CAAC;AAED,SAAgB,cAAc;IAC5B,OAAO,IAAA,kBAAU,EAAC,2BAAY,CAAC,CAAC,IAAI,CAAC;AACvC,CAAC"}
