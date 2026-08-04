@@ -17427,12 +17427,12 @@
       },
       {
         "source": "ui-native",
-        "target": "ui-core",
+        "target": "npm:react",
         "type": "static"
       },
       {
         "source": "ui-native",
-        "target": "npm:react",
+        "target": "ui-core",
         "type": "static"
       }
     ],
@@ -17548,12 +17548,12 @@
       },
       {
         "source": "ui-web",
-        "target": "ui-core",
+        "target": "npm:react",
         "type": "static"
       },
       {
         "source": "ui-web",
-        "target": "npm:react",
+        "target": "ui-core",
         "type": "static"
       },
       {
