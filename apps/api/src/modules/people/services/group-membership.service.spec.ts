@@ -13,8 +13,9 @@ describe('GroupMembershipService', () => {
       findById: jest.fn(),
       findActiveGroupMemberships: jest.fn().mockResolvedValue([]),
     };
-    const service = new GroupMembershipService(groupMembershipRepository as never, personRepository as never);
-    return { service, groupMembershipRepository, personRepository };
+    const eventPublisher = { publish: jest.fn() };
+    const service = new GroupMembershipService(groupMembershipRepository as never, personRepository as never, eventPublisher as never);
+    return { service, groupMembershipRepository, personRepository, eventPublisher };
   }
 
   const membershipRow = {
@@ -66,7 +67,7 @@ describe('GroupMembershipService', () => {
   });
 
   it('applies the change and requests a lifecycle-stage update when the Person is in FOLLOW_UP (PRD §19.1 step 6)', async () => {
-    const { service, personRepository, groupMembershipRepository } = buildService();
+    const { service, personRepository, groupMembershipRepository, eventPublisher } = buildService();
     personRepository.findById.mockResolvedValue({ id: 'person-1', branchId: 'branch-1', lifecycleStage: 'FOLLOW_UP' });
     groupMembershipRepository.findGroupById.mockResolvedValue({ id: 'bacenta-2', type: 'PASTORAL_CARE' });
     groupMembershipRepository.applyChange.mockResolvedValue(membershipRow);
@@ -77,10 +78,24 @@ describe('GroupMembershipService', () => {
       expect.objectContaining({ personLifecycleStageUpdate: 'ASSIGNED_TO_BACENTA' }),
     );
     expect(result.id).toBe('membership-1');
+    // Bacenta (PASTORAL_CARE) engagement itself is signalled via
+    // attendance, not roster membership - see AttendanceRecordService's
+    // bacenta_meeting.attendance_recorded and this service's own doc
+    // comment on basonta_roster.updated - but the PRD §19.1 step 6
+    // lifecycle-stage side effect (FOLLOW_UP -> ASSIGNED_TO_BACENTA,
+    // asserted above) is itself a lifecycle_stage.transitioned signal.
+    expect(eventPublisher.publish).toHaveBeenCalledTimes(1);
+    expect(eventPublisher.publish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        eventType: 'lifecycle_stage.transitioned',
+        subjectPersonId: 'person-1',
+        payload: { fromStage: 'FOLLOW_UP', toStage: 'ASSIGNED_TO_BACENTA' },
+      }),
+    );
   });
 
-  it('does not request a lifecycle-stage update for a Member being reassigned', async () => {
-    const { service, personRepository, groupMembershipRepository } = buildService();
+  it('does not request a lifecycle-stage update for a Member being reassigned, and publishes no signal', async () => {
+    const { service, personRepository, groupMembershipRepository, eventPublisher } = buildService();
     personRepository.findById.mockResolvedValue({ id: 'person-1', branchId: 'branch-1', lifecycleStage: 'MEMBER' });
     personRepository.findActiveGroupMemberships.mockResolvedValue([
       { id: 'membership-old', groupId: 'bacenta-1', groupType: 'PASTORAL_CARE' },
@@ -93,18 +108,27 @@ describe('GroupMembershipService', () => {
     expect(groupMembershipRepository.applyChange).toHaveBeenCalledWith(
       expect.objectContaining({ personLifecycleStageUpdate: undefined }),
     );
+    expect(eventPublisher.publish).not.toHaveBeenCalled();
   });
 
-  it('never requests a lifecycle-stage update for a MINISTRY (Basonta) assignment', async () => {
-    const { service, personRepository, groupMembershipRepository } = buildService();
+  it('never requests a lifecycle-stage update for a MINISTRY (Basonta) assignment, but does publish basonta_roster.updated', async () => {
+    const { service, personRepository, groupMembershipRepository, eventPublisher } = buildService();
     personRepository.findById.mockResolvedValue({ id: 'person-1', branchId: 'branch-1', lifecycleStage: 'FOLLOW_UP' });
     groupMembershipRepository.findGroupById.mockResolvedValue({ id: 'basonta-1', type: 'MINISTRY' });
-    groupMembershipRepository.applyChange.mockResolvedValue({ ...membershipRow, groupType: 'MINISTRY' });
+    groupMembershipRepository.applyChange.mockResolvedValue({ ...membershipRow, groupId: 'basonta-1', groupType: 'MINISTRY' });
 
     await service.assign('person-1', { groupId: 'basonta-1' });
 
     expect(groupMembershipRepository.applyChange).toHaveBeenCalledWith(
       expect.objectContaining({ personLifecycleStageUpdate: undefined }),
+    );
+    expect(eventPublisher.publish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        eventType: 'basonta_roster.updated',
+        branchId: 'branch-1',
+        subjectPersonId: 'person-1',
+        subjectGroupId: 'basonta-1',
+      }),
     );
   });
 

@@ -37,8 +37,9 @@ describe('FollowUpTaskService', () => {
     const personScopeService = {
       loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', ownerId: 'person-1' }),
     };
-    const service = new FollowUpTaskService(followUpTaskRepository as never, personScopeService as never);
-    return { service, followUpTaskRepository, personScopeService };
+    const eventPublisher = { publish: jest.fn() };
+    const service = new FollowUpTaskService(followUpTaskRepository as never, personScopeService as never, eventPublisher as never);
+    return { service, followUpTaskRepository, personScopeService, eventPublisher };
   }
 
   describe('create', () => {
@@ -130,8 +131,8 @@ describe('FollowUpTaskService', () => {
   });
 
   describe('complete', () => {
-    it('moves an OPEN task to COMPLETED', async () => {
-      const { service, followUpTaskRepository } = buildService();
+    it('moves an OPEN task to COMPLETED and publishes follow_up.completed', async () => {
+      const { service, followUpTaskRepository, eventPublisher } = buildService();
       followUpTaskRepository.findById.mockResolvedValue(buildTask({ status: 'OPEN' }));
       followUpTaskRepository.update.mockResolvedValue(buildTask({ status: 'COMPLETED' }));
 
@@ -139,6 +140,14 @@ describe('FollowUpTaskService', () => {
 
       expect(followUpTaskRepository.update).toHaveBeenCalledWith('ft-1', { status: 'COMPLETED' });
       expect(result.status).toBe('COMPLETED');
+      expect(eventPublisher.publish).toHaveBeenCalledWith(
+        expect.objectContaining({
+          eventType: 'follow_up.completed',
+          branchId: 'branch-1',
+          subjectPersonId: 'person-1',
+          payload: { followUpTaskId: 'ft-1' },
+        }),
+      );
     });
 
     it('rejects completing an already-COMPLETED task', async () => {

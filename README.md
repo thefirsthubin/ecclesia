@@ -1120,6 +1120,113 @@ screen (`RECORD_TRANSACTION_TYPE_OPTIONS`/`CHANNEL_OPTIONS`'s shape,
 hand, but needs the user's own `npx tsc --noEmit`/`pnpm build`, in
 addition to `pnpm lint && pnpm test`, before being trusted.
 
+**Engagement Signal Ingestion Pipeline milestone: complete, and smaller
+than briefed.** Research done before writing any code found that most of
+what the milestone brief described as missing ("Church Pulse/Insights/
+Silent Drift/Leadership Alerts driven by seeded data") already existed and
+was already real: `apps/worker`'s full consumer/sweep inventory, the
+Insights domain's compute-on-read Church Pulse/Silent Drift/Alert logic,
+and every web-admin/mobile dashboard screen already calling the live API.
+The one genuine gap was that no `apps/api` domain-module write path ever
+published an Engagement Signal onto the bus. This milestone closes that
+gap: a new `EventBridgePublisherService` in `apps/api/src/platform/events`
+(mirroring `apps/worker`'s own, per Nx's app-to-app boundary rule) is now
+called from seven points across Gatherings/People/Pastoral Care/
+Stewardship/Insights, each publishing immediately after an already-existing
+write already succeeds — `attendance.recorded`,
+`bacenta_meeting.attendance_recorded`, `role_assignment.active`,
+`basonta_roster.updated`, `lifecycle_stage.transitioned`,
+`follow_up.completed`, `giving.activity_recorded` (privacy-normalized per
+PRD §17.6), and `insights.alert_action_recorded`. No business logic
+changed; two stale doc comments claiming the pipeline didn't exist
+(`apps/api/src/modules/insights/INSIGHTS_DESIGN_NOTES.md`,
+`engagement-signal.service.ts`) were corrected in place. Every deviation
+from the Blueprint's literal event catalog is named and justified in
+`ENGAGEMENT_SIGNAL_PIPELINE_DESIGN_NOTES.md`. Same disclosed sandbox
+verification limitation as every prior sprint — needs a real `pnpm install
+&& pnpm lint && pnpm test && pnpm build` run before being trusted.
+
+**People Intake workflow milestone: complete.** Closes the "New Person /
+visitor intake form" and "Duplicate resolution queue UI" gaps
+`PEOPLE_PAGE_DESIGN_NOTES.md` §9 had deferred to their own sprint. The
+backend (`POST /people`, FR-PPL-02 duplicate detection, the
+`overrideDuplicateCheck` resubmission contract) already existed and was
+untouched — no schema change, no detection-rule change, per the
+milestone's own constraints. `apps/web-admin` gained `NewPersonForm.tsx`
+(Create Person + a 409 duplicate-candidate review flow), the first real
+consumer of the previously-built-but-unused `Modal` and `Toast`
+`libs/ui/web` primitives (`ToastProvider` now mounts at `app.tsx`'s root).
+No merge endpoint exists anywhere in this backend, confirmed by a
+repo-wide search before writing any code — the brief's "merge experience"
+deliverable was built as a candidate-review UI (view the existing record,
+or create anyway with `overrideDuplicateCheck: true`), not a literal
+database merge; that deviation and every other design decision is named
+in `PEOPLE_INTAKE_DESIGN_NOTES.md`. Same disclosed sandbox verification
+limitation as every prior milestone.
+
+**Mobile Personas milestone: complete — `apps/mobile` now supports all
+four personas the Design System's tab-bar spec named.** Ministry Leader
+(`BASONTA_LEADER`), Finance Officer (`TREASURER`), and Resident Pastor
+(`RESIDENT_PASTOR`/`ACTING_RESIDENT_PASTOR`) each get their own four-tab
+bar (Dashboard + two persona-specific tabs + Profile), reusing the
+Shepherd's existing Design System, `BottomNav`, hand-built `Navigator`,
+Dev-Auth `AuthContext`, and every backend endpoint unmodified except one:
+`BASONTA_LEADER` was missing `gatherings.gathering.read`/
+`gatherings.attendance.read` at `OWN_GROUP` scope (the same class of gap
+already fixed for `BACENTA_LEADER` in the Shepherd Dashboard sprint),
+without which the Ministry Leader's Events tab could never `GET` back
+what it had just created. The Shepherd experience itself is untouched —
+`AppShell`'s tab bar became role-aware (`role` prop, defaulting to the
+Shepherd's own five-tab set) rather than redesigned, and `ProfileScreen`
+was generalized (new role-agnostic `useActorSession()`/
+`usePersonNameByToken()` hooks, `useSession()` itself untouched) to work
+for all four personas instead of only the Shepherd. Full reasoning,
+including three named scope decisions (no Staffing Target or Expense
+surfaces on the Ministry Leader/Finance Officer personas — outside the
+brief's named four tabs each; Resident Pastor's "Cluster/Branch" tab
+built as a Branch-wide Bacenta list with lazy per-row Pulse drill-down,
+since no distinct "Cluster" entity exists in this schema), is in
+`MOBILE_PERSONAS_DESIGN_NOTES.md`. **First milestone with a real, not
+statically-reviewed-only, verification pass**: this sandbox's `pnpm`
+binary is still unavailable, but Nx's own locally-installed
+`node_modules/.bin/{jest,eslint,tsc}` work directly — all 23
+`apps/mobile` spec files (112 tests, including every pre-existing
+Shepherd-persona spec, confirmed unaffected) pass, `eslint`/`tsc --noEmit`
+are clean across every changed file. See that design-notes file §9 for
+the one thing still unverified (`libs/rbac`'s own Jest suite, blocked by
+a pre-existing `@swc/core` native-binding failure in this sandbox
+unrelated to this milestone's change).
+
+**Usher role milestone: complete — `USHER` is now a real, dedicated
+`RoleDto`, closing a gap the PRD's own narrative had left open since the
+Gatherings sprint** (Ushers are named repeatedly in PRD text — RACI table,
+capability table, Epic A's US-A1/US-A2 — but §17.2's formal Role catalog
+and §17.3's permission matrix never had a corresponding row; this
+codebase's own comments had already flagged the gap twice before this
+milestone closed it). Built to a written, user-reviewed-and-approved
+product proposal (`USHER_ROLE_PROPOSAL.md`, repo root) before any code
+changed, per the milestone brief's own "do not implement anything until
+the proposal has been reviewed" instruction. Approved shape: a dedicated
+role (not a reuse of `WORKER`/`BACENTA_LEADER`), two dedicated new mobile
+screens (`UsherAttendanceScreen`/`VisitorIntakeScreen` — not adaptations
+of the Shepherd's `AttendanceCaptureScreen`), and Branch-wide
+`people.person.read` for attendance search, with an explicit instruction
+to expose only minimum member information and document the absence of
+field-level RBAC rather than attempt to build it now. Six new
+`BRANCH`-scoped permission-matrix rows (attendance create/read, visitor
+intake create, gathering read, person read, and one discovered
+mid-build — group read, needed for the Visitor Intake screen's Bacenta-
+preference picker, disclosed as an addition beyond the original proposal
+rather than folded in silently). `VisitorIntakeScreen` is this codebase's
+first frontend consumer anywhere (mobile or web-admin) of
+`POST /visitor-intake`, which had existed, unconsumed, since the
+Gatherings sprint. Full reasoning — including the exact client-side
+minimum-information enforcement point (`searchPeopleForAttendance()`
+discards phone/email/dateOfBirth/address/guardianPersonId before any
+component ever sees them, since no field-level RBAC/DTO-narrowing
+mechanism exists anywhere in this codebase today) — is in
+`apps/mobile/src/app/screens/UsherAttendance/USHER_ROLE_DESIGN_NOTES.md`.
+
 ## Prerequisites
 
 | Tool | Version | Why |

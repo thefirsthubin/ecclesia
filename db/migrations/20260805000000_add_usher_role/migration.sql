@@ -1,0 +1,27 @@
+-- Usher role milestone: adds USHER to people."Role".
+--
+-- Closes the gap USHER_ROLE_PROPOSAL.md (repo root) and
+-- GATHERINGS_DESIGN_NOTES.md's "Usher role gap" section both document:
+-- PRD narrative repeatedly names "Usher" as the actor who records
+-- attendance and captures visitor intake, but the formal Role catalog
+-- (db/schema.prisma's `enum Role`, mirrored by libs/rbac/src/lib/roles.ts
+-- and libs/contracts's ROLE_VALUES) never had a corresponding value until
+-- now.
+--
+-- Hand-written, not `prisma migrate dev`-generated, for the same sandbox
+-- reason every migration since the first one has been
+-- (db/migrations/README.md): no live database or package registry access
+-- in the environment that authored it.
+--
+-- `ALTER TYPE ... ADD VALUE` cannot run inside the same transaction as a
+-- statement that *uses* the new value (PostgreSQL restriction - the new
+-- label isn't visible to the rest of that transaction). This migration
+-- only adds the value and does nothing else, so that restriction doesn't
+-- apply here; no follow-up statement in this file references 'USHER'.
+--
+-- No GRANT statements needed - `people."Role"` is a type, not a table;
+-- the Row-Level Security sprint's `ALTER DEFAULT PRIVILEGES` (migration
+-- 20260801050000) only concerns tables, and altering an enum type's
+-- values requires no additional privilege beyond what created it.
+
+ALTER TYPE people."Role" ADD VALUE 'USHER';

@@ -17439,6 +17439,11 @@
         "source": "ui-native",
         "target": "npm:react-native-svg",
         "type": "static"
+      },
+      {
+        "source": "ui-native",
+        "target": "npm:lucide-react-native",
+        "type": "static"
       }
     ],
     "ui-tokens": [],
@@ -17531,12 +17536,12 @@
       },
       {
         "source": "mobile",
-        "target": "npm:react",
+        "target": "contracts",
         "type": "static"
       },
       {
         "source": "mobile",
-        "target": "contracts",
+        "target": "npm:react",
         "type": "static"
       },
       {
@@ -17564,6 +17569,11 @@
       {
         "source": "ui-web",
         "target": "npm:react-dom",
+        "type": "static"
+      },
+      {
+        "source": "ui-web",
+        "target": "npm:lucide-react",
         "type": "static"
       },
       {
@@ -17765,6 +17775,11 @@
       {
         "source": "api",
         "target": "npm:@nestjs/terminus",
+        "type": "static"
+      },
+      {
+        "source": "api",
+        "target": "npm:@aws-sdk/client-eventbridge",
         "type": "static"
       },
       {

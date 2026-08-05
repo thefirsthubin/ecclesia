@@ -15,13 +15,15 @@ describe('RoleAssignmentService', () => {
     const personRepository = { findById: jest.fn() };
     const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
     const poimenEnrollmentService = { getStatus: jest.fn() };
+    const eventPublisher = { publish: jest.fn() };
     const service = new RoleAssignmentService(
       roleAssignmentRepository as never,
       personRepository as never,
       branchConfigurationService as never,
       poimenEnrollmentService as never,
+      eventPublisher as never,
     );
-    return { service, roleAssignmentRepository, personRepository, branchConfigurationService, poimenEnrollmentService };
+    return { service, roleAssignmentRepository, personRepository, branchConfigurationService, poimenEnrollmentService, eventPublisher };
   }
 
   const residentPastor: ActorContext = { personId: 'rp-1', role: 'RESIDENT_PASTOR', branchId: 'branch-1' };
@@ -55,7 +57,7 @@ describe('RoleAssignmentService', () => {
   });
 
   it('grants an ungated role (people.role_assignment.grant) to an authorized Resident Pastor', async () => {
-    const { service, personRepository, roleAssignmentRepository } = buildService();
+    const { service, personRepository, roleAssignmentRepository, eventPublisher } = buildService();
     personRepository.findById.mockResolvedValue({ id: 'person-1', branchId: 'branch-1', lifecycleStage: 'MEMBER' });
     roleAssignmentRepository.create.mockResolvedValue(roleAssignmentRow);
 
@@ -65,6 +67,14 @@ describe('RoleAssignmentService', () => {
       expect.objectContaining({ role: 'WORKER', grantedByUserId: 'user-1' }),
     );
     expect(result.id).toBe('ra-1');
+    expect(eventPublisher.publish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        eventType: 'role_assignment.active',
+        branchId: 'branch-1',
+        subjectPersonId: 'person-1',
+        payload: { role: 'WORKER', groupId: null },
+      }),
+    );
   });
 
   it('denies a role grant from an actor with no grant authority (e.g. Worker)', async () => {
@@ -114,7 +124,7 @@ describe('RoleAssignmentService', () => {
   });
 
   it('PRD §17.2: closes the prior active Bacenta Leader when granting a new one for the same Bacenta', async () => {
-    const { service, personRepository, roleAssignmentRepository, poimenEnrollmentService } = buildService();
+    const { service, personRepository, roleAssignmentRepository, poimenEnrollmentService, eventPublisher } = buildService();
     personRepository.findById.mockResolvedValue({ id: 'person-2', branchId: 'branch-1', lifecycleStage: 'MEMBER' });
     poimenEnrollmentService.getStatus.mockResolvedValue('COMPLETE');
     roleAssignmentRepository.findActiveBacentaLeader.mockResolvedValue({ id: 'ra-prior' });
@@ -140,6 +150,7 @@ describe('RoleAssignmentService', () => {
     );
     expect(roleAssignmentRepository.create).not.toHaveBeenCalled();
     expect(result.id).toBe('ra-new');
+    expect(eventPublisher.publish).toHaveBeenCalledWith(expect.objectContaining({ eventType: 'role_assignment.active' }));
   });
 
   it('grants a Bacenta Leader with no prior holder without a close step (still via createWithSuccession)', async () => {

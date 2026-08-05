@@ -37,6 +37,7 @@ export const ROLE_VALUES = [
   'BASONTA_LEADER',
   'TREASURER',
   'WORKER',
+  'USHER',
   'MEMBER',
   'VISITOR',
   'ADMIN',

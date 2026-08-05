@@ -78,6 +78,20 @@ draft, and the open questions that remain genuinely unresolved.
    covers it. Needs the same real-Postgres verification pass as every
    migration above before being trusted.
 
+**Usher role milestone addition:**
+
+8. `20260805000000_add_usher_role` - adds `'USHER'` to `people."Role"`
+   (`db/schema.prisma`'s `enum Role`), closing the gap
+   `GATHERINGS_DESIGN_NOTES.md`'s "Usher role gap" section and
+   `libs/rbac/src/lib/actions.ts`'s `gatherings.visitor_intake.*` doc
+   comment both flagged: PRD narrative repeatedly names "Usher" as an
+   actor, but no `Role` value ever existed for it. See
+   `USHER_ROLE_PROPOSAL.md` (repo root) for the full decision record.
+   Hand-written for the same sandbox reason as every migration above;
+   needs the same real-Postgres verification pass before being trusted.
+   A single `ALTER TYPE ... ADD VALUE` statement - no table changes, no
+   new `GRANT`s needed.
+
 **Do not edit a migration.sql file after it has been applied.** Prisma
 records a checksum of each migration when it's applied; editing the file
 afterward (rather than adding a new migration) causes `prisma migrate

@@ -6,15 +6,26 @@ import { EngagementSignalRepository } from '../repositories/engagement-signal.re
 
 /**
  * Insights' public service interface (Blueprint §7.2) for ingesting one
- * Engagement Signal. Deliberately has **no HTTP controller** in this
- * milestone: Blueprint §10.6 models every Engagement Signal as
- * asynchronous, arriving via the EventBridge/SQS bus described in
- * Blueprint Ch.4 and consumed by `apps/worker`, which does not exist yet
- * anywhere in this codebase (see `INSIGHTS_DESIGN_NOTES.md`'s disclosed
- * infra gap). This service is the landing point that future consumer
- * would call once it exists - injecting `EngagementSignalService` and
- * calling `record()` is then a one-line integration, not a redesign of
- * this module.
+ * Engagement Signal directly (synchronously, in-process). Deliberately has
+ * **no HTTP controller**: Blueprint §10.6 models every Engagement Signal as
+ * asynchronous, arriving via the EventBridge/SQS bus (Blueprint Ch.4).
+ *
+ * `[Engagement Signal Ingestion Pipeline milestone]` **Correction to this
+ * comment's own prior text**: the bus and `apps/worker` no longer "do not
+ * exist" - both were built in the Worker milestone
+ * (`apps/worker/WORKER_DESIGN_NOTES.md`), and apps/api's own domain
+ * modules now publish real Engagement Signals onto that bus at the point
+ * each domain event happens (`ENGAGEMENT_SIGNAL_PIPELINE_DESIGN_NOTES.md`
+ * at the repo root). This class remains the one piece of that end-to-end
+ * path still unconnected: `apps/worker`'s `InsightsConsumer` writes
+ * incoming signals via its own `WorkerEngagementSignalRepository` (a
+ * deliberately separate Prisma repo, not this one - see that class's own
+ * doc comment on Nx module-boundary rules), not through this service. This
+ * service stays as apps/api's own in-process landing point for the day a
+ * same-process caller (as opposed to a bus consumer) needs to record a
+ * signal without a round trip through EventBridge - injecting
+ * `EngagementSignalService` and calling `record()` is then a one-line
+ * integration, not a redesign of this module.
  */
 @Injectable()
 export class EngagementSignalService {

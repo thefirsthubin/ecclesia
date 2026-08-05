@@ -1,8 +1,11 @@
+import { randomUUID } from 'crypto';
+
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { planGroupMembershipChange } from '@ecclesia/domain-people';
-import type { CreateGroupMembershipRequestInput, GroupMembershipResponseDto } from '@ecclesia/contracts';
+import type { CreateGroupMembershipRequestInput, EngagementSignalEnvelope, GroupMembershipResponseDto } from '@ecclesia/contracts';
 import type { GroupMembership } from '@prisma/client';
 
+import { EventBridgePublisherService } from '../../../platform/events/eventbridge-publisher.service';
 import { GroupMembershipRepository } from '../repositories/group-membership.repository';
 import { PersonRepository } from '../repositories/person.repository';
 
@@ -29,6 +32,7 @@ export class GroupMembershipService {
   constructor(
     private readonly groupMembershipRepository: GroupMembershipRepository,
     private readonly personRepository: PersonRepository,
+    private readonly eventPublisher: EventBridgePublisherService,
   ) {}
 
   async assign(personId: string, input: CreateGroupMembershipRequestInput): Promise<GroupMembershipResponseDto> {
@@ -75,6 +79,52 @@ export class GroupMembershipService {
       reason: input.reason,
       personLifecycleStageUpdate,
     });
+
+    // `[Engagement Signal Ingestion Pipeline milestone]` Blueprint §10.4's
+    // `basonta_roster.updated` (Serving category) - fires only when the
+    // opened membership is in a `MINISTRY`-type Group (a Basonta/serving
+    // team), not a `PASTORAL_CARE`-type Group (a Bacenta) - Bacenta
+    // engagement is already captured via `bacenta_meeting.attendance_recorded`
+    // (attendance-based, `AttendanceRecordService`), so signalling here too
+    // for `PASTORAL_CARE` memberships would double-count the same
+    // underlying fact under two categories. See
+    // `ENGAGEMENT_SIGNAL_PIPELINE_DESIGN_NOTES.md`.
+    if (group.type === 'MINISTRY') {
+      const envelope: EngagementSignalEnvelope = {
+        eventId: randomUUID(),
+        eventType: 'basonta_roster.updated',
+        schemaVersion: 1,
+        branchId: person.branchId,
+        occurredAt: membership.startedAt.toISOString(),
+        subjectPersonId: personId,
+        subjectGroupId: group.id,
+        payload: { groupId: group.id, reason: input.reason ?? null },
+      };
+      await this.eventPublisher.publish(envelope);
+    }
+
+    // `[Engagement Signal Ingestion Pipeline milestone]` `lifecycle_stage.transitioned`
+    // (Visitor retention category) - this method's own PRD §19.1 step 6
+    // side effect (`personLifecycleStageUpdate`, above) is the *other*
+    // trigger for this same signal type besides `PersonService`'s own
+    // dedicated endpoint. Both publish the identical event type/payload
+    // shape from their own call site rather than one delegating to the
+    // other, since `PersonService.transitionLifecycleStage` deliberately
+    // rejects this exact transition (`requiresGroupMembershipToTransition`)
+    // - there is no single method both paths could share without
+    // reintroducing the coupling that rejection exists to prevent.
+    if (personLifecycleStageUpdate) {
+      const lifecycleEnvelope: EngagementSignalEnvelope = {
+        eventId: randomUUID(),
+        eventType: 'lifecycle_stage.transitioned',
+        schemaVersion: 1,
+        branchId: person.branchId,
+        occurredAt: membership.startedAt.toISOString(),
+        subjectPersonId: personId,
+        payload: { fromStage: person.lifecycleStage, toStage: personLifecycleStageUpdate },
+      };
+      await this.eventPublisher.publish(lifecycleEnvelope);
+    }
 
     return toResponseDto(membership);
   }

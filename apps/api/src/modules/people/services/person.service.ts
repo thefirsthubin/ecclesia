@@ -1,9 +1,19 @@
+import { randomUUID } from 'crypto';
+
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { checkLifecycleTransition, findDuplicateCandidates, requiresGroupMembershipToTransition } from '@ecclesia/domain-people';
-import type { CreatePersonInput, LifecycleTransitionRequestInput, ListPeopleQuery, PersonResponseDto, UpdatePersonInput } from '@ecclesia/contracts';
+import type {
+  CreatePersonInput,
+  EngagementSignalEnvelope,
+  LifecycleTransitionRequestInput,
+  ListPeopleQuery,
+  PersonResponseDto,
+  UpdatePersonInput,
+} from '@ecclesia/contracts';
 import type { ActorContext } from '@ecclesia/rbac';
 import type { Person } from '@prisma/client';
 
+import { EventBridgePublisherService } from '../../../platform/events/eventbridge-publisher.service';
 import { PersonRepository } from '../repositories/person.repository';
 import { GroupRosterService } from './group-roster.service';
 
@@ -38,6 +48,7 @@ export class PersonService {
   constructor(
     private readonly personRepository: PersonRepository,
     private readonly groupRosterService: GroupRosterService,
+    private readonly eventPublisher: EventBridgePublisherService,
   ) {}
 
   /**
@@ -171,6 +182,27 @@ export class PersonService {
     }
 
     const updated = await this.personRepository.updateLifecycleStage(id, input.toStage);
+
+    // `[Engagement Signal Ingestion Pipeline milestone]` Blueprint §10.4's
+    // `lifecycle_stage.transitioned` (Visitor retention category).
+    // `subjectPersonId` here is the Person whose stage transitioned, not
+    // the acting user - the envelope has no field for "who caused this,"
+    // and this method's own signature (unlike most other mutations in this
+    // module) never took an `actor: ActorContext` parameter to begin with
+    // (authorization already happened at the guard layer, per this class's
+    // own doc comment) - see ENGAGEMENT_SIGNAL_PIPELINE_DESIGN_NOTES.md for
+    // why no signature change was needed to publish this signal.
+    const envelope: EngagementSignalEnvelope = {
+      eventId: randomUUID(),
+      eventType: 'lifecycle_stage.transitioned',
+      schemaVersion: 1,
+      branchId: existing.branchId,
+      occurredAt: updated.updatedAt.toISOString(),
+      subjectPersonId: updated.id,
+      payload: { fromStage: existing.lifecycleStage, toStage: updated.lifecycleStage },
+    };
+    await this.eventPublisher.publish(envelope);
+
     return toResponseDto(updated);
   }
 }

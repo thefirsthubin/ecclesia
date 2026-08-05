@@ -19,8 +19,9 @@ describe('PersonService', () => {
     const groupRosterService = {
       listActiveMembers: jest.fn().mockResolvedValue([]),
     };
-    const service = new PersonService(personRepository as never, groupRosterService as never);
-    return { service, personRepository, groupRosterService };
+    const eventPublisher = { publish: jest.fn() };
+    const service = new PersonService(personRepository as never, groupRosterService as never, eventPublisher as never);
+    return { service, personRepository, groupRosterService, eventPublisher };
   }
 
   const personRow = {
@@ -123,7 +124,7 @@ describe('PersonService', () => {
 
   describe('transitionLifecycleStage', () => {
     it('applies a valid transition', async () => {
-      const { service, personRepository } = buildService();
+      const { service, personRepository, eventPublisher } = buildService();
       personRepository.findById.mockResolvedValue({ ...personRow, lifecycleStage: 'VISITOR' });
       personRepository.updateLifecycleStage.mockResolvedValue({ ...personRow, lifecycleStage: 'FIRST_TIME_GUEST' });
 
@@ -131,6 +132,14 @@ describe('PersonService', () => {
 
       expect(personRepository.updateLifecycleStage).toHaveBeenCalledWith('person-1', 'FIRST_TIME_GUEST');
       expect(result.lifecycleStage).toBe('FIRST_TIME_GUEST');
+      expect(eventPublisher.publish).toHaveBeenCalledWith(
+        expect.objectContaining({
+          eventType: 'lifecycle_stage.transitioned',
+          branchId: 'branch-1',
+          subjectPersonId: 'person-1',
+          payload: { fromStage: 'VISITOR', toStage: 'FIRST_TIME_GUEST' },
+        }),
+      );
     });
 
     it('rejects an invalid transition (FR-PPL-03)', async () => {

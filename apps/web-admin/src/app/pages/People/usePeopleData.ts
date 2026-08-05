@@ -1,4 +1,5 @@
 import type {
+  CreatePersonInput,
   GroupMembershipResponseDto,
   GroupResponseDto,
   ListPeopleQuery,
@@ -7,8 +8,9 @@ import type {
   RoleDto,
 } from '@ecclesia/contracts';
 import type { ActorContext } from '@ecclesia/rbac';
+import type { RecordOption } from '@ecclesia/ui-web';
 
-import { apiGet } from '../../lib/api-client';
+import { apiGet, apiPost } from '../../lib/api-client';
 import { useAsyncData } from '../../lib/useAsyncData';
 import type { AsyncDataResult } from '../../lib/useAsyncData';
 
@@ -87,6 +89,59 @@ export function useRoleAssignmentHistory(accessToken: string | undefined, person
     },
     [accessToken, personId],
   );
+}
+
+/**
+ * `[People Intake milestone]` `POST /people` (FR-PPL-01/FR-PPL-02,
+ * `createPersonSchema`). Imperative, not a `useAsyncData` hook - mirrors
+ * `recordTransaction`/`requestExpense` (`useStewardshipData.ts`), the
+ * established shape for a create call this codebase's pages trigger from a
+ * form submit handler rather than on mount. A 409 (`ConflictException({
+ * message, candidates })`, see `PersonService.create`) surfaces as an
+ * `ApiError` whose `body` is `{ message: string; candidates:
+ * DuplicateCandidateResponseDto[] }` - `NewPersonForm` reads that shape
+ * directly off `ApiError.body` rather than this function re-typing it,
+ * since `ApiError`'s `body` is intentionally `unknown` (see its own doc
+ * comment) and every call site is expected to narrow it for its own
+ * endpoint.
+ */
+export function createPerson(accessToken: string, input: CreatePersonInput): Promise<PersonResponseDto> {
+  return apiPost<PersonResponseDto>('/people', input, { authToken: accessToken });
+}
+
+/**
+ * `[People Intake milestone]` `GET /people/:id`, imperative rather than
+ * `usePersonDetail`'s hook form - the duplicate-candidate review step
+ * fetches an a-priori-unknown, possibly-empty set of candidate ids
+ * (`DuplicateCandidateResponseDto[]` from a 409) in a `Promise.all`, which
+ * doesn't fit a fixed-deps `useAsyncData` call.
+ */
+export function fetchPersonById(accessToken: string, personId: string): Promise<PersonResponseDto> {
+  return apiGet<PersonResponseDto>(`/people/${personId}`, { authToken: accessToken });
+}
+
+/**
+ * `[People Intake milestone]` `RecordPicker`'s `onSearch` for the New
+ * Person form's optional Guardian field (`createPersonSchema.guardianPersonId`).
+ * A direct copy of Pastoral Care's `searchPeopleForEscalation`
+ * (`usePastoralCareData.ts`) - same `GET /people?search=` endpoint, same
+ * `RecordOption` mapping, same disclosed "scoped to the acting user's own
+ * `people.person.read` grant" limitation. Kept as a per-page duplicate
+ * rather than extracted into a shared helper, matching this codebase's own
+ * "small per-app/per-page glue, not worth extracting" precedent (see
+ * `parseAmountToMinorUnits`'s doc comment for the same reasoning applied
+ * elsewhere).
+ */
+export async function searchPeopleForGuardian(accessToken: string, query: string): Promise<RecordOption[]> {
+  const params = new URLSearchParams();
+  if (query.trim()) params.set('search', query.trim());
+  const qs = params.toString();
+  const people = await apiGet<PersonResponseDto[]>(`/people${qs ? `?${qs}` : ''}`, { authToken: accessToken });
+  return people.map((person) => ({
+    id: person.id,
+    label: `${person.firstName} ${person.lastName}`,
+    description: person.phone ?? person.email ?? undefined,
+  }));
 }
 
 export function useGroupName(accessToken: string | undefined, groupId: string): AsyncDataResult<GroupResponseDto> {

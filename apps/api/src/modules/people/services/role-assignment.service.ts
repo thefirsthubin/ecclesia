@@ -1,10 +1,13 @@
+import { randomUUID } from 'crypto';
+
 import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { checkRoleAssignmentEligibility } from '@ecclesia/domain-people';
 import { evaluate, PERMISSION_MATRIX } from '@ecclesia/rbac';
 import type { Action, ActorContext, ResourceContext } from '@ecclesia/rbac';
-import type { CreateRoleAssignmentRequestInput, RoleAssignmentResponseDto } from '@ecclesia/contracts';
+import type { CreateRoleAssignmentRequestInput, EngagementSignalEnvelope, RoleAssignmentResponseDto } from '@ecclesia/contracts';
 import type { RoleAssignment } from '@prisma/client';
 
+import { EventBridgePublisherService } from '../../../platform/events/eventbridge-publisher.service';
 import { BranchConfigurationService } from '../../../platform/rbac/branch-configuration.service';
 import { PoimenEnrollmentService } from '../../pastoral-care/services/poimen-enrollment.service';
 import { PersonRepository } from '../repositories/person.repository';
@@ -62,6 +65,7 @@ export class RoleAssignmentService {
     private readonly personRepository: PersonRepository,
     private readonly branchConfigurationService: BranchConfigurationService,
     private readonly poimenEnrollmentService: PoimenEnrollmentService,
+    private readonly eventPublisher: EventBridgePublisherService,
   ) {}
 
   async grant(actor: ActorContext, personId: string, input: CreateRoleAssignmentRequestInput): Promise<RoleAssignmentResponseDto> {
@@ -122,12 +126,38 @@ export class RoleAssignmentService {
       const now = record.effectiveFrom ?? new Date();
       const priorLeader = await this.roleAssignmentRepository.findActiveBacentaLeader(input.groupId, now);
       const created = await this.roleAssignmentRepository.createWithSuccession(record, priorLeader?.id, now);
+      await this.publishRoleAssignmentActive(created);
       return toResponseDto(created);
     }
 
     const created = await this.roleAssignmentRepository.create(record);
+    await this.publishRoleAssignmentActive(created);
 
     return toResponseDto(created);
+  }
+
+  /**
+   * `[Engagement Signal Ingestion Pipeline milestone]` Blueprint §10.4's
+   * `role_assignment.active` (Serving category) - fires for every role
+   * grant regardless of the target Group's `type`, including `BACENTA_LEADER`
+   * succession. This is distinct from `GroupMembershipService`'s
+   * `basonta_roster.updated` below, which fires only when a *membership* (as
+   * opposed to a *role*) opens in a `MINISTRY`-type Group - a Person can
+   * receive a role without any Group membership at all (`input.groupId` is
+   * optional on the contract), so the two signals are not redundant.
+   */
+  private async publishRoleAssignmentActive(assignment: RoleAssignment): Promise<void> {
+    const envelope: EngagementSignalEnvelope = {
+      eventId: randomUUID(),
+      eventType: 'role_assignment.active',
+      schemaVersion: 1,
+      branchId: assignment.branchId,
+      occurredAt: assignment.effectiveFrom.toISOString(),
+      subjectPersonId: assignment.personId,
+      subjectGroupId: assignment.groupId ?? undefined,
+      payload: { role: assignment.role, groupId: assignment.groupId },
+    };
+    await this.eventPublisher.publish(envelope);
   }
 
   /** FR-PPL-07: full Role Assignment history for a Person, including

@@ -34,4 +34,9 @@ export default {
       '<rootDir>/../../../node_modules/lucide-react-native/dist/cjs/lucide-react-native.js',
   },
   coverageDirectory: '../../../coverage/libs/ui/native',
+  // `[Bug fix, Mobile Personas sprint]` same reasoning as
+  // `apps/mobile/jest.config.ts`'s identical setting - a real `pnpm
+  // test` run showed `ui-native:test` also failing under CPU
+  // contention from parallel workers, not any test logic bug.
+  testTimeout: 20000,
 };

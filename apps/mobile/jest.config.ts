@@ -63,4 +63,21 @@ export default {
       '<rootDir>/../../node_modules/lucide-react-native/dist/cjs/lucide-react-native.js',
   },
   coverageDirectory: '../../coverage/apps/mobile',
+  // `[Bug fix, Mobile Personas sprint]` Jest's default 5000ms per-test
+  // timeout was already marginal for this project (RN's Metro/Babel
+  // transform - deliberately not swapped for @swc/jest, see the doc
+  // comment above - is CPU-heavy relative to the rest of this
+  // monorepo's @swc/jest-based projects). This sprint added nine new
+  // screens (Ministry Leader/Finance Officer/Resident Pastor), each
+  // mounting several `Skeleton`-driven loading states via
+  // `CardAsyncBoundary`, which meaningfully increased this project's
+  // total async-test surface. A real `pnpm test` run (18 projects'
+  // worth of Jest workers contending for the same CPU cores, unlike
+  // this sandbox's serial `--runInBand` runs) showed 11 tests across 9
+  // suites failing with "Exceeded timeout of 5000 ms" - the same tests
+  // pass in 1-2s when run in isolation, confirming this is CPU
+  // contention under real parallel load, not a hang or a logic bug.
+  // 20000ms gives real headroom without masking an actual hang (a
+  // genuinely broken `waitFor` would still fail this comfortably).
+  testTimeout: 20000,
 };

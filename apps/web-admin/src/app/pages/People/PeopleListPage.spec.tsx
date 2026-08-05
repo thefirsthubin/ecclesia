@@ -1,5 +1,5 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import { ThemeProvider } from '@ecclesia/ui-web';
+import { ThemeProvider, ToastProvider } from '@ecclesia/ui-web';
 
 import { RouterProvider } from '../../router/router';
 import { PeopleListPage } from './PeopleListPage';
@@ -40,9 +40,11 @@ function person(overrides: Record<string, unknown> = {}) {
 function renderPage() {
   return render(
     <ThemeProvider>
-      <RouterProvider>
-        <PeopleListPage />
-      </RouterProvider>
+      <ToastProvider>
+        <RouterProvider>
+          <PeopleListPage />
+        </RouterProvider>
+      </ToastProvider>
     </ThemeProvider>,
   );
 }
@@ -103,5 +105,37 @@ describe('PeopleListPage', () => {
     renderPage();
 
     await waitFor(() => expect(screen.getByText("Couldn't load People")).toBeInTheDocument());
+  });
+
+  it('shows "+ New Person" for ADMIN (the only role permission-matrix grants people.person.create to)', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('ADMIN'));
+    global.fetch = jest.fn().mockResolvedValue({ ok: true, json: async () => [] });
+
+    renderPage();
+
+    await waitFor(() => expect(screen.getByTestId('new-person-open')).toBeInTheDocument());
+  });
+
+  it('hides "+ New Person" for a role that can never call POST /people (e.g. BACENTA_LEADER)', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('BACENTA_LEADER', { bacentaId: 'bacenta-1' }));
+    global.fetch = jest.fn().mockResolvedValue({ ok: true, json: async () => [] });
+
+    renderPage();
+
+    await waitFor(() => expect(screen.getByText('No people found')).toBeInTheDocument());
+    expect(screen.queryByTestId('new-person-open')).not.toBeInTheDocument();
+  });
+
+  it('reveals the New Person form and hides the open button when clicked', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('ADMIN'));
+    global.fetch = jest.fn().mockResolvedValue({ ok: true, json: async () => [] });
+
+    renderPage();
+    await waitFor(() => expect(screen.getByTestId('new-person-open')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByTestId('new-person-open'));
+
+    expect(screen.getByTestId('new-person-form')).toBeInTheDocument();
+    expect(screen.queryByTestId('new-person-open')).not.toBeInTheDocument();
   });
 });

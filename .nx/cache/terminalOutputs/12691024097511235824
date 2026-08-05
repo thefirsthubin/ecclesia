@@ -1,1269 +1,0 @@
-[2m> [22mjest
-
-[1m[2mDetermining test suites to run...[22m[22m[999D[K
-
-[1mTest Suites: [22m0 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m0 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m0 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[31m FAIL [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m0 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mTest suite failed to run
-
-    [1m[31mJest encountered an unexpected token[39m[22m
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see [4mhttps://jestjs.io/docs/ecmascript-modules[24m for how to enable it.
-     • If you are trying to use TypeScript, see [4mhttps://jestjs.io/docs/getting-started#using-typescript[24m
-     • To have some of your "node_modules" files transformed, you can specify a custom [1m"transformIgnorePatterns"[22m in your config.
-     • If you need a custom transformation specify a [1m"transform"[22m option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the [1m"moduleNameMapper"[22m config option.
-
-    You'll find more details and examples of these config options in the docs:
-    [36mhttps://jestjs.io/docs/configuration[39m
-    For information about custom transformations, see:
-    [36mhttps://jestjs.io/docs/code-transformation[39m
-
-    [1m[31mDetails:[39m[22m
-
-    SyntaxError: /Users/king/Documents/ecclesia/node_modules/.pnpm/@react-native+js-polyfills@0.75.4/node_modules/@react-native/js-polyfills/error-guard.js: Missing semicolon. (14:4)
-
-    [0m [90m 12 |[39m [36mlet[39m _inGuard [33m=[39m [35m0[39m[33m;[39m
-     [90m 13 |[39m
-    [31m[1m>[22m[39m[90m 14 |[39m type [33mErrorHandler[39m [33m=[39m (error[33m:[39m mixed[33m,[39m isFatal[33m:[39m boolean) [33m=>[39m [36mvoid[39m[33m;[39m
-     [90m    |[39m     [31m[1m^[22m[39m
-     [90m 15 |[39m type [33mFn[39m[33m<[39m[33mArgs[39m[33m,[39m [33mReturn[39m[33m>[39m [33m=[39m ([33m...[39m[33mArgs[39m) [33m=>[39m [33mReturn[39m[33m;[39m
-     [90m 16 |[39m
-     [90m 17 |[39m [90m/**[39m[0m
-
-      [2mat constructor ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:369:19)[22m
-      [2mat Parser.raise ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6620:19)[22m
-      [2mat Parser.semicolon ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6916:10)[22m
-      [2mat Parser.parseExpressionStatement ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13314:10)[22m
-      [2mat Parser.parseStatementContent ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12928:19)[22m
-      [2mat Parser.parseStatementLike ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12796:17)[22m
-      [2mat Parser.parseModuleItem ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12773:17)[22m
-      [2mat Parser.parseBlockOrModuleBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13345:36)[22m
-      [2mat Parser.parseBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13338:10)[22m
-      [2mat Parser.parseProgram ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12651:10)[22m
-      [2mat Parser.parseTopLevel ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12641:25)[22m
-      [2mat Parser.parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14517:25)[22m
-      [2mat parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14551:38)[22m
-      [2mat parser ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/parser/index.js[2m:41:34)[22m
-          at parser.next (<anonymous>)
-      [2mat normalizeFile ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/normalize-file.js[2m:51:37)[22m
-          at normalizeFile.next (<anonymous>)
-      [2mat run ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/index.js[2m:22:50)[22m
-          at run.next (<anonymous>)
-      [2mat transform ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:22:33)[22m
-          at transform.next (<anonymous>)
-      [2mat evaluateSync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:251:28)[22m
-      [2mat sync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:89:14)[22m
-      [2mat stopHiding - secret - don't use this - v1 ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/errors/rewrite-stack-trace.js[2m:47:12)[22m
-      [2mat transformSync ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:40:76)[22m
-      [2mat ScriptTransformer.transformSource ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:545:31)[22m
-      [2mat ScriptTransformer._transformAndBuildScript ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:674:40)[22m
-      [2mat ScriptTransformer.transform ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:726:19)[22m
-      [2mat Object.<anonymous> ([22m../../../node_modules/.pnpm/react-native@0.75.4_@babel+core@7.29.7_@babel+preset-env@7.29.7_@babel+core@7.29.7__@types+re_67c2yjddd65un2ti63gj7wzc2y/node_modules/react-native/jest/setup.js[2m:316:6)[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m0 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m0 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[31m FAIL [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m0 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mTest suite failed to run
-
-    [1m[31mJest encountered an unexpected token[39m[22m
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see [4mhttps://jestjs.io/docs/ecmascript-modules[24m for how to enable it.
-     • If you are trying to use TypeScript, see [4mhttps://jestjs.io/docs/getting-started#using-typescript[24m
-     • To have some of your "node_modules" files transformed, you can specify a custom [1m"transformIgnorePatterns"[22m in your config.
-     • If you need a custom transformation specify a [1m"transform"[22m option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the [1m"moduleNameMapper"[22m config option.
-
-    You'll find more details and examples of these config options in the docs:
-    [36mhttps://jestjs.io/docs/configuration[39m
-    For information about custom transformations, see:
-    [36mhttps://jestjs.io/docs/code-transformation[39m
-
-    [1m[31mDetails:[39m[22m
-
-    SyntaxError: /Users/king/Documents/ecclesia/node_modules/.pnpm/@react-native+js-polyfills@0.75.4/node_modules/@react-native/js-polyfills/error-guard.js: Missing semicolon. (14:4)
-
-    [0m [90m 12 |[39m [36mlet[39m _inGuard [33m=[39m [35m0[39m[33m;[39m
-     [90m 13 |[39m
-    [31m[1m>[22m[39m[90m 14 |[39m type [33mErrorHandler[39m [33m=[39m (error[33m:[39m mixed[33m,[39m isFatal[33m:[39m boolean) [33m=>[39m [36mvoid[39m[33m;[39m
-     [90m    |[39m     [31m[1m^[22m[39m
-     [90m 15 |[39m type [33mFn[39m[33m<[39m[33mArgs[39m[33m,[39m [33mReturn[39m[33m>[39m [33m=[39m ([33m...[39m[33mArgs[39m) [33m=>[39m [33mReturn[39m[33m;[39m
-     [90m 16 |[39m
-     [90m 17 |[39m [90m/**[39m[0m
-
-      [2mat constructor ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:369:19)[22m
-      [2mat Parser.raise ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6620:19)[22m
-      [2mat Parser.semicolon ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6916:10)[22m
-      [2mat Parser.parseExpressionStatement ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13314:10)[22m
-      [2mat Parser.parseStatementContent ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12928:19)[22m
-      [2mat Parser.parseStatementLike ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12796:17)[22m
-      [2mat Parser.parseModuleItem ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12773:17)[22m
-      [2mat Parser.parseBlockOrModuleBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13345:36)[22m
-      [2mat Parser.parseBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13338:10)[22m
-      [2mat Parser.parseProgram ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12651:10)[22m
-      [2mat Parser.parseTopLevel ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12641:25)[22m
-      [2mat Parser.parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14517:25)[22m
-      [2mat parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14551:38)[22m
-      [2mat parser ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/parser/index.js[2m:41:34)[22m
-          at parser.next (<anonymous>)
-      [2mat normalizeFile ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/normalize-file.js[2m:51:37)[22m
-          at normalizeFile.next (<anonymous>)
-      [2mat run ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/index.js[2m:22:50)[22m
-          at run.next (<anonymous>)
-      [2mat transform ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:22:33)[22m
-          at transform.next (<anonymous>)
-      [2mat evaluateSync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:251:28)[22m
-      [2mat sync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:89:14)[22m
-      [2mat stopHiding - secret - don't use this - v1 ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/errors/rewrite-stack-trace.js[2m:47:12)[22m
-      [2mat transformSync ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:40:76)[22m
-      [2mat ScriptTransformer.transformSource ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:545:31)[22m
-      [2mat ScriptTransformer._transformAndBuildScript ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:674:40)[22m
-      [2mat ScriptTransformer.transform ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:726:19)[22m
-      [2mat Object.<anonymous> ([22m../../../node_modules/.pnpm/react-native@0.75.4_@babel+core@7.29.7_@babel+preset-env@7.29.7_@babel+core@7.29.7__@types+re_67c2yjddd65un2ti63gj7wzc2y/node_modules/react-native/jest/setup.js[2m:316:6)[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m0 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[31m FAIL [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m0 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mTest suite failed to run
-
-    [1m[31mJest encountered an unexpected token[39m[22m
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see [4mhttps://jestjs.io/docs/ecmascript-modules[24m for how to enable it.
-     • If you are trying to use TypeScript, see [4mhttps://jestjs.io/docs/getting-started#using-typescript[24m
-     • To have some of your "node_modules" files transformed, you can specify a custom [1m"transformIgnorePatterns"[22m in your config.
-     • If you need a custom transformation specify a [1m"transform"[22m option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the [1m"moduleNameMapper"[22m config option.
-
-    You'll find more details and examples of these config options in the docs:
-    [36mhttps://jestjs.io/docs/configuration[39m
-    For information about custom transformations, see:
-    [36mhttps://jestjs.io/docs/code-transformation[39m
-
-    [1m[31mDetails:[39m[22m
-
-    SyntaxError: /Users/king/Documents/ecclesia/node_modules/.pnpm/@react-native+js-polyfills@0.75.4/node_modules/@react-native/js-polyfills/error-guard.js: Missing semicolon. (14:4)
-
-    [0m [90m 12 |[39m [36mlet[39m _inGuard [33m=[39m [35m0[39m[33m;[39m
-     [90m 13 |[39m
-    [31m[1m>[22m[39m[90m 14 |[39m type [33mErrorHandler[39m [33m=[39m (error[33m:[39m mixed[33m,[39m isFatal[33m:[39m boolean) [33m=>[39m [36mvoid[39m[33m;[39m
-     [90m    |[39m     [31m[1m^[22m[39m
-     [90m 15 |[39m type [33mFn[39m[33m<[39m[33mArgs[39m[33m,[39m [33mReturn[39m[33m>[39m [33m=[39m ([33m...[39m[33mArgs[39m) [33m=>[39m [33mReturn[39m[33m;[39m
-     [90m 16 |[39m
-     [90m 17 |[39m [90m/**[39m[0m
-
-      [2mat constructor ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:369:19)[22m
-      [2mat Parser.raise ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6620:19)[22m
-      [2mat Parser.semicolon ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6916:10)[22m
-      [2mat Parser.parseExpressionStatement ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13314:10)[22m
-      [2mat Parser.parseStatementContent ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12928:19)[22m
-      [2mat Parser.parseStatementLike ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12796:17)[22m
-      [2mat Parser.parseModuleItem ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12773:17)[22m
-      [2mat Parser.parseBlockOrModuleBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13345:36)[22m
-      [2mat Parser.parseBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13338:10)[22m
-      [2mat Parser.parseProgram ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12651:10)[22m
-      [2mat Parser.parseTopLevel ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12641:25)[22m
-      [2mat Parser.parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14517:25)[22m
-      [2mat parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14551:38)[22m
-      [2mat parser ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/parser/index.js[2m:41:34)[22m
-          at parser.next (<anonymous>)
-      [2mat normalizeFile ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/normalize-file.js[2m:51:37)[22m
-          at normalizeFile.next (<anonymous>)
-      [2mat run ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/index.js[2m:22:50)[22m
-          at run.next (<anonymous>)
-      [2mat transform ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:22:33)[22m
-          at transform.next (<anonymous>)
-      [2mat evaluateSync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:251:28)[22m
-      [2mat sync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:89:14)[22m
-      [2mat stopHiding - secret - don't use this - v1 ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/errors/rewrite-stack-trace.js[2m:47:12)[22m
-      [2mat transformSync ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:40:76)[22m
-      [2mat ScriptTransformer.transformSource ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:545:31)[22m
-      [2mat ScriptTransformer._transformAndBuildScript ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:674:40)[22m
-      [2mat ScriptTransformer.transform ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:726:19)[22m
-      [2mat Object.<anonymous> ([22m../../../node_modules/.pnpm/react-native@0.75.4_@babel+core@7.29.7_@babel+preset-env@7.29.7_@babel+core@7.29.7__@types+re_67c2yjddd65un2ti63gj7wzc2y/node_modules/react-native/jest/setup.js[2m:316:6)[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m0 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[31m FAIL [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Card/[22m[1mCard.spec.tsx[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m0 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mTest suite failed to run
-
-    [1m[31mJest encountered an unexpected token[39m[22m
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see [4mhttps://jestjs.io/docs/ecmascript-modules[24m for how to enable it.
-     • If you are trying to use TypeScript, see [4mhttps://jestjs.io/docs/getting-started#using-typescript[24m
-     • To have some of your "node_modules" files transformed, you can specify a custom [1m"transformIgnorePatterns"[22m in your config.
-     • If you need a custom transformation specify a [1m"transform"[22m option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the [1m"moduleNameMapper"[22m config option.
-
-    You'll find more details and examples of these config options in the docs:
-    [36mhttps://jestjs.io/docs/configuration[39m
-    For information about custom transformations, see:
-    [36mhttps://jestjs.io/docs/code-transformation[39m
-
-    [1m[31mDetails:[39m[22m
-
-    SyntaxError: /Users/king/Documents/ecclesia/node_modules/.pnpm/@react-native+js-polyfills@0.75.4/node_modules/@react-native/js-polyfills/error-guard.js: Missing semicolon. (14:4)
-
-    [0m [90m 12 |[39m [36mlet[39m _inGuard [33m=[39m [35m0[39m[33m;[39m
-     [90m 13 |[39m
-    [31m[1m>[22m[39m[90m 14 |[39m type [33mErrorHandler[39m [33m=[39m (error[33m:[39m mixed[33m,[39m isFatal[33m:[39m boolean) [33m=>[39m [36mvoid[39m[33m;[39m
-     [90m    |[39m     [31m[1m^[22m[39m
-     [90m 15 |[39m type [33mFn[39m[33m<[39m[33mArgs[39m[33m,[39m [33mReturn[39m[33m>[39m [33m=[39m ([33m...[39m[33mArgs[39m) [33m=>[39m [33mReturn[39m[33m;[39m
-     [90m 16 |[39m
-     [90m 17 |[39m [90m/**[39m[0m
-
-      [2mat constructor ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:369:19)[22m
-      [2mat Parser.raise ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6620:19)[22m
-      [2mat Parser.semicolon ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6916:10)[22m
-      [2mat Parser.parseExpressionStatement ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13314:10)[22m
-      [2mat Parser.parseStatementContent ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12928:19)[22m
-      [2mat Parser.parseStatementLike ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12796:17)[22m
-      [2mat Parser.parseModuleItem ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12773:17)[22m
-      [2mat Parser.parseBlockOrModuleBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13345:36)[22m
-      [2mat Parser.parseBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13338:10)[22m
-      [2mat Parser.parseProgram ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12651:10)[22m
-      [2mat Parser.parseTopLevel ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12641:25)[22m
-      [2mat Parser.parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14517:25)[22m
-      [2mat parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14551:38)[22m
-      [2mat parser ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/parser/index.js[2m:41:34)[22m
-          at parser.next (<anonymous>)
-      [2mat normalizeFile ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/normalize-file.js[2m:51:37)[22m
-          at normalizeFile.next (<anonymous>)
-      [2mat run ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/index.js[2m:22:50)[22m
-          at run.next (<anonymous>)
-      [2mat transform ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:22:33)[22m
-          at transform.next (<anonymous>)
-      [2mat evaluateSync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:251:28)[22m
-      [2mat sync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:89:14)[22m
-      [2mat stopHiding - secret - don't use this - v1 ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/errors/rewrite-stack-trace.js[2m:47:12)[22m
-      [2mat transformSync ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:40:76)[22m
-      [2mat ScriptTransformer.transformSource ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:545:31)[22m
-      [2mat ScriptTransformer._transformAndBuildScript ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:674:40)[22m
-      [2mat ScriptTransformer.transform ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:726:19)[22m
-      [2mat Object.<anonymous> ([22m../../../node_modules/.pnpm/react-native@0.75.4_@babel+core@7.29.7_@babel+preset-env@7.29.7_@babel+core@7.29.7__@types+re_67c2yjddd65un2ti63gj7wzc2y/node_modules/react-native/jest/setup.js[2m:316:6)[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m0 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[31m FAIL [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m0 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mTest suite failed to run
-
-    [1m[31mJest encountered an unexpected token[39m[22m
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see [4mhttps://jestjs.io/docs/ecmascript-modules[24m for how to enable it.
-     • If you are trying to use TypeScript, see [4mhttps://jestjs.io/docs/getting-started#using-typescript[24m
-     • To have some of your "node_modules" files transformed, you can specify a custom [1m"transformIgnorePatterns"[22m in your config.
-     • If you need a custom transformation specify a [1m"transform"[22m option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the [1m"moduleNameMapper"[22m config option.
-
-    You'll find more details and examples of these config options in the docs:
-    [36mhttps://jestjs.io/docs/configuration[39m
-    For information about custom transformations, see:
-    [36mhttps://jestjs.io/docs/code-transformation[39m
-
-    [1m[31mDetails:[39m[22m
-
-    SyntaxError: /Users/king/Documents/ecclesia/node_modules/.pnpm/@react-native+js-polyfills@0.75.4/node_modules/@react-native/js-polyfills/error-guard.js: Missing semicolon. (14:4)
-
-    [0m [90m 12 |[39m [36mlet[39m _inGuard [33m=[39m [35m0[39m[33m;[39m
-     [90m 13 |[39m
-    [31m[1m>[22m[39m[90m 14 |[39m type [33mErrorHandler[39m [33m=[39m (error[33m:[39m mixed[33m,[39m isFatal[33m:[39m boolean) [33m=>[39m [36mvoid[39m[33m;[39m
-     [90m    |[39m     [31m[1m^[22m[39m
-     [90m 15 |[39m type [33mFn[39m[33m<[39m[33mArgs[39m[33m,[39m [33mReturn[39m[33m>[39m [33m=[39m ([33m...[39m[33mArgs[39m) [33m=>[39m [33mReturn[39m[33m;[39m
-     [90m 16 |[39m
-     [90m 17 |[39m [90m/**[39m[0m
-
-      [2mat constructor ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:369:19)[22m
-      [2mat Parser.raise ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6620:19)[22m
-      [2mat Parser.semicolon ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6916:10)[22m
-      [2mat Parser.parseExpressionStatement ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13314:10)[22m
-      [2mat Parser.parseStatementContent ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12928:19)[22m
-      [2mat Parser.parseStatementLike ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12796:17)[22m
-      [2mat Parser.parseModuleItem ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12773:17)[22m
-      [2mat Parser.parseBlockOrModuleBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13345:36)[22m
-      [2mat Parser.parseBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13338:10)[22m
-      [2mat Parser.parseProgram ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12651:10)[22m
-      [2mat Parser.parseTopLevel ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12641:25)[22m
-      [2mat Parser.parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14517:25)[22m
-      [2mat parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14551:38)[22m
-      [2mat parser ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/parser/index.js[2m:41:34)[22m
-          at parser.next (<anonymous>)
-      [2mat normalizeFile ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/normalize-file.js[2m:51:37)[22m
-          at normalizeFile.next (<anonymous>)
-      [2mat run ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/index.js[2m:22:50)[22m
-          at run.next (<anonymous>)
-      [2mat transform ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:22:33)[22m
-          at transform.next (<anonymous>)
-      [2mat evaluateSync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:251:28)[22m
-      [2mat sync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:89:14)[22m
-      [2mat stopHiding - secret - don't use this - v1 ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/errors/rewrite-stack-trace.js[2m:47:12)[22m
-      [2mat transformSync ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:40:76)[22m
-      [2mat ScriptTransformer.transformSource ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:545:31)[22m
-      [2mat ScriptTransformer._transformAndBuildScript ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:674:40)[22m
-      [2mat ScriptTransformer.transform ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:726:19)[22m
-      [2mat Object.<anonymous> ([22m../../../node_modules/.pnpm/react-native@0.75.4_@babel+core@7.29.7_@babel+preset-env@7.29.7_@babel+core@7.29.7__@types+re_67c2yjddd65un2ti63gj7wzc2y/node_modules/react-native/jest/setup.js[2m:316:6)[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m0 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m[1m[31m5 failed[39m[22m, 5 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[31m FAIL [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m[1m[31m5 failed[39m[22m, 5 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mTest suite failed to run
-
-    [1m[31mJest encountered an unexpected token[39m[22m
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see [4mhttps://jestjs.io/docs/ecmascript-modules[24m for how to enable it.
-     • If you are trying to use TypeScript, see [4mhttps://jestjs.io/docs/getting-started#using-typescript[24m
-     • To have some of your "node_modules" files transformed, you can specify a custom [1m"transformIgnorePatterns"[22m in your config.
-     • If you need a custom transformation specify a [1m"transform"[22m option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the [1m"moduleNameMapper"[22m config option.
-
-    You'll find more details and examples of these config options in the docs:
-    [36mhttps://jestjs.io/docs/configuration[39m
-    For information about custom transformations, see:
-    [36mhttps://jestjs.io/docs/code-transformation[39m
-
-    [1m[31mDetails:[39m[22m
-
-    SyntaxError: /Users/king/Documents/ecclesia/node_modules/.pnpm/@react-native+js-polyfills@0.75.4/node_modules/@react-native/js-polyfills/error-guard.js: Missing semicolon. (14:4)
-
-    [0m [90m 12 |[39m [36mlet[39m _inGuard [33m=[39m [35m0[39m[33m;[39m
-     [90m 13 |[39m
-    [31m[1m>[22m[39m[90m 14 |[39m type [33mErrorHandler[39m [33m=[39m (error[33m:[39m mixed[33m,[39m isFatal[33m:[39m boolean) [33m=>[39m [36mvoid[39m[33m;[39m
-     [90m    |[39m     [31m[1m^[22m[39m
-     [90m 15 |[39m type [33mFn[39m[33m<[39m[33mArgs[39m[33m,[39m [33mReturn[39m[33m>[39m [33m=[39m ([33m...[39m[33mArgs[39m) [33m=>[39m [33mReturn[39m[33m;[39m
-     [90m 16 |[39m
-     [90m 17 |[39m [90m/**[39m[0m
-
-      [2mat constructor ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:369:19)[22m
-      [2mat Parser.raise ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6620:19)[22m
-      [2mat Parser.semicolon ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6916:10)[22m
-      [2mat Parser.parseExpressionStatement ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13314:10)[22m
-      [2mat Parser.parseStatementContent ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12928:19)[22m
-      [2mat Parser.parseStatementLike ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12796:17)[22m
-      [2mat Parser.parseModuleItem ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12773:17)[22m
-      [2mat Parser.parseBlockOrModuleBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13345:36)[22m
-      [2mat Parser.parseBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13338:10)[22m
-      [2mat Parser.parseProgram ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12651:10)[22m
-      [2mat Parser.parseTopLevel ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12641:25)[22m
-      [2mat Parser.parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14517:25)[22m
-      [2mat parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14551:38)[22m
-      [2mat parser ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/parser/index.js[2m:41:34)[22m
-          at parser.next (<anonymous>)
-      [2mat normalizeFile ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/normalize-file.js[2m:51:37)[22m
-          at normalizeFile.next (<anonymous>)
-      [2mat run ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/index.js[2m:22:50)[22m
-          at run.next (<anonymous>)
-      [2mat transform ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:22:33)[22m
-          at transform.next (<anonymous>)
-      [2mat evaluateSync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:251:28)[22m
-      [2mat sync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:89:14)[22m
-      [2mat stopHiding - secret - don't use this - v1 ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/errors/rewrite-stack-trace.js[2m:47:12)[22m
-      [2mat transformSync ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:40:76)[22m
-      [2mat ScriptTransformer.transformSource ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:545:31)[22m
-      [2mat ScriptTransformer._transformAndBuildScript ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:674:40)[22m
-      [2mat ScriptTransformer.transform ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:726:19)[22m
-      [2mat Object.<anonymous> ([22m../../../node_modules/.pnpm/react-native@0.75.4_@babel+core@7.29.7_@babel+preset-env@7.29.7_@babel+core@7.29.7__@types+re_67c2yjddd65un2ti63gj7wzc2y/node_modules/react-native/jest/setup.js[2m:316:6)[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m[1m[31m5 failed[39m[22m, 5 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[31m FAIL [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m[1m[31m5 failed[39m[22m, 5 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mTest suite failed to run
-
-    [1m[31mJest encountered an unexpected token[39m[22m
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see [4mhttps://jestjs.io/docs/ecmascript-modules[24m for how to enable it.
-     • If you are trying to use TypeScript, see [4mhttps://jestjs.io/docs/getting-started#using-typescript[24m
-     • To have some of your "node_modules" files transformed, you can specify a custom [1m"transformIgnorePatterns"[22m in your config.
-     • If you need a custom transformation specify a [1m"transform"[22m option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the [1m"moduleNameMapper"[22m config option.
-
-    You'll find more details and examples of these config options in the docs:
-    [36mhttps://jestjs.io/docs/configuration[39m
-    For information about custom transformations, see:
-    [36mhttps://jestjs.io/docs/code-transformation[39m
-
-    [1m[31mDetails:[39m[22m
-
-    SyntaxError: /Users/king/Documents/ecclesia/node_modules/.pnpm/@react-native+js-polyfills@0.75.4/node_modules/@react-native/js-polyfills/error-guard.js: Missing semicolon. (14:4)
-
-    [0m [90m 12 |[39m [36mlet[39m _inGuard [33m=[39m [35m0[39m[33m;[39m
-     [90m 13 |[39m
-    [31m[1m>[22m[39m[90m 14 |[39m type [33mErrorHandler[39m [33m=[39m (error[33m:[39m mixed[33m,[39m isFatal[33m:[39m boolean) [33m=>[39m [36mvoid[39m[33m;[39m
-     [90m    |[39m     [31m[1m^[22m[39m
-     [90m 15 |[39m type [33mFn[39m[33m<[39m[33mArgs[39m[33m,[39m [33mReturn[39m[33m>[39m [33m=[39m ([33m...[39m[33mArgs[39m) [33m=>[39m [33mReturn[39m[33m;[39m
-     [90m 16 |[39m
-     [90m 17 |[39m [90m/**[39m[0m
-
-      [2mat constructor ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:369:19)[22m
-      [2mat Parser.raise ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6620:19)[22m
-      [2mat Parser.semicolon ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6916:10)[22m
-      [2mat Parser.parseExpressionStatement ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13314:10)[22m
-      [2mat Parser.parseStatementContent ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12928:19)[22m
-      [2mat Parser.parseStatementLike ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12796:17)[22m
-      [2mat Parser.parseModuleItem ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12773:17)[22m
-      [2mat Parser.parseBlockOrModuleBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13345:36)[22m
-      [2mat Parser.parseBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13338:10)[22m
-      [2mat Parser.parseProgram ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12651:10)[22m
-      [2mat Parser.parseTopLevel ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12641:25)[22m
-      [2mat Parser.parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14517:25)[22m
-      [2mat parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14551:38)[22m
-      [2mat parser ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/parser/index.js[2m:41:34)[22m
-          at parser.next (<anonymous>)
-      [2mat normalizeFile ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/normalize-file.js[2m:51:37)[22m
-          at normalizeFile.next (<anonymous>)
-      [2mat run ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/index.js[2m:22:50)[22m
-          at run.next (<anonymous>)
-      [2mat transform ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:22:33)[22m
-          at transform.next (<anonymous>)
-      [2mat evaluateSync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:251:28)[22m
-      [2mat sync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:89:14)[22m
-      [2mat stopHiding - secret - don't use this - v1 ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/errors/rewrite-stack-trace.js[2m:47:12)[22m
-      [2mat transformSync ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:40:76)[22m
-      [2mat ScriptTransformer.transformSource ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:545:31)[22m
-      [2mat ScriptTransformer._transformAndBuildScript ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:674:40)[22m
-      [2mat ScriptTransformer.transform ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:726:19)[22m
-      [2mat Object.<anonymous> ([22m../../../node_modules/.pnpm/react-native@0.75.4_@babel+core@7.29.7_@babel+preset-env@7.29.7_@babel+core@7.29.7__@types+re_67c2yjddd65un2ti63gj7wzc2y/node_modules/react-native/jest/setup.js[2m:316:6)[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m[1m[31m5 failed[39m[22m, 5 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[31m FAIL [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m[1m[31m5 failed[39m[22m, 5 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mTest suite failed to run
-
-    [1m[31mJest encountered an unexpected token[39m[22m
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see [4mhttps://jestjs.io/docs/ecmascript-modules[24m for how to enable it.
-     • If you are trying to use TypeScript, see [4mhttps://jestjs.io/docs/getting-started#using-typescript[24m
-     • To have some of your "node_modules" files transformed, you can specify a custom [1m"transformIgnorePatterns"[22m in your config.
-     • If you need a custom transformation specify a [1m"transform"[22m option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the [1m"moduleNameMapper"[22m config option.
-
-    You'll find more details and examples of these config options in the docs:
-    [36mhttps://jestjs.io/docs/configuration[39m
-    For information about custom transformations, see:
-    [36mhttps://jestjs.io/docs/code-transformation[39m
-
-    [1m[31mDetails:[39m[22m
-
-    SyntaxError: /Users/king/Documents/ecclesia/node_modules/.pnpm/@react-native+js-polyfills@0.75.4/node_modules/@react-native/js-polyfills/error-guard.js: Missing semicolon. (14:4)
-
-    [0m [90m 12 |[39m [36mlet[39m _inGuard [33m=[39m [35m0[39m[33m;[39m
-     [90m 13 |[39m
-    [31m[1m>[22m[39m[90m 14 |[39m type [33mErrorHandler[39m [33m=[39m (error[33m:[39m mixed[33m,[39m isFatal[33m:[39m boolean) [33m=>[39m [36mvoid[39m[33m;[39m
-     [90m    |[39m     [31m[1m^[22m[39m
-     [90m 15 |[39m type [33mFn[39m[33m<[39m[33mArgs[39m[33m,[39m [33mReturn[39m[33m>[39m [33m=[39m ([33m...[39m[33mArgs[39m) [33m=>[39m [33mReturn[39m[33m;[39m
-     [90m 16 |[39m
-     [90m 17 |[39m [90m/**[39m[0m
-
-      [2mat constructor ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:369:19)[22m
-      [2mat Parser.raise ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6620:19)[22m
-      [2mat Parser.semicolon ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6916:10)[22m
-      [2mat Parser.parseExpressionStatement ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13314:10)[22m
-      [2mat Parser.parseStatementContent ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12928:19)[22m
-      [2mat Parser.parseStatementLike ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12796:17)[22m
-      [2mat Parser.parseModuleItem ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12773:17)[22m
-      [2mat Parser.parseBlockOrModuleBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13345:36)[22m
-      [2mat Parser.parseBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13338:10)[22m
-      [2mat Parser.parseProgram ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12651:10)[22m
-      [2mat Parser.parseTopLevel ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12641:25)[22m
-      [2mat Parser.parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14517:25)[22m
-      [2mat parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14551:38)[22m
-      [2mat parser ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/parser/index.js[2m:41:34)[22m
-          at parser.next (<anonymous>)
-      [2mat normalizeFile ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/normalize-file.js[2m:51:37)[22m
-          at normalizeFile.next (<anonymous>)
-      [2mat run ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/index.js[2m:22:50)[22m
-          at run.next (<anonymous>)
-      [2mat transform ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:22:33)[22m
-          at transform.next (<anonymous>)
-      [2mat evaluateSync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:251:28)[22m
-      [2mat sync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:89:14)[22m
-      [2mat stopHiding - secret - don't use this - v1 ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/errors/rewrite-stack-trace.js[2m:47:12)[22m
-      [2mat transformSync ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:40:76)[22m
-      [2mat ScriptTransformer.transformSource ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:545:31)[22m
-      [2mat ScriptTransformer._transformAndBuildScript ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:674:40)[22m
-      [2mat ScriptTransformer.transform ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:726:19)[22m
-      [2mat Object.<anonymous> ([22m../../../node_modules/.pnpm/react-native@0.75.4_@babel+core@7.29.7_@babel+preset-env@7.29.7_@babel+core@7.29.7__@types+re_67c2yjddd65un2ti63gj7wzc2y/node_modules/react-native/jest/setup.js[2m:316:6)[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m[1m[31m5 failed[39m[22m, 5 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[31m FAIL [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m[1m[31m5 failed[39m[22m, 5 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mTest suite failed to run
-
-    [1m[31mJest encountered an unexpected token[39m[22m
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see [4mhttps://jestjs.io/docs/ecmascript-modules[24m for how to enable it.
-     • If you are trying to use TypeScript, see [4mhttps://jestjs.io/docs/getting-started#using-typescript[24m
-     • To have some of your "node_modules" files transformed, you can specify a custom [1m"transformIgnorePatterns"[22m in your config.
-     • If you need a custom transformation specify a [1m"transform"[22m option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the [1m"moduleNameMapper"[22m config option.
-
-    You'll find more details and examples of these config options in the docs:
-    [36mhttps://jestjs.io/docs/configuration[39m
-    For information about custom transformations, see:
-    [36mhttps://jestjs.io/docs/code-transformation[39m
-
-    [1m[31mDetails:[39m[22m
-
-    SyntaxError: /Users/king/Documents/ecclesia/node_modules/.pnpm/@react-native+js-polyfills@0.75.4/node_modules/@react-native/js-polyfills/error-guard.js: Missing semicolon. (14:4)
-
-    [0m [90m 12 |[39m [36mlet[39m _inGuard [33m=[39m [35m0[39m[33m;[39m
-     [90m 13 |[39m
-    [31m[1m>[22m[39m[90m 14 |[39m type [33mErrorHandler[39m [33m=[39m (error[33m:[39m mixed[33m,[39m isFatal[33m:[39m boolean) [33m=>[39m [36mvoid[39m[33m;[39m
-     [90m    |[39m     [31m[1m^[22m[39m
-     [90m 15 |[39m type [33mFn[39m[33m<[39m[33mArgs[39m[33m,[39m [33mReturn[39m[33m>[39m [33m=[39m ([33m...[39m[33mArgs[39m) [33m=>[39m [33mReturn[39m[33m;[39m
-     [90m 16 |[39m
-     [90m 17 |[39m [90m/**[39m[0m
-
-      [2mat constructor ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:369:19)[22m
-      [2mat Parser.raise ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6620:19)[22m
-      [2mat Parser.semicolon ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6916:10)[22m
-      [2mat Parser.parseExpressionStatement ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13314:10)[22m
-      [2mat Parser.parseStatementContent ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12928:19)[22m
-      [2mat Parser.parseStatementLike ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12796:17)[22m
-      [2mat Parser.parseModuleItem ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12773:17)[22m
-      [2mat Parser.parseBlockOrModuleBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13345:36)[22m
-      [2mat Parser.parseBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13338:10)[22m
-      [2mat Parser.parseProgram ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12651:10)[22m
-      [2mat Parser.parseTopLevel ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12641:25)[22m
-      [2mat Parser.parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14517:25)[22m
-      [2mat parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14551:38)[22m
-      [2mat parser ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/parser/index.js[2m:41:34)[22m
-          at parser.next (<anonymous>)
-      [2mat normalizeFile ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/normalize-file.js[2m:51:37)[22m
-          at normalizeFile.next (<anonymous>)
-      [2mat run ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/index.js[2m:22:50)[22m
-          at run.next (<anonymous>)
-      [2mat transform ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:22:33)[22m
-          at transform.next (<anonymous>)
-      [2mat evaluateSync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:251:28)[22m
-      [2mat sync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:89:14)[22m
-      [2mat stopHiding - secret - don't use this - v1 ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/errors/rewrite-stack-trace.js[2m:47:12)[22m
-      [2mat transformSync ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:40:76)[22m
-      [2mat ScriptTransformer.transformSource ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:545:31)[22m
-      [2mat ScriptTransformer._transformAndBuildScript ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:674:40)[22m
-      [2mat ScriptTransformer.transform ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:726:19)[22m
-      [2mat Object.<anonymous> ([22m../../../node_modules/.pnpm/react-native@0.75.4_@babel+core@7.29.7_@babel+preset-env@7.29.7_@babel+core@7.29.7__@types+re_67c2yjddd65un2ti63gj7wzc2y/node_modules/react-native/jest/setup.js[2m:316:6)[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m[1m[31m5 failed[39m[22m, 5 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[31m FAIL [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m[1m[31m5 failed[39m[22m, 5 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mTest suite failed to run
-
-    [1m[31mJest encountered an unexpected token[39m[22m
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see [4mhttps://jestjs.io/docs/ecmascript-modules[24m for how to enable it.
-     • If you are trying to use TypeScript, see [4mhttps://jestjs.io/docs/getting-started#using-typescript[24m
-     • To have some of your "node_modules" files transformed, you can specify a custom [1m"transformIgnorePatterns"[22m in your config.
-     • If you need a custom transformation specify a [1m"transform"[22m option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the [1m"moduleNameMapper"[22m config option.
-
-    You'll find more details and examples of these config options in the docs:
-    [36mhttps://jestjs.io/docs/configuration[39m
-    For information about custom transformations, see:
-    [36mhttps://jestjs.io/docs/code-transformation[39m
-
-    [1m[31mDetails:[39m[22m
-
-    SyntaxError: /Users/king/Documents/ecclesia/node_modules/.pnpm/@react-native+js-polyfills@0.75.4/node_modules/@react-native/js-polyfills/error-guard.js: Missing semicolon. (14:4)
-
-    [0m [90m 12 |[39m [36mlet[39m _inGuard [33m=[39m [35m0[39m[33m;[39m
-     [90m 13 |[39m
-    [31m[1m>[22m[39m[90m 14 |[39m type [33mErrorHandler[39m [33m=[39m (error[33m:[39m mixed[33m,[39m isFatal[33m:[39m boolean) [33m=>[39m [36mvoid[39m[33m;[39m
-     [90m    |[39m     [31m[1m^[22m[39m
-     [90m 15 |[39m type [33mFn[39m[33m<[39m[33mArgs[39m[33m,[39m [33mReturn[39m[33m>[39m [33m=[39m ([33m...[39m[33mArgs[39m) [33m=>[39m [33mReturn[39m[33m;[39m
-     [90m 16 |[39m
-     [90m 17 |[39m [90m/**[39m[0m
-
-      [2mat constructor ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:369:19)[22m
-      [2mat Parser.raise ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6620:19)[22m
-      [2mat Parser.semicolon ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6916:10)[22m
-      [2mat Parser.parseExpressionStatement ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13314:10)[22m
-      [2mat Parser.parseStatementContent ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12928:19)[22m
-      [2mat Parser.parseStatementLike ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12796:17)[22m
-      [2mat Parser.parseModuleItem ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12773:17)[22m
-      [2mat Parser.parseBlockOrModuleBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13345:36)[22m
-      [2mat Parser.parseBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13338:10)[22m
-      [2mat Parser.parseProgram ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12651:10)[22m
-      [2mat Parser.parseTopLevel ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12641:25)[22m
-      [2mat Parser.parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14517:25)[22m
-      [2mat parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14551:38)[22m
-      [2mat parser ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/parser/index.js[2m:41:34)[22m
-          at parser.next (<anonymous>)
-      [2mat normalizeFile ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/normalize-file.js[2m:51:37)[22m
-          at normalizeFile.next (<anonymous>)
-      [2mat run ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/index.js[2m:22:50)[22m
-          at run.next (<anonymous>)
-      [2mat transform ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:22:33)[22m
-          at transform.next (<anonymous>)
-      [2mat evaluateSync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:251:28)[22m
-      [2mat sync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:89:14)[22m
-      [2mat stopHiding - secret - don't use this - v1 ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/errors/rewrite-stack-trace.js[2m:47:12)[22m
-      [2mat transformSync ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:40:76)[22m
-      [2mat ScriptTransformer.transformSource ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:545:31)[22m
-      [2mat ScriptTransformer._transformAndBuildScript ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:674:40)[22m
-      [2mat ScriptTransformer.transform ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:726:19)[22m
-      [2mat Object.<anonymous> ([22m../../../node_modules/.pnpm/react-native@0.75.4_@babel+core@7.29.7_@babel+preset-env@7.29.7_@babel+core@7.29.7__@types+re_67c2yjddd65un2ti63gj7wzc2y/node_modules/react-native/jest/setup.js[2m:316:6)[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m[1m[31m5 failed[39m[22m, 5 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[31m FAIL [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m[1m[31m5 failed[39m[22m, 5 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mTest suite failed to run
-
-    [1m[31mJest encountered an unexpected token[39m[22m
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see [4mhttps://jestjs.io/docs/ecmascript-modules[24m for how to enable it.
-     • If you are trying to use TypeScript, see [4mhttps://jestjs.io/docs/getting-started#using-typescript[24m
-     • To have some of your "node_modules" files transformed, you can specify a custom [1m"transformIgnorePatterns"[22m in your config.
-     • If you need a custom transformation specify a [1m"transform"[22m option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the [1m"moduleNameMapper"[22m config option.
-
-    You'll find more details and examples of these config options in the docs:
-    [36mhttps://jestjs.io/docs/configuration[39m
-    For information about custom transformations, see:
-    [36mhttps://jestjs.io/docs/code-transformation[39m
-
-    [1m[31mDetails:[39m[22m
-
-    SyntaxError: /Users/king/Documents/ecclesia/node_modules/.pnpm/@react-native+js-polyfills@0.75.4/node_modules/@react-native/js-polyfills/error-guard.js: Missing semicolon. (14:4)
-
-    [0m [90m 12 |[39m [36mlet[39m _inGuard [33m=[39m [35m0[39m[33m;[39m
-     [90m 13 |[39m
-    [31m[1m>[22m[39m[90m 14 |[39m type [33mErrorHandler[39m [33m=[39m (error[33m:[39m mixed[33m,[39m isFatal[33m:[39m boolean) [33m=>[39m [36mvoid[39m[33m;[39m
-     [90m    |[39m     [31m[1m^[22m[39m
-     [90m 15 |[39m type [33mFn[39m[33m<[39m[33mArgs[39m[33m,[39m [33mReturn[39m[33m>[39m [33m=[39m ([33m...[39m[33mArgs[39m) [33m=>[39m [33mReturn[39m[33m;[39m
-     [90m 16 |[39m
-     [90m 17 |[39m [90m/**[39m[0m
-
-      [2mat constructor ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:369:19)[22m
-      [2mat Parser.raise ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6620:19)[22m
-      [2mat Parser.semicolon ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6916:10)[22m
-      [2mat Parser.parseExpressionStatement ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13314:10)[22m
-      [2mat Parser.parseStatementContent ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12928:19)[22m
-      [2mat Parser.parseStatementLike ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12796:17)[22m
-      [2mat Parser.parseModuleItem ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12773:17)[22m
-      [2mat Parser.parseBlockOrModuleBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13345:36)[22m
-      [2mat Parser.parseBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13338:10)[22m
-      [2mat Parser.parseProgram ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12651:10)[22m
-      [2mat Parser.parseTopLevel ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12641:25)[22m
-      [2mat Parser.parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14517:25)[22m
-      [2mat parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14551:38)[22m
-      [2mat parser ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/parser/index.js[2m:41:34)[22m
-          at parser.next (<anonymous>)
-      [2mat normalizeFile ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/normalize-file.js[2m:51:37)[22m
-          at normalizeFile.next (<anonymous>)
-      [2mat run ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/index.js[2m:22:50)[22m
-          at run.next (<anonymous>)
-      [2mat transform ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:22:33)[22m
-          at transform.next (<anonymous>)
-      [2mat evaluateSync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:251:28)[22m
-      [2mat sync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:89:14)[22m
-      [2mat stopHiding - secret - don't use this - v1 ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/errors/rewrite-stack-trace.js[2m:47:12)[22m
-      [2mat transformSync ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:40:76)[22m
-      [2mat ScriptTransformer.transformSource ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:545:31)[22m
-      [2mat ScriptTransformer._transformAndBuildScript ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:674:40)[22m
-      [2mat ScriptTransformer.transform ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:726:19)[22m
-      [2mat Object.<anonymous> ([22m../../../node_modules/.pnpm/react-native@0.75.4_@babel+core@7.29.7_@babel+preset-env@7.29.7_@babel+core@7.29.7__@types+re_67c2yjddd65un2ti63gj7wzc2y/node_modules/react-native/jest/setup.js[2m:316:6)[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m[1m[31m5 failed[39m[22m, 5 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m[1m[31m11 failed[39m[22m, 11 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[31m FAIL [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m[1m[31m11 failed[39m[22m, 11 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mTest suite failed to run
-
-    [1m[31mJest encountered an unexpected token[39m[22m
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see [4mhttps://jestjs.io/docs/ecmascript-modules[24m for how to enable it.
-     • If you are trying to use TypeScript, see [4mhttps://jestjs.io/docs/getting-started#using-typescript[24m
-     • To have some of your "node_modules" files transformed, you can specify a custom [1m"transformIgnorePatterns"[22m in your config.
-     • If you need a custom transformation specify a [1m"transform"[22m option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the [1m"moduleNameMapper"[22m config option.
-
-    You'll find more details and examples of these config options in the docs:
-    [36mhttps://jestjs.io/docs/configuration[39m
-    For information about custom transformations, see:
-    [36mhttps://jestjs.io/docs/code-transformation[39m
-
-    [1m[31mDetails:[39m[22m
-
-    SyntaxError: /Users/king/Documents/ecclesia/node_modules/.pnpm/@react-native+js-polyfills@0.75.4/node_modules/@react-native/js-polyfills/error-guard.js: Missing semicolon. (14:4)
-
-    [0m [90m 12 |[39m [36mlet[39m _inGuard [33m=[39m [35m0[39m[33m;[39m
-     [90m 13 |[39m
-    [31m[1m>[22m[39m[90m 14 |[39m type [33mErrorHandler[39m [33m=[39m (error[33m:[39m mixed[33m,[39m isFatal[33m:[39m boolean) [33m=>[39m [36mvoid[39m[33m;[39m
-     [90m    |[39m     [31m[1m^[22m[39m
-     [90m 15 |[39m type [33mFn[39m[33m<[39m[33mArgs[39m[33m,[39m [33mReturn[39m[33m>[39m [33m=[39m ([33m...[39m[33mArgs[39m) [33m=>[39m [33mReturn[39m[33m;[39m
-     [90m 16 |[39m
-     [90m 17 |[39m [90m/**[39m[0m
-
-      [2mat constructor ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:369:19)[22m
-      [2mat Parser.raise ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6620:19)[22m
-      [2mat Parser.semicolon ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6916:10)[22m
-      [2mat Parser.parseExpressionStatement ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13314:10)[22m
-      [2mat Parser.parseStatementContent ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12928:19)[22m
-      [2mat Parser.parseStatementLike ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12796:17)[22m
-      [2mat Parser.parseModuleItem ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12773:17)[22m
-      [2mat Parser.parseBlockOrModuleBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13345:36)[22m
-      [2mat Parser.parseBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13338:10)[22m
-      [2mat Parser.parseProgram ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12651:10)[22m
-      [2mat Parser.parseTopLevel ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12641:25)[22m
-      [2mat Parser.parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14517:25)[22m
-      [2mat parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14551:38)[22m
-      [2mat parser ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/parser/index.js[2m:41:34)[22m
-          at parser.next (<anonymous>)
-      [2mat normalizeFile ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/normalize-file.js[2m:51:37)[22m
-          at normalizeFile.next (<anonymous>)
-      [2mat run ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/index.js[2m:22:50)[22m
-          at run.next (<anonymous>)
-      [2mat transform ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:22:33)[22m
-          at transform.next (<anonymous>)
-      [2mat evaluateSync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:251:28)[22m
-      [2mat sync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:89:14)[22m
-      [2mat stopHiding - secret - don't use this - v1 ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/errors/rewrite-stack-trace.js[2m:47:12)[22m
-      [2mat transformSync ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:40:76)[22m
-      [2mat ScriptTransformer.transformSource ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:545:31)[22m
-      [2mat ScriptTransformer._transformAndBuildScript ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:674:40)[22m
-      [2mat ScriptTransformer.transform ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:726:19)[22m
-      [2mat Object.<anonymous> ([22m../../../node_modules/.pnpm/react-native@0.75.4_@babel+core@7.29.7_@babel+preset-env@7.29.7_@babel+core@7.29.7__@types+re_67c2yjddd65un2ti63gj7wzc2y/node_modules/react-native/jest/setup.js[2m:316:6)[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m[1m[31m11 failed[39m[22m, 11 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[31m FAIL [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m[1m[31m11 failed[39m[22m, 11 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mTest suite failed to run
-
-    [1m[31mJest encountered an unexpected token[39m[22m
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see [4mhttps://jestjs.io/docs/ecmascript-modules[24m for how to enable it.
-     • If you are trying to use TypeScript, see [4mhttps://jestjs.io/docs/getting-started#using-typescript[24m
-     • To have some of your "node_modules" files transformed, you can specify a custom [1m"transformIgnorePatterns"[22m in your config.
-     • If you need a custom transformation specify a [1m"transform"[22m option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the [1m"moduleNameMapper"[22m config option.
-
-    You'll find more details and examples of these config options in the docs:
-    [36mhttps://jestjs.io/docs/configuration[39m
-    For information about custom transformations, see:
-    [36mhttps://jestjs.io/docs/code-transformation[39m
-
-    [1m[31mDetails:[39m[22m
-
-    SyntaxError: /Users/king/Documents/ecclesia/node_modules/.pnpm/@react-native+js-polyfills@0.75.4/node_modules/@react-native/js-polyfills/error-guard.js: Missing semicolon. (14:4)
-
-    [0m [90m 12 |[39m [36mlet[39m _inGuard [33m=[39m [35m0[39m[33m;[39m
-     [90m 13 |[39m
-    [31m[1m>[22m[39m[90m 14 |[39m type [33mErrorHandler[39m [33m=[39m (error[33m:[39m mixed[33m,[39m isFatal[33m:[39m boolean) [33m=>[39m [36mvoid[39m[33m;[39m
-     [90m    |[39m     [31m[1m^[22m[39m
-     [90m 15 |[39m type [33mFn[39m[33m<[39m[33mArgs[39m[33m,[39m [33mReturn[39m[33m>[39m [33m=[39m ([33m...[39m[33mArgs[39m) [33m=>[39m [33mReturn[39m[33m;[39m
-     [90m 16 |[39m
-     [90m 17 |[39m [90m/**[39m[0m
-
-      [2mat constructor ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:369:19)[22m
-      [2mat Parser.raise ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6620:19)[22m
-      [2mat Parser.semicolon ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:6916:10)[22m
-      [2mat Parser.parseExpressionStatement ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13314:10)[22m
-      [2mat Parser.parseStatementContent ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12928:19)[22m
-      [2mat Parser.parseStatementLike ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12796:17)[22m
-      [2mat Parser.parseModuleItem ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12773:17)[22m
-      [2mat Parser.parseBlockOrModuleBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13345:36)[22m
-      [2mat Parser.parseBlockBody ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:13338:10)[22m
-      [2mat Parser.parseProgram ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12651:10)[22m
-      [2mat Parser.parseTopLevel ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:12641:25)[22m
-      [2mat Parser.parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14517:25)[22m
-      [2mat parse ([22m../../../node_modules/.pnpm/@babel+parser@7.29.8/node_modules/@babel/parser/lib/index.js[2m:14551:38)[22m
-      [2mat parser ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/parser/index.js[2m:41:34)[22m
-          at parser.next (<anonymous>)
-      [2mat normalizeFile ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/normalize-file.js[2m:51:37)[22m
-          at normalizeFile.next (<anonymous>)
-      [2mat run ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/index.js[2m:22:50)[22m
-          at run.next (<anonymous>)
-      [2mat transform ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:22:33)[22m
-          at transform.next (<anonymous>)
-      [2mat evaluateSync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:251:28)[22m
-      [2mat sync ([22m../../../node_modules/.pnpm/gensync@1.0.0-beta.2/node_modules/gensync/index.js[2m:89:14)[22m
-      [2mat stopHiding - secret - don't use this - v1 ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/errors/rewrite-stack-trace.js[2m:47:12)[22m
-      [2mat transformSync ([22m../../../node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transform.js[2m:40:76)[22m
-      [2mat ScriptTransformer.transformSource ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:545:31)[22m
-      [2mat ScriptTransformer._transformAndBuildScript ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:674:40)[22m
-      [2mat ScriptTransformer.transform ([22m../../../node_modules/.pnpm/@jest+transform@29.7.0/node_modules/@jest/transform/build/ScriptTransformer.js[2m:726:19)[22m
-      [2mat Object.<anonymous> ([22m../../../node_modules/.pnpm/react-native@0.75.4_@babel+core@7.29.7_@babel+preset-env@7.29.7_@babel+core@7.29.7__@types+re_67c2yjddd65un2ti63gj7wzc2y/node_modules/react-native/jest/setup.js[2m:316:6)[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
-
-[1mTest Suites: [22m[1m[31m11 failed[39m[22m, 11 of 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[999D[K[1mTest Suites: [22m[1m[31m13 failed[39m[22m, 13 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1.573 s
-[2mRan all test suites[22m[2m.[22m

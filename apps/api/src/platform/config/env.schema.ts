@@ -146,6 +146,27 @@ const baseEnvSchema = z.object({
    * production value nobody has specified" reasoning as `COGNITO_*`).
    */
   CORS_ORIGIN: z.string().optional(),
+
+  /**
+   * `[Engagement Signal Ingestion Pipeline milestone]` AWS region the
+   * shared EventBridge bus lives in - identical purpose and citation
+   * (Blueprint §10.1/§10.2, ADR-007) as `apps/worker`'s own `AWS_REGION`.
+   * Required, no default: an API process that cannot reach the event bus
+   * should refuse to boot, not start and silently drop every Engagement
+   * Signal on the first publish attempt - same "fail fast" reasoning as
+   * `DATABASE_URL`/`COGNITO_REGION` above.
+   */
+  AWS_REGION: z.string().min(1, 'AWS_REGION is required'),
+
+  /**
+   * `[Engagement Signal Ingestion Pipeline milestone]` the single
+   * EventBridge bus name every Engagement Signal this process publishes
+   * lands on - identical purpose, citation, and default value as
+   * `apps/worker`'s own `EVENTBRIDGE_BUS_NAME` (Blueprint §10.2 names it
+   * `ecclesia-engagement-signals`; both processes publish onto the one
+   * shared bus, they do not each get their own).
+   */
+  EVENTBRIDGE_BUS_NAME: z.string().min(1).default('ecclesia-engagement-signals'),
 });
 
 /**

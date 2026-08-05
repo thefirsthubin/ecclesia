@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { DatabaseModule } from '../../platform/database/database.module';
+import { EventsModule } from '../../platform/events/events.module';
 import { RbacPlatformModule } from '../../platform/rbac/rbac-platform.module';
 import { PastoralCareModule } from '../pastoral-care/pastoral-care.module';
 import { PeopleModule } from '../people/people.module';
@@ -51,7 +52,7 @@ import { VisitorIntakeService } from './services/visitor-intake.service';
  * `apps/api/src/modules/ministry/MINISTRY_DESIGN_NOTES.md`.
  */
 @Module({
-  imports: [DatabaseModule, RbacPlatformModule, PeopleModule, PastoralCareModule],
+  imports: [DatabaseModule, RbacPlatformModule, EventsModule, PeopleModule, PastoralCareModule],
   controllers: [GatheringSeriesController, GatheringController, AttendanceRecordController, VisitorIntakeController],
   providers: [
     GatheringSeriesRepository,

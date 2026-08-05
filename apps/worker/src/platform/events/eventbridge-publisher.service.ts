@@ -9,19 +9,27 @@ import type { EnvConfig } from '../config/env.schema';
 /**
  * Publishes an `EngagementSignalEnvelope` (Blueprint §10.3) onto the one
  * shared EventBridge bus (§10.2, `EVENTBRIDGE_BUS_NAME`, defaulted to
- * `ecclesia-engagement-signals`). Used two ways in this milestone's
- * vertical slice:
+ * `ecclesia-engagement-signals`). Two producers exist in this codebase:
  *
- * 1. A live event producer in apps/api would call this to publish a
- *    real-time Engagement Signal - not built in this vertical slice (no
- *    apps/api call site emits one yet, same disclosed gap
- *    `INSIGHTS_DESIGN_NOTES.md` already names at length).
- * 2. `SilentDriftSweepJob` (this vertical slice) calls this to publish the
- *    *synthetic* Engagement Signal a scheduled sweep emits on detecting a
- *    condition (§10.8: "On detecting a condition, a sweep job emits a
- *    synthetic Engagement Signal onto the same bus... rather than calling
- *    the Notification service directly, keeping exactly one downstream
- *    reaction mechanism regardless of trigger source").
+ * 1. `apps/worker`'s own scheduled sweeps (`SilentDriftSweepJob`,
+ *    `FollowUpSlaSweepJob`, `AttendanceCompletenessSweepJob`,
+ *    `FlaggedTransactionSlaSweepJob`, `PledgeReminderSweepJob`) call this
+ *    class directly to publish the *synthetic* Engagement Signal a sweep
+ *    emits on detecting a condition (§10.8: "On detecting a condition, a
+ *    sweep job emits a synthetic Engagement Signal onto the same bus...
+ *    rather than calling the Notification service directly, keeping
+ *    exactly one downstream reaction mechanism regardless of trigger
+ *    source").
+ * 2. `apps/api`'s own domain-module services (Gatherings, People,
+ *    Pastoral Care, Stewardship, Insights) publish real-time Engagement
+ *    Signals via their own, separate `EventBridgePublisherService`
+ *    (`apps/api/src/platform/events/eventbridge-publisher.service.ts`,
+ *    not this class - see that file's own doc comment for why it's a
+ *    deliberate near-duplicate rather than a shared import). **This
+ *    corrects this comment's own prior text**, which said "no apps/api
+ *    call site emits one yet" - that gap was closed in the Engagement
+ *    Signal Ingestion Pipeline milestone; see
+ *    `ENGAGEMENT_SIGNAL_PIPELINE_DESIGN_NOTES.md` at the repo root.
  *
  * **`Source`/`DetailType` on the underlying `PutEventsCommand` are an
  * inferred implementation detail, not a Blueprint citation.** EventBridge's

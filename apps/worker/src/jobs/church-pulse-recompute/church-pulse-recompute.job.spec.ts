@@ -1,6 +1,34 @@
 import { ChurchPulseRecomputeJob } from './church-pulse-recompute.job';
 
 describe('ChurchPulseRecomputeJob', () => {
+  // `[Bug fix]` `computeAndStore`/`evaluateAndCreateAlertIfNeeded` build
+  // `now` from the real system clock (`new Date()` inside
+  // `church-pulse-recompute.job.ts` - not injected, so it can't be
+  // stubbed via a constructor argument). The two tests below feed
+  // `findRecentHistoryByScope` fixed, hardcoded history timestamps
+  // (2026-07-15 / 2026-08-01) and rely on both landing inside
+  // `evaluatePulseTrend`'s 21-day trailing window relative to *real*
+  // "now" - which only holds while the suite happens to run on or
+  // before 2026-08-05T00:00:00.000Z (`windowStart = now - 21d <=
+  // 2026-07-15T00:00:00.000Z`). Run this suite on or after that
+  // instant (confirmed failing via a real `pnpm test` run on
+  // 2026-08-05) and `evaluatePulseTrend` silently drops the July point
+  // from its window, collapsing `earliest`/`latest` to the same August
+  // point and producing a 0-point delta instead of the intended
+  // 20-point decline - not a logic bug in `evaluatePulseTrend` itself
+  // (its window-filtering is correct), just a test fixture that decays
+  // with the real calendar. Pinning the clock makes the window's
+  // relationship to the fixture dates deterministic regardless of when
+  // the suite actually runs.
+  beforeEach(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2026-08-01T12:00:00.000Z'));
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   function buildJob() {
     const repository = {
       listActiveBacentaGroups: jest.fn(),

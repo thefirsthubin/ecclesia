@@ -63,15 +63,18 @@ export const ACTIONS = [
 
   // [INFERRED - no PRD §17.3 row covers this] Digital visitor capture
   // (FR-GTH-04, BR-GTH-03). §16.4 names "Ushers, self-service (future)"
-  // as the primary actors, but "Usher" is not a modeled `Role`
-  // (`libs/rbac/src/lib/roles.ts` - the PRD §17.2 role catalog Sprint 1.1
-  // transcribed has no Usher entry, and §17.3's own column headers omit
-  // it too) - a genuine gap between the narrative personas and the
-  // formal RBAC model, not something this milestone invents a fix for.
-  // Modeled with the same role/scope shape as `gatherings.attendance.create`
-  // immediately above (the roles who can already record attendance are
-  // the same roles present at a Gathering to also capture a visitor).
-  // See GATHERINGS_DESIGN_NOTES.md.
+  // as the primary actors. "Usher" was not a modeled `Role` for a long
+  // time - the PRD §17.2 role catalog Sprint 1.1 transcribed has no
+  // Usher entry, and §17.3's own column headers omit it too, a genuine
+  // gap between the narrative personas and the formal RBAC model this
+  // codebase flagged but deliberately deferred. **Closed in the Usher
+  // role milestone**: `USHER` now exists in `libs/rbac/src/lib/roles.ts`
+  // and holds this action directly (BRANCH scope) - see
+  // `USHER_ROLE_PROPOSAL.md`/`USHER_ROLE_DESIGN_NOTES.md`. The other
+  // roles below were modeled with the same role/scope shape as
+  // `gatherings.attendance.create` immediately above (the roles who can
+  // already record attendance are the same roles present at a Gathering
+  // to also capture a visitor). See GATHERINGS_DESIGN_NOTES.md.
   'gatherings.visitor_intake.create',
   'gatherings.visitor_intake.read',
 

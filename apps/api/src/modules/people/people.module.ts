@@ -1,6 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 
 import { DatabaseModule } from '../../platform/database/database.module';
+import { EventsModule } from '../../platform/events/events.module';
 import { RbacPlatformModule } from '../../platform/rbac/rbac-platform.module';
 import { PastoralCareModule } from '../pastoral-care/pastoral-care.module';
 import { GroupController } from './controllers/group.controller';
@@ -58,7 +59,7 @@ import { RoleAssignmentService } from './services/role-assignment.service';
  * symmetrically here.
  */
 @Module({
-  imports: [DatabaseModule, RbacPlatformModule, forwardRef(() => PastoralCareModule)],
+  imports: [DatabaseModule, RbacPlatformModule, EventsModule, forwardRef(() => PastoralCareModule)],
   controllers: [PersonController, GroupController, GroupMembershipController, RoleAssignmentController],
   providers: [
     PersonRepository,

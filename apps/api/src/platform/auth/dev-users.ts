@@ -23,9 +23,15 @@
  * council-level role the RBAC catalog defines - PRD §17.2), "Super
  * Administrator" -> `ADMIN` (the only platform-configuration role the
  * catalog defines). This mapping is disclosed here, not silently assumed.
+ *
+ * `dev-usher` was added in the Usher role milestone, outside that
+ * original six - `USHER` didn't exist as a `Role` until this milestone,
+ * so it couldn't have been part of Sprint 1.1's brief. Added the same
+ * way `BASONTA_LEADER` originally was, so `apps/mobile`'s Usher persona
+ * has a real seeded login option to test against.
  */
 
-export type DevUserRole = 'RESIDENT_PASTOR' | 'ASSISTANT_PASTOR' | 'TREASURER' | 'BASONTA_LEADER' | 'COUNCIL_OVERSEER' | 'ADMIN';
+export type DevUserRole = 'RESIDENT_PASTOR' | 'ASSISTANT_PASTOR' | 'TREASURER' | 'BASONTA_LEADER' | 'USHER' | 'COUNCIL_OVERSEER' | 'ADMIN';
 
 export interface DevUserSeed {
   /**
@@ -74,6 +80,14 @@ export const DEV_USER_SEEDS: readonly DevUserSeed[] = [
     email: 'basonta.leader@dev.ecclesia.local',
     firstName: 'Basonta',
     lastName: 'Leader',
+  },
+  {
+    id: 'dev-usher',
+    label: 'Usher',
+    role: 'USHER',
+    email: 'usher@dev.ecclesia.local',
+    firstName: 'Branch',
+    lastName: 'Usher',
   },
   {
     id: 'dev-council-administrator',

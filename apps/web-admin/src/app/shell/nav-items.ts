@@ -47,6 +47,7 @@ const ROLE_LABELS: Record<RoleDto, string> = {
   BASONTA_LEADER: 'Basonta Leader',
   TREASURER: 'Treasurer',
   WORKER: 'Worker',
+  USHER: 'Usher',
   MEMBER: 'Member',
   VISITOR: 'Visitor',
   ADMIN: 'Admin',

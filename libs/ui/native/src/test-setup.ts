@@ -1,3 +1,5 @@
+import { configure } from '@testing-library/react-native';
+
 // @testing-library/react-native (v12+) ships its own Jest matchers
 // (toBeTruthy, toBeOnTheScreen, etc.) auto-registered on import - no
 // separate jest-native setup package is required (mirrors
@@ -11,3 +13,9 @@
 // This is React Native's own documented Jest workaround, not a
 // project-specific hack.
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
+
+// `[Bug fix, Mobile Personas sprint]` same reasoning as
+// `apps/mobile/src/test-setup.ts`'s identical call - RTL's `waitFor()`
+// default 1000ms poll timeout is separate from Jest's `testTimeout` and
+// was never overridden here either.
+configure({ asyncUtilTimeout: 10000 });

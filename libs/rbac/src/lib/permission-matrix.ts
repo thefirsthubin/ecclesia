@@ -38,6 +38,14 @@ const BASE_MATRIX: PermissionRule[] = [
     scope: 'BRANCH',
     reason: 'PRD §17.3 - name only, for transaction attribution',
   },
+  {
+    role: 'USHER',
+    action: 'people.person.read',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason:
+      "[Usher role milestone] USHER_ROLE_PROPOSAL.md §3's Open Question, resolved: BRANCH scope so the attendance-capture screen can search the whole congregation at a Branch-wide Gathering (§16.4: \"pre-populated roster... not a blank form,\" naming Ushers alongside Shepherds for this exact screen) - not OWN_GROUP, since an Usher leads no single Bacenta/Basonta to scope to. `libs/rbac` has no field-level restriction mechanism (checked - no PersonSummary/name-only DTO exists anywhere in this codebase, and the PRD's own \"R (name only)\" note on Treasurer's row above was never actually implemented as one either), so this grant returns the full PersonResponseDto same as every other people.person.read row - the mitigation is client-side only: apps/mobile's Usher Attendance screen deliberately renders/requests just name + lifecycle stage, never phone/email/address/dateOfBirth/guardianPersonId, even though the API response carries them. Documented as a known, disclosed limitation in USHER_ROLE_DESIGN_NOTES.md, not a solved one - true enforcement needs a future field-level RBAC/DTO-narrowing mechanism this milestone does not build.",
+  },
   { role: 'WORKER', action: 'people.person.read', effect: 'ALLOW', scope: 'SELF' },
   { role: 'MEMBER', action: 'people.person.read', effect: 'ALLOW', scope: 'SELF' },
   { role: 'MEMBER', action: 'people.person.update', effect: 'ALLOW', scope: 'SELF' },
@@ -182,6 +190,14 @@ const BASE_MATRIX: PermissionRule[] = [
   },
   { role: 'ADMIN', action: 'people.group.read', effect: 'ALLOW', scope: 'BRANCH' },
   { role: 'ADMIN', action: 'people.group.update', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'USHER',
+    action: 'people.group.read',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason:
+      "[Usher role milestone] Not in the original USHER_ROLE_PROPOSAL.md §3 grant table - found while building the Visitor Intake screen, whose bacentaPreferenceGroupId field (US-A2) needs a way to list Bacentas to let a guest name one. GroupListResourceContextGuard's own doc comment already scopes GET /groups list to exactly this shape (\"the intended audience for a branch-wide listing\") - BRANCH, not OWN_GROUP, since an Usher leads no single Bacenta. See USHER_ROLE_DESIGN_NOTES.md for the full disclosure of this addition beyond the approved proposal.",
+  },
 
   // --- Gathering: create/configure -----------------------------------
   { role: 'RESIDENT_PASTOR', action: 'gatherings.gathering.read', effect: 'ALLOW', scope: 'BRANCH' },
@@ -198,6 +214,13 @@ const BASE_MATRIX: PermissionRule[] = [
   },
   { role: 'BASONTA_LEADER', action: 'gatherings.gathering.create', effect: 'ALLOW', scope: 'OWN_GROUP' },
   { role: 'BASONTA_LEADER', action: 'gatherings.gathering.update', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  {
+    role: 'BASONTA_LEADER',
+    action: 'gatherings.gathering.read',
+    effect: 'ALLOW',
+    scope: 'OWN_GROUP',
+    reason: '[Bug fix, Mobile Personas sprint] the exact same gap the Shepherd Dashboard sprint already fixed for BACENTA_LEADER above (create/update existed, read did not) - a Basonta Leader could create/update their own Ministry Events but never GET one back, single or list, blocking the Ministry Leader mobile persona\'s Events tab entirely. See MOBILE_PERSONAS_DESIGN_NOTES.md.',
+  },
   { role: 'ADMIN', action: 'gatherings.gathering.create', effect: 'ALLOW', scope: 'BRANCH' },
   { role: 'ADMIN', action: 'gatherings.gathering.update', effect: 'ALLOW', scope: 'BRANCH' },
   {
@@ -207,6 +230,14 @@ const BASE_MATRIX: PermissionRule[] = [
     scope: 'BRANCH',
     reason:
       '[Bug fix, Gatherings Web Admin sprint] same class of gap the Shepherd Dashboard sprint already fixed for BACENTA_LEADER above - ADMIN held create/update here but no read at all, an oversight rather than a deliberate exclusion.',
+  },
+  {
+    role: 'USHER',
+    action: 'gatherings.gathering.read',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason:
+      '[Usher role milestone] USHER_ROLE_PROPOSAL.md §3 - to find today\'s Gathering(s) (typically a Branch-wide Sunday Service, ownerGroupId null) to record against. No create/update grant - an Usher never configures the Gathering itself, that stays Assistant Pastor/Bacenta Leader/Basonta Leader/Admin\'s job.',
   },
 
   // --- Attendance: record ---------------------------------------------
@@ -228,6 +259,13 @@ const BASE_MATRIX: PermissionRule[] = [
   },
   { role: 'BASONTA_LEADER', action: 'gatherings.attendance.create', effect: 'ALLOW', scope: 'OWN_GROUP' },
   {
+    role: 'BASONTA_LEADER',
+    action: 'gatherings.attendance.read',
+    effect: 'ALLOW',
+    scope: 'OWN_GROUP',
+    reason: '[Bug fix, Mobile Personas sprint] same class of gap as gatherings.gathering.read above - a Basonta Leader could record attendance for their own Ministry Events but not read it back.',
+  },
+  {
     role: 'ADMIN',
     action: 'gatherings.attendance.create',
     effect: 'ALLOW',
@@ -241,6 +279,21 @@ const BASE_MATRIX: PermissionRule[] = [
     scope: 'BRANCH',
     reason:
       '[Bug fix, Gatherings Web Admin sprint] same class of gap as gatherings.gathering.read\'s ADMIN row above - needed so the web-admin Gathering calendar can show per-Gathering attendance-completeness status (GET .../attendance-records/completeness) for an Admin, not just Resident Pastor.',
+  },
+  {
+    role: 'USHER',
+    action: 'gatherings.attendance.create',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason: '[Usher role milestone] USHER_ROLE_PROPOSAL.md §1/§5 - the role\'s core responsibility.',
+  },
+  {
+    role: 'USHER',
+    action: 'gatherings.attendance.read',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason:
+      '[Usher role milestone] Granted alongside .create from the start, not a follow-up bug fix like the BACENTA_LEADER/BASONTA_LEADER rows above - so the Usher Attendance screen\'s own "N recorded" progress indicator works from day one.',
   },
 
   // --- [INFERRED - no PRD §17.3 row covers this] Digital visitor capture
@@ -256,6 +309,14 @@ const BASE_MATRIX: PermissionRule[] = [
     effect: 'ALLOW',
     scope: 'BRANCH',
     reason: 'PRD §17.3 pattern - support cases only, mirroring gatherings.attendance.create',
+  },
+  {
+    role: 'USHER',
+    action: 'gatherings.visitor_intake.create',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason:
+      "[Usher role milestone] USHER_ROLE_PROPOSAL.md §1/§6 - the role's other core responsibility (US-A1). Not .read - no GET endpoint exists for this action anywhere in this codebase (only RESIDENT_PASTOR's row above holds it, unused), so it would be a dead grant.",
   },
 
   // --- Financial Transaction: record ("Recorded") --------------------

@@ -30,7 +30,10 @@ datasource db {
 // ---------------------------------------------------------------------
 
 /// Mirrors libs/rbac/src/lib/roles.ts's ROLES array exactly (PRD §17.2 +
-/// Blueprint §8.6's ACTING_RESIDENT_PASTOR).
+/// Blueprint §8.6's ACTING_RESIDENT_PASTOR + the Usher role milestone's
+/// USHER addition - see that file's own doc comment and
+/// USHER_ROLE_PROPOSAL.md for why USHER exists despite not being a
+/// literal §17.2 row).
 enum Role {
   RESIDENT_PASTOR
   ACTING_RESIDENT_PASTOR
@@ -39,6 +42,7 @@ enum Role {
   BASONTA_LEADER
   TREASURER
   WORKER
+  USHER
   MEMBER
   VISITOR
   ADMIN

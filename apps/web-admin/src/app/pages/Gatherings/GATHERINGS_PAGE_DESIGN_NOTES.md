@@ -69,19 +69,22 @@ duplicate queue.
 ## 5. Why Attendance Capture and Visitor Intake aren't on this page
 
 Both are named Usher-primary in PRD §16.4's own Key Surfaces table
-("Ushers, Shepherds, Basonta Leaders" / "Ushers, self-service (future)"),
-and `GATHERINGS_DESIGN_NOTES.md`'s own "Usher role gap" section already
-discloses that **no `USHER` role exists in `libs/rbac`'s role catalog at
-all** — a structural blocker, not a scope choice this page could route
-around. `gatherings.attendance.create`/`gatherings.visitor_intake.create`
-are granted to `BACENTA_LEADER`/`BASONTA_LEADER`/`ASSISTANT_PASTOR`/`ADMIN`
-as a disclosed stand-in, but those are mobile-primary at-the-door
-workflows (fast, tablet-optimized, "pre-populated roster with
-tap-to-mark-present") that don't fit a web-admin oversight page's shape
-even if the permission technically allows it. Building either here would
-mean designing a workflow UI for a role that doesn't formally exist yet -
-deferred pending the product decision `GATHERINGS_DESIGN_NOTES.md`
-already flags as needed.
+("Ushers, Shepherds, Basonta Leaders" / "Ushers, self-service (future)").
+At the time this page was built, `GATHERINGS_DESIGN_NOTES.md`'s own
+"Usher role gap" section disclosed that **no `USHER` role existed in
+`libs/rbac`'s role catalog at all** — a structural blocker, not a scope
+choice this page could route around.
+
+**Update (Usher role milestone)**: that gap is now closed — `USHER` is a
+real role (`USHER_ROLE_PROPOSAL.md`, repo root) — but the conclusion
+that these two flows don't belong on this page still holds, now as a
+deliberate scope decision rather than a structural block: both are
+fast, tablet-optimized, at-the-door workflows ("pre-populated roster
+with tap-to-mark-present," §16.4) that don't fit a web-admin oversight
+page's shape. They were built on `apps/mobile` instead
+(`UsherAttendanceScreen`/`VisitorIntakeScreen` — see
+`USHER_ROLE_DESIGN_NOTES.md`), mirroring every other persona's
+mobile-only precedent, not left undone.
 
 ## 6. Why Group filtering isn't built
 

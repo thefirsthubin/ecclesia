@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { DatabaseModule } from '../../platform/database/database.module';
+import { EventsModule } from '../../platform/events/events.module';
 import { RbacPlatformModule } from '../../platform/rbac/rbac-platform.module';
 import { PeopleModule } from '../people/people.module';
 import { BankDepositConfirmationController } from './controllers/bank-deposit-confirmation.controller';
@@ -52,7 +53,7 @@ import { ProjectService } from './services/project.service';
  * dependency or Gatherings' consumption of both.
  */
 @Module({
-  imports: [DatabaseModule, RbacPlatformModule, PeopleModule],
+  imports: [DatabaseModule, RbacPlatformModule, EventsModule, PeopleModule],
   controllers: [FinancialTransactionController, ExpenseController, ProjectController, PledgeController, BankDepositConfirmationController],
   providers: [
     FinancialTransactionRepository,

@@ -24,13 +24,36 @@
  */
 export const API_BASE_URL = 'http://localhost:3000/v1';
 
+/**
+ * `[People Intake milestone]` `body` carries the parsed JSON response body
+ * when the server returned one (every error response this backend sends is
+ * a JSON object - see `HttpExceptionFilter`/Nest's default), `undefined`
+ * when the response had no body or wasn't valid JSON (e.g. a network-layer
+ * failure the fetch itself never turned into a Response). This is what lets
+ * a 409 from `POST /people` (`ConflictException({ message, candidates })`,
+ * see `PersonService.create`) be read as a duplicate-candidate list instead
+ * of only a generic status code - no prior sprint's flow needed this, since
+ * nothing before the People Intake milestone read a structured error body.
+ */
 export class ApiError extends Error {
   constructor(
     message: string,
     public readonly status: number,
+    public readonly body?: unknown,
   ) {
     super(message);
     this.name = 'ApiError';
+  }
+}
+
+/** Best-effort JSON parse of a failed response's body - swallows parse
+ * failures (empty body, non-JSON body) rather than letting them mask the
+ * real `ApiError` with an unrelated `SyntaxError`. */
+async function readErrorBody(response: Response): Promise<unknown> {
+  try {
+    return await response.json();
+  } catch {
+    return undefined;
   }
 }
 
@@ -47,7 +70,7 @@ export async function apiGet<T>(path: string, options: ApiGetOptions = {}): Prom
 
   const response = await fetch(`${API_BASE_URL}${path}`, { headers, signal: options.signal });
   if (!response.ok) {
-    throw new ApiError(`Request to ${path} failed with status ${response.status}`, response.status);
+    throw new ApiError(`Request to ${path} failed with status ${response.status}`, response.status, await readErrorBody(response));
   }
   return (await response.json()) as T;
 }
@@ -70,7 +93,7 @@ export async function apiPatch<T>(path: string, body: unknown, options: ApiPatch
     signal: options.signal,
   });
   if (!response.ok) {
-    throw new ApiError(`Request to ${path} failed with status ${response.status}`, response.status);
+    throw new ApiError(`Request to ${path} failed with status ${response.status}`, response.status, await readErrorBody(response));
   }
   return (await response.json()) as T;
 }
@@ -98,7 +121,7 @@ export async function apiPost<T>(path: string, body: unknown, options: ApiPostOp
     signal: options.signal,
   });
   if (!response.ok) {
-    throw new ApiError(`Request to ${path} failed with status ${response.status}`, response.status);
+    throw new ApiError(`Request to ${path} failed with status ${response.status}`, response.status, await readErrorBody(response));
   }
   return (await response.json()) as T;
 }

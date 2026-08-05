@@ -66,6 +66,29 @@ export const ICON_REGISTRY = {
    * name exists in both platforms" rule above. */
   coins: 'Coins',
   clipboardList: 'ClipboardList',
+  /** `[Mobile Personas sprint]` Added for `apps/mobile`'s three new
+   * role-aware bottom tab bars (`AppShell.tsx`) - `landmark` (Finance
+   * Officer's Reconcile tab, a bank/deposit-reconciliation icon lucide
+   * ships under this exact name) and `building` (Resident Pastor's
+   * Cluster/Branch tab - `Building2`, lucide's multi-storey building
+   * glyph, a closer fit than the existing `home` which is already
+   * `Dashboard`'s icon on every persona's tab bar). Same "no existing
+   * entry close enough in meaning" reasoning as `coins`/`clipboardList`
+   * above; confirmed present under these exact export names in both
+   * `lucide-react` and `lucide-react-native` (both pinned to `1.28.0`)
+   * before adding. */
+  landmark: 'Landmark',
+  building: 'Building2',
+  /** `[Usher role milestone]` Added for `apps/mobile`'s new Usher bottom
+   * tab bar (`AppShell.tsx`) - `userPlus` (Visitor Intake tab, lucide's
+   * "add a person" glyph, matching the tab's own capture-a-new-guest
+   * purpose more precisely than the existing `user`/`users`, both already
+   * used elsewhere on this persona's own tab bar). Same "no existing
+   * entry close enough in meaning" reasoning as `coins`/`clipboardList`/
+   * `landmark`/`building` above; confirmed present as `UserPlus` in both
+   * `lucide-react` and `lucide-react-native` before adding
+   * (`node_modules/lucide-react{,-native}/dist/esm/icons/user-plus.mjs`). */
+  userPlus: 'UserPlus',
 } as const;
 
 export type IconName = keyof typeof ICON_REGISTRY;

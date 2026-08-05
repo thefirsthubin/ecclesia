@@ -1,8 +1,11 @@
+import { randomUUID } from 'crypto';
+
 import { Injectable, NotFoundException } from '@nestjs/common';
-import type { AlertResponseDto, ResolveAlertInput } from '@ecclesia/contracts';
+import type { AlertResponseDto, EngagementSignalEnvelope, ResolveAlertInput } from '@ecclesia/contracts';
 import { DEFAULT_PULSE_TREND_WINDOW_DAYS, evaluatePulseTrend } from '@ecclesia/domain-insights';
 import type { Alert, PulseScoreScopeType } from '@prisma/client';
 
+import { EventBridgePublisherService } from '../../../platform/events/eventbridge-publisher.service';
 import { AlertRepository } from '../repositories/alert.repository';
 import { PulseScoreHistoryRepository } from '../repositories/pulse-score-history.repository';
 
@@ -35,6 +38,7 @@ export class AlertService {
   constructor(
     private readonly alertRepository: AlertRepository,
     private readonly pulseScoreHistoryRepository: PulseScoreHistoryRepository,
+    private readonly eventPublisher: EventBridgePublisherService,
   ) {}
 
   /**
@@ -98,6 +102,26 @@ export class AlertService {
       resolvedByPersonId: actorPersonId,
       resolvedAt: new Date(),
     });
+
+    // `[Engagement Signal Ingestion Pipeline milestone]` Blueprint §10.4's
+    // `insights.alert_action_recorded` (Leadership engagement category -
+    // the one category in the six-signal catalog whose source is Insights
+    // itself, not another domain: a leader's own responsiveness to alerts
+    // is treated as an engagement signal in its own right). `resolved.status`
+    // is always `'ACTED'` or `'DISMISSED'` here (`ResolveAlertInput`'s
+    // `status` enum, `libs/contracts/src/lib/insights.schemas.ts`) - never
+    // `'OPEN'`, since `resolve()` only ever transitions out of it.
+    const envelope: EngagementSignalEnvelope = {
+      eventId: randomUUID(),
+      eventType: 'insights.alert_action_recorded',
+      schemaVersion: 1,
+      branchId: resolved.branchId,
+      occurredAt: (resolved.resolvedAt ?? new Date()).toISOString(),
+      subjectPersonId: actorPersonId,
+      payload: { alertId: resolved.id, action: resolved.status === 'ACTED' ? 'acted' : 'dismissed' },
+    };
+    await this.eventPublisher.publish(envelope);
+
     return toResponseDto(resolved);
   }
 

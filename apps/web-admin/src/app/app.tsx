@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { ThemeProvider } from '@ecclesia/ui-web';
+import { ThemeProvider, ToastProvider } from '@ecclesia/ui-web';
 
 import { AuthProvider, useAuth } from './auth/AuthContext';
 import { SessionRestoringScreen } from './auth/SessionRestoringScreen';
@@ -23,15 +23,24 @@ import { InsightsPage } from './pages/Insights/InsightsPage';
  * route tree: `/`, `/login`, `/dashboard`, and one stub per remaining
  * Design System §3.1 nav item. See `APPLICATION_SHELL_DESIGN_NOTES.md`
  * for the full reasoning behind every choice below.
+ *
+ * `[People Intake milestone]` `ToastProvider` mounts here for the first
+ * time - `libs/ui/web`'s own doc comment on it says to mount it once near
+ * the app root "(same expectation as `ThemeProvider`)"; nested directly
+ * inside `ThemeProvider` since every toast reads theme tokens. No earlier
+ * sprint needed it (every prior page's success/error feedback was inline
+ * form state), so this was previously built but unused.
  */
 export function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <RouterProvider>
-          <AppRoutes />
-        </RouterProvider>
-      </AuthProvider>
+      <ToastProvider>
+        <AuthProvider>
+          <RouterProvider>
+            <AppRoutes />
+          </RouterProvider>
+        </AuthProvider>
+      </ToastProvider>
     </ThemeProvider>
   );
 }

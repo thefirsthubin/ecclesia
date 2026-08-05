@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { DatabaseModule } from '../../platform/database/database.module';
+import { EventsModule } from '../../platform/events/events.module';
 import { RbacPlatformModule } from '../../platform/rbac/rbac-platform.module';
 import { PeopleModule } from '../people/people.module';
 import { AlertController } from './controllers/alert.controller';
@@ -36,7 +37,7 @@ import { PulseScoreService } from './services/pulse-score.service';
  * controller.
  */
 @Module({
-  imports: [DatabaseModule, RbacPlatformModule, PeopleModule],
+  imports: [DatabaseModule, RbacPlatformModule, EventsModule, PeopleModule],
   controllers: [DashboardController, AlertController],
   providers: [
     EngagementSignalRepository,

@@ -15,11 +15,14 @@ backend can honestly support this pass:
 |---|---|---|
 | Search & directory | Yes | `PeopleListPage` |
 | Person profile view | Partial | `PersonDetailPage` — profile fields + Group-membership history + Role-Assignment history (FR-PPL-07). Attendance/giving summaries are Gatherings'/Stewardship's own data — out of scope here, same reasoning as `APPLICATION_SHELL_DESIGN_NOTES.md` §5's alert-severity omission: don't fabricate a field the API doesn't return. |
-| New Person / visitor intake form | No | Deferred — §6 |
-| Duplicate resolution queue | No | Deferred — §6, and already flagged as a narrower-than-PRD substitute in `PEOPLE_DESIGN_NOTES.md`'s "What this milestone deliberately does not build" |
-| Bacenta/Basonta reassignment flow | No | Deferred — §6 |
+| New Person / visitor intake form | Yes | `[People Intake milestone]` `NewPersonForm` — see `PEOPLE_INTAKE_DESIGN_NOTES.md` at the repo root |
+| Duplicate resolution / candidate review | Yes | `[People Intake milestone]` same component — FR-PPL-02's 409 resubmission contract, see `PEOPLE_INTAKE_DESIGN_NOTES.md` |
+| Bacenta/Basonta reassignment flow | No | Still deferred — §6 |
 
-This sprint is read-only: list, search, and view history. No mutation UI.
+This sprint was originally read-only (list, search, view history); the
+People Intake milestone added the one write flow this doc's own §9 had
+flagged as belonging in its own sprint. See `PEOPLE_INTAKE_DESIGN_NOTES.md`
+for that work — not repeated here.
 
 ## 2. Backend gap-filling (companion to this doc)
 
@@ -133,6 +136,8 @@ invented for web.
   `Card`, each history row showing active/past status and date range.
 - `GroupNameText.tsx` — id→name resolver, §7.
 - `usePeopleData.ts` — hooks + `resolveDefaultPeopleQuery`, §3/§7.
+- `NewPersonForm.tsx` — `[People Intake milestone]` Create Person +
+  duplicate-candidate review; see `PEOPLE_INTAKE_DESIGN_NOTES.md`.
 
 **No new `libs/ui/web` primitives needed** — `Avatar`, `Badge`, `Card`,
 `Divider`, `EmptyState`, `ErrorState`, `Heading`, `Input`, `Skeleton`,
@@ -146,14 +151,16 @@ internally — §6.
 
 ## 9. Deferred / explicitly out of scope this pass
 
-- New Person / visitor intake form (PRD §16.1) — a write flow with its
-  own validation/duplicate-detection UX; belongs in its own sprint.
-- Duplicate resolution queue UI — no persistent queue exists server-side
-  yet either (`PEOPLE_DESIGN_NOTES.md`'s own "deliberately does not
-  build" list); nothing to build a UI against.
+- ~~New Person / visitor intake form~~ — built, People Intake milestone,
+  see `PEOPLE_INTAKE_DESIGN_NOTES.md`.
+- ~~Duplicate resolution queue UI~~ — built as a per-submission
+  candidate-review step (not a persistent queue — none exists
+  server-side, unchanged from `PEOPLE_DESIGN_NOTES.md`'s own
+  "deliberately does not build" list), see `PEOPLE_INTAKE_DESIGN_NOTES.md`.
 - Bacenta/Basonta reassignment flow (PRD §16.1) — a write flow (calls the
-  existing `group-membership.controller.ts` `POST`), deferred with the
-  intake form.
+  existing `group-membership.controller.ts` `POST`), still deferred —
+  out of scope for the People Intake milestone too, which only covered
+  Person creation.
 - ASSISTANT_PASTOR multi-Bacenta cluster browsing — §3's `[Design
   Decision]` simplification to "first Bacenta only."
 - Pagination — `GET /people` returns the full scoped result set

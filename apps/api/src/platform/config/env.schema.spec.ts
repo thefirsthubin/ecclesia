@@ -20,11 +20,19 @@ const VALID_COGNITO_ENV = {
 // required" now has to say so explicitly rather than relying on
 // NODE_ENV's default inferring it incidentally. The inference behavior
 // itself gets its own dedicated `describe('AUTH_MODE')` block below.
+// `[Engagement Signal Ingestion Pipeline milestone]` `AWS_REGION` is
+// unconditionally required by `env.schema.ts` (no `.default()`), the same
+// "fail fast" reasoning as `DATABASE_URL`/`APP_DATABASE_URL` - every env
+// fixture in this file that expects a successful `validateEnv()` call now
+// needs it too. `EVENTBRIDGE_BUS_NAME` is not added here since it has a
+// documented default (see the dedicated test for that below).
+const VALID_AWS_REGION_ENV = { AWS_REGION: 'us-east-1' };
 const VALID_ENV = {
   DATABASE_URL: VALID_DATABASE_URL,
   APP_DATABASE_URL: VALID_APP_DATABASE_URL,
   AUTH_MODE: 'cognito',
   ...VALID_COGNITO_ENV,
+  ...VALID_AWS_REGION_ENV,
 };
 
 describe('validateEnv', () => {
@@ -35,8 +43,30 @@ describe('validateEnv', () => {
       PORT: 3000,
       LOG_LEVEL: 'info',
       API_DOCS_ENABLED: true,
+      EVENTBRIDGE_BUS_NAME: 'ecclesia-engagement-signals',
       ...VALID_ENV,
     });
+  });
+
+  it('rejects a missing AWS_REGION - the process must refuse to boot without a region to reach EventBridge in', () => {
+    expect(() =>
+      validateEnv({
+        DATABASE_URL: VALID_DATABASE_URL,
+        APP_DATABASE_URL: VALID_APP_DATABASE_URL,
+        AUTH_MODE: 'cognito',
+        ...VALID_COGNITO_ENV,
+      }),
+    ).toThrow(/AWS_REGION/);
+  });
+
+  it('EVENTBRIDGE_BUS_NAME defaults to the Blueprint-named bus when unset', () => {
+    const config = validateEnv(VALID_ENV);
+    expect(config.EVENTBRIDGE_BUS_NAME).toBe('ecclesia-engagement-signals');
+  });
+
+  it('accepts an explicit EVENTBRIDGE_BUS_NAME override', () => {
+    const config = validateEnv({ ...VALID_ENV, EVENTBRIDGE_BUS_NAME: 'ecclesia-engagement-signals-staging' });
+    expect(config.EVENTBRIDGE_BUS_NAME).toBe('ecclesia-engagement-signals-staging');
   });
 
   it('coerces PORT from a string, as process.env always provides', () => {
@@ -88,6 +118,7 @@ describe('validateEnv', () => {
     const config = validateEnv({
       AUTH_MODE: 'cognito',
       ...VALID_COGNITO_ENV,
+      ...VALID_AWS_REGION_ENV,
       DATABASE_URL: 'postgres://ecclesia:ecclesia@localhost:5432/ecclesia_dev',
       APP_DATABASE_URL: VALID_APP_DATABASE_URL,
     });
@@ -102,6 +133,7 @@ describe('validateEnv', () => {
         APP_DATABASE_URL: VALID_APP_DATABASE_URL,
         COGNITO_CLIENT_ID: 'x',
         COGNITO_REGION: 'us-east-1',
+        ...VALID_AWS_REGION_ENV,
       }),
     ).toThrow(/COGNITO_USER_POOL_ID/);
   });
@@ -120,6 +152,7 @@ describe('validateEnv', () => {
         APP_DATABASE_URL: VALID_APP_DATABASE_URL,
         COGNITO_USER_POOL_ID: VALID_COGNITO_ENV.COGNITO_USER_POOL_ID,
         COGNITO_REGION: 'us-east-1',
+        ...VALID_AWS_REGION_ENV,
       }),
     ).toThrow(/COGNITO_CLIENT_ID/);
   });
@@ -132,6 +165,7 @@ describe('validateEnv', () => {
         APP_DATABASE_URL: VALID_APP_DATABASE_URL,
         COGNITO_USER_POOL_ID: VALID_COGNITO_ENV.COGNITO_USER_POOL_ID,
         COGNITO_CLIENT_ID: VALID_COGNITO_ENV.COGNITO_CLIENT_ID,
+        ...VALID_AWS_REGION_ENV,
       }),
     ).toThrow(/COGNITO_REGION/);
   });
@@ -149,6 +183,7 @@ describe('validateEnv', () => {
       PORT: 8080,
       LOG_LEVEL: 'warn',
       API_DOCS_ENABLED: false,
+      EVENTBRIDGE_BUS_NAME: 'ecclesia-engagement-signals',
       ...VALID_ENV,
     });
   });
@@ -162,7 +197,12 @@ describe('validateEnv', () => {
  */
 describe('AUTH_MODE', () => {
   it('defaults to development when NODE_ENV=development and AUTH_MODE is unset, with no COGNITO_* required', () => {
-    const config = validateEnv({ NODE_ENV: 'development', DATABASE_URL: VALID_DATABASE_URL, APP_DATABASE_URL: VALID_APP_DATABASE_URL });
+    const config = validateEnv({
+      NODE_ENV: 'development',
+      DATABASE_URL: VALID_DATABASE_URL,
+      APP_DATABASE_URL: VALID_APP_DATABASE_URL,
+      ...VALID_AWS_REGION_ENV,
+    });
     expect(config.AUTH_MODE).toBe('development');
   });
 
@@ -172,6 +212,7 @@ describe('AUTH_MODE', () => {
       DATABASE_URL: VALID_DATABASE_URL,
       APP_DATABASE_URL: VALID_APP_DATABASE_URL,
       ...VALID_COGNITO_ENV,
+      ...VALID_AWS_REGION_ENV,
     });
     expect(config.AUTH_MODE).toBe('cognito');
   });
@@ -182,6 +223,7 @@ describe('AUTH_MODE', () => {
       DATABASE_URL: VALID_DATABASE_URL,
       APP_DATABASE_URL: VALID_APP_DATABASE_URL,
       ...VALID_COGNITO_ENV,
+      ...VALID_AWS_REGION_ENV,
     });
     expect(config.AUTH_MODE).toBe('cognito');
   });
@@ -197,6 +239,7 @@ describe('AUTH_MODE', () => {
       DATABASE_URL: VALID_DATABASE_URL,
       APP_DATABASE_URL: VALID_APP_DATABASE_URL,
       AUTH_MODE: 'development',
+      ...VALID_AWS_REGION_ENV,
     });
     expect(config.AUTH_MODE).toBe('development');
   });
@@ -207,6 +250,7 @@ describe('AUTH_MODE', () => {
       DATABASE_URL: VALID_DATABASE_URL,
       APP_DATABASE_URL: VALID_APP_DATABASE_URL,
       AUTH_MODE: 'development',
+      ...VALID_AWS_REGION_ENV,
     });
     expect(config.COGNITO_USER_POOL_ID).toBeUndefined();
     expect(config.COGNITO_CLIENT_ID).toBeUndefined();
@@ -220,6 +264,7 @@ describe('AUTH_MODE', () => {
         DATABASE_URL: VALID_DATABASE_URL,
         APP_DATABASE_URL: VALID_APP_DATABASE_URL,
         AUTH_MODE: 'development',
+        ...VALID_AWS_REGION_ENV,
       }),
     ).toThrow(/AUTH_MODE=development is not allowed when NODE_ENV=production/);
   });

@@ -1,7 +1,10 @@
+import { randomUUID } from 'crypto';
+
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { checkInboundTransactionTransition, isInboundTransactionState } from '@ecclesia/domain-stewardship';
 import type { InboundTransactionState } from '@ecclesia/domain-stewardship';
 import type {
+  EngagementSignalEnvelope,
   FinancialTransactionResponseDto,
   FlagFinancialTransactionInput,
   RecordFinancialTransactionInput,
@@ -9,6 +12,7 @@ import type {
 import type { ActorContext } from '@ecclesia/rbac';
 import type { FinancialTransaction } from '@prisma/client';
 
+import { EventBridgePublisherService } from '../../../platform/events/eventbridge-publisher.service';
 import { FinancialTransactionRepository } from '../repositories/financial-transaction.repository';
 
 function toResponseDto(transaction: FinancialTransaction, recordedByPersonId: string | null): FinancialTransactionResponseDto {
@@ -40,7 +44,10 @@ function toResponseDto(transaction: FinancialTransaction, recordedByPersonId: st
  */
 @Injectable()
 export class FinancialTransactionService {
-  constructor(private readonly financialTransactionRepository: FinancialTransactionRepository) {}
+  constructor(
+    private readonly financialTransactionRepository: FinancialTransactionRepository,
+    private readonly eventPublisher: EventBridgePublisherService,
+  ) {}
 
   /**
    * FR-STW-01/BR-STW-01/BR-STW-02: `sourceGroupId` present means a
@@ -69,6 +76,28 @@ export class FinancialTransactionService {
       initialState: 'RECORDED',
       actorUserId,
     });
+
+    // `[Engagement Signal Ingestion Pipeline milestone]` Blueprint §10.4's
+    // `giving.activity_recorded` (normalized for PRD §17.6's privacy
+    // boundary: personId + occurredAt only - no amount, transaction id, or
+    // channel; `payload` is deliberately empty). Only published when there
+    // is an individual `giverPersonId` to attribute it to - a
+    // Bacenta-collected offering (`sourceGroupId` set) has no individual
+    // giver by design (see this method's own doc comment above), so there
+    // is no Person whose engagement this fact could legitimately signal.
+    if (transaction.giverPersonId) {
+      const envelope: EngagementSignalEnvelope = {
+        eventId: randomUUID(),
+        eventType: 'giving.activity_recorded',
+        schemaVersion: 1,
+        branchId: transaction.branchId,
+        occurredAt: transaction.createdAt.toISOString(),
+        subjectPersonId: transaction.giverPersonId,
+        payload: {},
+      };
+      await this.eventPublisher.publish(envelope);
+    }
+
     return toResponseDto(transaction, actor.personId);
   }
 

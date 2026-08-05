@@ -1,8 +1,11 @@
+import { randomUUID } from 'crypto';
+
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { computeFollowUpTaskDueAt } from '@ecclesia/domain-pastoral-care';
 import type { FollowUpTaskTrigger } from '@ecclesia/domain-pastoral-care';
 import type {
   CreateFollowUpTaskInput,
+  EngagementSignalEnvelope,
   FollowUpTaskResponseDto,
   FollowUpTaskStatusDto,
   ListFollowUpTasksForActorQuery,
@@ -10,6 +13,7 @@ import type {
 import type { ActorContext } from '@ecclesia/rbac';
 import type { FollowUpTask, FollowUpTaskStatus } from '@prisma/client';
 
+import { EventBridgePublisherService } from '../../../platform/events/eventbridge-publisher.service';
 import { PersonScopeService } from '../../people/services/person-scope.service';
 import { FollowUpTaskRepository } from '../repositories/follow-up-task.repository';
 
@@ -57,6 +61,7 @@ export class FollowUpTaskService {
   constructor(
     private readonly followUpTaskRepository: FollowUpTaskRepository,
     private readonly personScopeService: PersonScopeService,
+    private readonly eventPublisher: EventBridgePublisherService,
   ) {}
 
   async create(actor: ActorContext, personId: string, input: CreateFollowUpTaskInput): Promise<FollowUpTaskResponseDto> {
@@ -120,6 +125,31 @@ export class FollowUpTaskService {
   async complete(id: string): Promise<FollowUpTaskResponseDto> {
     const existing = await this.requireOpenOrEscalated(id);
     const task = await this.followUpTaskRepository.update(existing.id, { status: 'COMPLETED' });
+
+    // `[Engagement Signal Ingestion Pipeline milestone]` Blueprint §10.4's
+    // `follow_up.completed` (Follow-up responsiveness category).
+    // `subjectPersonId` is the Person the follow-up was *about*
+    // (`task.personId`), not who completed it - this method's own
+    // signature never took an `actor`/acting-personId parameter (unlike
+    // `create()` above), and the envelope has no field for an acting user
+    // regardless. Payload deliberately carries no free-text "outcome"
+    // field - the Blueprint's own catalog sketch shows one, but nothing in
+    // `FollowUpTask`'s actual schema or this method's signature captures
+    // one; inventing a field no domain data backs would be exactly the
+    // kind of new business rule this milestone's brief prohibits. See
+    // ENGAGEMENT_SIGNAL_PIPELINE_DESIGN_NOTES.md.
+    const envelope: EngagementSignalEnvelope = {
+      eventId: randomUUID(),
+      eventType: 'follow_up.completed',
+      schemaVersion: 1,
+      branchId: task.branchId,
+      occurredAt: task.updatedAt.toISOString(),
+      subjectPersonId: task.personId,
+      subjectGroupId: task.groupId ?? undefined,
+      payload: { followUpTaskId: task.id },
+    };
+    await this.eventPublisher.publish(envelope);
+
     return toResponseDto(task);
   }
 

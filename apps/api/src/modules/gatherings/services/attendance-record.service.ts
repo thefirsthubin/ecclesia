@@ -1,10 +1,13 @@
+import { randomUUID } from 'crypto';
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { evaluateAttendanceCompleteness } from '@ecclesia/domain-gatherings';
 import type { AttendanceCompletenessOutcome } from '@ecclesia/domain-gatherings';
-import type { AttendanceRecordResponseDto, RecordAttendanceInput } from '@ecclesia/contracts';
+import type { AttendanceRecordResponseDto, EngagementSignalEnvelope, RecordAttendanceInput } from '@ecclesia/contracts';
 import type { ActorContext } from '@ecclesia/rbac';
 import type { AttendanceRecord } from '@prisma/client';
 
+import { EventBridgePublisherService } from '../../../platform/events/eventbridge-publisher.service';
 import { AttendanceRecordRepository } from '../repositories/attendance-record.repository';
 import { GatheringRepository } from '../repositories/gathering.repository';
 
@@ -34,6 +37,7 @@ export class AttendanceRecordService {
   constructor(
     private readonly attendanceRecordRepository: AttendanceRecordRepository,
     private readonly gatheringRepository: GatheringRepository,
+    private readonly eventPublisher: EventBridgePublisherService,
   ) {}
 
   async record(actor: ActorContext, gatheringId: string, input: RecordAttendanceInput): Promise<AttendanceRecordResponseDto> {
@@ -49,6 +53,33 @@ export class AttendanceRecordService {
       status: input.status,
       recordedByPersonId: actor.personId,
     });
+
+    // `[Engagement Signal Ingestion Pipeline milestone]` Blueprint §10.4's
+    // Engagement Signal catalog names two attendance-derived event types -
+    // `attendance.recorded` (Attendance consistency category) and
+    // `bacenta_meeting.attendance_recorded` (Bacenta participation
+    // category) - from what is, in this codebase, a single write path:
+    // `Gathering.type` is a Branch-configurable free-text field
+    // (`libs/contracts/src/lib/gatherings.schemas.ts`), not a fixed enum
+    // with a dedicated "this is a Bacenta Meeting" flag. `'BACENTA_MEETING'`
+    // is the one type value every fixture/seed in this codebase uses for
+    // Bacenta gatherings - branching on it here, deterministically, is the
+    // only available signal to distinguish the two catalog event types;
+    // every other gathering type (`'SUNDAY_SERVICE'` and any other
+    // Branch-configured value) is treated as the general `attendance.recorded`
+    // category. See `ENGAGEMENT_SIGNAL_PIPELINE_DESIGN_NOTES.md`.
+    const envelope: EngagementSignalEnvelope = {
+      eventId: randomUUID(),
+      eventType: gathering.type === 'BACENTA_MEETING' ? 'bacenta_meeting.attendance_recorded' : 'attendance.recorded',
+      schemaVersion: 1,
+      branchId: gathering.branchId,
+      occurredAt: record.recordedAt.toISOString(),
+      subjectPersonId: record.personId,
+      subjectGroupId: gathering.ownerGroupId ?? undefined,
+      payload: { gatheringId: record.gatheringId, gatheringType: gathering.type, status: record.status },
+    };
+    await this.eventPublisher.publish(envelope);
+
     return toResponseDto(record);
   }
 

@@ -1,3 +1,5 @@
+import type { RoleDto } from '@ecclesia/contracts';
+
 import { useAuth } from '../auth/AuthContext';
 
 /**
@@ -56,6 +58,79 @@ export function useSession(): ShepherdSession {
     personId: actor.personId,
     branchId: actor.branchId,
     bacentaGroupId: actor.bacentaId,
+    authToken: accessToken,
+  };
+}
+
+/**
+ * `[Mobile Personas sprint]` The role-agnostic counterpart to
+ * `useSession()` above, added once this app grew personas beyond
+ * `BACENTA_LEADER` — `ministry.roster.read`/`insights.branch_dashboard.read`/
+ * `stewardship.transaction.read` and friends are `OWN_GROUP`- or
+ * `BRANCH`-scoped depending on the role, never `bacentaId`-scoped
+ * specifically, so a Ministry Leader/Finance Officer/Resident Pastor
+ * screen calling `useSession()` would throw immediately (that function's
+ * own doc comment is explicit this is by design, not an oversight, for
+ * the Shepherd-only persona it was written for).
+ *
+ * `useSession()` itself is left completely unchanged — every existing
+ * Shepherd screen/hook that already calls it keeps working exactly as
+ * before ("Do NOT redesign the Shepherd experience"). This is a sibling,
+ * not a replacement.
+ */
+export interface ActorSession {
+  personId: string;
+  branchId: string;
+  role: RoleDto;
+  /** Present only for `BACENTA_LEADER`. */
+  bacentaGroupId?: string;
+  /** Present only for `BASONTA_LEADER`. */
+  basontaGroupId?: string;
+  /** Bearer token attached to every `apiClient` request. */
+  authToken: string;
+}
+
+export function useActorSession(): ActorSession {
+  const { state } = useAuth();
+  if (state.status !== 'authenticated') {
+    throw new Error('useActorSession() called outside an authenticated screen — AuthContext state is not "authenticated"');
+  }
+  const { actor, accessToken } = state;
+  return {
+    personId: actor.personId,
+    branchId: actor.branchId,
+    role: actor.role,
+    bacentaGroupId: actor.bacentaId,
+    basontaGroupId: actor.basontaId,
+    authToken: accessToken,
+  };
+}
+
+/**
+ * The Ministry Leader (`BASONTA_LEADER`) equivalent of `useSession()` -
+ * same "throw rather than hand a screen an empty-string group id" shape,
+ * scoped to `actor.basontaId` instead of `actor.bacentaId`.
+ */
+export interface MinistrySession {
+  personId: string;
+  branchId: string;
+  basontaGroupId: string;
+  authToken: string;
+}
+
+export function useMinistrySession(): MinistrySession {
+  const { state } = useAuth();
+  if (state.status !== 'authenticated') {
+    throw new Error('useMinistrySession() called outside an authenticated screen — AuthContext state is not "authenticated"');
+  }
+  const { actor, accessToken } = state;
+  if (!actor.basontaId) {
+    throw new Error(`useMinistrySession(): authenticated actor (role "${actor.role}") has no basontaId — this screen requires a Basonta-scoped persona`);
+  }
+  return {
+    personId: actor.personId,
+    branchId: actor.branchId,
+    basontaGroupId: actor.basontaId,
     authToken: accessToken,
   };
 }

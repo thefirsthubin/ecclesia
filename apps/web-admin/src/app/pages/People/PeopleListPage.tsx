@@ -1,10 +1,25 @@
 import { useState } from 'react';
-import { Avatar, Badge, Card, Divider, EmptyState, ErrorState, Heading, Input, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
+import { Avatar, Badge, Button, Card, Divider, EmptyState, ErrorState, Heading, Input, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
 import type { LifecycleStageDto } from '@ecclesia/contracts';
 
 import { useAuth } from '../../auth/AuthContext';
 import { Link } from '../../router/router';
+import { NewPersonForm } from './NewPersonForm';
 import { resolveDefaultPeopleQuery, usePeopleList } from './usePeopleData';
+
+/**
+ * `[People Intake milestone]` Exactly one permission-matrix row grants
+ * `people.person.create` (`libs/rbac/src/lib/permission-matrix.ts`):
+ * `{ role: 'ADMIN', ..., effect: 'ALLOW' }` - no other role can ever
+ * succeed at this call. Unlike Stewardship's "always show the button, let
+ * the backend's 403 decide" precedent (appropriate there because several
+ * roles' eligibility is genuinely data-dependent), showing "+ New Person"
+ * to a role with zero chance of success would be pure UI noise, not a
+ * deferred authorization decision - so this page gates client-side, the
+ * same reasoning `ConfigurationPage` already established for a
+ * single-role-only surface.
+ */
+const CAN_CREATE_PERSON_ROLES = ['ADMIN'] as const;
 
 const LIFECYCLE_BADGE_STATUS: Record<LifecycleStageDto, 'neutral' | 'info' | 'warning' | 'danger' | 'success'> = {
   VISITOR: 'neutral',
@@ -36,16 +51,36 @@ export function PeopleListPage() {
   const theme = useTheme();
   const { state } = useAuth();
   const [search, setSearch] = useState('');
+  const [newPersonFormOpen, setNewPersonFormOpen] = useState(false);
 
   if (state.status !== 'authenticated') return null;
 
   const baseQuery = resolveDefaultPeopleQuery(state.actor);
   const query = search.trim() ? { ...baseQuery, search: search.trim() } : baseQuery;
   const peopleState = usePeopleList(state.accessToken, query);
+  const canCreatePerson = CAN_CREATE_PERSON_ROLES.includes(state.actor.role as (typeof CAN_CREATE_PERSON_ROLES)[number]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4], maxWidth: 720 }}>
-      <Heading level={1}>People</Heading>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[3] }}>
+        <Heading level={1}>People</Heading>
+        {canCreatePerson && !newPersonFormOpen && (
+          <Button variant="secondary" size="sm" onClick={() => setNewPersonFormOpen(true)} accessibilityLabel="Add a new Person" testId="new-person-open">
+            + New Person
+          </Button>
+        )}
+      </div>
+
+      {canCreatePerson && newPersonFormOpen && (
+        <NewPersonForm
+          onCancel={() => setNewPersonFormOpen(false)}
+          onCreated={() => {
+            setNewPersonFormOpen(false);
+            peopleState.refetch();
+          }}
+        />
+      )}
+
       <Input label="Search by name" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="e.g. Ama Owusu" />
 
       {peopleState.status === 'loading' && (

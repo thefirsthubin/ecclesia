@@ -1,6 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 
 import { DatabaseModule } from '../../platform/database/database.module';
+import { EventsModule } from '../../platform/events/events.module';
 import { RbacPlatformModule } from '../../platform/rbac/rbac-platform.module';
 import { PeopleModule } from '../people/people.module';
 import { FollowUpTaskController } from './controllers/follow-up-task.controller';
@@ -49,7 +50,7 @@ import { SilentDriftFlagService } from './services/silent-drift-flag.service';
  * from People).
  */
 @Module({
-  imports: [DatabaseModule, RbacPlatformModule, forwardRef(() => PeopleModule)],
+  imports: [DatabaseModule, RbacPlatformModule, EventsModule, forwardRef(() => PeopleModule)],
   controllers: [PoimenEnrollmentController, FollowUpTaskController, PastoralNoteController, SilentDriftFlagController],
   providers: [
     PoimenEnrollmentRepository,

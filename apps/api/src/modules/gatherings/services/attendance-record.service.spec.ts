@@ -43,8 +43,9 @@ describe('AttendanceRecordService', () => {
   function buildService() {
     const attendanceRecordRepository = { upsert: jest.fn(), findByGathering: jest.fn(), countByGathering: jest.fn() };
     const gatheringRepository = { findById: jest.fn() };
-    const service = new AttendanceRecordService(attendanceRecordRepository as never, gatheringRepository as never);
-    return { service, attendanceRecordRepository, gatheringRepository };
+    const eventPublisher = { publish: jest.fn() };
+    const service = new AttendanceRecordService(attendanceRecordRepository as never, gatheringRepository as never, eventPublisher as never);
+    return { service, attendanceRecordRepository, gatheringRepository, eventPublisher };
   }
 
   describe('record', () => {
@@ -66,6 +67,35 @@ describe('AttendanceRecordService', () => {
 
       expect(attendanceRecordRepository.upsert).toHaveBeenCalledWith(
         expect.objectContaining({ gatheringId: 'g-1', personId: 'person-1', branchId: 'branch-owner', recordedByPersonId: 'usher-1' }),
+      );
+    });
+
+    it('publishes attendance.recorded for a non-Bacenta-Meeting gathering type', async () => {
+      const { service, attendanceRecordRepository, gatheringRepository, eventPublisher } = buildService();
+      gatheringRepository.findById.mockResolvedValue(buildGathering({ type: 'SUNDAY_SERVICE' }));
+      attendanceRecordRepository.upsert.mockResolvedValue(buildRecord());
+
+      await service.record(actor, 'g-1', { personId: 'person-1', status: 'PRESENT' } as never);
+
+      expect(eventPublisher.publish).toHaveBeenCalledWith(
+        expect.objectContaining({
+          eventType: 'attendance.recorded',
+          branchId: 'branch-1',
+          subjectPersonId: 'person-1',
+          payload: expect.objectContaining({ gatheringId: 'g-1', gatheringType: 'SUNDAY_SERVICE', status: 'PRESENT' }),
+        }),
+      );
+    });
+
+    it('publishes bacenta_meeting.attendance_recorded for a BACENTA_MEETING gathering type', async () => {
+      const { service, attendanceRecordRepository, gatheringRepository, eventPublisher } = buildService();
+      gatheringRepository.findById.mockResolvedValue(buildGathering({ type: 'BACENTA_MEETING', ownerGroupId: 'group-1' }));
+      attendanceRecordRepository.upsert.mockResolvedValue(buildRecord());
+
+      await service.record(actor, 'g-1', { personId: 'person-1', status: 'PRESENT' } as never);
+
+      expect(eventPublisher.publish).toHaveBeenCalledWith(
+        expect.objectContaining({ eventType: 'bacenta_meeting.attendance_recorded', subjectGroupId: 'group-1' }),
       );
     });
   });

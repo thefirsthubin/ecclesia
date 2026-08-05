@@ -88,23 +88,29 @@ blocks. This service does not invent a rotation scheme. The response's
 so a UI can prompt an Usher/Admin to assign a Follow-up task manually when
 it's `false`.
 
-## The "Usher" role gap (found, not fixed)
+## The "Usher" role gap (found, then closed in the Usher role milestone)
 
 PRD narrative (§16.4, the persona list, and FR-GTH-03/FR-GTH-04's own
 acceptance criteria) repeatedly names "Usher" as the actor who records
 attendance and captures visitor intake forms. `libs/rbac/src/lib/roles.ts`'s
-`ROLES` array has no `USHER` entry, and §17.3's permission-matrix column
-headers omit it too - this predates this milestone (Sprint 1.1 built the
-role catalog from §17.3's literal column headers) but is the first
-milestone where it concretely blocks something: there is no role to assign
-`gatherings.attendance.create`/`gatherings.visitor_intake.create` to that
-matches the PRD's own narrative. `permission-matrix.ts` instead grants
-those actions to `BACENTA_LEADER`/`BASONTA_LEADER` (whose Bacenta/Basonta
-these Gatherings usually belong to) and `ASSISTANT_PASTOR`/`ADMIN` at wider
-scopes - a reasonable stand-in, not a citation. **Needs a product decision**
-on whether `USHER` should be added to the canonical Role catalog, which
-would also require revisiting §17.3's permission matrix at its source
-rather than inferring rows for a role that doesn't formally exist.
+`ROLES` array had no `USHER` entry, and §17.3's permission-matrix column
+headers omitted it too - this predated this file's own milestone (Sprint
+1.1 built the role catalog from §17.3's literal column headers), and for
+a long time was worked around rather than fixed: `permission-matrix.ts`
+granted `gatherings.attendance.create`/`gatherings.visitor_intake.create`
+to `BACENTA_LEADER`/`BASONTA_LEADER`/`ASSISTANT_PASTOR`/`ADMIN` instead -
+a reasonable stand-in, never a citation, and explicitly flagged here as
+"needs a product decision."
+
+**That decision was made in the Usher role milestone** (see
+`USHER_ROLE_PROPOSAL.md` at the repo root and
+`apps/mobile/src/app/screens/UsherAttendance/USHER_ROLE_DESIGN_NOTES.md`
+for the full record): `USHER` is now a real `Role`, holding
+`gatherings.gathering.read`/`gatherings.attendance.create`/
+`gatherings.attendance.read`/`gatherings.visitor_intake.create` (plus
+`people.person.read`/`people.group.read` for the mobile screens that
+consume this module's endpoints) at `BRANCH` scope - narrower than any of
+the stand-in roles above, and no longer inferred.
 
 ## Recurrence-rule format gap (found, not fixed)
 
@@ -206,9 +212,15 @@ surfaced two real gaps:
 
 See `apps/web-admin/src/app/pages/Gatherings/GATHERINGS_PAGE_DESIGN_NOTES.md`
 for the client side, including why Attendance Capture and Visitor Intake
-are not built on web-admin this pass (both are Usher-primary flows, and
-the "Usher role gap" this file already discloses above blocks them
-structurally, not just by choice).
+were not built on web-admin at the time this note was written (both are
+Usher-primary flows, and the "Usher role gap" this file discloses above
+blocked them structurally, not just by choice, until the Usher role
+milestone closed it). **Update**: that gap is now closed (see the section
+above) - Attendance Capture and Visitor Intake were built on
+`apps/mobile` for the new `USHER` role, per `USHER_ROLE_PROPOSAL.md`'s
+own "mobile-only, no web-admin surface" scope decision (an Usher's job
+happens at the door with a phone/tablet, mirroring every other mobile
+persona) - a deliberate choice now, not a structural block.
 
 ## Known sandbox limitation
 

@@ -48,9 +48,41 @@ import { createContext, useCallback, useContext, useMemo, useState } from 'react
  * "pushing a screen you can back out of") - a plain `navigate` for tab
  * switches would instead pile up unbounded back-history behind the tab
  * bar, which is not what any tab-bar navigation pattern does.
+ *
+ * `[Mobile Personas sprint]` Six new screen names added for the three new
+ * personas' own middle two tabs (`ministry-roster`/`ministry-events` for
+ * Ministry Leader, `finance-verify`/`finance-reconcile` for Finance
+ * Officer, `pastor-alerts`/`pastor-cluster` for Resident Pastor) - `'dashboard'`
+ * and `'profile'` are deliberately *not* duplicated per-persona: every
+ * persona's tab bar has exactly one Dashboard and one Profile tab, and
+ * `App.tsx`'s `CurrentScreen` already branches the Dashboard case on
+ * `actor.role` to pick the right component - a second `ScreenName` per
+ * persona for the same tab position would only complicate `AppShell`'s
+ * already role-aware `TABS` for no navigational benefit (`switchTab`
+ * doesn't need to know *which* Dashboard it's switching to, only that the
+ * key is `'dashboard'`).
+ *
+ * `[Usher role milestone]` Two more added for the Usher persona's own
+ * middle two tabs (`usher-attendance`/`visitor-intake`) - not named
+ * `'attendance-capture'` (the Shepherd's own screen, a different
+ * component with a different data shape, see `USHER_ROLE_PROPOSAL.md`
+ * §4) even though both tabs are conceptually "record attendance."
  */
 
-export type ScreenName = 'dashboard' | 'attendance-capture' | 'offering-recording' | 'follow-up-queue' | 'profile';
+export type ScreenName =
+  | 'dashboard'
+  | 'attendance-capture'
+  | 'offering-recording'
+  | 'follow-up-queue'
+  | 'ministry-roster'
+  | 'ministry-events'
+  | 'finance-verify'
+  | 'finance-reconcile'
+  | 'pastor-alerts'
+  | 'pastor-cluster'
+  | 'usher-attendance'
+  | 'visitor-intake'
+  | 'profile';
 
 interface NavigationEntry {
   screen: ScreenName;

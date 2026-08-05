@@ -34,8 +34,9 @@ describe('AlertService', () => {
       resolve: jest.fn(),
     };
     const pulseScoreHistoryRepository = { findRecentByScope: jest.fn() };
-    const service = new AlertService(alertRepository as never, pulseScoreHistoryRepository as never);
-    return { service, alertRepository, pulseScoreHistoryRepository };
+    const eventPublisher = { publish: jest.fn() };
+    const service = new AlertService(alertRepository as never, pulseScoreHistoryRepository as never, eventPublisher as never);
+    return { service, alertRepository, pulseScoreHistoryRepository, eventPublisher };
   }
 
   describe('evaluateAndCreateIfNeeded', () => {
@@ -110,8 +111,8 @@ describe('AlertService', () => {
       await expect(service.resolve('person-1', 'missing', { status: 'ACTED' })).rejects.toThrow(NotFoundException);
     });
 
-    it('attributes resolution to the acting Person, never a client-supplied resolver', async () => {
-      const { service, alertRepository } = buildService();
+    it('attributes resolution to the acting Person, never a client-supplied resolver, and publishes insights.alert_action_recorded', async () => {
+      const { service, alertRepository, eventPublisher } = buildService();
       alertRepository.findById.mockResolvedValue(buildAlert());
       alertRepository.resolve.mockResolvedValue(buildAlert({ status: 'ACTED', resolvedByPersonId: 'person-1', resolvedAt: NOW }));
 
@@ -122,6 +123,26 @@ describe('AlertService', () => {
         expect.objectContaining({ status: 'ACTED', resolvedByPersonId: 'person-1' }),
       );
       expect(result.status).toBe('ACTED');
+      expect(eventPublisher.publish).toHaveBeenCalledWith(
+        expect.objectContaining({
+          eventType: 'insights.alert_action_recorded',
+          branchId: 'branch-1',
+          subjectPersonId: 'person-1',
+          payload: { alertId: 'alert-1', action: 'acted' },
+        }),
+      );
+    });
+
+    it('records action "dismissed" when the Alert is resolved as DISMISSED', async () => {
+      const { service, alertRepository, eventPublisher } = buildService();
+      alertRepository.findById.mockResolvedValue(buildAlert());
+      alertRepository.resolve.mockResolvedValue(buildAlert({ status: 'DISMISSED', resolvedByPersonId: 'person-1', resolvedAt: NOW }));
+
+      await service.resolve('person-1', 'alert-1', { status: 'DISMISSED' });
+
+      expect(eventPublisher.publish).toHaveBeenCalledWith(
+        expect.objectContaining({ payload: { alertId: 'alert-1', action: 'dismissed' } }),
+      );
     });
   });
 });

@@ -43,7 +43,30 @@ export function Skeleton({ width = '100%', height = 16, radius = 'sm', circle = 
       ]),
     );
     loop.start();
-    return () => loop.stop();
+    return () => {
+      // `[Bug fix, Mobile Personas sprint]` Under Jest, `loop.stop()`
+      // touches RN's Animated internals, which behave differently
+      // under the mocked `NativeAnimatedHelper` (`test-setup.ts` in
+      // both this lib and `apps/mobile`) than on a real device. This
+      // try/catch is defensive insurance around that Jest-only surface
+      // - `NativeAnimatedHelper` is never mocked in a running app, so
+      // `loop.stop()` cannot throw there.
+      //
+      // Note: a real `pnpm test` run (parallel workers, unlike this
+      // sandbox's serial `--runInBand`) showed `mobile:test` and
+      // `ui-native:test` failing with "Exceeded timeout of 5000 ms"
+      // after this sprint added nine Skeleton-heavy screens. That
+      // turned out to be plain CPU contention under parallel load (the
+      // same tests pass in 1-2s isolated), not something this
+      // try/catch addresses - see `testTimeout: 20000` in
+      // `apps/mobile/jest.config.ts` / `libs/ui/native/jest.config.ts`
+      // for the actual fix.
+      try {
+        loop.stop();
+      } catch {
+        // Test-environment-only, see above - nothing to recover or log.
+      }
+    };
   }, [reducedMotion, opacity, theme.motion.duration.slow]);
 
   const borderRadius = circle

@@ -36,25 +36,33 @@ describe('FinancialTransactionService', () => {
       findRecordedByPersonId: jest.fn(),
       findFirstEventByToState: jest.fn(),
     };
-    const service = new FinancialTransactionService(financialTransactionRepository as never);
-    return { service, financialTransactionRepository };
+    const eventPublisher = { publish: jest.fn() };
+    const service = new FinancialTransactionService(financialTransactionRepository as never, eventPublisher as never);
+    return { service, financialTransactionRepository, eventPublisher };
   }
 
   describe('record', () => {
-    it('sets giverPersonId to the acting Person only when no sourceGroupId is given', async () => {
-      const { service, financialTransactionRepository } = buildService();
+    it('sets giverPersonId to the acting Person only when no sourceGroupId is given, and publishes giving.activity_recorded', async () => {
+      const { service, financialTransactionRepository, eventPublisher } = buildService();
       financialTransactionRepository.findUserIdByPersonId.mockResolvedValue('user-1');
-      financialTransactionRepository.createWithEvent.mockResolvedValue(buildTransaction({ sourceGroupId: null }));
+      financialTransactionRepository.createWithEvent.mockResolvedValue(
+        buildTransaction({ sourceGroupId: null, giverPersonId: 'treasurer-1' }),
+      );
 
       await service.record(treasurer, { type: 'DONATION', channel: 'MOBILE_MONEY', amountMinor: '1000' } as never);
 
       expect(financialTransactionRepository.createWithEvent).toHaveBeenCalledWith(
         expect.objectContaining({ giverPersonId: 'treasurer-1', sourceGroupId: undefined, initialState: 'RECORDED' }),
       );
+      // Normalized per PRD §17.6 - no amount, transaction id, or channel in
+      // the payload, only the subject Person and when it happened.
+      expect(eventPublisher.publish).toHaveBeenCalledWith(
+        expect.objectContaining({ eventType: 'giving.activity_recorded', branchId: 'branch-1', subjectPersonId: 'treasurer-1', payload: {} }),
+      );
     });
 
-    it('leaves giverPersonId unset for a Bacenta-recorded offering', async () => {
-      const { service, financialTransactionRepository } = buildService();
+    it('leaves giverPersonId unset for a Bacenta-recorded offering, and publishes no giving signal (no individual to attribute it to)', async () => {
+      const { service, financialTransactionRepository, eventPublisher } = buildService();
       financialTransactionRepository.findUserIdByPersonId.mockResolvedValue('user-1');
       financialTransactionRepository.createWithEvent.mockResolvedValue(buildTransaction());
 
@@ -68,6 +76,7 @@ describe('FinancialTransactionService', () => {
       expect(financialTransactionRepository.createWithEvent).toHaveBeenCalledWith(
         expect.objectContaining({ giverPersonId: undefined, sourceGroupId: 'bacenta-1' }),
       );
+      expect(eventPublisher.publish).not.toHaveBeenCalled();
     });
 
     it('converts the string amountMinor input to a native BigInt for persistence', async () => {

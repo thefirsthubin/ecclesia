@@ -96,47 +96,39 @@ nobody views for a while simply has a stale `PulseScore`/no new
 `PulseScoreHistory` points until the next read - not wrong, but not the
 "defined cadence" the PRD's language implies either.
 
-## The missing Engagement Signal ingestion pipeline (Blueprint Ch.4/§10.6)
+## The Engagement Signal ingestion pipeline (Blueprint Ch.4/§10.6) - now built
 
-Blueprint §10.4's Engagement Signal catalog names seven concrete event
-types (`attendance.recorded`, `bacenta_meeting.attendance_recorded`,
-`role_assignment.active`/`basonta_roster.updated`,
-`follow_up.completed`/`follow_up.sla_breached`,
-`insights.alert_action_recorded`, `lifecycle_stage.transitioned`,
-`giving.activity_recorded`) produced by Gatherings/People/Pastoral
-Care/Stewardship and consumed asynchronously via an EventBridge/SQS bus
-by `apps/worker` (§10.6: "a few seconds to minutes of propagation delay
-... is explicitly acceptable"). **None of that bus, and no
-`apps/worker` consumer, exists anywhere in this codebase** - the same
-category of gap already disclosed for every prior milestone's missing
-scheduler, just for an event bus instead of a cron trigger.
+**This section originally documented a gap. It is stale and corrected
+here rather than deleted, so the history of what was and wasn't true at
+each milestone stays legible.** The gap it described - no EventBridge/SQS
+bus, no `apps/worker` consumer, no producer call sites in
+Gatherings/People/Pastoral Care/Stewardship - was closed across two later
+milestones: the Worker milestone built the bus infrastructure and
+consumers (`apps/worker/WORKER_DESIGN_NOTES.md`), and the **Engagement
+Signal Ingestion Pipeline milestone** (see
+`ENGAGEMENT_SIGNAL_PIPELINE_DESIGN_NOTES.md` at the repo root) added the
+seven `.publish()` call sites this section originally said did not exist.
+Full detail - exact file paths, the two intentional deviations from the
+Blueprint's literal catalog, and the test coverage added - lives in that
+document, not duplicated here.
 
-This milestone deliberately does **not** invent a synchronous substitute
-wiring calls directly from Gatherings/People/Pastoral Care/Stewardship
-into `EngagementSignalService.record()` - that would silently redesign an
-architecture the Blueprint explicitly describes as asynchronous
-(§10.6's own stated latency tolerance is evidence the design intends
-decoupling, not a synchronous call graph) without evidence that's an
-equivalent substitution rather than a different one. Instead:
+`EngagementSignalService.record()` (`services/engagement-signal.service.ts`)
+still has no HTTP controller and is still not the method any of the new
+publish call sites go through - see that file's own doc comment for
+exactly why (apps/api publishes onto the bus directly via
+`EventBridgePublisherService`; `apps/worker`'s `InsightsConsumer` is what
+writes the row on the other end, via its own separate repository).
 
-- `EngagementSignalService` is built completely, with the one method
-  (`record()`) a future `apps/worker` consumer would call once the bus
-  exists, and is exported from `InsightsModule` so any future consumer -
-  worker-based or otherwise - can inject it directly.
-- It has **no HTTP controller** - nothing in this milestone calls it, by
-  design, since there is no producer wired up yet to call it from.
-- `recordEngagementSignalSchema` (`libs/contracts`) defines the one
-  canonical wire shape for that future call, narrower than Blueprint
-  §10.3's full envelope (no `eventId`/`eventType`/`schemaVersion`) since
-  those envelope fields belong to whatever unwraps the bus message before
-  calling this service, not to the signal's own persisted shape.
-
-**Practical consequence:** every dashboard built this milestone is
-functionally correct against whatever `EngagementSignal` rows already
-exist in the database, but no rows will exist in a real deployment until
-this ingestion pipeline is built - Church Pulse scores will read as 0
-for every Branch/Bacenta until then. This is the single largest
-follow-up this milestone leaves open.
+**Practical consequence, updated:** every dashboard built this milestone
+is functionally correct against whatever `EngagementSignal` rows exist,
+and as of the pipeline milestone, real rows now flow in from live
+ministry activity (attendance, role assignments, Basonta roster changes,
+lifecycle transitions, follow-up completions, individual giving, alert
+resolutions) rather than only from seed/manual data - see the pipeline
+design notes' own "deviations from the PRD/Blueprint" section for the two
+places the shipped event-type strings and payload shapes diverge slightly
+from the Blueprint's literal catalog text, and why each divergence was
+judged lower-risk than the alternative.
 
 ## Alert inbox: embedded per-dashboard, not a separate cross-cutting endpoint
 
@@ -242,8 +234,10 @@ and summarized here:
 
 ## What this milestone deliberately does not build
 
-- **The real Engagement Signal ingestion pipeline.** See its own section
-  above - the single largest follow-up.
+- **The real Engagement Signal ingestion pipeline.** ~~See its own
+  section above - the single largest follow-up.~~ **Built in the
+  Engagement Signal Ingestion Pipeline milestone** - see that section's
+  updated text above.
 - **FR-INS-02's weight-configuration screen (H2).** Explicitly lower
   priority than FR-INS-01/03/04/05 (all R1) per PRD §13.6's own priority
   column. `PulseScoreRepository.findChurchPulseWeights()` reads
@@ -256,14 +250,10 @@ and summarized here:
   own section above.
 - **A separate cross-cutting Alert inbox list endpoint.** See "Alert
   inbox" section above - served per-dashboard instead.
-- **`insights.alert_action_recorded` as an actual emitted Engagement
-  Signal.** Blueprint §10.4 lists this as the "leadership engagement"
-  signal source's producer event, self-referentially fed by Insights'
-  own `AlertService.resolve()`. Not wired up this milestone, for the same
-  reason nothing else emits onto the (nonexistent) bus yet -
-  `AlertService.resolve()` persists the resolution to `insights.alerts`
-  directly, which is itself readable by future dashboard reads, but does
-  not additionally round-trip through an `EngagementSignal` row.
+- ~~`insights.alert_action_recorded` as an actual emitted Engagement
+  Signal.~~ **Built in the Engagement Signal Ingestion Pipeline
+  milestone** - `AlertService.resolve()` now publishes it directly (see
+  `ENGAGEMENT_SIGNAL_PIPELINE_DESIGN_NOTES.md`).
 
 ## Known sandbox limitation
 
