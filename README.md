@@ -1227,6 +1227,37 @@ component ever sees them, since no field-level RBAC/DTO-narrowing
 mechanism exists anywhere in this codebase today) — is in
 `apps/mobile/src/app/screens/UsherAttendance/USHER_ROLE_DESIGN_NOTES.md`.
 
+**Production Infrastructure Foundation milestone: infrastructure-as-code
+only, complete — `infra/` is now a real AWS CDK v2 (TypeScript)
+application**, not deployed anywhere. Six stacks (Cognito, EventBridge+SQS,
+SES, Secrets Manager, CloudWatch, IAM), each instantiated once per
+environment (`dev`/`staging`/`production`) from one shared set of stack
+classes parameterized by a typed `EnvironmentConfig` — no stack contains
+an environment-specific branch, satisfying the milestone's own
+"configurable without duplicating infrastructure definitions" requirement.
+The pre-existing `infra/environments/`/`infra/modules/` directories were
+preserved and populated, exactly as their own placeholder READMEs already
+promised, rather than replaced. Every IAM grant uses CDK's resource-scoped
+`.grant*()` convenience methods, never a wildcard resource. No stack
+performs a live AWS context lookup (no VPC, no `.fromLookup()` calls
+anywhere) — a deliberate scope boundary, not an oversight: Compute/Data
+infrastructure (VPC, ECS Fargate, RDS, ElastiCache) is a distinct, disclosed
+future milestone, since none of the seven resources this milestone builds
+need a VPC to function. Full reasoning, every design decision, and every
+disclosed gap (the `pilot` environment, per-role Cognito MFA, the SES→Cognito
+wiring, etc.) is in `infra/INFRASTRUCTURE_DESIGN_NOTES.md`, with a practical
+how-to in `infra/ENVIRONMENTS.md` and `infra/DEPLOYMENT.md`. **Nothing was
+deployed, bootstrapped, or provisioned** — per the milestone's own explicit
+constraints. Same disclosed sandbox limitation as this milestone's own
+dependencies (`aws-cdk-lib`/`constructs`/`aws-cdk` could not be installed
+here, no package-registry access) — `eslint`/`tsc --noEmit` were run against
+every new file using two independent local verification techniques
+(confirming no syntax errors and no unresolved local identifiers) and every
+CDK API call was manually cross-checked against the real AWS CDK v2 surface,
+but a real `pnpm install` followed by `pnpm lint && pnpm test && pnpm build`
+and `cdk synth --all` is still needed to fully confirm this milestone's own
+validation criteria on a machine with registry access.
+
 ## Prerequisites
 
 | Tool | Version | Why |

@@ -1,0 +1,15 @@
+[2m> [22mnpx tsc --noEmit -p tsconfig.json
+
+[2m> [22mnpx cdk synth --all --quiet
+
+Unknown option(s): --all. These will be ignored. Run 'cdk --help' to see available options.
+/Users/king/Documents/ecclesia/infra/lib/common/ecclesia-stack.ts:30
+    super(scope, id, {
+    ^
+«UnsupportedFeatureFlag» Unsupported feature flag '@aws-cdk/core:enableStackNameDuplicates'. This flag existed on CDKv1 but has been removed in CDKv2. CDK will now behave as the same as when the flag is enabled.
+    ...new Stack2 in .pnpm...
+    at new EcclesiaStack (/Users/king/Documents/ecclesia/infra/lib/common/ecclesia-stack.ts:30:5)
+    at new CognitoStack (/Users/king/Documents/ecclesia/infra/lib/stacks/cognito-stack.ts:47:5)
+    at <anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:46:3)
+    ...node internals, .pnpm, .pnpm...
+[31mnpx ts-node --prefer-ts-exts bin/infra.ts: Subprocess exited with error 1[39m

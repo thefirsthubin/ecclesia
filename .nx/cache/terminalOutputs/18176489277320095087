@@ -1,0 +1,20 @@
+/Users/king/Documents/ecclesia/node_modules/.pnpm/webpack-dev-server@5.2.6_tslib@2.8.1_webpack-cli@5.1.4_webpack@5.109.2/node_modules/webpack-dev-server/lib/Server.js:2702
+        throw error;
+        ^
+
+Error: listen EADDRINUSE: address already in use :::4200
+[90m    at Server.setupListenHandle [as _listen2] (node:net:1941:16)[39m
+[90m    at listenInCluster (node:net:1998:12)[39m
+[90m    at Server.listen (node:net:2103:7)[39m
+    at READ_WRITE [90m(/Users/king/Documents/ecclesia/[39mnode_modules/[4m.pnpm[24m/webpack-dev-server@5.2.6_tslib@2.8.1_webpack-cli@5.1.4_webpack@5.109.2/node_modules/[4mwebpack-dev-server[24m/lib/Server.js:3612:23[90m)[39m
+    at new Promise (<anonymous>)
+    at Server.start [90m(/Users/king/Documents/ecclesia/[39mnode_modules/[4m.pnpm[24m/webpack-dev-server@5.2.6_tslib@2.8.1_webpack-cli@5.1.4_webpack@5.109.2/node_modules/[4mwebpack-dev-server[24m/lib/Server.js:3610:7[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)[39m {
+  code: [32m'EADDRINUSE'[39m,
+  errno: [33m-48[39m,
+  syscall: [32m'listen'[39m,
+  address: [32m'::'[39m,
+  port: [33m4200[39m
+}
+
+Node.js v22.23.2

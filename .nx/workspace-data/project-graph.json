@@ -1835,6 +1835,121 @@
         ],
         "implicitDependencies": []
       }
+    },
+    "infra": {
+      "name": "infra",
+      "type": "app",
+      "data": {
+        "root": "infra",
+        "targets": {
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "outputs": [
+              "{options.outputFile}"
+            ],
+            "options": {
+              "lintFilePatterns": [
+                "infra/**/*.ts"
+              ]
+            },
+            "configurations": {},
+            "parallelism": true,
+            "inputs": [
+              "default",
+              "{workspaceRoot}/eslint.config.mjs"
+            ],
+            "cache": true
+          },
+          "test": {
+            "options": {
+              "cwd": "infra",
+              "env": {
+                "TS_NODE_COMPILER_OPTIONS": "{\"moduleResolution\":\"node10\"}"
+              },
+              "command": "jest"
+            },
+            "metadata": {
+              "technologies": [
+                "jest"
+              ],
+              "description": "Run Jest Tests",
+              "help": {
+                "command": "pnpm exec jest --help",
+                "example": {
+                  "options": {
+                    "coverage": true
+                  }
+                }
+              }
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production",
+              "{workspaceRoot}/jest.preset.js"
+            ],
+            "outputs": [
+              "{workspaceRoot}/coverage/infra"
+            ],
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
+          "build": {
+            "executor": "nx:run-commands",
+            "outputs": [
+              "{projectRoot}/cdk.out"
+            ],
+            "options": {
+              "cwd": "infra",
+              "commands": [
+                "npx tsc --noEmit -p tsconfig.json",
+                "npx cdk synth --quiet"
+              ],
+              "parallel": false
+            },
+            "configurations": {},
+            "parallelism": true,
+            "dependsOn": [
+              "^build"
+            ],
+            "inputs": [
+              "production",
+              "^production"
+            ],
+            "cache": true
+          },
+          "synth": {
+            "executor": "nx:run-commands",
+            "outputs": [
+              "{projectRoot}/cdk.out"
+            ],
+            "options": {
+              "cwd": "infra",
+              "command": "npx cdk synth"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "diff": {
+            "executor": "nx:run-commands",
+            "options": {
+              "cwd": "infra",
+              "command": "npx cdk diff --all"
+            },
+            "configurations": {},
+            "parallelism": true
+          }
+        },
+        "name": "infra",
+        "$schema": "../node_modules/nx/schemas/project-schema.json",
+        "projectType": "application",
+        "sourceRoot": "infra",
+        "tags": [
+          "scope:infra"
+        ],
+        "implicitDependencies": []
+      }
     }
   },
   "externalNodes": {
@@ -1872,6 +1987,33 @@
         "version": "16.0.1",
         "packageName": "@angular-devkit/schematics",
         "hash": "sha512-A9D0LTYmiqiBa90GKcSuWb7hUouGIbm/AHbJbjL85WLLRbQA2PwKl7P5Mpd6nS/ZC0kfG4VQY3VOaDvb3qpI9g=="
+      }
+    },
+    "npm:@aws-cdk/asset-awscli-v1": {
+      "type": "npm",
+      "name": "npm:@aws-cdk/asset-awscli-v1",
+      "data": {
+        "version": "2.2.282",
+        "packageName": "@aws-cdk/asset-awscli-v1",
+        "hash": "sha512-7hKMi5tTxDcKGIMIOq14PnY0GBcugW33Uh/2YHDZiEwSxLeFOCYBwhR+BFXONb/EJeVI3RETFgailNZbkcKF6g=="
+      }
+    },
+    "npm:@aws-cdk/asset-node-proxy-agent-v6": {
+      "type": "npm",
+      "name": "npm:@aws-cdk/asset-node-proxy-agent-v6",
+      "data": {
+        "version": "2.1.2",
+        "packageName": "@aws-cdk/asset-node-proxy-agent-v6",
+        "hash": "sha512-pDiuqH+qY3zM9lhhLjbKJ1tnKOHzQ2V4Wr/3qsxyKeKAkuPMI/BVGvZG1PbrikUw949cGVTfVEt4ETKKYnrj0Q=="
+      }
+    },
+    "npm:@aws-cdk/cloud-assembly-schema": {
+      "type": "npm",
+      "name": "npm:@aws-cdk/cloud-assembly-schema",
+      "data": {
+        "version": "54.16.0",
+        "packageName": "@aws-cdk/cloud-assembly-schema",
+        "hash": "sha512-Mhwh/L1buy8r6ucxdjPqSAQB559pX1ehcfusRBpDrpoOi4vHKl/iWDjXz0p1QD6ySptlzCgqbBP8TE+EE6ew0w=="
       }
     },
     "npm:@aws-sdk/client-eventbridge": {
@@ -7058,6 +7200,24 @@
         "hash": "sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ=="
       }
     },
+    "npm:aws-cdk-lib": {
+      "type": "npm",
+      "name": "npm:aws-cdk-lib",
+      "data": {
+        "version": "2.263.0",
+        "packageName": "aws-cdk-lib",
+        "hash": "sha512-cXC9wnOr+LknMee9x0kYwofgVs8aN8eBKsbzcE90sDUtpLTgWG2Bd+9koqxBKPeIU8kig/GGBFwJ69Wr+hLKDg=="
+      }
+    },
+    "npm:aws-cdk": {
+      "type": "npm",
+      "name": "npm:aws-cdk",
+      "data": {
+        "version": "2.1135.0",
+        "packageName": "aws-cdk",
+        "hash": "sha512-Vfz2kllheB+8y9audOtcw0qo0v6EnjxfO2pK7x6eSulHmD0GaAvkqrg6MF+20wxE2KTyuY1UDBzICO+nHUaFtA=="
+      }
+    },
     "npm:aws-jwt-verify": {
       "type": "npm",
       "name": "npm:aws-jwt-verify",
@@ -8046,6 +8206,15 @@
         "version": "2.15.3",
         "packageName": "consola",
         "hash": "sha512-9vAdYbHj6x2fLKC4+oPH0kFzY/orMZyG2Aj+kNylHxKGJ/Ed4dpNyAQYwJOdqO4zdM7XpVHmyejQDcQHrnuXbw=="
+      }
+    },
+    "npm:constructs": {
+      "type": "npm",
+      "name": "npm:constructs",
+      "data": {
+        "version": "10.8.1",
+        "packageName": "constructs",
+        "hash": "sha512-98yGXYyhePqPYh3cYu8nzBERmAhC0DONe3UD03okK0nehZ7hYP4wgZuf02a04+uOWxnTJ5Rpp5m0GRNpwyLGGA=="
       }
     },
     "npm:content-disposition": {
@@ -17785,6 +17954,18 @@
       {
         "source": "api",
         "target": "npm:@nx/webpack",
+        "type": "static"
+      }
+    ],
+    "infra": [
+      {
+        "source": "infra",
+        "target": "npm:aws-cdk-lib",
+        "type": "static"
+      },
+      {
+        "source": "infra",
+        "target": "npm:constructs",
         "type": "static"
       }
     ],
@@ -28270,6 +28451,28 @@
       {
         "source": "npm:available-typed-arrays",
         "target": "npm:possible-typed-array-names",
+        "type": "static"
+      }
+    ],
+    "npm:aws-cdk-lib": [
+      {
+        "source": "npm:aws-cdk-lib",
+        "target": "npm:@aws-cdk/asset-awscli-v1",
+        "type": "static"
+      },
+      {
+        "source": "npm:aws-cdk-lib",
+        "target": "npm:@aws-cdk/asset-node-proxy-agent-v6",
+        "type": "static"
+      },
+      {
+        "source": "npm:aws-cdk-lib",
+        "target": "npm:@aws-cdk/cloud-assembly-schema",
+        "type": "static"
+      },
+      {
+        "source": "npm:aws-cdk-lib",
+        "target": "npm:constructs",
         "type": "static"
       }
     ],

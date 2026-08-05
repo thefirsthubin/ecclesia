@@ -1,0 +1,201 @@
+{
+  "/Ecclesia-Production-Observability": [
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:86:3)",
+        "...node internals, .pnpm, .pnpm, .pnpm..."
+      ]
+    },
+    {
+      "type": "aws:cdk:stack-tags",
+      "data": [
+        {
+          "key": "Environment",
+          "value": "production"
+        },
+        {
+          "key": "ManagedBy",
+          "value": "CDK"
+        },
+        {
+          "key": "Project",
+          "value": "Ecclesia"
+        }
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Observability/AlertTopicArnOutput": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AlertTopicArnOutput"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new ObservabilityStack (/Users/king/Documents/ecclesia/infra/lib/stacks/observability-stack.ts:121:5)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:86:3)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Observability/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Observability/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Observability/AlertTopic/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AlertTopic2720D535"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Topic2 in .pnpm...",
+        "new ObservabilityStack (/Users/king/Documents/ecclesia/infra/lib/stacks/observability-stack.ts:46:23)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:86:3)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Observability/Dashboard/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "Dashboard9E4231ED"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Dashboard2 in .pnpm...",
+        "new ObservabilityStack (/Users/king/Documents/ecclesia/infra/lib/stacks/observability-stack.ts:67:22)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:86:3)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Observability/InsightsQueueDepthAlarm/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "InsightsQueueDepthAlarmAEE19630"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Alarm2 in .pnpm...",
+        "new ObservabilityStack (/Users/king/Documents/ecclesia/infra/lib/stacks/observability-stack.ts:87:26)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:86:3)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Observability/InsightsDlqDepthAlarm/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "InsightsDlqDepthAlarm11A88949"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Alarm2 in .pnpm...",
+        "new ObservabilityStack (/Users/king/Documents/ecclesia/infra/lib/stacks/observability-stack.ts:99:24)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:86:3)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Observability/NotificationQueueDepthAlarm/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "NotificationQueueDepthAlarmD7621C52"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Alarm2 in .pnpm...",
+        "new ObservabilityStack (/Users/king/Documents/ecclesia/infra/lib/stacks/observability-stack.ts:87:26)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:86:3)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Observability/NotificationDlqDepthAlarm/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "NotificationDlqDepthAlarmE8549E34"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Alarm2 in .pnpm...",
+        "new ObservabilityStack (/Users/king/Documents/ecclesia/infra/lib/stacks/observability-stack.ts:99:24)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:86:3)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Observability/AuditQueueDepthAlarm/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuditQueueDepthAlarm37CAE530"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Alarm2 in .pnpm...",
+        "new ObservabilityStack (/Users/king/Documents/ecclesia/infra/lib/stacks/observability-stack.ts:87:26)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:86:3)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Observability/AuditDlqDepthAlarm/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuditDlqDepthAlarmD2E5CB32"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Alarm2 in .pnpm...",
+        "new ObservabilityStack (/Users/king/Documents/ecclesia/infra/lib/stacks/observability-stack.ts:99:24)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:86:3)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Observability/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ]
+}

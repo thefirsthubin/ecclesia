@@ -1,0 +1,46 @@
+[2m> [22mnpx tsc --noEmit -p tsconfig.json
+
+[2m> [22mnpx cdk synth --quiet
+
+[WARNING] aws-cdk-lib.aws_cognito.UserPoolProps#advancedSecurityMode is deprecated.
+  Advanced Security Mode is deprecated due to user pool feature plans. Use StandardThreatProtectionMode and CustomThreatProtectionMode to set Thread Protection level.
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.aws_cognito.AdvancedSecurityMode is deprecated.
+  Advanced Security Mode is deprecated due to user pool feature plans. Use StandardThreatProtectionMode and CustomThreatProtectionMode to set Thread Protection level.
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.aws_cognito.AdvancedSecurityMode#AUDIT is deprecated.
+  
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.Stack#addDependency is deprecated.
+  Use `addStackDependency` instead.
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.aws_cognito.UserPoolProps#advancedSecurityMode is deprecated.
+  Advanced Security Mode is deprecated due to user pool feature plans. Use StandardThreatProtectionMode and CustomThreatProtectionMode to set Thread Protection level.
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.aws_cognito.AdvancedSecurityMode is deprecated.
+  Advanced Security Mode is deprecated due to user pool feature plans. Use StandardThreatProtectionMode and CustomThreatProtectionMode to set Thread Protection level.
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.aws_cognito.AdvancedSecurityMode#AUDIT is deprecated.
+  
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.Stack#addDependency is deprecated.
+  Use `addStackDependency` instead.
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.aws_cognito.UserPoolProps#advancedSecurityMode is deprecated.
+  Advanced Security Mode is deprecated due to user pool feature plans. Use StandardThreatProtectionMode and CustomThreatProtectionMode to set Thread Protection level.
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.aws_cognito.AdvancedSecurityMode is deprecated.
+  Advanced Security Mode is deprecated due to user pool feature plans. Use StandardThreatProtectionMode and CustomThreatProtectionMode to set Thread Protection level.
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.aws_cognito.AdvancedSecurityMode#ENFORCED is deprecated.
+  
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.Stack#addDependency is deprecated.
+  Use `addStackDependency` instead.
+  This API will be removed in the next major release.
+[1m[33mWARNING[39m[22m [1mNo cross-stack-reference strength configured, defaulting to "strong". We recommend you set feature flag "@aws-cdk/core:defaultCrossStackReferences" to "both", then deploy everywhere, then set it to "weak". Alternatively, set it to "strong" explicitly to lock in the current producer-protecting behavior. (See: https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/README.md#reference-strength)[22m [90m(Construct Annotations)[39m
+   Ecclesia-Dev-Iam
+   [90mAcknowledge with 'Construct-Annotations::@aws-cdk/core:crossStackReferencesDefaultStrong'[39m
+[32mSuccessfully synthesized to [34m/Users/king/Documents/ecclesia/infra/cdk.out[39m[32m[39m
+Supply a stack id ([32mEcclesia-Dev-Cognito[39m, [32mEcclesia-Dev-Eventing[39m, [32mEcclesia-Dev-Ses[39m, [32mEcclesia-Dev-Secrets[39m, [32mEcclesia-Dev-Iam[39m, [32mEcclesia-Dev-Observability[39m, [32mEcclesia-Staging-Cognito[39m, [32mEcclesia-Staging-Eventing[39m, [32mEcclesia-Staging-Ses[39m, [32mEcclesia-Staging-Secrets[39m, [32mEcclesia-Staging-Iam[39m, [32mEcclesia-Staging-Observability[39m, [32mEcclesia-Production-Cognito[39m, [32mEcclesia-Production-Eventing[39m, [32mEcclesia-Production-Ses[39m, [32mEcclesia-Production-Secrets[39m, [32mEcclesia-Production-Iam[39m, [32mEcclesia-Production-Observability[39m) to display its template.
+82 feature flags are not configured. Run 'cdk flags --unstable=flags' to learn more.

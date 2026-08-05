@@ -1,0 +1,21 @@
+{
+  "version": "54.0.0",
+  "files": {
+    "1c306cbd030e8728d44394a627c5ea31193bd594acaaacdd89c3158a2f819199": {
+      "displayName": "Ecclesia-Production-Observability Template",
+      "source": {
+        "path": "Ecclesia-Production-Observability.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-eu-west-1-cc9cba5e": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1",
+          "objectKey": "1c306cbd030e8728d44394a627c5ea31193bd594acaaacdd89c3158a2f819199.json",
+          "region": "eu-west-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-eu-west-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

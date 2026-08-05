@@ -1,0 +1,419 @@
+[2m> [22mjest
+
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m infra [39m[27m[0m [2mlib/common/[22m[1mnaming.spec.ts[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m infra [39m[27m[0m [2mlib/stacks/[22m[1msecrets-stack.spec.ts[22m ([0m[1m[41m28.567 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m infra [39m[27m[0m [2mlib/stacks/[22m[1mses-stack.spec.ts[22m ([0m[1m[41m28.717 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m infra [39m[27m[0m [2mlib/stacks/[22m[1mcognito-stack.spec.ts[22m ([0m[1m[41m30.993 s[49m[22m[0m)
+  [1m● [22mConsole
+
+    [2m[33mconsole.warn[39m[22m
+[33m      [WARNING] aws-cdk-lib.aws_cognito.UserPoolProps#advancedSecurityMode is deprecated.[39m
+[33m        Advanced Security Mode is deprecated due to user pool feature plans. Use StandardThreatProtectionMode and CustomThreatProtectionMode to set Thread Protection level.[39m
+[33m        This API will be removed in the next major release.[39m
+[2m[22m
+[2m    [0m [90m 47 |[39m     [36msuper[39m(scope[33m,[39m id[33m,[39m config[33m,[39m props)[33m;[39m[22m
+[2m     [90m 48 |[39m[22m
+[2m    [31m[1m>[22m[2m[39m[90m 49 |[39m     [36mthis[39m[33m.[39muserPool [33m=[39m [36mnew[39m cognito[33m.[39m[33mUserPool[39m([36mthis[39m[33m,[39m [32m'UserPool'[39m[33m,[39m {[22m
+[2m     [90m    |[39m                     [31m[1m^[22m[2m[39m[22m
+[2m     [90m 50 |[39m       userPoolName[33m:[39m [36mthis[39m[33m.[39mresourceName([32m'user-pool'[39m)[33m,[39m[22m
+[2m     [90m 51 |[39m       selfSignUpEnabled[33m:[39m config[33m.[39mcognito[33m.[39mselfSignUpEnabled[33m,[39m[22m
+[2m     [90m 52 |[39m       signInAliases[33m:[39m { email[33m:[39m [36mtrue[39m[33m,[39m phone[33m:[39m [36mtrue[39m[33m,[39m username[33m:[39m [36mfalse[39m }[33m,[39m[0m[22m
+[2m[22m
+[2m      [2mat print ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:11:146)[22m[2m[22m
+[2m      [2mat Proxy.aws_cdk_lib_aws_cognito_UserPoolProps ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:1:34024)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/aws-cognito/lib/user-pool.js[2m:1:10657)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/no-box-stack-traces.js[2m:1:447)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/prop-injectable.js[2m:1:957)[22m[2m[22m
+[2m      [2mat new CognitoStack ([22m[2mlib/stacks/cognito-stack.ts[2m:49:21)[22m[2m[22m
+[2m      [2mat synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:10:19)[22m[2m[22m
+[2m      [2mat Object.synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:17:22)[22m[2m[22m
+
+    [2m[33mconsole.warn[39m[22m
+[33m      [WARNING] aws-cdk-lib.aws_cognito.AdvancedSecurityMode is deprecated.[39m
+[33m        Advanced Security Mode is deprecated due to user pool feature plans. Use StandardThreatProtectionMode and CustomThreatProtectionMode to set Thread Protection level.[39m
+[33m        This API will be removed in the next major release.[39m
+[2m[22m
+[2m    [0m [90m 47 |[39m     [36msuper[39m(scope[33m,[39m id[33m,[39m config[33m,[39m props)[33m;[39m[22m
+[2m     [90m 48 |[39m[22m
+[2m    [31m[1m>[22m[2m[39m[90m 49 |[39m     [36mthis[39m[33m.[39muserPool [33m=[39m [36mnew[39m cognito[33m.[39m[33mUserPool[39m([36mthis[39m[33m,[39m [32m'UserPool'[39m[33m,[39m {[22m
+[2m     [90m    |[39m                     [31m[1m^[22m[2m[39m[22m
+[2m     [90m 50 |[39m       userPoolName[33m:[39m [36mthis[39m[33m.[39mresourceName([32m'user-pool'[39m)[33m,[39m[22m
+[2m     [90m 51 |[39m       selfSignUpEnabled[33m:[39m config[33m.[39mcognito[33m.[39mselfSignUpEnabled[33m,[39m[22m
+[2m     [90m 52 |[39m       signInAliases[33m:[39m { email[33m:[39m [36mtrue[39m[33m,[39m phone[33m:[39m [36mtrue[39m[33m,[39m username[33m:[39m [36mfalse[39m }[33m,[39m[0m[22m
+[2m[22m
+[2m      [2mat print ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:11:146)[22m[2m[22m
+[2m      [2mat Proxy.aws_cdk_lib_aws_cognito_AdvancedSecurityMode ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:1:33418)[22m[2m[22m
+[2m      [2mat Proxy.aws_cdk_lib_aws_cognito_UserPoolProps ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:1:34318)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/aws-cognito/lib/user-pool.js[2m:1:10657)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/no-box-stack-traces.js[2m:1:447)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/prop-injectable.js[2m:1:957)[22m[2m[22m
+[2m      [2mat new CognitoStack ([22m[2mlib/stacks/cognito-stack.ts[2m:49:21)[22m[2m[22m
+[2m      [2mat synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:10:19)[22m[2m[22m
+[2m      [2mat Object.synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:17:22)[22m[2m[22m
+
+    [2m[33mconsole.warn[39m[22m
+[33m      [WARNING] aws-cdk-lib.aws_cognito.AdvancedSecurityMode#AUDIT is deprecated.[39m
+[33m        [39m
+[33m        This API will be removed in the next major release.[39m
+[2m[22m
+[2m    [0m [90m 47 |[39m     [36msuper[39m(scope[33m,[39m id[33m,[39m config[33m,[39m props)[33m;[39m[22m
+[2m     [90m 48 |[39m[22m
+[2m    [31m[1m>[22m[2m[39m[90m 49 |[39m     [36mthis[39m[33m.[39muserPool [33m=[39m [36mnew[39m cognito[33m.[39m[33mUserPool[39m([36mthis[39m[33m,[39m [32m'UserPool'[39m[33m,[39m {[22m
+[2m     [90m    |[39m                     [31m[1m^[22m[2m[39m[22m
+[2m     [90m 50 |[39m       userPoolName[33m:[39m [36mthis[39m[33m.[39mresourceName([32m'user-pool'[39m)[33m,[39m[22m
+[2m     [90m 51 |[39m       selfSignUpEnabled[33m:[39m config[33m.[39mcognito[33m.[39mselfSignUpEnabled[33m,[39m[22m
+[2m     [90m 52 |[39m       signInAliases[33m:[39m { email[33m:[39m [36mtrue[39m[33m,[39m phone[33m:[39m [36mtrue[39m[33m,[39m username[33m:[39m [36mfalse[39m }[33m,[39m[0m[22m
+[2m[22m
+[2m      [2mat print ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:11:146)[22m[2m[22m
+[2m      [2mat Proxy.aws_cdk_lib_aws_cognito_AdvancedSecurityMode ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:1:33734)[22m[2m[22m
+[2m      [2mat Proxy.aws_cdk_lib_aws_cognito_UserPoolProps ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:1:34318)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/aws-cognito/lib/user-pool.js[2m:1:10657)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/no-box-stack-traces.js[2m:1:447)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/prop-injectable.js[2m:1:957)[22m[2m[22m
+[2m      [2mat new CognitoStack ([22m[2mlib/stacks/cognito-stack.ts[2m:49:21)[22m[2m[22m
+[2m      [2mat synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:10:19)[22m[2m[22m
+[2m      [2mat Object.synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:17:22)[22m[2m[22m
+
+    [2m[33mconsole.warn[39m[22m
+[33m      [WARNING] aws-cdk-lib.aws_cognito.UserPoolProps#advancedSecurityMode is deprecated.[39m
+[33m        Advanced Security Mode is deprecated due to user pool feature plans. Use StandardThreatProtectionMode and CustomThreatProtectionMode to set Thread Protection level.[39m
+[33m        This API will be removed in the next major release.[39m
+[2m[22m
+[2m    [0m [90m 47 |[39m     [36msuper[39m(scope[33m,[39m id[33m,[39m config[33m,[39m props)[33m;[39m[22m
+[2m     [90m 48 |[39m[22m
+[2m    [31m[1m>[22m[2m[39m[90m 49 |[39m     [36mthis[39m[33m.[39muserPool [33m=[39m [36mnew[39m cognito[33m.[39m[33mUserPool[39m([36mthis[39m[33m,[39m [32m'UserPool'[39m[33m,[39m {[22m
+[2m     [90m    |[39m                     [31m[1m^[22m[2m[39m[22m
+[2m     [90m 50 |[39m       userPoolName[33m:[39m [36mthis[39m[33m.[39mresourceName([32m'user-pool'[39m)[33m,[39m[22m
+[2m     [90m 51 |[39m       selfSignUpEnabled[33m:[39m config[33m.[39mcognito[33m.[39mselfSignUpEnabled[33m,[39m[22m
+[2m     [90m 52 |[39m       signInAliases[33m:[39m { email[33m:[39m [36mtrue[39m[33m,[39m phone[33m:[39m [36mtrue[39m[33m,[39m username[33m:[39m [36mfalse[39m }[33m,[39m[0m[22m
+[2m[22m
+[2m      [2mat print ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:11:146)[22m[2m[22m
+[2m      [2mat Proxy.aws_cdk_lib_aws_cognito_UserPoolProps ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:1:34024)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/aws-cognito/lib/user-pool.js[2m:1:10657)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/no-box-stack-traces.js[2m:1:447)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/prop-injectable.js[2m:1:957)[22m[2m[22m
+[2m      [2mat new CognitoStack ([22m[2mlib/stacks/cognito-stack.ts[2m:49:21)[22m[2m[22m
+[2m      [2mat synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:10:19)[22m[2m[22m
+[2m      [2mat Object.synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:26:22)[22m[2m[22m
+
+    [2m[33mconsole.warn[39m[22m
+[33m      [WARNING] aws-cdk-lib.aws_cognito.AdvancedSecurityMode is deprecated.[39m
+[33m        Advanced Security Mode is deprecated due to user pool feature plans. Use StandardThreatProtectionMode and CustomThreatProtectionMode to set Thread Protection level.[39m
+[33m        This API will be removed in the next major release.[39m
+[2m[22m
+[2m    [0m [90m 47 |[39m     [36msuper[39m(scope[33m,[39m id[33m,[39m config[33m,[39m props)[33m;[39m[22m
+[2m     [90m 48 |[39m[22m
+[2m    [31m[1m>[22m[2m[39m[90m 49 |[39m     [36mthis[39m[33m.[39muserPool [33m=[39m [36mnew[39m cognito[33m.[39m[33mUserPool[39m([36mthis[39m[33m,[39m [32m'UserPool'[39m[33m,[39m {[22m
+[2m     [90m    |[39m                     [31m[1m^[22m[2m[39m[22m
+[2m     [90m 50 |[39m       userPoolName[33m:[39m [36mthis[39m[33m.[39mresourceName([32m'user-pool'[39m)[33m,[39m[22m
+[2m     [90m 51 |[39m       selfSignUpEnabled[33m:[39m config[33m.[39mcognito[33m.[39mselfSignUpEnabled[33m,[39m[22m
+[2m     [90m 52 |[39m       signInAliases[33m:[39m { email[33m:[39m [36mtrue[39m[33m,[39m phone[33m:[39m [36mtrue[39m[33m,[39m username[33m:[39m [36mfalse[39m }[33m,[39m[0m[22m
+[2m[22m
+[2m      [2mat print ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:11:146)[22m[2m[22m
+[2m      [2mat Proxy.aws_cdk_lib_aws_cognito_AdvancedSecurityMode ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:1:33418)[22m[2m[22m
+[2m      [2mat Proxy.aws_cdk_lib_aws_cognito_UserPoolProps ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:1:34318)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/aws-cognito/lib/user-pool.js[2m:1:10657)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/no-box-stack-traces.js[2m:1:447)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/prop-injectable.js[2m:1:957)[22m[2m[22m
+[2m      [2mat new CognitoStack ([22m[2mlib/stacks/cognito-stack.ts[2m:49:21)[22m[2m[22m
+[2m      [2mat synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:10:19)[22m[2m[22m
+[2m      [2mat Object.synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:26:22)[22m[2m[22m
+
+    [2m[33mconsole.warn[39m[22m
+[33m      [WARNING] aws-cdk-lib.aws_cognito.AdvancedSecurityMode#AUDIT is deprecated.[39m
+[33m        [39m
+[33m        This API will be removed in the next major release.[39m
+[2m[22m
+[2m    [0m [90m 47 |[39m     [36msuper[39m(scope[33m,[39m id[33m,[39m config[33m,[39m props)[33m;[39m[22m
+[2m     [90m 48 |[39m[22m
+[2m    [31m[1m>[22m[2m[39m[90m 49 |[39m     [36mthis[39m[33m.[39muserPool [33m=[39m [36mnew[39m cognito[33m.[39m[33mUserPool[39m([36mthis[39m[33m,[39m [32m'UserPool'[39m[33m,[39m {[22m
+[2m     [90m    |[39m                     [31m[1m^[22m[2m[39m[22m
+[2m     [90m 50 |[39m       userPoolName[33m:[39m [36mthis[39m[33m.[39mresourceName([32m'user-pool'[39m)[33m,[39m[22m
+[2m     [90m 51 |[39m       selfSignUpEnabled[33m:[39m config[33m.[39mcognito[33m.[39mselfSignUpEnabled[33m,[39m[22m
+[2m     [90m 52 |[39m       signInAliases[33m:[39m { email[33m:[39m [36mtrue[39m[33m,[39m phone[33m:[39m [36mtrue[39m[33m,[39m username[33m:[39m [36mfalse[39m }[33m,[39m[0m[22m
+[2m[22m
+[2m      [2mat print ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:11:146)[22m[2m[22m
+[2m      [2mat Proxy.aws_cdk_lib_aws_cognito_AdvancedSecurityMode ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:1:33734)[22m[2m[22m
+[2m      [2mat Proxy.aws_cdk_lib_aws_cognito_UserPoolProps ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:1:34318)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/aws-cognito/lib/user-pool.js[2m:1:10657)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/no-box-stack-traces.js[2m:1:447)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/prop-injectable.js[2m:1:957)[22m[2m[22m
+[2m      [2mat new CognitoStack ([22m[2mlib/stacks/cognito-stack.ts[2m:49:21)[22m[2m[22m
+[2m      [2mat synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:10:19)[22m[2m[22m
+[2m      [2mat Object.synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:26:22)[22m[2m[22m
+
+    [2m[33mconsole.warn[39m[22m
+[33m      [WARNING] aws-cdk-lib.aws_cognito.UserPoolProps#advancedSecurityMode is deprecated.[39m
+[33m        Advanced Security Mode is deprecated due to user pool feature plans. Use StandardThreatProtectionMode and CustomThreatProtectionMode to set Thread Protection level.[39m
+[33m        This API will be removed in the next major release.[39m
+[2m[22m
+[2m    [0m [90m 47 |[39m     [36msuper[39m(scope[33m,[39m id[33m,[39m config[33m,[39m props)[33m;[39m[22m
+[2m     [90m 48 |[39m[22m
+[2m    [31m[1m>[22m[2m[39m[90m 49 |[39m     [36mthis[39m[33m.[39muserPool [33m=[39m [36mnew[39m cognito[33m.[39m[33mUserPool[39m([36mthis[39m[33m,[39m [32m'UserPool'[39m[33m,[39m {[22m
+[2m     [90m    |[39m                     [31m[1m^[22m[2m[39m[22m
+[2m     [90m 50 |[39m       userPoolName[33m:[39m [36mthis[39m[33m.[39mresourceName([32m'user-pool'[39m)[33m,[39m[22m
+[2m     [90m 51 |[39m       selfSignUpEnabled[33m:[39m config[33m.[39mcognito[33m.[39mselfSignUpEnabled[33m,[39m[22m
+[2m     [90m 52 |[39m       signInAliases[33m:[39m { email[33m:[39m [36mtrue[39m[33m,[39m phone[33m:[39m [36mtrue[39m[33m,[39m username[33m:[39m [36mfalse[39m }[33m,[39m[0m[22m
+[2m[22m
+[2m      [2mat print ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:11:146)[22m[2m[22m
+[2m      [2mat Proxy.aws_cdk_lib_aws_cognito_UserPoolProps ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:1:34024)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/aws-cognito/lib/user-pool.js[2m:1:10657)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/no-box-stack-traces.js[2m:1:447)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/prop-injectable.js[2m:1:957)[22m[2m[22m
+[2m      [2mat new CognitoStack ([22m[2mlib/stacks/cognito-stack.ts[2m:49:21)[22m[2m[22m
+[2m      [2mat synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:10:19)[22m[2m[22m
+[2m      [2mat Object.synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:34:22)[22m[2m[22m
+
+    [2m[33mconsole.warn[39m[22m
+[33m      [WARNING] aws-cdk-lib.aws_cognito.AdvancedSecurityMode is deprecated.[39m
+[33m        Advanced Security Mode is deprecated due to user pool feature plans. Use StandardThreatProtectionMode and CustomThreatProtectionMode to set Thread Protection level.[39m
+[33m        This API will be removed in the next major release.[39m
+[2m[22m
+[2m    [0m [90m 47 |[39m     [36msuper[39m(scope[33m,[39m id[33m,[39m config[33m,[39m props)[33m;[39m[22m
+[2m     [90m 48 |[39m[22m
+[2m    [31m[1m>[22m[2m[39m[90m 49 |[39m     [36mthis[39m[33m.[39muserPool [33m=[39m [36mnew[39m cognito[33m.[39m[33mUserPool[39m([36mthis[39m[33m,[39m [32m'UserPool'[39m[33m,[39m {[22m
+[2m     [90m    |[39m                     [31m[1m^[22m[2m[39m[22m
+[2m     [90m 50 |[39m       userPoolName[33m:[39m [36mthis[39m[33m.[39mresourceName([32m'user-pool'[39m)[33m,[39m[22m
+[2m     [90m 51 |[39m       selfSignUpEnabled[33m:[39m config[33m.[39mcognito[33m.[39mselfSignUpEnabled[33m,[39m[22m
+[2m     [90m 52 |[39m       signInAliases[33m:[39m { email[33m:[39m [36mtrue[39m[33m,[39m phone[33m:[39m [36mtrue[39m[33m,[39m username[33m:[39m [36mfalse[39m }[33m,[39m[0m[22m
+[2m[22m
+[2m      [2mat print ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:11:146)[22m[2m[22m
+[2m      [2mat Proxy.aws_cdk_lib_aws_cognito_AdvancedSecurityMode ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:1:33418)[22m[2m[22m
+[2m      [2mat Proxy.aws_cdk_lib_aws_cognito_UserPoolProps ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:1:34318)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/aws-cognito/lib/user-pool.js[2m:1:10657)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/no-box-stack-traces.js[2m:1:447)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/prop-injectable.js[2m:1:957)[22m[2m[22m
+[2m      [2mat new CognitoStack ([22m[2mlib/stacks/cognito-stack.ts[2m:49:21)[22m[2m[22m
+[2m      [2mat synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:10:19)[22m[2m[22m
+[2m      [2mat Object.synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:34:22)[22m[2m[22m
+
+    [2m[33mconsole.warn[39m[22m
+[33m      [WARNING] aws-cdk-lib.aws_cognito.AdvancedSecurityMode#AUDIT is deprecated.[39m
+[33m        [39m
+[33m        This API will be removed in the next major release.[39m
+[2m[22m
+[2m    [0m [90m 47 |[39m     [36msuper[39m(scope[33m,[39m id[33m,[39m config[33m,[39m props)[33m;[39m[22m
+[2m     [90m 48 |[39m[22m
+[2m    [31m[1m>[22m[2m[39m[90m 49 |[39m     [36mthis[39m[33m.[39muserPool [33m=[39m [36mnew[39m cognito[33m.[39m[33mUserPool[39m([36mthis[39m[33m,[39m [32m'UserPool'[39m[33m,[39m {[22m
+[2m     [90m    |[39m                     [31m[1m^[22m[2m[39m[22m
+[2m     [90m 50 |[39m       userPoolName[33m:[39m [36mthis[39m[33m.[39mresourceName([32m'user-pool'[39m)[33m,[39m[22m
+[2m     [90m 51 |[39m       selfSignUpEnabled[33m:[39m config[33m.[39mcognito[33m.[39mselfSignUpEnabled[33m,[39m[22m
+[2m     [90m 52 |[39m       signInAliases[33m:[39m { email[33m:[39m [36mtrue[39m[33m,[39m phone[33m:[39m [36mtrue[39m[33m,[39m username[33m:[39m [36mfalse[39m }[33m,[39m[0m[22m
+[2m[22m
+[2m      [2mat print ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:11:146)[22m[2m[22m
+[2m      [2mat Proxy.aws_cdk_lib_aws_cognito_AdvancedSecurityMode ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:1:33734)[22m[2m[22m
+[2m      [2mat Proxy.aws_cdk_lib_aws_cognito_UserPoolProps ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:1:34318)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/aws-cognito/lib/user-pool.js[2m:1:10657)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/no-box-stack-traces.js[2m:1:447)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/prop-injectable.js[2m:1:957)[22m[2m[22m
+[2m      [2mat new CognitoStack ([22m[2mlib/stacks/cognito-stack.ts[2m:49:21)[22m[2m[22m
+[2m      [2mat synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:10:19)[22m[2m[22m
+[2m      [2mat Object.synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:34:22)[22m[2m[22m
+
+    [2m[33mconsole.warn[39m[22m
+[33m      [WARNING] aws-cdk-lib.aws_cognito.UserPoolProps#advancedSecurityMode is deprecated.[39m
+[33m        Advanced Security Mode is deprecated due to user pool feature plans. Use StandardThreatProtectionMode and CustomThreatProtectionMode to set Thread Protection level.[39m
+[33m        This API will be removed in the next major release.[39m
+[2m[22m
+[2m    [0m [90m 47 |[39m     [36msuper[39m(scope[33m,[39m id[33m,[39m config[33m,[39m props)[33m;[39m[22m
+[2m     [90m 48 |[39m[22m
+[2m    [31m[1m>[22m[2m[39m[90m 49 |[39m     [36mthis[39m[33m.[39muserPool [33m=[39m [36mnew[39m cognito[33m.[39m[33mUserPool[39m([36mthis[39m[33m,[39m [32m'UserPool'[39m[33m,[39m {[22m
+[2m     [90m    |[39m                     [31m[1m^[22m[2m[39m[22m
+[2m     [90m 50 |[39m       userPoolName[33m:[39m [36mthis[39m[33m.[39mresourceName([32m'user-pool'[39m)[33m,[39m[22m
+[2m     [90m 51 |[39m       selfSignUpEnabled[33m:[39m config[33m.[39mcognito[33m.[39mselfSignUpEnabled[33m,[39m[22m
+[2m     [90m 52 |[39m       signInAliases[33m:[39m { email[33m:[39m [36mtrue[39m[33m,[39m phone[33m:[39m [36mtrue[39m[33m,[39m username[33m:[39m [36mfalse[39m }[33m,[39m[0m[22m
+[2m[22m
+[2m      [2mat print ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:11:146)[22m[2m[22m
+[2m      [2mat Proxy.aws_cdk_lib_aws_cognito_UserPoolProps ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:1:34024)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/aws-cognito/lib/user-pool.js[2m:1:10657)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/no-box-stack-traces.js[2m:1:447)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/prop-injectable.js[2m:1:957)[22m[2m[22m
+[2m      [2mat new CognitoStack ([22m[2mlib/stacks/cognito-stack.ts[2m:49:21)[22m[2m[22m
+[2m      [2mat synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:10:19)[22m[2m[22m
+[2m      [2mat Object.synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:41:22)[22m[2m[22m
+
+    [2m[33mconsole.warn[39m[22m
+[33m      [WARNING] aws-cdk-lib.aws_cognito.AdvancedSecurityMode is deprecated.[39m
+[33m        Advanced Security Mode is deprecated due to user pool feature plans. Use StandardThreatProtectionMode and CustomThreatProtectionMode to set Thread Protection level.[39m
+[33m        This API will be removed in the next major release.[39m
+[2m[22m
+[2m    [0m [90m 47 |[39m     [36msuper[39m(scope[33m,[39m id[33m,[39m config[33m,[39m props)[33m;[39m[22m
+[2m     [90m 48 |[39m[22m
+[2m    [31m[1m>[22m[2m[39m[90m 49 |[39m     [36mthis[39m[33m.[39muserPool [33m=[39m [36mnew[39m cognito[33m.[39m[33mUserPool[39m([36mthis[39m[33m,[39m [32m'UserPool'[39m[33m,[39m {[22m
+[2m     [90m    |[39m                     [31m[1m^[22m[2m[39m[22m
+[2m     [90m 50 |[39m       userPoolName[33m:[39m [36mthis[39m[33m.[39mresourceName([32m'user-pool'[39m)[33m,[39m[22m
+[2m     [90m 51 |[39m       selfSignUpEnabled[33m:[39m config[33m.[39mcognito[33m.[39mselfSignUpEnabled[33m,[39m[22m
+[2m     [90m 52 |[39m       signInAliases[33m:[39m { email[33m:[39m [36mtrue[39m[33m,[39m phone[33m:[39m [36mtrue[39m[33m,[39m username[33m:[39m [36mfalse[39m }[33m,[39m[0m[22m
+[2m[22m
+[2m      [2mat print ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:11:146)[22m[2m[22m
+[2m      [2mat Proxy.aws_cdk_lib_aws_cognito_AdvancedSecurityMode ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:1:33418)[22m[2m[22m
+[2m      [2mat Proxy.aws_cdk_lib_aws_cognito_UserPoolProps ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:1:34318)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/aws-cognito/lib/user-pool.js[2m:1:10657)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/no-box-stack-traces.js[2m:1:447)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/prop-injectable.js[2m:1:957)[22m[2m[22m
+[2m      [2mat new CognitoStack ([22m[2mlib/stacks/cognito-stack.ts[2m:49:21)[22m[2m[22m
+[2m      [2mat synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:10:19)[22m[2m[22m
+[2m      [2mat Object.synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:41:22)[22m[2m[22m
+
+    [2m[33mconsole.warn[39m[22m
+[33m      [WARNING] aws-cdk-lib.aws_cognito.AdvancedSecurityMode#AUDIT is deprecated.[39m
+[33m        [39m
+[33m        This API will be removed in the next major release.[39m
+[2m[22m
+[2m    [0m [90m 47 |[39m     [36msuper[39m(scope[33m,[39m id[33m,[39m config[33m,[39m props)[33m;[39m[22m
+[2m     [90m 48 |[39m[22m
+[2m    [31m[1m>[22m[2m[39m[90m 49 |[39m     [36mthis[39m[33m.[39muserPool [33m=[39m [36mnew[39m cognito[33m.[39m[33mUserPool[39m([36mthis[39m[33m,[39m [32m'UserPool'[39m[33m,[39m {[22m
+[2m     [90m    |[39m                     [31m[1m^[22m[2m[39m[22m
+[2m     [90m 50 |[39m       userPoolName[33m:[39m [36mthis[39m[33m.[39mresourceName([32m'user-pool'[39m)[33m,[39m[22m
+[2m     [90m 51 |[39m       selfSignUpEnabled[33m:[39m config[33m.[39mcognito[33m.[39mselfSignUpEnabled[33m,[39m[22m
+[2m     [90m 52 |[39m       signInAliases[33m:[39m { email[33m:[39m [36mtrue[39m[33m,[39m phone[33m:[39m [36mtrue[39m[33m,[39m username[33m:[39m [36mfalse[39m }[33m,[39m[0m[22m
+[2m[22m
+[2m      [2mat print ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:11:146)[22m[2m[22m
+[2m      [2mat Proxy.aws_cdk_lib_aws_cognito_AdvancedSecurityMode ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:1:33734)[22m[2m[22m
+[2m      [2mat Proxy.aws_cdk_lib_aws_cognito_UserPoolProps ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:1:34318)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/aws-cognito/lib/user-pool.js[2m:1:10657)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/no-box-stack-traces.js[2m:1:447)[22m[2m[22m
+[2m      [2mat new UserPool2 ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/prop-injectable.js[2m:1:957)[22m[2m[22m
+[2m      [2mat new CognitoStack ([22m[2mlib/stacks/cognito-stack.ts[2m:49:21)[22m[2m[22m
+[2m      [2mat synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:10:19)[22m[2m[22m
+[2m      [2mat Object.synth ([22m[2m[0m[36mlib/stacks/cognito-stack.spec.ts[39m[0m[2m:41:22)[22m[2m[22m
+
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m infra [39m[27m[0m [2mlib/stacks/[22m[1meventing-stack.spec.ts[22m ([0m[1m[41m32.098 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m infra [39m[27m[0m [2mlib/stacks/[22m[1mobservability-stack.spec.ts[22m ([0m[1m[41m33.565 s[49m[22m[0m)
+[0m[7m[1m[31m FAIL [39m[22m[27m[0m [0m[7m[37m infra [39m[27m[0m [2mlib/stacks/[22m[1miam-stack.spec.ts[22m ([0m[1m[41m33.867 s[49m[22m[0m)
+  [1m● [22mConsole
+
+    [2m[33mconsole.warn[39m[22m
+[33m      [WARNING] aws-cdk-lib.Stack#addDependency is deprecated.[39m
+[33m        Use `addStackDependency` instead.[39m
+[33m        This API will be removed in the next major release.[39m
+[2m[22m
+[2m    [0m [90m 64 |[39m     [90m// `cdk deploy --all`'s dependency graph still deploys SesStack before[39m[22m
+[2m     [90m 65 |[39m     [90m// IamStack in any environment where an identity is configured.[39m[22m
+[2m    [31m[1m>[22m[2m[39m[90m 66 |[39m     [36mthis[39m[33m.[39maddDependency(ses)[33m;[39m[22m
+[2m     [90m    |[39m          [31m[1m^[22m[2m[39m[22m
+[2m     [90m 67 |[39m[22m
+[2m     [90m 68 |[39m     [36mthis[39m[33m.[39mapiTaskExecutionRole [33m=[39m [36mthis[39m[33m.[39mbuildExecutionRole([32m'ApiTaskExecutionRole'[39m[33m,[39m [32m'api-task-execution-role'[39m)[33m;[39m[22m
+[2m     [90m 69 |[39m     [36mthis[39m[33m.[39mworkerTaskExecutionRole [33m=[39m [36mthis[39m[33m.[39mbuildExecutionRole([32m'WorkerTaskExecutionRole'[39m[33m,[39m [32m'worker-task-execution-role'[39m)[33m;[39m[0m[22m
+[2m[22m
+[2m      [2mat Proxy.print ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:11:146)[22m[2m[22m
+[2m      [2mat IamStack.addDependency ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/stack.js[2m:1:13956)[22m[2m[22m
+[2m      [2mat new addDependency ([22m[2mlib/stacks/iam-stack.ts[2m:66:10)[22m[2m[22m
+[2m      [2mat synth ([22m[2m[0m[36mlib/stacks/iam-stack.spec.ts[39m[0m[2m:18:19)[22m[2m[22m
+[2m      [2mat Object.synth ([22m[2m[0m[36mlib/stacks/iam-stack.spec.ts[39m[0m[2m:23:22)[22m[2m[22m
+
+    [2m[33mconsole.warn[39m[22m
+[33m      [WARNING] aws-cdk-lib.Stack#addDependency is deprecated.[39m
+[33m        Use `addStackDependency` instead.[39m
+[33m        This API will be removed in the next major release.[39m
+[2m[22m
+[2m    [0m [90m 64 |[39m     [90m// `cdk deploy --all`'s dependency graph still deploys SesStack before[39m[22m
+[2m     [90m 65 |[39m     [90m// IamStack in any environment where an identity is configured.[39m[22m
+[2m    [31m[1m>[22m[2m[39m[90m 66 |[39m     [36mthis[39m[33m.[39maddDependency(ses)[33m;[39m[22m
+[2m     [90m    |[39m          [31m[1m^[22m[2m[39m[22m
+[2m     [90m 67 |[39m[22m
+[2m     [90m 68 |[39m     [36mthis[39m[33m.[39mapiTaskExecutionRole [33m=[39m [36mthis[39m[33m.[39mbuildExecutionRole([32m'ApiTaskExecutionRole'[39m[33m,[39m [32m'api-task-execution-role'[39m)[33m;[39m[22m
+[2m     [90m 69 |[39m     [36mthis[39m[33m.[39mworkerTaskExecutionRole [33m=[39m [36mthis[39m[33m.[39mbuildExecutionRole([32m'WorkerTaskExecutionRole'[39m[33m,[39m [32m'worker-task-execution-role'[39m)[33m;[39m[0m[22m
+[2m[22m
+[2m      [2mat Proxy.print ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:11:146)[22m[2m[22m
+[2m      [2mat IamStack.addDependency ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/stack.js[2m:1:13956)[22m[2m[22m
+[2m      [2mat new addDependency ([22m[2mlib/stacks/iam-stack.ts[2m:66:10)[22m[2m[22m
+[2m      [2mat synth ([22m[2m[0m[36mlib/stacks/iam-stack.spec.ts[39m[0m[2m:18:19)[22m[2m[22m
+[2m      [2mat Object.synth ([22m[2m[0m[36mlib/stacks/iam-stack.spec.ts[39m[0m[2m:28:22)[22m[2m[22m
+
+    [2m[33mconsole.warn[39m[22m
+[33m      [WARNING] aws-cdk-lib.Stack#addDependency is deprecated.[39m
+[33m        Use `addStackDependency` instead.[39m
+[33m        This API will be removed in the next major release.[39m
+[2m[22m
+[2m    [0m [90m 64 |[39m     [90m// `cdk deploy --all`'s dependency graph still deploys SesStack before[39m[22m
+[2m     [90m 65 |[39m     [90m// IamStack in any environment where an identity is configured.[39m[22m
+[2m    [31m[1m>[22m[2m[39m[90m 66 |[39m     [36mthis[39m[33m.[39maddDependency(ses)[33m;[39m[22m
+[2m     [90m    |[39m          [31m[1m^[22m[2m[39m[22m
+[2m     [90m 67 |[39m[22m
+[2m     [90m 68 |[39m     [36mthis[39m[33m.[39mapiTaskExecutionRole [33m=[39m [36mthis[39m[33m.[39mbuildExecutionRole([32m'ApiTaskExecutionRole'[39m[33m,[39m [32m'api-task-execution-role'[39m)[33m;[39m[22m
+[2m     [90m 69 |[39m     [36mthis[39m[33m.[39mworkerTaskExecutionRole [33m=[39m [36mthis[39m[33m.[39mbuildExecutionRole([32m'WorkerTaskExecutionRole'[39m[33m,[39m [32m'worker-task-execution-role'[39m)[33m;[39m[0m[22m
+[2m[22m
+[2m      [2mat Proxy.print ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/.warnings.jsii.js[2m:11:146)[22m[2m[22m
+[2m      [2mat IamStack.addDependency ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/stack.js[2m:1:13956)[22m[2m[22m
+[2m      [2mat new addDependency ([22m[2mlib/stacks/iam-stack.ts[2m:66:10)[22m[2m[22m
+[2m      [2mat synth ([22m[2m[0m[36mlib/stacks/iam-stack.spec.ts[39m[0m[2m:18:19)[22m[2m[22m
+[2m      [2mat Object.synth ([22m[2m[0m[36mlib/stacks/iam-stack.spec.ts[39m[0m[2m:42:22)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mIamStack › attaches an AWS-managed policy (the ECS task execution policy) to at least one role[39m[22m
+
+    [0mExpected value [0m  [32mundefined[39m
+    [0mReceived:[0m
+    [0m[0m  [31mundefined[39m[0m[0m
+    [0m[0m
+    [0mMessage:[0m
+    [0m  The Matcher anyValue() cannot be nested within arrayWith()[0m
+
+    Difference:
+
+    [2mCompared values have no visual difference.[22m
+[2m[22m
+[2m    [0m [90m 41 |[39m   it([32m'attaches an AWS-managed policy (the ECS task execution policy) to at least one role'[39m[33m,[39m () [33m=>[39m {[22m
+[2m     [90m 42 |[39m     [36mconst[39m template [33m=[39m synth()[33m;[39m[22m
+[2m    [31m[1m>[22m[2m[39m[90m 43 |[39m     template[33m.[39mhasResourceProperties([32m'AWS::IAM::Role'[39m[33m,[39m {[22m
+[2m     [90m    |[39m              [31m[1m^[22m[2m[39m[22m
+[2m     [90m 44 |[39m       [33mManagedPolicyArns[39m[33m:[39m [33mMatch[39m[33m.[39marrayWith([[33mMatch[39m[33m.[39manyValue()])[33m,[39m[22m
+[2m     [90m 45 |[39m     })[33m;[39m[22m
+[2m     [90m 46 |[39m   })[33m;[39m[0m[22m
+[2m[22m
+[2m      [2mat ArrayMatch.testSubsequence ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/assertions/lib/match.js[2m:1:4376)[22m[2m[22m
+[2m      [2mat ArrayMatch.test ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/assertions/lib/match.js[2m:1:2965)[22m[2m[22m
+[2m      [2mat ObjectMatch.test ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/assertions/lib/match.js[2m:1:6529)[22m[2m[22m
+[2m      [2mat LiteralMatch.test ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/assertions/lib/match.js[2m:1:2260)[22m[2m[22m
+[2m      [2mat ObjectMatch.test ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/assertions/lib/match.js[2m:1:6529)[22m[2m[22m
+[2m      [2mat [22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/assertions/lib/private/section.js[2m:1:925[22m[2m[22m
+[2m      [2mat eachEntryInSection ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/assertions/lib/private/section.js[2m:1:1490)[22m[2m[22m
+[2m      [2mat matchSection ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/assertions/lib/private/section.js[2m:1:831)[22m[2m[22m
+[2m      [2mat hasResource ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/assertions/lib/private/resources.js[2m:4:430)[22m[2m[22m
+[2m      [2mat hasResourceProperties ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/assertions/lib/private/resources.js[2m:4:807)[22m[2m[22m
+[2m      [2mat Template.hasResourceProperties ([22m[2m../node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/assertions/lib/template.js[2m:1:4298)[22m[2m[22m
+[2m      [2mat Object.hasResourceProperties ([22m[2m[0m[36mlib/stacks/iam-stack.spec.ts[39m[0m[2m:43:14)[22m[2m[22m
+
+[WARNING] aws-cdk-lib.aws_cognito.UserPoolProps#advancedSecurityMode is deprecated.
+  Advanced Security Mode is deprecated due to user pool feature plans. Use StandardThreatProtectionMode and CustomThreatProtectionMode to set Thread Protection level.
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.aws_cognito.AdvancedSecurityMode is deprecated.
+  Advanced Security Mode is deprecated due to user pool feature plans. Use StandardThreatProtectionMode and CustomThreatProtectionMode to set Thread Protection level.
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.aws_cognito.AdvancedSecurityMode#AUDIT is deprecated.
+  
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.Stack#addDependency is deprecated.
+  Use `addStackDependency` instead.
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.aws_cognito.UserPoolProps#advancedSecurityMode is deprecated.
+  Advanced Security Mode is deprecated due to user pool feature plans. Use StandardThreatProtectionMode and CustomThreatProtectionMode to set Thread Protection level.
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.aws_cognito.AdvancedSecurityMode is deprecated.
+  Advanced Security Mode is deprecated due to user pool feature plans. Use StandardThreatProtectionMode and CustomThreatProtectionMode to set Thread Protection level.
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.aws_cognito.AdvancedSecurityMode#AUDIT is deprecated.
+  
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.Stack#addDependency is deprecated.
+  Use `addStackDependency` instead.
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.aws_cognito.UserPoolProps#advancedSecurityMode is deprecated.
+  Advanced Security Mode is deprecated due to user pool feature plans. Use StandardThreatProtectionMode and CustomThreatProtectionMode to set Thread Protection level.
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.aws_cognito.AdvancedSecurityMode is deprecated.
+  Advanced Security Mode is deprecated due to user pool feature plans. Use StandardThreatProtectionMode and CustomThreatProtectionMode to set Thread Protection level.
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.aws_cognito.AdvancedSecurityMode#ENFORCED is deprecated.
+  
+  This API will be removed in the next major release.
+[WARNING] aws-cdk-lib.Stack#addDependency is deprecated.
+  Use `addStackDependency` instead.
+  This API will be removed in the next major release.
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m infra [39m[27m[0m [2mbin/[22m[1minfra.spec.ts[22m ([0m[1m[41m49.064 s[49m[22m[0m)
+
+[1mTest Suites: [22m[1m[31m1 failed[39m[22m, [1m[32m7 passed[39m[22m, 8 total
+[1mTests:       [22m[1m[31m1 failed[39m[22m, [1m[32m21 passed[39m[22m, 22 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        52.249 s, estimated 205 s
+[2mRan all test suites[22m[2m.[22m

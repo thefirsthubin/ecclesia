@@ -1,0 +1,21 @@
+{
+  "version": "54.0.0",
+  "files": {
+    "1ca55f228d001abb3c7c5a9dec322cf9b167466a1d5ff5ded74f1a59beb921bb": {
+      "displayName": "Ecclesia-Staging-Cognito Template",
+      "source": {
+        "path": "Ecclesia-Staging-Cognito.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-eu-west-1-868d2e5e": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1",
+          "objectKey": "1ca55f228d001abb3c7c5a9dec322cf9b167466a1d5ff5ded74f1a59beb921bb.json",
+          "region": "eu-west-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-eu-west-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

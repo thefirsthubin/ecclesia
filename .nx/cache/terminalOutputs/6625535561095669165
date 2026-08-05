@@ -1,0 +1,41 @@
+[2m> [22mjest
+
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/ErrorState/[22m[1mErrorState.spec.tsx[22m ([0m[1m[41m154.996 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Checkbox/[22m[1mCheckbox.spec.tsx[22m ([0m[1m[41m155.299 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Select/[22m[1mSelect.spec.tsx[22m ([0m[1m[41m154.946 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Accordion/[22m[1mAccordion.spec.tsx[22m ([0m[1m[41m154.721 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Search/[22m[1mSearch.spec.tsx[22m ([0m[1m[41m155.096 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Filters/[22m[1mFilterBar.spec.tsx[22m ([0m[1m[41m155.322 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Button/[22m[1mButton.spec.tsx[22m ([0m[1m[41m154.946 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/BottomNav/[22m[1mBottomNav.spec.tsx[22m ([0m[1m[41m155.119 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/RecordPicker/[22m[1mRecordPicker.spec.tsx[22m ([0m[1m[41m155.054 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Charts/[22m[1mLineChart.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Drawer/[22m[1mDrawer.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Skeleton/[22m[1mSkeleton.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Charts/[22m[1mBarChart.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Toast/[22m[1mToastProvider.spec.tsx[22m ([0m[1m[41m157.016 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Badge/[22m[1mBadge.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Tooltip/[22m[1mTooltip.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Radio/[22m[1mRadioGroup.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Heading/[22m[1mHeading.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Modal/[22m[1mModal.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Tabs/[22m[1mTabs.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Input/[22m[1mInput.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Avatar/[22m[1mAvatar.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Text/[22m[1mText.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Divider/[22m[1mDivider.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Icon/[22m[1mIcon.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/EmptyState/[22m[1mEmptyState.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/TextArea/[22m[1mTextArea.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Table/[22m[1mTable.spec.tsx[22m ([0m[1m[41m157.826 s[49m[22m[0m)
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Pagination/[22m[1mPagination.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Card/[22m[1mCard.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Switch/[22m[1mSwitch.spec.tsx[22m
+[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m ui-native [39m[27m[0m [2msrc/lib/Spinner/[22m[1mSpinner.spec.tsx[22m
+[33mA worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that .unref() was called on them.[39m
+
+[1mTest Suites: [22m[1m[32m32 passed[39m[22m, 32 total
+[1mTests:       [22m[1m[32m101 passed[39m[22m, 101 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        [1m[33m175.259 s[39m[22m
+[2mRan all test suites[22m[2m.[22m

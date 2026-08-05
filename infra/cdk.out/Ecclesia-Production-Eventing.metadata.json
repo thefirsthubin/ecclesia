@@ -1,0 +1,599 @@
+{
+  "/Ecclesia-Production-Eventing": [
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "...node internals, .pnpm, .pnpm, .pnpm..."
+      ]
+    },
+    {
+      "type": "aws:cdk:stack-tags",
+      "data": [
+        {
+          "key": "Environment",
+          "value": "production"
+        },
+        {
+          "key": "ManagedBy",
+          "value": "CDK"
+        },
+        {
+          "key": "Project",
+          "value": "Ecclesia"
+        }
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/Exportecclesia-production-eventbridge-bus-name": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "Exportecclesiaproductioneventbridgebusname"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...EventingStack.exportValue in .pnpm...",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:43:10)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/Exportecclesia-production-insights-queue-arn": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "Exportecclesiaproductioninsightsqueuearn"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...EventingStack.exportValue in .pnpm...",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:44:10)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/Exportecclesia-production-notification-queue-arn": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "Exportecclesiaproductionnotificationqueuearn"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...EventingStack.exportValue in .pnpm...",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:45:10)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/Exportecclesia-production-audit-queue-arn": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "Exportecclesiaproductionauditqueuearn"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...EventingStack.exportValue in .pnpm...",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:46:10)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/BusNameParam/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BusNameParam67486984"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new StringParameter2 in .pnpm...",
+        "writeParameter (/Users/king/Documents/ecclesia/infra/lib/common/parameters.ts:23:10)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:37:19)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/BusArnParam/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BusArnParamE583E81A"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new StringParameter2 in .pnpm...",
+        "writeParameter (/Users/king/Documents/ecclesia/infra/lib/common/parameters.ts:23:10)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:38:19)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/InsightsQueueUrlParam/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "InsightsQueueUrlParamB34A4A8C"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new StringParameter2 in .pnpm...",
+        "writeParameter (/Users/king/Documents/ecclesia/infra/lib/common/parameters.ts:23:10)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:39:19)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/NotificationQueueUrlParam/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "NotificationQueueUrlParam31DCCE68"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new StringParameter2 in .pnpm...",
+        "writeParameter (/Users/king/Documents/ecclesia/infra/lib/common/parameters.ts:23:10)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:40:19)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/AuditQueueUrlParam/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuditQueueUrlParam94A9980D"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new StringParameter2 in .pnpm...",
+        "writeParameter (/Users/king/Documents/ecclesia/infra/lib/common/parameters.ts:23:10)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:41:19)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/Exports/Output{\"Fn::GetAtt\":[\"EngagementSignalBus4E37EDB7\",\"Arn\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttEngagementSignalBus4E37EDB7Arn6CFF23A5"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/Exports/Output{\"Fn::GetAtt\":[\"EngagementSignalBusInsightsQueue529C3DCE\",\"Arn\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttEngagementSignalBusInsightsQueue529C3DCEArnB9B3CF17"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/Exports/Output{\"Fn::GetAtt\":[\"EngagementSignalBusNotificationQueueA0130601\",\"Arn\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttEngagementSignalBusNotificationQueueA0130601ArnAE6E3F61"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/Exports/Output{\"Fn::GetAtt\":[\"EngagementSignalBusAuditQueueE693E9DF\",\"Arn\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttEngagementSignalBusAuditQueueE693E9DFArnF3A26E7A"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/Exports/Output{\"Fn::GetAtt\":[\"EngagementSignalBusInsightsQueue529C3DCE\",\"QueueName\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttEngagementSignalBusInsightsQueue529C3DCEQueueName35E47A7B"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/Exports/Output{\"Fn::GetAtt\":[\"EngagementSignalBusNotificationQueueA0130601\",\"QueueName\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttEngagementSignalBusNotificationQueueA0130601QueueName793EF356"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/Exports/Output{\"Fn::GetAtt\":[\"EngagementSignalBusAuditQueueE693E9DF\",\"QueueName\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttEngagementSignalBusAuditQueueE693E9DFQueueName833035E3"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/Exports/Output{\"Fn::GetAtt\":[\"EngagementSignalBusInsightsDlq19C6551B\",\"QueueName\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttEngagementSignalBusInsightsDlq19C6551BQueueNameAC7DD055"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/Exports/Output{\"Fn::GetAtt\":[\"EngagementSignalBusNotificationDlqE3B42E63\",\"QueueName\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttEngagementSignalBusNotificationDlqE3B42E63QueueName068E950A"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/Exports/Output{\"Fn::GetAtt\":[\"EngagementSignalBusAuditDlq248BABFF\",\"QueueName\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttEngagementSignalBusAuditDlq248BABFFQueueName9225AD00"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/EngagementSignalBus/Bus/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EngagementSignalBus4E37EDB7"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new EventBus2 in .pnpm...",
+        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:78:21)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/EngagementSignalBus/InsightsDlq/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EngagementSignalBusInsightsDlq19C6551B"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Queue2 in .pnpm...",
+        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:125:17)",
+        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:92:27)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/EngagementSignalBus/InsightsQueue/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EngagementSignalBusInsightsQueue529C3DCE"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Queue2 in .pnpm...",
+        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:132:19)",
+        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:92:27)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/EngagementSignalBus/NotificationDlq/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EngagementSignalBusNotificationDlqE3B42E63"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Queue2 in .pnpm...",
+        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:125:17)",
+        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:93:31)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/EngagementSignalBus/NotificationQueue/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EngagementSignalBusNotificationQueueA0130601"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Queue2 in .pnpm...",
+        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:132:19)",
+        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:93:31)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/EngagementSignalBus/AuditDlq/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EngagementSignalBusAuditDlq248BABFF"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Queue2 in .pnpm...",
+        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:125:17)",
+        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:94:24)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/EngagementSignalBus/AuditQueue/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EngagementSignalBusAuditQueueE693E9DF"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Queue2 in .pnpm...",
+        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:132:19)",
+        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:94:24)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/EngagementSignalBus/AllEventsToInsights/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EngagementSignalBusAllEventsToInsightsB7712FAB"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Rule2 in .pnpm...",
+        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:99:5)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/EngagementSignalBus/AllEventsToAudit/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EngagementSignalBusAllEventsToAuditEF61E6A3"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Rule2 in .pnpm...",
+        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:107:5)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/EngagementSignalBus/AlertableEventsToNotification/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EngagementSignalBusAlertableEventsToNotificationAD0ED3DC"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Rule2 in .pnpm...",
+        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:115:5)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/EngagementSignalBus/InsightsDlq/Policy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EngagementSignalBusInsightsDlqPolicyAA63A63B"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Queue2 in .pnpm...",
+        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:125:17)",
+        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:92:27)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/EngagementSignalBus/InsightsQueue/Policy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EngagementSignalBusInsightsQueuePolicy45EB3862"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Queue2 in .pnpm...",
+        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:132:19)",
+        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:92:27)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/EngagementSignalBus/NotificationDlq/Policy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EngagementSignalBusNotificationDlqPolicyECA4D074"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Queue2 in .pnpm...",
+        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:125:17)",
+        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:93:31)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/EngagementSignalBus/NotificationQueue/Policy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EngagementSignalBusNotificationQueuePolicyDC462425"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Queue2 in .pnpm...",
+        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:132:19)",
+        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:93:31)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/EngagementSignalBus/AuditDlq/Policy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EngagementSignalBusAuditDlqPolicy8F1F1A84"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Queue2 in .pnpm...",
+        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:125:17)",
+        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:94:24)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-Eventing/EngagementSignalBus/AuditQueue/Policy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EngagementSignalBusAuditQueuePolicyC379E902"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Queue2 in .pnpm...",
+        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:132:19)",
+        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:94:24)",
+        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)"
+      ]
+    }
+  ]
+}

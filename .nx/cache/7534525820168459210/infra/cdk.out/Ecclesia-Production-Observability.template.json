@@ -1,0 +1,428 @@
+{
+ "Description": "Ecclesia production - CloudWatch (Production Infrastructure Foundation milestone)",
+ "Resources": {
+  "AlertTopic2720D535": {
+   "Type": "AWS::SNS::Topic",
+   "Properties": {
+    "DisplayName": "Ecclesia production alerts",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "TopicName": "ecclesia-production-alerts"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Observability/AlertTopic/Resource"
+   }
+  },
+  "Dashboard9E4231ED": {
+   "Type": "AWS::CloudWatch::Dashboard",
+   "Properties": {
+    "DashboardBody": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"widgets\":[{\"type\":\"text\",\"width\":24,\"height\":4,\"x\":0,\"y\":0,\"properties\":{\"markdown\":\"# Ecclesia SRE Dashboard - production\\n\\nBlueprint §12.4. **Only SQS widgets exist today** - ECS/RDS widgets\\nare added once the Compute & Data Infrastructure milestone ships\\n(`INFRASTRUCTURE_DESIGN_NOTES.md` §7). This is a disclosed, not\\nsilent, gap.\"}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":4,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Insights queue depth\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"AWS/SQS\",\"ApproximateNumberOfMessagesVisible\",\"QueueName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Production-Eventing:ExportsOutputFnGetAttEngagementSignalBusInsightsQueue529C3DCEQueueName35E47A7B"
+       },
+       "\",{\"stat\":\"Maximum\"}]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":12,\"y\":4,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Insights oldest message age (Blueprint §12.4 backlog indicator)\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"AWS/SQS\",\"ApproximateAgeOfOldestMessage\",\"QueueName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Production-Eventing:ExportsOutputFnGetAttEngagementSignalBusInsightsQueue529C3DCEQueueName35E47A7B"
+       },
+       "\",{\"stat\":\"Maximum\"}]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":10,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Notification queue depth\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"AWS/SQS\",\"ApproximateNumberOfMessagesVisible\",\"QueueName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Production-Eventing:ExportsOutputFnGetAttEngagementSignalBusNotificationQueueA0130601QueueName793EF356"
+       },
+       "\",{\"stat\":\"Maximum\"}]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":12,\"y\":10,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Notification oldest message age (Blueprint §12.4 backlog indicator)\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"AWS/SQS\",\"ApproximateAgeOfOldestMessage\",\"QueueName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Production-Eventing:ExportsOutputFnGetAttEngagementSignalBusNotificationQueueA0130601QueueName793EF356"
+       },
+       "\",{\"stat\":\"Maximum\"}]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":16,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Audit queue depth\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"AWS/SQS\",\"ApproximateNumberOfMessagesVisible\",\"QueueName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Production-Eventing:ExportsOutputFnGetAttEngagementSignalBusAuditQueueE693E9DFQueueName833035E3"
+       },
+       "\",{\"stat\":\"Maximum\"}]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":12,\"y\":16,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Audit oldest message age (Blueprint §12.4 backlog indicator)\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"AWS/SQS\",\"ApproximateAgeOfOldestMessage\",\"QueueName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Production-Eventing:ExportsOutputFnGetAttEngagementSignalBusAuditQueueE693E9DFQueueName833035E3"
+       },
+       "\",{\"stat\":\"Maximum\"}]],\"yAxis\":{}}}]}"
+      ]
+     ]
+    },
+    "DashboardName": "ecclesia-production-sre-dashboard",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Observability/Dashboard/Resource"
+   }
+  },
+  "InsightsQueueDepthAlarmAEE19630": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Ref": "AlertTopic2720D535"
+     }
+    ],
+    "AlarmDescription": "Blueprint §12.4 Worker backlog indicator - Insights queue depth sustained above threshold.",
+    "AlarmName": "ecclesia-production-insights-queue-depth",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "QueueName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Production-Eventing:ExportsOutputFnGetAttEngagementSignalBusInsightsQueue529C3DCEQueueName35E47A7B"
+      }
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "ApproximateNumberOfMessagesVisible",
+    "Namespace": "AWS/SQS",
+    "Period": 300,
+    "Statistic": "Maximum",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 100,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Observability/InsightsQueueDepthAlarm/Resource"
+   }
+  },
+  "InsightsDlqDepthAlarm11A88949": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Ref": "AlertTopic2720D535"
+     }
+    ],
+    "AlarmDescription": "Blueprint §10.5 - any message on the Insights DLQ means a consumer failed repeatedly and needs investigation, not silent accumulation.",
+    "AlarmName": "ecclesia-production-insights-dlq-depth",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "QueueName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Production-Eventing:ExportsOutputFnGetAttEngagementSignalBusInsightsDlq19C6551BQueueNameAC7DD055"
+      }
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "ApproximateNumberOfMessagesVisible",
+    "Namespace": "AWS/SQS",
+    "Period": 300,
+    "Statistic": "Maximum",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 0,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Observability/InsightsDlqDepthAlarm/Resource"
+   }
+  },
+  "NotificationQueueDepthAlarmD7621C52": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Ref": "AlertTopic2720D535"
+     }
+    ],
+    "AlarmDescription": "Blueprint §12.4 Worker backlog indicator - Notification queue depth sustained above threshold.",
+    "AlarmName": "ecclesia-production-notification-queue-depth",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "QueueName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Production-Eventing:ExportsOutputFnGetAttEngagementSignalBusNotificationQueueA0130601QueueName793EF356"
+      }
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "ApproximateNumberOfMessagesVisible",
+    "Namespace": "AWS/SQS",
+    "Period": 300,
+    "Statistic": "Maximum",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 100,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Observability/NotificationQueueDepthAlarm/Resource"
+   }
+  },
+  "NotificationDlqDepthAlarmE8549E34": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Ref": "AlertTopic2720D535"
+     }
+    ],
+    "AlarmDescription": "Blueprint §10.5 - any message on the Notification DLQ means a consumer failed repeatedly and needs investigation, not silent accumulation.",
+    "AlarmName": "ecclesia-production-notification-dlq-depth",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "QueueName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Production-Eventing:ExportsOutputFnGetAttEngagementSignalBusNotificationDlqE3B42E63QueueName068E950A"
+      }
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "ApproximateNumberOfMessagesVisible",
+    "Namespace": "AWS/SQS",
+    "Period": 300,
+    "Statistic": "Maximum",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 0,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Observability/NotificationDlqDepthAlarm/Resource"
+   }
+  },
+  "AuditQueueDepthAlarm37CAE530": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Ref": "AlertTopic2720D535"
+     }
+    ],
+    "AlarmDescription": "Blueprint §12.4 Worker backlog indicator - Audit queue depth sustained above threshold.",
+    "AlarmName": "ecclesia-production-audit-queue-depth",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "QueueName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Production-Eventing:ExportsOutputFnGetAttEngagementSignalBusAuditQueueE693E9DFQueueName833035E3"
+      }
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "ApproximateNumberOfMessagesVisible",
+    "Namespace": "AWS/SQS",
+    "Period": 300,
+    "Statistic": "Maximum",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 100,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Observability/AuditQueueDepthAlarm/Resource"
+   }
+  },
+  "AuditDlqDepthAlarmD2E5CB32": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Ref": "AlertTopic2720D535"
+     }
+    ],
+    "AlarmDescription": "Blueprint §10.5 - any message on the Audit DLQ means a consumer failed repeatedly and needs investigation, not silent accumulation.",
+    "AlarmName": "ecclesia-production-audit-dlq-depth",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "QueueName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Production-Eventing:ExportsOutputFnGetAttEngagementSignalBusAuditDlq248BABFFQueueName9225AD00"
+      }
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "ApproximateNumberOfMessagesVisible",
+    "Namespace": "AWS/SQS",
+    "Period": 300,
+    "Statistic": "Maximum",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 0,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Observability/AuditDlqDepthAlarm/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/0XJwQ7CIBAE0G/pHVazTbwbvZuod7OFmtJSaFiQA+HfDfXgad7MIOCph2NHmaXSi7RmgPKIpBZBmV+FHUN5+s0ocXm7HVUo65POFNUE5Uo8DZ6Cbv+/nC2FtU07am28pbilWIXzeoSZDx9EwB6wm9kYGZKLZh3h/ssvbutWQZkAAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Observability/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "AlertTopicArnOutput": {
+   "Value": {
+    "Ref": "AlertTopic2720D535"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
