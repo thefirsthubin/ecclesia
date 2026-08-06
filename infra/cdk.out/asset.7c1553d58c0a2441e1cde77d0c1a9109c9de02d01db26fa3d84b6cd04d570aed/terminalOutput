@@ -1,5 +1,0 @@
-
-[0m[7m[1m[33m NX [39m[22m[27m[0m  [33mThe Nx Daemon is unsupported in WebAssembly environments. Some things may be slower than or not function as expected.[39m
-
-Compiling TypeScript files for project "domain-pastoral-care"...
-Done compiling TypeScript files for project "domain-pastoral-care".

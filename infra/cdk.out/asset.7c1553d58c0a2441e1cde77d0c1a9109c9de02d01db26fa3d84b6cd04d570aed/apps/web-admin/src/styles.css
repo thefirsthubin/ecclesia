@@ -1,7 +1,0 @@
-/* Global stylesheet placeholder. Design-system tokens and Tailwind (or
-   equivalent) integration are introduced alongside the first real screen,
-   not in this Sprint 0 scaffold. */
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
-}
