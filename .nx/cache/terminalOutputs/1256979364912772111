@@ -1,647 +1,0 @@
-[2m> [22mjest
-
-[1m[2mDetermining test suites to run...[22m[22m[999D[K
-
-[1mTest Suites: [22m0 of 21 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 4 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...dance-completeness-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...pec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m....ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ed-transaction-sla-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ilent-drift-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ventbridge-publisher.service.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...tabase/[22m[1mprisma.service.spec.ts[22m
-
-[1mTest Suites: [22m0 of 21 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 4 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...dance-completeness-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...pec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m....ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ed-transaction-sla-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ilent-drift-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ventbridge-publisher.service.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...tabase/[22m[1mprisma.service.spec.ts[22m
-
-[1mTest Suites: [22m0 of 21 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s, estimated 4 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...dance-completeness-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...pec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m....ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ed-transaction-sla-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ilent-drift-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ventbridge-publisher.service.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...tabase/[22m[1mprisma.service.spec.ts[22m
-
-[1mTest Suites: [22m0 of 21 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        2 s, estimated 4 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...dance-completeness-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...pec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m....ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ed-transaction-sla-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ilent-drift-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ventbridge-publisher.service.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...tabase/[22m[1mprisma.service.spec.ts[22m
-
-[1mTest Suites: [22m0 of 21 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 4 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/jobs/silent-drift-sweep/[22m[1msilent-drift-sweep.repository.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...dance-completeness-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...pec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m....ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ed-transaction-sla-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ilent-drift-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ventbridge-publisher.service.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...tabase/[22m[1mprisma.service.spec.ts[22m
-
-[1mTest Suites: [22m0 of 21 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 4 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...dance-completeness-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...pec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m....ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ed-transaction-sla-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ilent-drift-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ventbridge-publisher.service.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...tabase/[22m[1mprisma.service.spec.ts[22m
-
-[1mTest Suites: [22m0 of 21 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 4 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/jobs/attendance-completeness-sweep/[22m[1mattendance-completeness-sweep.job.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...dance-completeness-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...pec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m....ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ed-transaction-sla-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ilent-drift-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ventbridge-publisher.service.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...tabase/[22m[1mprisma.service.spec.ts[22m
-
-[1mTest Suites: [22m0 of 21 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 4 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...pec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m....ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ed-transaction-sla-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ventbridge-publisher.service.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...tabase/[22m[1mprisma.service.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../audit/[22m[1maudit.consumer.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m2 passed[39m[22m, 2 of 21 total
-[1mTests:       [22m[1m[32m9 passed[39m[22m, 9 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 4 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/platform/events/[22m[1meventbridge-publisher.service.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...pec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m....ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ed-transaction-sla-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ventbridge-publisher.service.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...tabase/[22m[1mprisma.service.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../audit/[22m[1maudit.consumer.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m2 passed[39m[22m, 2 of 21 total
-[1mTests:       [22m[1m[32m9 passed[39m[22m, 9 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 4 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...nts/[22m[1msqs-consumer.base.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...pec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m....ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ed-transaction-sla-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...tabase/[22m[1mprisma.service.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../audit/[22m[1maudit.consumer.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m3 passed[39m[22m, 3 of 21 total
-[1mTests:       [22m[1m[32m12 passed[39m[22m, 12 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 4 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/platform/database/[22m[1mprisma.service.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...nts/[22m[1msqs-consumer.base.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...pec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m....ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ed-transaction-sla-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...tabase/[22m[1mprisma.service.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../audit/[22m[1maudit.consumer.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m3 passed[39m[22m, 3 of 21 total
-[1mTests:       [22m[1m[32m12 passed[39m[22m, 12 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 4 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/jobs/church-pulse-recompute/[22m[1mchurch-pulse-recompute.job.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...nts/[22m[1msqs-consumer.base.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...pec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m....ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ed-transaction-sla-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...tabase/[22m[1mprisma.service.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../audit/[22m[1maudit.consumer.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m3 passed[39m[22m, 3 of 21 total
-[1mTests:       [22m[1m[32m12 passed[39m[22m, 12 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 4 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...nts/[22m[1msqs-consumer.base.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...pec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m....ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ed-transaction-sla-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...h-pulse-recompute.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...llow-up-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../audit/[22m[1maudit.consumer.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m5 passed[39m[22m, 5 of 21 total
-[1mTests:       [22m[1m[32m16 passed[39m[22m, 16 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/jobs/pledge-reminder-sweep/[22m[1mpledge-reminder-sweep.job.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...nts/[22m[1msqs-consumer.base.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...pec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m....ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ed-transaction-sla-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...h-pulse-recompute.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...llow-up-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../audit/[22m[1maudit.consumer.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m5 passed[39m[22m, 5 of 21 total
-[1mTests:       [22m[1m[32m16 passed[39m[22m, 16 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/jobs/flagged-transaction-sla-sweep/[22m[1mflagged-transaction-sla-sweep.job.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...nts/[22m[1msqs-consumer.base.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...pec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m....ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ed-transaction-sla-sweep.job.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...h-pulse-recompute.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...llow-up-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../audit/[22m[1maudit.consumer.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m5 passed[39m[22m, 5 of 21 total
-[1mTests:       [22m[1m[32m16 passed[39m[22m, 16 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ompleteness-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...nts/[22m[1msqs-consumer.base.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...pec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../[22m[1maudit-log.repository.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...h-pulse-recompute.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...llow-up-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../audit/[22m[1maudit.consumer.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m7 passed[39m[22m, 7 of 21 total
-[1mTests:       [22m[1m[32m22 passed[39m[22m, 22 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/jobs/silent-drift-sweep/[22m[1msilent-drift-sweep.job.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ompleteness-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...nts/[22m[1msqs-consumer.base.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...pec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../[22m[1maudit-log.repository.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...h-pulse-recompute.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...llow-up-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../audit/[22m[1maudit.consumer.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m7 passed[39m[22m, 7 of 21 total
-[1mTests:       [22m[1m[32m22 passed[39m[22m, 22 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/jobs/follow-up-sla-sweep/[22m[1mfollow-up-sla-sweep.job.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ompleteness-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...nts/[22m[1msqs-consumer.base.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...pec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../[22m[1maudit-log.repository.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...h-pulse-recompute.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...llow-up-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../audit/[22m[1maudit.consumer.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m7 passed[39m[22m, 7 of 21 total
-[1mTests:       [22m[1m[32m22 passed[39m[22m, 22 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ompleteness-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...nts/[22m[1msqs-consumer.base.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../[22m[1maudit-log.repository.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...saction-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...h-pulse-recompute.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...llow-up-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../audit/[22m[1maudit.consumer.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m9 passed[39m[22m, 9 of 21 total
-[1mTests:       [22m[1m[32m29 passed[39m[22m, 29 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/platform/events/[22m[1msqs-consumer.base.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ompleteness-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...nts/[22m[1msqs-consumer.base.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../[22m[1maudit-log.repository.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...saction-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...h-pulse-recompute.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...llow-up-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../audit/[22m[1maudit.consumer.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m9 passed[39m[22m, 9 of 21 total
-[1mTests:       [22m[1m[32m29 passed[39m[22m, 29 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/consumers/insights/[22m[1minsights.consumer.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ompleteness-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...nts/[22m[1msqs-consumer.base.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../[22m[1maudit-log.repository.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...saction-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...h-pulse-recompute.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...llow-up-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../audit/[22m[1maudit.consumer.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m9 passed[39m[22m, 9 of 21 total
-[1mTests:       [22m[1m[32m29 passed[39m[22m, 29 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/consumers/notification/[22m[1mnotification.consumer.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ompleteness-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...hts/[22m[1minsights.consumer.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m...nts/[22m[1msqs-consumer.base.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../[22m[1maudit-log.repository.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...saction-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...h-pulse-recompute.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...llow-up-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../audit/[22m[1maudit.consumer.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m9 passed[39m[22m, 9 of 21 total
-[1mTests:       [22m[1m[32m29 passed[39m[22m, 29 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ompleteness-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../[22m[1maudit-log.repository.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ge-reminder-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...saction-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...h-pulse-recompute.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...llow-up-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../audit/[22m[1maudit.consumer.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m12 passed[39m[22m, 12 of 21 total
-[1mTests:       [22m[1m[32m36 passed[39m[22m, 36 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/jobs/church-pulse-recompute/[22m[1mchurch-pulse-recompute.repository.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ompleteness-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../[22m[1maudit-log.repository.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ge-reminder-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...saction-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...h-pulse-recompute.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...llow-up-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../audit/[22m[1maudit.consumer.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m12 passed[39m[22m, 12 of 21 total
-[1mTests:       [22m[1m[32m36 passed[39m[22m, 36 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/jobs/follow-up-sla-sweep/[22m[1mfollow-up-sla-sweep.repository.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ompleteness-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../[22m[1maudit-log.repository.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ge-reminder-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...saction-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...h-pulse-recompute.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...llow-up-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../audit/[22m[1maudit.consumer.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m12 passed[39m[22m, 12 of 21 total
-[1mTests:       [22m[1m[32m36 passed[39m[22m, 36 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/consumers/audit/[22m[1maudit.consumer.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ompleteness-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../[22m[1maudit-log.repository.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ge-reminder-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...saction-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...h-pulse-recompute.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...llow-up-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../audit/[22m[1maudit.consumer.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m12 passed[39m[22m, 12 of 21 total
-[1mTests:       [22m[1m[32m36 passed[39m[22m, 36 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/consumers/audit/[22m[1maudit-log.repository.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ompleteness-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../[22m[1maudit-log.repository.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ge-reminder-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...saction-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...h-pulse-recompute.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...llow-up-sla-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2m.../audit/[22m[1maudit.consumer.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m12 passed[39m[22m, 12 of 21 total
-[1mTests:       [22m[1m[32m36 passed[39m[22m, 36 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ompleteness-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ge-reminder-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...saction-sla-sweep.repository.
-spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m16 passed[39m[22m, 16 of 21 total
-[1mTests:       [22m[1m[32m42 passed[39m[22m, 42 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/jobs/attendance-completeness-sweep/[22m[1mattendance-completeness-sweep.repository.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ompleteness-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ge-reminder-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...saction-sla-sweep.repository.
-spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m16 passed[39m[22m, 16 of 21 total
-[1mTests:       [22m[1m[32m42 passed[39m[22m, 42 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ompleteness-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ge-reminder-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...saction-sla-sweep.repository.
-spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m16 passed[39m[22m, 16 of 21 total
-[1mTests:       [22m[1m[32m42 passed[39m[22m, 42 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/jobs/flagged-transaction-sla-sweep/[22m[1mflagged-transaction-sla-sweep.repository.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ompleteness-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ge-reminder-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...saction-sla-sweep.repository.
-spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m16 passed[39m[22m, 16 of 21 total
-[1mTests:       [22m[1m[32m42 passed[39m[22m, 42 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/platform/events/[22m[1mprocessed-event.repository.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ompleteness-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/[22m[1mcommand.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ge-reminder-sweep.repository.
-spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...saction-sla-sweep.repository.
-spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m16 passed[39m[22m, 16 of 21 total
-[1mTests:       [22m[1m[32m42 passed[39m[22m, 42 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ge-reminder-sweep.repository.
-spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m20 passed[39m[22m, 20 of 21 total
-[1mTests:       [22m[1m[32m68 passed[39m[22m, 68 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [0m[7m[37m worker [39m[27m[0m [2msrc/jobs/pledge-reminder-sweep/[22m[1mpledge-reminder-sweep.repository.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [0m[7m[37m worker [39m[27m[0m [1m...ge-reminder-sweep.repository.
-spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m20 passed[39m[22m, 20 of 21 total
-[1mTests:       [22m[1m[32m68 passed[39m[22m, 68 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-
-[1mTest Suites: [22m[1m[32m21 passed[39m[22m, 21 total
-[1mTests:       [22m[1m[32m70 passed[39m[22m, 70 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s[K[1A[K[1A[K[1A[K[1A[K[1A[999D[K
-[1mTest Suites: [22m[1m[32m21 passed[39m[22m, 21 total
-[1mTests:       [22m[1m[32m70 passed[39m[22m, 70 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4.741 s
-[2mRan all test suites[22m[2m.[22m
