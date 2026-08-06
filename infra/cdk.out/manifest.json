@@ -23,7 +23,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/5f172e92dd12f77cf1d40f7c1406d91c94487bf3bdc1b17104cd8000687632f0.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/98f16bd99ffaa8a6ac7d0c54b578b6f21f6ea6ecbf31f2f1236cf56a80d06d45.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -63,7 +63,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/8ceb30040008ab44047f3686b02386191400af8021c1c475485cc429ff23450a.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/9a5d18975b336e6659e0fbcbbdba4e8ad020326735e4ab36746db1916dae1c71.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -103,7 +103,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/4afa6c85e76f7eaa5bd5c7661721bb74b04de96280879659ef61e66ed044d9da.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/525b740132d91221727f85571ea4fb90cc180b9e16fe9d01208a82d8c6237a1a.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -143,7 +143,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/bfea9d36fce4624d61df24c65a0d6aae730a2c146a9f18d829e887851eb7582d.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/afb39f9b1467039db7b5d765e0563e2ca100e2cc7087c213f25b5946fe9b6ea0.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -183,7 +183,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/d8e142c6ae418c6555e0797d5a814a0640edc383ad74ea9f095d7c57be54abcc.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/df13b019bc123f9a6001d6f5af5da21eb1ea8d7713b15a9e1722bd0b3fd2acbb.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -226,7 +226,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/736096e1f78e69840af1f57f3132341f33032537acc00b1d9ec814cc8cce1143.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/51c69e13fee1810798f5174297622445f1fead7951ddb0c334497450d42843c8.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -244,6 +244,308 @@
       ],
       "additionalMetadataFile": "Ecclesia-Dev-Observability.metadata.json",
       "displayName": "Ecclesia-Dev-Observability"
+    },
+    "Ecclesia-Dev-Network.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Dev-Network.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Dev-Network": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Dev-Network.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "Environment": "dev",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/42bdb96fcf24ab4266f6734d7f6bc1babb5f6b43637fd82c46e88781170464a4.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Dev-Network.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Dev-Network.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Dev-Network.metadata.json",
+      "displayName": "Ecclesia-Dev-Network"
+    },
+    "Ecclesia-Dev-Database.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Dev-Database.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Dev-Database": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Dev-Database.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "Environment": "dev",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/9951d90f1924bca9db9ed0af6e082059698a11ddb45a2cb2c1948ca0f4f3bed3.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Dev-Database.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Dev-Network",
+        "Ecclesia-Dev-Secrets",
+        "Ecclesia-Dev-Database.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Dev-Database.metadata.json",
+      "displayName": "Ecclesia-Dev-Database"
+    },
+    "Ecclesia-Dev-EcsCluster.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Dev-EcsCluster.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Dev-EcsCluster": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Dev-EcsCluster.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "Environment": "dev",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/d6dfa0d649029c3b94bf66d97ff638416dd677225a5b81c889ea27ab6189089c.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Dev-EcsCluster.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Dev-EcsCluster.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Dev-EcsCluster.metadata.json",
+      "displayName": "Ecclesia-Dev-EcsCluster"
+    },
+    "Ecclesia-Dev-Alb.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Dev-Alb.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Dev-Alb": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Dev-Alb.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "Environment": "dev",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/feada5fe366b28c9aed8c0e8c42481143e6c30c295543e4bc86a3ed8186a0e7d.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Dev-Alb.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Dev-Network",
+        "Ecclesia-Dev-Alb.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Dev-Alb.metadata.json",
+      "displayName": "Ecclesia-Dev-Alb"
+    },
+    "Ecclesia-Dev-ApiService.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Dev-ApiService.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Dev-ApiService": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Dev-ApiService.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "Environment": "dev",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/1c81b52c4305cb4d6b8c92c79ab410d133f7559ccd453b34e2f8cca9455a4a8f.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Dev-ApiService.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Dev-Alb",
+        "Ecclesia-Dev-Database",
+        "Ecclesia-Dev-Cognito",
+        "Ecclesia-Dev-Eventing",
+        "Ecclesia-Dev-Secrets",
+        "Ecclesia-Dev-Iam",
+        "Ecclesia-Dev-EcsCluster",
+        "Ecclesia-Dev-Network",
+        "Ecclesia-Dev-ApiService.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Dev-ApiService.metadata.json",
+      "displayName": "Ecclesia-Dev-ApiService"
+    },
+    "Ecclesia-Dev-WorkerService.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Dev-WorkerService.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Dev-WorkerService": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Dev-WorkerService.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "Environment": "dev",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/4b3b64ff5d852e41d4346abc2c2502b02e3f4e23cc96e7c9e875c65d97c81629.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Dev-WorkerService.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Dev-Database",
+        "Ecclesia-Dev-Eventing",
+        "Ecclesia-Dev-Secrets",
+        "Ecclesia-Dev-Iam",
+        "Ecclesia-Dev-EcsCluster",
+        "Ecclesia-Dev-Network",
+        "Ecclesia-Dev-WorkerService.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Dev-WorkerService.metadata.json",
+      "displayName": "Ecclesia-Dev-WorkerService"
+    },
+    "Ecclesia-Dev-RuntimeObservability.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Dev-RuntimeObservability.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Dev-RuntimeObservability": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Dev-RuntimeObservability.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "Environment": "dev",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/167e552f214d693f5063db1b926d9028e01588bc5393d293e77ae833d9e294e4.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Dev-RuntimeObservability.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Dev-EcsCluster",
+        "Ecclesia-Dev-ApiService",
+        "Ecclesia-Dev-WorkerService",
+        "Ecclesia-Dev-Database",
+        "Ecclesia-Dev-Observability",
+        "Ecclesia-Dev-RuntimeObservability.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Dev-RuntimeObservability.metadata.json",
+      "displayName": "Ecclesia-Dev-RuntimeObservability"
     },
     "Ecclesia-Staging-Cognito.assets": {
       "type": "cdk:asset-manifest",
@@ -267,7 +569,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/1ca55f228d001abb3c7c5a9dec322cf9b167466a1d5ff5ded74f1a59beb921bb.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/b926ec674c3905a9fe96dd78c6707d5a649a2b8706c9a3d5d229c2fa9c5460f4.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -307,7 +609,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/fe7fca57a8c98fb0d3381b150b6399ae22e0e4cfcf5f8b25e399331ac0095d07.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/339be050b520ce6c8e36ceecdf806d09ec5cd3e9ebd043c8bd0297129fa0ffa7.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -347,7 +649,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/25bf7f0da334669b264388fbca619fa66bf81207486ae1f7b58852baf853e51f.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/b01c0f70fd233d7bcd8d3b97f08d03cc1befebc1721c6edc65889c60715f7878.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -387,7 +689,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/67cb82ba4acd71133ad3f2ad88aa6d4e10e41c8b4df33cbba79a77d158ccae0f.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/04e832df99c26b63b62a2ae88642addee9ae683d2646202f7308e664aab2812f.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -427,7 +729,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/5fe51004c9221a380b93284f0de54abd2153c2c9fb66ee03b8f2502c81e4456f.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/e266c20a503a601a435de597a08270ad9bdccdbbaec13bedee44df40f6a0ffc3.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -470,7 +772,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/383977ac3711cc35d18e0839d8606e8bc60d87032018233a2d1c5f1fdb5bc998.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/097f9be1d737eb1274327498a2b4ed3bac925fcc6c61adb40ecdbe2f50a1e15f.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -488,6 +790,308 @@
       ],
       "additionalMetadataFile": "Ecclesia-Staging-Observability.metadata.json",
       "displayName": "Ecclesia-Staging-Observability"
+    },
+    "Ecclesia-Staging-Network.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Staging-Network.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Staging-Network": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Staging-Network.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "Environment": "staging",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/1108b34b2612828d8a0ae08320e8739dc9e3321ec608f488497106a799db58bf.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Staging-Network.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Staging-Network.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Staging-Network.metadata.json",
+      "displayName": "Ecclesia-Staging-Network"
+    },
+    "Ecclesia-Staging-Database.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Staging-Database.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Staging-Database": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Staging-Database.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "Environment": "staging",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/9156fa33fc16b6436dbd91dff863a901f66ae9d24e876c5602c6b28c39f7e619.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Staging-Database.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Staging-Network",
+        "Ecclesia-Staging-Secrets",
+        "Ecclesia-Staging-Database.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Staging-Database.metadata.json",
+      "displayName": "Ecclesia-Staging-Database"
+    },
+    "Ecclesia-Staging-EcsCluster.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Staging-EcsCluster.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Staging-EcsCluster": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Staging-EcsCluster.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "Environment": "staging",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/b25a7025e13a6a6b58dc35849684e3e0abb4a7c7daac0f66493873dcb4c95272.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Staging-EcsCluster.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Staging-EcsCluster.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Staging-EcsCluster.metadata.json",
+      "displayName": "Ecclesia-Staging-EcsCluster"
+    },
+    "Ecclesia-Staging-Alb.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Staging-Alb.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Staging-Alb": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Staging-Alb.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "Environment": "staging",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/6d3c2cfff67fed16612ebd444a3df98f41f6aa6c1a107cce459f3996042670d4.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Staging-Alb.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Staging-Network",
+        "Ecclesia-Staging-Alb.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Staging-Alb.metadata.json",
+      "displayName": "Ecclesia-Staging-Alb"
+    },
+    "Ecclesia-Staging-ApiService.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Staging-ApiService.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Staging-ApiService": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Staging-ApiService.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "Environment": "staging",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/b4aed27126ade27a8ad808989da165a34fd3db05d914ab3ee5524033a8bd0ad7.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Staging-ApiService.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Staging-Alb",
+        "Ecclesia-Staging-Database",
+        "Ecclesia-Staging-Cognito",
+        "Ecclesia-Staging-Eventing",
+        "Ecclesia-Staging-Secrets",
+        "Ecclesia-Staging-Iam",
+        "Ecclesia-Staging-EcsCluster",
+        "Ecclesia-Staging-Network",
+        "Ecclesia-Staging-ApiService.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Staging-ApiService.metadata.json",
+      "displayName": "Ecclesia-Staging-ApiService"
+    },
+    "Ecclesia-Staging-WorkerService.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Staging-WorkerService.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Staging-WorkerService": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Staging-WorkerService.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "Environment": "staging",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/f7aeb1be29595e4f4542080c899dbec38b336afb4d298eddede4a488550eeade.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Staging-WorkerService.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Staging-Database",
+        "Ecclesia-Staging-Eventing",
+        "Ecclesia-Staging-Secrets",
+        "Ecclesia-Staging-Iam",
+        "Ecclesia-Staging-EcsCluster",
+        "Ecclesia-Staging-Network",
+        "Ecclesia-Staging-WorkerService.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Staging-WorkerService.metadata.json",
+      "displayName": "Ecclesia-Staging-WorkerService"
+    },
+    "Ecclesia-Staging-RuntimeObservability.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Staging-RuntimeObservability.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Staging-RuntimeObservability": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Staging-RuntimeObservability.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "Environment": "staging",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/6ad9d2b37dc7b28c9de302240c41dd2ee1e218c7fde152828de7d38e3f3631d3.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Staging-RuntimeObservability.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Staging-EcsCluster",
+        "Ecclesia-Staging-ApiService",
+        "Ecclesia-Staging-WorkerService",
+        "Ecclesia-Staging-Database",
+        "Ecclesia-Staging-Observability",
+        "Ecclesia-Staging-RuntimeObservability.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Staging-RuntimeObservability.metadata.json",
+      "displayName": "Ecclesia-Staging-RuntimeObservability"
     },
     "Ecclesia-Production-Cognito.assets": {
       "type": "cdk:asset-manifest",
@@ -511,7 +1115,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/de595142415a795e80360fc783c59edfdd69d5ffb91a15bb04f828694b349393.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/8dbeb70f0e4c6550897d02fc25182aad445cdd0c6cd5f39a1b0c3aa3926e2a9b.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -551,7 +1155,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/f0597dc7643b7745469926c87463e5b8657ac1fa175e5a40a8b0bf0a157d1a9f.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/3159921696126bb580ee6f47786e31443312a9db94f91280b5356fd428875027.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -591,7 +1195,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/765f7dc4935e835f0faa8e9693e2eedc36f3a50b0eca409a662566229f0fe2bb.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/d38f990d6c4942b49bae0eed9ca65e6c8c487110ff70a243035ace4b17ce0637.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -631,7 +1235,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/0b6d1171ee80031b6f875f29df3cd2669c362a4b8d682d05ed408d87074c75e4.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/f1413585076a2814ed164c194eabbf1c7b0e7805c685bd8ce213677ff3ffab29.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -671,7 +1275,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/b10707137a7dcb08e27e4a287a3ef9d6064dbde8b41afa07d62ca2e9afd44a26.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/c5614aeff64c00352fd3d042c3f8dbd0921fdaf22273e9af3119cd28e1c9ee59.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -714,7 +1318,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/1c306cbd030e8728d44394a627c5ea31193bd594acaaacdd89c3158a2f819199.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/4879f41e9d724b743165aba3bb602b64f53136412711bdfbf331289ac050350f.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -732,6 +1336,308 @@
       ],
       "additionalMetadataFile": "Ecclesia-Production-Observability.metadata.json",
       "displayName": "Ecclesia-Production-Observability"
+    },
+    "Ecclesia-Production-Network.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Production-Network.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Production-Network": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Production-Network.template.json",
+        "terminationProtection": true,
+        "tags": {
+          "Environment": "production",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/3889faab1ca52ddf140dfebd360d40332660657699aa35131c466b7a279e94cf.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Production-Network.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Production-Network.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Production-Network.metadata.json",
+      "displayName": "Ecclesia-Production-Network"
+    },
+    "Ecclesia-Production-Database.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Production-Database.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Production-Database": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Production-Database.template.json",
+        "terminationProtection": true,
+        "tags": {
+          "Environment": "production",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/c46b77b0c19fb4b1b71c7fc00323ac450211edf9709b5a77fcae2266a6f91a92.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Production-Database.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Production-Network",
+        "Ecclesia-Production-Secrets",
+        "Ecclesia-Production-Database.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Production-Database.metadata.json",
+      "displayName": "Ecclesia-Production-Database"
+    },
+    "Ecclesia-Production-EcsCluster.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Production-EcsCluster.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Production-EcsCluster": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Production-EcsCluster.template.json",
+        "terminationProtection": true,
+        "tags": {
+          "Environment": "production",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/9cfac941ba69531250e4e6035de782c7f898a2d56c001f2ca60847d88a8c6c5e.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Production-EcsCluster.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Production-EcsCluster.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Production-EcsCluster.metadata.json",
+      "displayName": "Ecclesia-Production-EcsCluster"
+    },
+    "Ecclesia-Production-Alb.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Production-Alb.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Production-Alb": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Production-Alb.template.json",
+        "terminationProtection": true,
+        "tags": {
+          "Environment": "production",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/2aeabb38e4744eb8867c6d2be5521a4343a3c6d43ffc27b7fe8d84fa58e810bd.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Production-Alb.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Production-Network",
+        "Ecclesia-Production-Alb.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Production-Alb.metadata.json",
+      "displayName": "Ecclesia-Production-Alb"
+    },
+    "Ecclesia-Production-ApiService.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Production-ApiService.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Production-ApiService": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Production-ApiService.template.json",
+        "terminationProtection": true,
+        "tags": {
+          "Environment": "production",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/16f6e9cec496ce5568085a72fb3dcc877d745e845313501044cef24cfeb43cdd.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Production-ApiService.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Production-Alb",
+        "Ecclesia-Production-Database",
+        "Ecclesia-Production-Cognito",
+        "Ecclesia-Production-Eventing",
+        "Ecclesia-Production-Secrets",
+        "Ecclesia-Production-Iam",
+        "Ecclesia-Production-EcsCluster",
+        "Ecclesia-Production-Network",
+        "Ecclesia-Production-ApiService.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Production-ApiService.metadata.json",
+      "displayName": "Ecclesia-Production-ApiService"
+    },
+    "Ecclesia-Production-WorkerService.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Production-WorkerService.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Production-WorkerService": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Production-WorkerService.template.json",
+        "terminationProtection": true,
+        "tags": {
+          "Environment": "production",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/634f2da1b3e9f52d6843cee043ef1e4e8f718669adbbbc66c65edd3cad9eb7a0.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Production-WorkerService.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Production-Database",
+        "Ecclesia-Production-Eventing",
+        "Ecclesia-Production-Secrets",
+        "Ecclesia-Production-Iam",
+        "Ecclesia-Production-EcsCluster",
+        "Ecclesia-Production-Network",
+        "Ecclesia-Production-WorkerService.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Production-WorkerService.metadata.json",
+      "displayName": "Ecclesia-Production-WorkerService"
+    },
+    "Ecclesia-Production-RuntimeObservability.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "Ecclesia-Production-RuntimeObservability.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "Ecclesia-Production-RuntimeObservability": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/eu-west-1",
+      "properties": {
+        "templateFile": "Ecclesia-Production-RuntimeObservability.template.json",
+        "terminationProtection": true,
+        "tags": {
+          "Environment": "production",
+          "ManagedBy": "CDK",
+          "Project": "Ecclesia"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/89e0d3eb860efd7a3c898c86d801f1bdc259aebba23bcf84cff73ae631ba6068.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "Ecclesia-Production-RuntimeObservability.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "Ecclesia-Production-EcsCluster",
+        "Ecclesia-Production-ApiService",
+        "Ecclesia-Production-WorkerService",
+        "Ecclesia-Production-Database",
+        "Ecclesia-Production-Observability",
+        "Ecclesia-Production-RuntimeObservability.assets"
+      ],
+      "additionalMetadataFile": "Ecclesia-Production-RuntimeObservability.metadata.json",
+      "displayName": "Ecclesia-Production-RuntimeObservability"
     },
     "Tree": {
       "type": "cdk:tree",

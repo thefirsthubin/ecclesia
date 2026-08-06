@@ -3,7 +3,7 @@
     {
       "type": "aws:cdk:creationStack",
       "data": [
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)",
         "...node internals, .pnpm, .pnpm, .pnpm..."
       ]
     },
@@ -34,8 +34,8 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...EventingStack.exportValue in .pnpm...",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:43:10)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:43:10)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -49,8 +49,8 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...EventingStack.exportValue in .pnpm...",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:44:10)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:44:10)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -64,8 +64,8 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...EventingStack.exportValue in .pnpm...",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:45:10)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:45:10)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -79,8 +79,8 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...EventingStack.exportValue in .pnpm...",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:46:10)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:46:10)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -120,9 +120,9 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new StringParameter2 in .pnpm...",
-        "writeParameter (/Users/king/Documents/ecclesia/infra/lib/common/parameters.ts:23:10)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:37:19)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "writeParameter (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/common/parameters.ts:23:10)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:37:19)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -136,9 +136,9 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new StringParameter2 in .pnpm...",
-        "writeParameter (/Users/king/Documents/ecclesia/infra/lib/common/parameters.ts:23:10)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:38:19)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "writeParameter (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/common/parameters.ts:23:10)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:38:19)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -152,9 +152,9 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new StringParameter2 in .pnpm...",
-        "writeParameter (/Users/king/Documents/ecclesia/infra/lib/common/parameters.ts:23:10)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:39:19)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "writeParameter (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/common/parameters.ts:23:10)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:39:19)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -168,9 +168,9 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new StringParameter2 in .pnpm...",
-        "writeParameter (/Users/king/Documents/ecclesia/infra/lib/common/parameters.ts:23:10)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:40:19)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "writeParameter (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/common/parameters.ts:23:10)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:40:19)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -184,9 +184,9 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new StringParameter2 in .pnpm...",
-        "writeParameter (/Users/king/Documents/ecclesia/infra/lib/common/parameters.ts:23:10)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:41:19)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "writeParameter (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/common/parameters.ts:23:10)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:41:19)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -334,6 +334,58 @@
       ]
     }
   ],
+  "/Ecclesia-Dev-Eventing/Exports/Output{\"Ref\":\"EngagementSignalBus4E37EDB7\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefEngagementSignalBus4E37EDB7874996B9"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-Eventing/Exports/Output{\"Ref\":\"EngagementSignalBusInsightsQueue529C3DCE\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefEngagementSignalBusInsightsQueue529C3DCE9FD643FA"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-Eventing/Exports/Output{\"Ref\":\"EngagementSignalBusNotificationQueueA0130601\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefEngagementSignalBusNotificationQueueA0130601FD834939"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-Eventing/Exports/Output{\"Ref\":\"EngagementSignalBusAuditQueueE693E9DF\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefEngagementSignalBusAuditQueueE693E9DFC5BA9B47"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
   "/Ecclesia-Dev-Eventing/EngagementSignalBus/Bus/Resource": [
     {
       "type": "aws:cdk:logicalId",
@@ -343,9 +395,9 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new EventBus2 in .pnpm...",
-        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:78:21)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "new EngagementSignalBus (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:78:21)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -359,10 +411,10 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new Queue2 in .pnpm...",
-        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:125:17)",
-        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:92:27)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "EngagementSignalBus.buildQueuePair (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:125:17)",
+        "new EngagementSignalBus (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:92:27)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -376,10 +428,10 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new Queue2 in .pnpm...",
-        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:132:19)",
-        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:92:27)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "EngagementSignalBus.buildQueuePair (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:132:19)",
+        "new EngagementSignalBus (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:92:27)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -393,10 +445,10 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new Queue2 in .pnpm...",
-        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:125:17)",
-        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:93:31)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "EngagementSignalBus.buildQueuePair (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:125:17)",
+        "new EngagementSignalBus (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:93:31)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -410,10 +462,10 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new Queue2 in .pnpm...",
-        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:132:19)",
-        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:93:31)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "EngagementSignalBus.buildQueuePair (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:132:19)",
+        "new EngagementSignalBus (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:93:31)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -427,10 +479,10 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new Queue2 in .pnpm...",
-        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:125:17)",
-        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:94:24)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "EngagementSignalBus.buildQueuePair (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:125:17)",
+        "new EngagementSignalBus (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:94:24)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -444,10 +496,10 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new Queue2 in .pnpm...",
-        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:132:19)",
-        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:94:24)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "EngagementSignalBus.buildQueuePair (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:132:19)",
+        "new EngagementSignalBus (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:94:24)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -461,9 +513,9 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new Rule2 in .pnpm...",
-        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:99:5)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "new EngagementSignalBus (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:99:5)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -477,9 +529,9 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new Rule2 in .pnpm...",
-        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:107:5)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "new EngagementSignalBus (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:107:5)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -493,9 +545,9 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new Rule2 in .pnpm...",
-        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:115:5)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)",
+        "new EngagementSignalBus (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:115:5)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -509,10 +561,10 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new Queue2 in .pnpm...",
-        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:125:17)",
-        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:92:27)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)"
+        "EngagementSignalBus.buildQueuePair (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:125:17)",
+        "new EngagementSignalBus (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:92:27)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)"
       ]
     }
   ],
@@ -525,10 +577,10 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new Queue2 in .pnpm...",
-        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:132:19)",
-        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:92:27)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)"
+        "EngagementSignalBus.buildQueuePair (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:132:19)",
+        "new EngagementSignalBus (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:92:27)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)"
       ]
     }
   ],
@@ -541,10 +593,10 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new Queue2 in .pnpm...",
-        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:125:17)",
-        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:93:31)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)"
+        "EngagementSignalBus.buildQueuePair (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:125:17)",
+        "new EngagementSignalBus (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:93:31)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)"
       ]
     }
   ],
@@ -557,10 +609,10 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new Queue2 in .pnpm...",
-        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:132:19)",
-        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:93:31)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)"
+        "EngagementSignalBus.buildQueuePair (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:132:19)",
+        "new EngagementSignalBus (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:93:31)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)"
       ]
     }
   ],
@@ -573,10 +625,10 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new Queue2 in .pnpm...",
-        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:125:17)",
-        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:94:24)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)"
+        "EngagementSignalBus.buildQueuePair (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:125:17)",
+        "new EngagementSignalBus (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:94:24)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)"
       ]
     }
   ],
@@ -589,10 +641,10 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new Queue2 in .pnpm...",
-        "EngagementSignalBus.buildQueuePair (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:132:19)",
-        "new EngagementSignalBus (/Users/king/Documents/ecclesia/infra/modules/engagement-signal-bus.construct.ts:94:24)",
-        "new EventingStack (/Users/king/Documents/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:55:20)"
+        "EngagementSignalBus.buildQueuePair (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:132:19)",
+        "new EngagementSignalBus (/sessions/festive-loving-gauss/mnt/ecclesia/infra/modules/engagement-signal-bus.construct.ts:94:24)",
+        "new EventingStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/eventing-stack.ts:24:16)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:59:20)"
       ]
     }
   ]

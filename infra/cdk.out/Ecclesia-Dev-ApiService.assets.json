@@ -1,0 +1,37 @@
+{
+  "version": "54.0.0",
+  "files": {
+    "1c81b52c4305cb4d6b8c92c79ab410d133f7559ccd453b34e2f8cca9455a4a8f": {
+      "displayName": "Ecclesia-Dev-ApiService Template",
+      "source": {
+        "path": "Ecclesia-Dev-ApiService.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-eu-west-1-5285e988": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1",
+          "objectKey": "1c81b52c4305cb4d6b8c92c79ab410d133f7559ccd453b34e2f8cca9455a4a8f.json",
+          "region": "eu-west-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-eu-west-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {
+    "726e5f967a9969e18a183296d41ad5236be230f120ea540a8396f13eab12b92f": {
+      "displayName": "ApiService/TaskDefinition/Container/AssetImage",
+      "source": {
+        "directory": "asset.726e5f967a9969e18a183296d41ad5236be230f120ea540a8396f13eab12b92f",
+        "dockerFile": "apps/api/Dockerfile"
+      },
+      "destinations": {
+        "current_account-eu-west-1-888a8a81": {
+          "repositoryName": "cdk-hnb659fds-container-assets-${AWS::AccountId}-eu-west-1",
+          "imageTag": "726e5f967a9969e18a183296d41ad5236be230f120ea540a8396f13eab12b92f",
+          "region": "eu-west-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-image-publishing-role-${AWS::AccountId}-eu-west-1"
+        }
+      }
+    }
+  }
+}

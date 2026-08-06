@@ -361,10 +361,56 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zWLWwrCMBBF19L/ZJQpuAE3UOoCZExHmTYPyESLhOxd2uLXuYfDRcBLD+eOVrVuWqyXB9RbIbcYWvVehQLUMXk212fcOSQv7rvpsZpRDdsnS3wNlClw4bz3v7TWTEwTw6ynDyJgD9jNKmLzOxYJDOPBH6wE+L2OAAAA"
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zWLWwrCMBBF19L/ZJQpuAE3UOoCZExHmTYPyESLhOxd2uLXuYfDRcBLD+eOVrVuWqyXB9RbIbcYWvVehQLUMXk212fcOSQv7rvpsZpRDdsnS3wNlClw4bz3v7TWTEwTw6ynDyIgQt/NKmLzOxYJDOPBH0sF9SuOAAAA"
    },
    "Metadata": {
     "aws:cdk:path": "Ecclesia-Production-Iam/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "ExportsOutputFnGetAttApiTaskExecutionRole3D69C76EArn7BB68CCC": {
+   "Value": {
+    "Fn::GetAtt": [
+     "ApiTaskExecutionRole3D69C76E",
+     "Arn"
+    ]
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Iam:ExportsOutputFnGetAttApiTaskExecutionRole3D69C76EArn7BB68CCC"
+   }
+  },
+  "ExportsOutputFnGetAttApiTaskRole12FAD4A7ArnA37BDEAD": {
+   "Value": {
+    "Fn::GetAtt": [
+     "ApiTaskRole12FAD4A7",
+     "Arn"
+    ]
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Iam:ExportsOutputFnGetAttApiTaskRole12FAD4A7ArnA37BDEAD"
+   }
+  },
+  "ExportsOutputFnGetAttWorkerTaskExecutionRole67BF844FArn88FD1CB4": {
+   "Value": {
+    "Fn::GetAtt": [
+     "WorkerTaskExecutionRole67BF844F",
+     "Arn"
+    ]
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Iam:ExportsOutputFnGetAttWorkerTaskExecutionRole67BF844FArn88FD1CB4"
+   }
+  },
+  "ExportsOutputFnGetAttWorkerTaskRole013F226AArnCC93AE7B": {
+   "Value": {
+    "Fn::GetAtt": [
+     "WorkerTaskRole013F226A",
+     "Arn"
+    ]
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Iam:ExportsOutputFnGetAttWorkerTaskRole013F226AArnCC93AE7B"
    }
   }
  },

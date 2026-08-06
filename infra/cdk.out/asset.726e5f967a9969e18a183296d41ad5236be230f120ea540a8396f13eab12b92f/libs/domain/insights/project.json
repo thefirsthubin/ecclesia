@@ -1,0 +1,36 @@
+{
+  "name": "domain-insights",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/domain/insights/src",
+  "tags": [
+    "scope:domain-insights"
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/libs/domain/insights",
+        "main": "libs/domain/insights/src/index.ts",
+        "tsConfig": "libs/domain/insights/tsconfig.lib.json",
+        "assets": [
+          "libs/domain/insights/*.md"
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "libs/domain/insights/**/*.ts"
+        ]
+      }
+    }
+  }
+}

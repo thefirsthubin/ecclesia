@@ -1,0 +1,208 @@
+{
+  "/Ecclesia-Dev-ApiService": [
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:123:22)",
+        "...node internals, .pnpm, .pnpm, .pnpm..."
+      ]
+    },
+    {
+      "type": "aws:cdk:stack-tags",
+      "data": [
+        {
+          "key": "Environment",
+          "value": "dev"
+        },
+        {
+          "key": "ManagedBy",
+          "value": "CDK"
+        },
+        {
+          "key": "Project",
+          "value": "Ecclesia"
+        }
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-ApiService/ApiServiceNameOutput": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiServiceNameOutput"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new ApiServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/api-service-stack.ts:141:5)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:123:22)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-ApiService/ApiUrlOutput": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiUrlOutput"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new ApiServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/api-service-stack.ts:142:5)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:123:22)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-ApiService/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-ApiService/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-ApiService/ApiService/Service": [
+    {
+      "type": "aws:cdk:warning",
+      "data": "minHealthyPercent has not been configured so the default value of 50% is used. The number of running tasks will decrease below the desired count during deployments etc. See https://github.com/aws/aws-cdk/issues/31705 [ack: @aws-cdk/aws-ecs:minHealthyPercent]",
+      "trace": [
+        "Annotations.addMessage (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/annotations.js:1:3506)",
+        "Annotations.addWarningV2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/annotations.js:1:2194)",
+        "new BaseService2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/aws-ecs/lib/base/base-service.js:1:16295)",
+        "new BaseService2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/no-box-stack-traces.js:1:345)",
+        "new FargateService2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/aws-ecs/lib/fargate/fargate-service.js:1:7829)",
+        "new FargateService2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/prop-injectable.js:1:855)",
+        "new FargateService (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/constructs/fargate-service.construct.ts:144:20)",
+        "new ApiServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/api-service-stack.ts:70:27)",
+        "Object.<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:123:22)",
+        "Module._compile (node:internal/modules/cjs/loader:1781:14)",
+        "Module.m._compile (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/index.ts:1618:23)",
+        "node:internal/modules/cjs/loader:1913:10",
+        "Object.require.extensions.<computed> [as .ts] (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/index.ts:1621:12)",
+        "Module.load (node:internal/modules/cjs/loader:1505:32)",
+        "Function._load (node:internal/modules/cjs/loader:1309:12)",
+        "wrapModuleLoad (node:internal/modules/cjs/loader:254:19)",
+        "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)",
+        "phase4 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/bin.ts:649:14)",
+        "bootstrap (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/bin.ts:95:10)",
+        "main (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/bin.ts:55:10)",
+        "Object.<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/bin.ts:800:3)",
+        "Module._compile (node:internal/modules/cjs/loader:1781:14)",
+        "Object.<anonymous> (node:internal/modules/cjs/loader:1913:10)",
+        "Module.load (node:internal/modules/cjs/loader:1505:32)",
+        "Function._load (node:internal/modules/cjs/loader:1309:12)",
+        "wrapModuleLoad (node:internal/modules/cjs/loader:254:19)",
+        "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)",
+        "node:internal/main/run_main_module:36:49"
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-ApiService/ApiServiceNameParam/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiServiceNameParam78284A93"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new StringParameter2 in .pnpm...",
+        "writeParameter (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/common/parameters.ts:23:10)",
+        "new ApiServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/api-service-stack.ts:139:19)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:123:22)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-ApiService/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-ApiService/Exports/Output{\"Fn::GetAtt\":[\"ApiService199661B5\",\"Name\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttApiService199661B5Name6719CF36"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-ApiService/ApiService/LogGroup/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiServiceLogGroup313E31FA"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new LogGroup2 in .pnpm...",
+        "new FargateService (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/constructs/fargate-service.construct.ts:87:21)",
+        "new ApiServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/api-service-stack.ts:70:27)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:123:22)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-ApiService/ApiService/TaskDefinition/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiServiceTaskDefinitionD60EA9BF"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new FargateTaskDefinition2 in .pnpm...",
+        "new FargateService (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/constructs/fargate-service.construct.ts:117:27)",
+        "new ApiServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/api-service-stack.ts:70:27)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:123:22)",
+        "...node internals, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-ApiService/ApiService/Service/Service": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiService199661B5"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new FargateService2 in .pnpm...",
+        "new FargateService (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/constructs/fargate-service.construct.ts:144:20)",
+        "new ApiServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/api-service-stack.ts:70:27)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:123:22)",
+        "...node internals, .pnpm..."
+      ]
+    }
+  ]
+}

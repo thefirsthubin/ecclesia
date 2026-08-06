@@ -1,0 +1,138 @@
+{
+  "/Ecclesia-Dev-EcsCluster": [
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:111:19)",
+        "...node internals, .pnpm, .pnpm, .pnpm..."
+      ]
+    },
+    {
+      "type": "aws:cdk:stack-tags",
+      "data": [
+        {
+          "key": "Environment",
+          "value": "dev"
+        },
+        {
+          "key": "ManagedBy",
+          "value": "CDK"
+        },
+        {
+          "key": "Project",
+          "value": "Ecclesia"
+        }
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-EcsCluster/ClusterNameOutput": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ClusterNameOutput"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new EcsClusterStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/ecs-cluster-stack.ts:54:5)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:111:19)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-EcsCluster/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-EcsCluster/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-EcsCluster/Cluster/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ClusterEB0386A7"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Cluster2 in .pnpm...",
+        "new EcsClusterStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/ecs-cluster-stack.ts:39:20)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:111:19)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-EcsCluster/Cluster/Cluster": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "Cluster3DA9CCBA"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-EcsCluster/ClusterNameParam/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ClusterNameParam24033294"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new StringParameter2 in .pnpm...",
+        "writeParameter (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/common/parameters.ts:23:10)",
+        "new EcsClusterStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/ecs-cluster-stack.ts:52:19)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:111:19)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-EcsCluster/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-EcsCluster/Exports/Output{\"Ref\":\"ClusterEB0386A7\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefClusterEB0386A796A0E3FE"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ]
+}

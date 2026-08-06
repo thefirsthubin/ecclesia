@@ -377,7 +377,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/0XJwQ7CIBAE0G/pHVazTbwbvZuod7OFmtJSaFiQA+HfDfXgad7MIOCph2NHmaXSi7RmgPKIpBZBmV+FHUN5+s0ocXm7HVUo65POFNUE5Uo8DZ6Cbv+/nC2FtU07am28pbilWIXzeoSZDx9EwB6wm9kYGZKLZh3h/ssvbutWQZkAAAA="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/0XJwQ7CIBAE0G/pHVazTbwbvZuod7OFmtJSaFiQA+HfDfXgad7MIOCph2NHmaXSi7RmgPKIpBZBmV+FHUN5+s0ocXm7HVUo65POFNUE5Uo8DZ6Cbv+/nC2FtU07am28pbilWIXzeoSZDx9EQIS+m9kYGZKLZh3h/ssviepb15kAAAA="
    },
    "Metadata": {
     "aws:cdk:path": "Ecclesia-Production-Observability/CDKMetadata/Default"
@@ -388,6 +388,14 @@
   "AlertTopicArnOutput": {
    "Value": {
     "Ref": "AlertTopic2720D535"
+   }
+  },
+  "ExportsOutputRefAlertTopic2720D5359ADB6D3E": {
+   "Value": {
+    "Ref": "AlertTopic2720D535"
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Observability:ExportsOutputRefAlertTopic2720D5359ADB6D3E"
    }
   }
  },

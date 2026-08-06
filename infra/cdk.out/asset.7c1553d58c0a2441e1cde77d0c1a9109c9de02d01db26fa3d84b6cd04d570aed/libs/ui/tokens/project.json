@@ -1,0 +1,26 @@
+{
+  "name": "ui-tokens",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/ui/tokens/src",
+  "tags": ["scope:ui-tokens"],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/ui/tokens",
+        "main": "libs/ui/tokens/src/index.ts",
+        "tsConfig": "libs/ui/tokens/tsconfig.lib.json",
+        "assets": ["libs/ui/tokens/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/ui/tokens/**/*.ts"]
+      }
+    }
+  }
+}

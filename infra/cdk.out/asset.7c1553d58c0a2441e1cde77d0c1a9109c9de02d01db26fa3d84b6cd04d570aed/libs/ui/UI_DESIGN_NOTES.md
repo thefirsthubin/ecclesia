@@ -1,0 +1,321 @@
+# Ecclesia UI Foundation — Design Notes
+
+Sprint scope: the reusable UI platform every future `apps/web-admin` and
+`apps/mobile` screen is built from — tokens, theme, icons, and a curated
+base-component slice. No business screens are implemented here (see
+"Explicitly out of scope" below). Traces to
+`docs/Ecclesia_Design_System_UX_Foundation_v1.0.md` ("the Design System"
+below) throughout.
+
+## 1. Architecture
+
+```
+libs/ui/
+  tokens/   @ecclesia/ui-tokens   pure TS data, zero framework dependency (leaf)
+  core/     @ecclesia/ui-core     theme composition + shared types + icon registry, depends on tokens only
+  web/      @ecclesia/ui-web      React DOM components, depends on core + tokens
+  native/   @ecclesia/ui-native   React Native components, depends on core + tokens
+```
+
+`ui-web` and `ui-native` are siblings — neither imports the other, ever.
+Both build on exactly the same `Theme` object (`buildTheme()` in
+`ui-core`) and the same `ICON_REGISTRY`, so a design decision made once
+(a color, a spacing value, which icon means "warning") is correct on
+both platforms by construction, not by two developers independently
+copying it correctly.
+
+This mirrors the project's existing `libs/domain/*` pattern (small,
+single-purpose libs, one clear dependency direction) rather than
+inventing a new structural convention.
+
+### Module boundaries
+
+`eslint.config.cjs`'s `@nx/enforce-module-boundaries` `depConstraints`
+enforce the dependency graph above at lint time, plus a real boundary
+this sprint added: the former single `scope:app` tag was split into
+`scope:app-backend` (`apps/api`, `apps/worker`), `scope:app-web`
+(`apps/web-admin`), and `scope:app-native` (`apps/mobile`). Backend apps
+structurally cannot import `ui-tokens`/`ui-core`/`ui-web`/`ui-native` —
+a NestJS service accidentally importing React is now a lint error, not
+just a code-review catch.
+
+### Styling approach: token-driven inline styles, not a CSS framework
+
+Both platforms compute style objects from `useTheme()` at render time
+(web: inline `style={{...}}`; native: RN's `style` prop) rather than
+adopting CSS Modules, Tailwind, or styled-components. This is a
+deliberate, disclosed trade-off: this repo has a long history of
+webpack/babel/SWC/Metro tooling breakage (see root `README.md`'s
+Sprint 0 log), and every one of those fixes was hard-won. Adding a new
+CSS build pipeline is new surface area for exactly that class of
+failure, for a benefit (co-located styles, autocomplete) the token
+system already provides another way. If a future sprint wants to
+revisit this (e.g. for real theming performance at scale), that's a
+scoped follow-up, not something to smuggle into this one.
+
+## 2. Design tokens (`ui-tokens`)
+
+One file per category, each with a named export and (where relevant) a
+derived TypeScript union type for the valid keys:
+
+| File | Exports | Notes |
+|---|---|---|
+| `color.ts` | `neutral`, `brand`, `status`, `churchPulse`, `CHURCH_PULSE_BANDS`, `getChurchPulseBand()`, `lightPalette`/`darkPalette` | `lightPalette`/`darkPalette` are `SemanticColorTokens` — the same token *names* resolve to different values per mode (Design System §5.11). |
+| `typography.ts` | `fontFamily`, `typography: Record<TypographyRole, TypeStyle>` | 9 roles: `display`, `heading1-3`, `body`, `bodySmall`, `caption`, `label`, `numericTabular`. Every role has an identically-shaped `TypeStyle` object (see the in-file comment on why `tabularNumbers` is required, not optional — it's a real type-safety fix, not decoration). |
+| `spacing.ts` | `spacing: Record<SpacingStep, number>` | 8pt rhythm: 0,4,8,12,16,20,24,32,40,48,64 at keys 0-16. |
+| `radius.ts` | `radius` | none/sm/md/lg/full. |
+| `elevation.ts` | `elevation: Record<ElevationLevel, ElevationStyle>` | 3 levels (0/1/2), each an `{offsetX, offsetY, blur, opacity}` shape both platforms can consume without a CSS-string round-trip. |
+| `breakpoints.ts` | `breakpoints` | sm/md/lg/xl — web-only concern in practice (see `useBreakpoint` note below). |
+| `motion.ts` | `motion.duration`, `motion.easing` | `duration.fast/standard/slow`, `easing.standard/emphasized` as cubic-bezier tuples. |
+| `z-index.ts` | `zIndex` | named stacking-context tokens (no raw numbers at call sites). |
+| `opacity.ts` | `opacity` | includes `opacity.disabled`, used consistently for every disabled-state component. |
+| `sizing.ts` | `touchTarget`, `iconSize`, `avatarSize` | `touchTarget.minIOS` (44), `minAndroid` (48), `minWeb` (44) — the two platforms' own accessibility guidelines actually disagree, so both are exported and each platform's components pick the correct floor. |
+| `contrast.ts` | `getContrastRatio()`, `meetsWcagAaNormalText()` | Dependency-free WCAG 2.1 relative-luminance implementation, used by `tokens.spec.ts` to assert real contrast ratios rather than trust a comment. |
+
+**Church Pulse color bands** (`churchPulse`, `CHURCH_PULSE_BANDS`,
+`getChurchPulseBand(score)`) are an explicit **[Design decision —
+extends Design System §10.1]**: thriving 80-100, healthy 60-79,
+attention 40-59, atRisk 0-39. The Design System names the concept;
+the exact numeric bands and their colors are this sprint's addition,
+disclosed as such.
+
+## 3. Theme system (`ui-core` + per-platform `ThemeProvider`)
+
+`ui-core/theme.ts` exports `buildTheme(mode: 'light' | 'dark'): Theme`
+— a pure function, no React, no platform API. Everything except
+`colors` is mode-independent and simply passed through; `colors`
+resolves to `lightPalette`/`darkPalette` from `ui-tokens`.
+
+Each platform wraps this in a real `ThemeProvider`:
+
+- **`ui-web`**: `ThemeProvider` (React context), `useTheme()`,
+  `useColorScheme()`, `useBreakpoint()` + `useResponsiveValue<T>()`,
+  `useReducedMotion()`. System color scheme via
+  `matchMedia('(prefers-color-scheme: dark)')` + `useSyncExternalStore`
+  (React 18's idiomatic pattern for subscribing to external browser
+  state — chosen over a `useEffect`+`useState` polyfill because it's
+  race-free by construction). Light mode is the default; a `colorScheme`
+  prop can force either mode or `"system"`.
+- **`ui-native`**: identical hook surface. System color scheme via RN's
+  `Appearance` API; reduced motion via
+  `AccessibilityInfo.isReduceMotionEnabled()` + the
+  `'reduceMotionChanged'` event (no synchronous snapshot API exists on
+  RN, so this one hook uses plain `useState`/`useEffect` rather than
+  `useSyncExternalStore`). `useBreakpoint` exists via
+  `useWindowDimensions` for future tablet support, but per Design
+  System §6.11 mobile does not use breakpoint-driven layout as its
+  primary responsive strategy the way web does.
+
+Dark mode: both `lightPalette` and `darkPalette` share the same
+semantic key names (`colors.text.primary`, `colors.surface.raised`,
+etc.) — a component never branches on `theme.mode` directly, it just
+reads a token, and the token resolves correctly for whichever mode is
+active. This is what makes dark-mode support "already done" for every
+component in this sprint rather than a future retrofit.
+
+## 4. Base components — implemented (23 of 23)
+
+Every component below exists on **both** platforms with matching props
+(platform-appropriate event names: `onClick`/`onPress`,
+`children: ReactNode`/`children: string` where RN's `<Text>` requires a
+string), is fully typed, and has a `.spec` test covering render +
+accessibility-relevant behavior.
+
+| Component | Purpose | Key accessibility pattern |
+|---|---|---|
+| `Text` | Body copy primitive, all non-heading typography roles | — |
+| `Heading` | `level: 1\|2\|3\|'display'` | Web: real `<h1>`-`<h3>`. Native: `accessibilityRole="header"` on every level (RN has no numeric heading concept — document order conveys hierarchy). |
+| `Button` | Primary action trigger, 4 variants × 3 sizes, loading/icon slots | Web: focus-visible outline, `aria-busy`. Native: `accessibilityState={{disabled, busy}}`, 44/48pt touch floor, `hitSlop`. |
+| `Card` | Content grouping, optional `interactive` (whole-card tap target) | Web: real `role="button"`+`tabIndex`+Enter/Space handling, not a `<div onClick>`. Native: `Pressable` with `accessibilityRole="button"`. |
+| `Badge` | Small status/count chip, 5 status colors × subtle/solid | Never the sole conveyor of urgency (Design System §7.9) — caller responsibility, documented on the component. |
+| `Avatar` | Photo or deterministic initials fallback | `role="img"`/`accessibilityLabel` = full name either way. |
+| `Input` | Labeled text field with error/helper text | Web: `<label htmlFor>` + `aria-describedby`+`role="alert"` on error. Native: no `<label>` equivalent exists, so `accessibilityLabel` mirrors the visible label text. |
+| `Divider` | Visual separator | Web: `role="separator"`+`aria-orientation`. Native: `accessibilityElementsHidden` (decorative). |
+| `Spinner` | Loading indicator | Web: `role="status"` (implies `aria-live`). Native: wraps RN's own `ActivityIndicator` rather than reimplementing rotation — the platform already provides a correct native spinner. Explicitly exempt from `useReducedMotion` (WCAG's essential-motion exception; a spinner conveys "still working," suppressing it would be misleading). |
+| `Skeleton` | Loading placeholder | `aria-hidden`/`accessibilityElementsHidden`; pulse animation disabled under reduced motion (unlike `Spinner` — a skeleton's animation is decorative, not informational, so it doesn't get the same exemption). |
+| `EmptyState` | "No content" designed state (Design System §7.18) | `tone: 'neutral' \| 'positive'` — an empty priority zone is good news, not an error; the component supports reading that way. |
+| `ErrorState` | Recoverable-error designed state | Web: `role="alert"`. Native: `accessibilityLiveRegion="assertive"` (RN's ARIA-alert analogue). Optional `onRetry` renders a secondary `Button`. |
+| `TextArea` | Multi-line text entry | Same pattern as `Input` (label/error/helper), reapplied not redesigned. |
+| `Checkbox` | Binary form selection, supports `indeterminate` | Web: real `<input type="checkbox">`, visually hidden, artwork on top is `aria-hidden`; `indeterminate` set via ref (no JSX attribute exists). Native: `Pressable` + `accessibilityRole="checkbox"` + `accessibilityState.checked` (`true`/`false`/`'mixed'`). |
+| `Radio` / `RadioGroup` | Mutually-exclusive single-select from a visible set | Web: real `<fieldset>`/`<legend>` grouping real `<input type="radio">`s. Native: `accessibilityRole="radiogroup"`/`"radio"` (no fieldset equivalent on this platform). |
+| `Switch` | Immediate-effect setting toggle (distinct from `Checkbox` — Part 7.4) | Web: `role="switch"`+`aria-checked` on a `<button>`, not a checkbox input. Native: wraps RN's own `Switch` primitive (correct platform visuals + `accessibilityRole="switch"` for free). |
+| `Select` | Labeled dropdown from a closed option set | Web: real `<select>` (native keyboard/type-ahead/mobile-picker behavior for free), chevron overlay is decorative. Native: no `<select>` equivalent exists, so a `Pressable` trigger opens this library's own `Modal` (`variant="dialog"`) as the option list — reuses `Modal`'s already-solved overlay/dismissal behavior rather than inventing a second one. |
+| `Toast` / `useToast` | Transient status messaging, triggerable from anywhere in the tree | The one component in this table that is a context provider (`ToastProvider`), not a purely caller-controlled presentational component — a toast can be shown from deep in a form or a background sync, unlike `Modal`'s one-caller-one-`isOpen`-flag model. Web: portals to `document.body` at `zIndex.toast`, `role="status"`+`aria-live` (`"assertive"` for `danger`). Native: no DOM portal exists, so the provider layers an absolutely-positioned, `pointerEvents="box-none"` `View` over its own `children` instead — same "mount once near the app root" expectation as web. |
+| `Tooltip` | Brief, supplementary hover/focus label — never the *only* place information lives | Web: shown on `mouseenter`+`focus` (both a mouse and keyboard user can trigger it, a hover-only implementation would fail this), hidden on `mouseleave`/`blur`/`Escape`, `role="tooltip"`+`aria-describedby`. Native: no hover concept exists, so triggered by `onLongPress` instead and auto-hides after a duration; also sets `accessibilityHint` on the child unconditionally (independent of the visual bubble state) so VoiceOver/TalkBack users get the content without needing to discover the long-press gesture. |
+| `Drawer` | Edge-anchored side panel for supplementary content/filters, lighter-weight than a centered `Modal` | Reuses `Modal`'s exact portal/focus-trap/dismissal strategy on both platforms (see `Modal`'s own entry below) — the only real difference is layout: full-height, slides from `side: 'left' \| 'right'` instead of centering. Native's edge-slide is a disclosed simplification (`animationType="fade"`, not a true slide-in — that needs `react-native-reanimated`, out of scope here). |
+| `Tabs` | Switches between mutually-exclusive content panels; only the active panel renders | One of two components needing real shared interaction-state logic beyond every prior component (`UI_DESIGN_NOTES.md`'s original framing). Web: WAI-ARIA "automatic activation" pattern — `role="tablist"/"tab"/"tabpanel"`, roving `tabIndex`, `ArrowLeft`/`ArrowRight`/`Home`/`End` move *and* activate. Native: RN's own `"tablist"`/`"tab"` `accessibilityRole` values map directly onto the same concept; tab bar is a horizontal `ScrollView` since a Bacenta/Ministry-heavy tab set can exceed one phone screen width. |
+| `Accordion` | Expand/collapse panels, single- or multi-open via `allowMultiple` | The second component needing shared interaction-state logic. Web: real `<button aria-expanded aria-controls>` header + `role="region" aria-labelledby` panel (navigable via the screen reader's landmarks list, not just linear reading). Native: `Pressable` + `accessibilityState.expanded` header; RN has no `role="region"` landmark equivalent, so the panel itself carries no additional accessibility role beyond being conditionally rendered. |
+
+### `Modal` — resolved (`[Stewardship gaps sprint]`)
+
+Built on both platforms, matching `libs/ui/UI_DESIGN_NOTES.md`'s own
+plan above exactly: `libs/ui/{web,native}/src/lib/Modal/Modal.tsx`,
+exported from both barrels. Picked as the one component to build out of
+the deferred eleven — not an arbitrary pick, the same "one full,
+reviewable vertical slice, not all eleven at once" phasing this
+project used for `apps/worker`'s own two-milestone rollout. It was also
+the single most-cited real blocker across prior sprints:
+`STEWARDSHIP_PAGE_DESIGN_NOTES.md` names pages building inline
+`Input`+`Button` workarounds specifically because no `Modal` existed.
+
+- **Web**: portals to `document.body` (`createPortal`), using the
+  previously-exported-but-unused `zIndex.overlay`/`zIndex.modal`
+  tokens. Implements Design System v1.0 Part 7.8's full behavior spec:
+  `role="dialog"`/`aria-modal="true"`/`aria-labelledby`, a minimal
+  dependency-free focus trap (cycles `Tab`/`Shift+Tab` between the
+  dialog's own focusable elements), focus returned to the triggering
+  element on close, and `dismissible={false}` for the "destructive
+  dialog needs an explicit button press, never a dismiss-by-accident
+  path" rule (disables `Esc`/scrim-click).
+- **Native**: built on RN's own `Modal` primitive, exactly as
+  `UI_DESIGN_NOTES.md`'s own plan already named ("native via RN's
+  `Modal` primitive") — not a from-scratch portal reimplementation.
+  `accessibilityViewIsModal` is RN's platform mechanism for
+  VoiceOver/TalkBack focus-trapping; there is no manual Tab-trap
+  concept on this platform (RN has no keyboard-Tab navigation model).
+  **Not** Part 7.8's `bottom-sheet` variant (Mobile's own distinct,
+  slides-from-bottom, one-handed-reachability presentation) — that
+  remains unbuilt, disclosed on the component's own doc comment.
+- Both platforms support `variant: 'modal' | 'dialog'` (Part 7.8's two
+  web-equivalent variants) and an optional `footer` slot for action
+  buttons.
+- `tsc --noEmit` ran clean in this sandbox for all four
+  `libs/ui/{web,native}` `tsconfig.{lib,spec}.json` configs. Actual
+  Jest execution still needs the user's own `pnpm test` — this
+  sandbox's disclosed Jest-execution limitations (native `@swc/core`
+  binding failures) apply here too, not newly introduced by this
+  component.
+
+## 5. Navigation / Data / Layout components — built
+
+Design System §7 Parts 6-8 (data tables, search/filter/pagination,
+command palette, charts, mobile bottom-nav, record pickers) - the
+milestone after all 23 base components (§4). `Sidebar`/`TopBar`/
+`Breadcrumbs`/`UserMenu`/`NotificationBell` (web-only app-shell nav)
+predate this milestone and aren't re-covered here.
+
+| Component | Platforms | Notes |
+|---|---|---|
+| `Table` | web + native | Web: real `<table>`, sortable `<th>` via `aria-sort`, optional row selection via `Checkbox` (indeterminate "select all"), `EmptyState`/`Skeleton` reused for empty/loading. Native: header `View` + RN's own `FlatList` for real virtualization (not a plain `.map`) - flex-weighted columns instead of web's pixel widths. |
+| `Search` | web + native | `Input`'s pattern plus a leading search icon, trailing clear button, and built-in debounced `onSearch` (default 300ms) so callers don't hand-roll `setTimeout`. |
+| `Pagination` | web + native | Web: numbered pages with ellipsis-truncation (always shows first/last + a window around current), `aria-current="page"` (not a disabled button) for the current page. Native: deliberately simpler - Previous/Next + "Page X of Y" text, since a row of small page-number buttons is a poor touch target on a phone. |
+| `FilterBar` | web + native | A thin, removable-chip display for *already-resolved* active filters - not a filter-builder (per-field editors are business-domain UI, out of this library's scope). A `children` slot holds the caller's own "Add filter" control. |
+| `CommandPalette` | **web only** | Cmd/Ctrl+K launcher, WAI-ARIA "editable combobox with list autocomplete" pattern (`role="combobox"`+`aria-activedescendant`, not `Modal`'s Tab-trap). Reuses `Modal`/`Drawer`'s `createPortal`+`zIndex` strategy. Does not own the global keypress listener - that's an app-shell concern. Disclosed native gap: no mobile keyboard-shortcut-launcher convention exists, so `ui-native` has no equivalent. |
+| `BarChart` / `LineChart` (`Charts`) | web + native | No charting library dependency (this repo's disclosed npm-registry/build-tooling sensitivity, §1). `BarChart`: each value is real visible text, not encoded only in bar height. `LineChart`: plain `<svg>`/`react-native-svg` polyline with a computed summarizing `aria-label`/`accessibilityLabel` ("Line chart from X to Y, trending up") - an honest, disclosed simplification, not a claim of full per-point screen-reader access; a caller needing that should pair it with a `Table`. |
+| `BottomNav` | **native only** | Persistent bottom tab bar, mobile's primary nav surface (`Sidebar`'s counterpart). `onPress(key)` callback, not `Sidebar`'s router-injecting `linkAs` - stays agnostic of whatever navigation library `apps/mobile` uses, the same way `Tabs`' `onChange` does. Does not apply its own safe-area inset (`react-native-safe-area-context` isn't a dependency of this workspace) - wrapping it in a safe-area container is the caller's job. |
+| `RecordPicker` | web + native | Async-searchable **single-select** picker for "assign a Person/Group" flows. One component for both Person and Group pickers - the caller supplies `onSearch`, since `ui-web`/`ui-native` cannot call any app's API client directly (module-boundary rule). Web: inline dropdown under the input. Native: reuses `Modal` (`variant="dialog"`) for the search+results overlay, the same choice `Select` made. Multi-select is a disclosed, deferred follow-up. |
+
+`tsc --noEmit` ran clean in this sandbox for all four
+`libs/ui/{web,native}` `tsconfig.{lib,spec}.json` configs after this
+tier. Real `pnpm test`/`pnpm lint` execution is the user's machine's
+job, per this document's own recurring sandbox-limitations note (§10).
+
+## 6. Icons
+
+**Decision: [lucide]**, via `lucide-react` (web) and
+`lucide-react-native` (native, peer dependency `react-native-svg`).
+
+Why: single open-source icon set covering both platforms with matching
+visual language (same stroke width/style), tree-shakeable (each icon is
+its own export, so bundlers only ship the icons actually used), and
+actively maintained. No screen or component outside the platform
+`Icon` wrapper ever imports lucide directly — `ICON_REGISTRY` in
+`ui-core` is the single source of truth for which ~34 semantic icon
+names exist in Ecclesia (`check`, `alertTriangle`, `chevronDown`,
+etc.), each mapped to lucide's PascalCase export name. Adding an icon
+means adding one line to `ICON_REGISTRY`, never a new import scattered
+across a screen file. This is what "never allow multiple icon systems"
+(the prompt's explicit requirement) means in practice: it's not just a
+convention, `Icon` is the only component that imports the library at
+all.
+
+`react-native-svg` is pinned to `^15.2.0` — a **disclosed, unverified
+guess**: WebSearch confirmed the newest 15.x releases (15.15.5+)
+require React Native ≥0.78, and this repo pins RN at exactly `0.75.4`,
+so an earlier 15.x patch was chosen deliberately. This needs
+confirmation via the user's own `pnpm install`; if it conflicts, try
+other 15.x/14.x patches.
+
+## 7. Accessibility
+
+Applied consistently, not per-component ad hoc:
+
+- Every interactive component meets the touch-target floor (`theme.touchTarget`) on native, and a minimum click target on web.
+- Every color pairing used for text-on-background is verified ≥4.5:1 contrast by `ui-tokens/tokens.spec.ts`, computed via a from-scratch WCAG 2.1 formula (no color library dependency — the sandbox has no npm registry access to add one during this build).
+- Status is never conveyed by color alone: `Badge`/`ErrorState`/status colors are always paired with text or an icon.
+- Every component that manages its own interaction state exposes it to assistive tech (`aria-busy`/`accessibilityState.busy` for `Button` loading, `aria-describedby`/`role="alert"` for `Input` errors, etc.) rather than only a visual change.
+- Reduced-motion is respected where animation is decorative (`Skeleton`) and deliberately *not* suppressed where animation is the information (`Spinner`) — see §4 above for the reasoning.
+
+## 8. Developer experience
+
+**Naming**: one component per directory
+(`ComponentName/ComponentName.tsx` + `.spec.tsx` + `index.ts`),
+PascalCase directories matching the exported component name — mirrors
+the convention already used by `libs/domain/*`'s service/module files.
+
+**Imports**: consumers always import from the package barrel
+(`@ecclesia/ui-web` / `@ecclesia/ui-native`), never a deep path like
+`@ecclesia/ui-web/lib/Button/Button` — enforced by convention today
+(no lint rule added this sprint; a `no-restricted-imports` rule
+blocking deep imports would be a reasonable small follow-up if deep
+imports show up in review).
+
+**Storybook**: recommended, not built this sprint. Given this repo's
+demonstrated sensitivity to new build tooling (see §1's styling-approach
+rationale), adding Storybook should be its own small, isolated sprint
+with its own verification pass — bundling it into this one would risk
+tooling breakage obscuring whether the *components* are correct.
+
+**Testing strategy**: React Testing Library (web) /
+`@testing-library/react-native` (native) — every component's `.spec`
+asserts rendered output and accessibility-relevant attributes
+(labels, roles, `aria-*`/`accessibility*` props), not implementation
+detail (no snapshot tests, no internal-state assertions). This matches
+the testing philosophy already used throughout `libs/domain/*`.
+**Sandbox caveat**: Jest cannot execute in this sandbox (persistent
+`@swc/core` native-binding failure, present since the project's very
+first sprint) — every spec listed in this document was written to the
+same standard as the executable domain-module tests, but has only been
+statically type-checked (`tsc --noEmit`) here, not actually run. Real
+`pnpm test` execution is the user's machine's job — see the root
+README's verification section.
+
+## 9. Acceptance criteria — walkthrough
+
+The prompt's stated acceptance bar: *"apps/web-admin and apps/mobile
+both import the same design tokens and the same base components, with
+platform-specific implementations."*
+
+- `apps/web-admin/src/app/app.tsx` imports `ThemeProvider`, `useTheme`, `Heading`, `Text`, `Button`, `Card`, `Badge` from `@ecclesia/ui-web`.
+- `apps/mobile/src/app/App.tsx` imports the same six named exports from `@ecclesia/ui-native` instead.
+- Both render an identical *structure* (heading, description text, a card containing a heading + status badge + description + button that increments a demo counter) using each platform's native primitives (`<div>`/`<h1>` vs. `View`/RN `Text`), proving the shared component contracts produce visually-equivalent, platform-correct output.
+- Both compile cleanly via `tsc --noEmit` against their respective `tsconfig.app.json`, with the only remaining errors being the expected "module not found" for `lucide-react`/`lucide-react-native` (not yet installed in this sandbox — resolves after the user's own `pnpm install`).
+- This showcase is explicitly commented in both files as **not** a product screen — a placeholder proving the wiring, exactly like the Sprint 0 scaffolds it replaces.
+
+## 10. Sandbox limitations disclosed this sprint
+
+- Jest cannot execute at all (native `@swc/core` binding failure) — true since the project's first sprint, unrelated to this work.
+- `npx nx lint`/`nx build` via the Nx project graph is unreliable in this sandbox (see the Stewardship-gaps-sprint note below); every in-sandbox verification uses direct `npx tsc -p <tsconfig> --noEmit` instead, which has been reliable throughout. Full `pnpm lint`/`pnpm test`/`pnpm build` is deferred to the user's real machine, per the verification commands in the root README.
+- No npm registry network access — new dependency versions (`lucide-react`, `lucide-react-native`, `react-native-svg`) were sourced via `WebSearch` for approximate current/compatible versions, not registry-verified in-sandbox. Requires the user's own `pnpm install` to confirm.
+
+### `[Stewardship gaps sprint]` — remaining 10 base components resolved
+
+`TextArea`, `Checkbox`, `Radio`/`RadioGroup`, `Switch`, `Select`,
+`Toast`/`useToast`, `Tooltip`, `Drawer`, `Tabs`, `Accordion` — all
+built on both platforms per §4's table above, closing out every base
+component originally scoped (23 of 23). `Select` and `Drawer` on
+native, plus `Toast`'s native provider, deliberately reuse this
+library's own `Modal` rather than inventing new overlay primitives
+(`Select`'s option list is a `Modal` `variant="dialog"`; `Drawer` is
+literally `Modal`'s portal/focus-trap logic with edge-anchored layout
+instead of centering) — the same "don't re-solve a solved problem"
+discipline `Modal` itself followed for RN's own `Modal` primitive.
+
+No new npm dependencies were added for this slice — every component
+above is built from primitives already in this library (`Icon`,
+`Modal`, `Heading`, theme tokens) or the two platforms' own built-ins
+(`<select>`, `<fieldset>`, RN's `Switch`/`Modal`). `tsc --noEmit` ran
+clean in this sandbox for all four `libs/ui/{web,native}`
+`tsconfig.{lib,spec}.json` configs after this slice — same disclosed
+caveat as `Modal`'s own entry above: real `pnpm test`/`pnpm lint`
+execution is the user's machine's job.

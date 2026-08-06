@@ -1,16 +1,16 @@
 {
   "version": "54.0.0",
   "files": {
-    "4afa6c85e76f7eaa5bd5c7661721bb74b04de96280879659ef61e66ed044d9da": {
+    "525b740132d91221727f85571ea4fb90cc180b9e16fe9d01208a82d8c6237a1a": {
       "displayName": "Ecclesia-Dev-Ses Template",
       "source": {
         "path": "Ecclesia-Dev-Ses.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "current_account-eu-west-1-350088a9": {
+        "current_account-eu-west-1-cf5277da": {
           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1",
-          "objectKey": "4afa6c85e76f7eaa5bd5c7661721bb74b04de96280879659ef61e66ed044d9da.json",
+          "objectKey": "525b740132d91221727f85571ea4fb90cc180b9e16fe9d01208a82d8c6237a1a.json",
           "region": "eu-west-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-eu-west-1"
         }

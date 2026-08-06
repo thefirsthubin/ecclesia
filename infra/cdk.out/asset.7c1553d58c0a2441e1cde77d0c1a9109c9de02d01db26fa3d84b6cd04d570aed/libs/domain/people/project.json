@@ -1,0 +1,36 @@
+{
+  "name": "domain-people",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/domain/people/src",
+  "tags": [
+    "scope:domain-people"
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/libs/domain/people",
+        "main": "libs/domain/people/src/index.ts",
+        "tsConfig": "libs/domain/people/tsconfig.lib.json",
+        "assets": [
+          "libs/domain/people/*.md"
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "libs/domain/people/**/*.ts"
+        ]
+      }
+    }
+  }
+}

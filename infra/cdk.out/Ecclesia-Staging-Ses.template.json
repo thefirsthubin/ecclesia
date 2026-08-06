@@ -33,7 +33,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/13IQQqEMAwAwLd4b6Ok4Ad8gLA+YKlaJeqmi0n1IP5dxJungUHA0kGR+V1s1892oRaORn03G7/LV4LAUUUeaEyrV4rcBDXVwO8776yT/pOehmMfYJJ8QwR0gNkkRHZNrPQL8Hm8AL1lUll6AAAA"
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/13IQQqEMAwAwLd4b6Ok4Ad8gLA+YKlaJeqmi0n1IP5dxJungUHA0kGR+V1s1892oRaORn03G7/LV4LAUUUeaEyrV4rcBDXVwO8776yT/pOehmMfYJJ8QwREcNkkRHZNrPQL8Hm8AFpkX896AAAA"
    },
    "Metadata": {
     "aws:cdk:path": "Ecclesia-Staging-Ses/CDKMetadata/Default"

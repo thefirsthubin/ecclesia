@@ -1,0 +1,37 @@
+{
+  "version": "54.0.0",
+  "files": {
+    "634f2da1b3e9f52d6843cee043ef1e4e8f718669adbbbc66c65edd3cad9eb7a0": {
+      "displayName": "Ecclesia-Production-WorkerService Template",
+      "source": {
+        "path": "Ecclesia-Production-WorkerService.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-eu-west-1-ac8349e3": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1",
+          "objectKey": "634f2da1b3e9f52d6843cee043ef1e4e8f718669adbbbc66c65edd3cad9eb7a0.json",
+          "region": "eu-west-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-eu-west-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {
+    "7c1553d58c0a2441e1cde77d0c1a9109c9de02d01db26fa3d84b6cd04d570aed": {
+      "displayName": "InsightsConsumer/TaskDefinition/Container/AssetImage",
+      "source": {
+        "directory": "asset.7c1553d58c0a2441e1cde77d0c1a9109c9de02d01db26fa3d84b6cd04d570aed",
+        "dockerFile": "apps/worker/Dockerfile"
+      },
+      "destinations": {
+        "current_account-eu-west-1-790f5341": {
+          "repositoryName": "cdk-hnb659fds-container-assets-${AWS::AccountId}-eu-west-1",
+          "imageTag": "7c1553d58c0a2441e1cde77d0c1a9109c9de02d01db26fa3d84b6cd04d570aed",
+          "region": "eu-west-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-image-publishing-role-${AWS::AccountId}-eu-west-1"
+        }
+      }
+    }
+  }
+}

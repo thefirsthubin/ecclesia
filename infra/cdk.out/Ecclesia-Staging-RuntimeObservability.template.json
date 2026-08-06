@@ -1,0 +1,975 @@
+{
+ "Description": "Ecclesia staging - ECS/RDS CloudWatch alarms + dashboard (Cloud Runtime Infrastructure milestone)",
+ "Resources": {
+  "Dashboard9E4231ED": {
+   "Type": "AWS::CloudWatch::Dashboard",
+   "Properties": {
+    "DashboardBody": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"widgets\":[{\"type\":\"text\",\"width\":24,\"height\":3,\"x\":0,\"y\":0,\"properties\":{\"markdown\":\"# Ecclesia Runtime Dashboard - staging\\n\\nMilestone 10 (Cloud Runtime Infrastructure): ECS + RDS resources.\"}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":3,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Api CPU / Memory\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"AWS/ECS\",\"CPUUtilization\",\"ClusterName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+       },
+       "\",\"ServiceName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-ApiService:ExportsOutputFnGetAttApiService199661B5Name6719CF36"
+       },
+       "\"],[\"AWS/ECS\",\"MemoryUtilization\",\"ClusterName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+       },
+       "\",\"ServiceName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-ApiService:ExportsOutputFnGetAttApiService199661B5Name6719CF36"
+       },
+       "\"]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":9,\"properties\":{\"view\":\"timeSeries\",\"title\":\"WorkerInsights CPU / Memory\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"AWS/ECS\",\"CPUUtilization\",\"ClusterName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+       },
+       "\",\"ServiceName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-WorkerService:ExportsOutputFnGetAttInsightsConsumerService21B3948DName147EC207"
+       },
+       "\"],[\"AWS/ECS\",\"MemoryUtilization\",\"ClusterName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+       },
+       "\",\"ServiceName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-WorkerService:ExportsOutputFnGetAttInsightsConsumerService21B3948DName147EC207"
+       },
+       "\"]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":15,\"properties\":{\"view\":\"timeSeries\",\"title\":\"WorkerNotification CPU / Memory\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"AWS/ECS\",\"CPUUtilization\",\"ClusterName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+       },
+       "\",\"ServiceName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-WorkerService:ExportsOutputFnGetAttNotificationConsumerService11D9D27AName982E5A26"
+       },
+       "\"],[\"AWS/ECS\",\"MemoryUtilization\",\"ClusterName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+       },
+       "\",\"ServiceName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-WorkerService:ExportsOutputFnGetAttNotificationConsumerService11D9D27AName982E5A26"
+       },
+       "\"]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":21,\"properties\":{\"view\":\"timeSeries\",\"title\":\"WorkerAudit CPU / Memory\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"AWS/ECS\",\"CPUUtilization\",\"ClusterName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+       },
+       "\",\"ServiceName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-WorkerService:ExportsOutputFnGetAttAuditConsumerService08114978NameCE0846F7"
+       },
+       "\"],[\"AWS/ECS\",\"MemoryUtilization\",\"ClusterName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+       },
+       "\",\"ServiceName\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-WorkerService:ExportsOutputFnGetAttAuditConsumerService08114978NameCE0846F7"
+       },
+       "\"]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":27,\"properties\":{\"view\":\"timeSeries\",\"title\":\"RDS CPU / Connections\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"AWS/RDS\",\"CPUUtilization\",\"DBInstanceIdentifier\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-Database:ExportsOutputRefInstanceC1063A87B325EA17"
+       },
+       "\"],[\"AWS/RDS\",\"DatabaseConnections\",\"DBInstanceIdentifier\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-Database:ExportsOutputRefInstanceC1063A87B325EA17"
+       },
+       "\"]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":12,\"y\":27,\"properties\":{\"view\":\"timeSeries\",\"title\":\"RDS Free Storage / Freeable Memory\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"AWS/RDS\",\"FreeStorageSpace\",\"DBInstanceIdentifier\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-Database:ExportsOutputRefInstanceC1063A87B325EA17"
+       },
+       "\"],[\"AWS/RDS\",\"FreeableMemory\",\"DBInstanceIdentifier\",\"",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-Database:ExportsOutputRefInstanceC1063A87B325EA17"
+       },
+       "\"]],\"yAxis\":{}}}]}"
+      ]
+     ]
+    },
+    "DashboardName": "ecclesia-staging-runtime-dashboard",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-RuntimeObservability/Dashboard/Resource"
+   }
+  },
+  "ApiCpuAlarm8FA6A548": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::ImportValue": "Ecclesia-Staging-Observability:ExportsOutputRefAlertTopic2720D5359ADB6D3E"
+     }
+    ],
+    "AlarmDescription": "Milestone 10 §9 - Api ECS service CPU sustained above 85%.",
+    "AlarmName": "ecclesia-staging-api-cpu-high",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "ClusterName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+      }
+     },
+     {
+      "Name": "ServiceName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-ApiService:ExportsOutputFnGetAttApiService199661B5Name6719CF36"
+      }
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "CPUUtilization",
+    "Namespace": "AWS/ECS",
+    "Period": 300,
+    "Statistic": "Average",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 85,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-RuntimeObservability/ApiCpuAlarm/Resource"
+   }
+  },
+  "ApiMemoryAlarm149B8177": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::ImportValue": "Ecclesia-Staging-Observability:ExportsOutputRefAlertTopic2720D5359ADB6D3E"
+     }
+    ],
+    "AlarmDescription": "Milestone 10 §9 - Api ECS service memory sustained above 85% (apps/api's own HealthController RSS ceiling is a related, application-level signal - see INFRA_RUNTIME.md's sizing note).",
+    "AlarmName": "ecclesia-staging-api-memory-high",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "ClusterName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+      }
+     },
+     {
+      "Name": "ServiceName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-ApiService:ExportsOutputFnGetAttApiService199661B5Name6719CF36"
+      }
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "MemoryUtilization",
+    "Namespace": "AWS/ECS",
+    "Period": 300,
+    "Statistic": "Average",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 85,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-RuntimeObservability/ApiMemoryAlarm/Resource"
+   }
+  },
+  "ApiRunningTaskCountAlarm9177000B": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::ImportValue": "Ecclesia-Staging-Observability:ExportsOutputRefAlertTopic2720D5359ADB6D3E"
+     }
+    ],
+    "AlarmDescription": "Milestone 10 §9 - Api ECS service running fewer tasks than desired (1) for a sustained period - task failures.",
+    "AlarmName": "ecclesia-staging-api-running-task-count-low",
+    "ComparisonOperator": "LessThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "ClusterName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+      }
+     },
+     {
+      "Name": "ServiceName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-ApiService:ExportsOutputFnGetAttApiService199661B5Name6719CF36"
+      }
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "RunningTaskCount",
+    "Namespace": "AWS/ECS",
+    "Period": 300,
+    "Statistic": "Minimum",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 1,
+    "TreatMissingData": "breaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-RuntimeObservability/ApiRunningTaskCountAlarm/Resource"
+   }
+  },
+  "WorkerInsightsCpuAlarm362279E4": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::ImportValue": "Ecclesia-Staging-Observability:ExportsOutputRefAlertTopic2720D5359ADB6D3E"
+     }
+    ],
+    "AlarmDescription": "Milestone 10 §9 - WorkerInsights ECS service CPU sustained above 85%.",
+    "AlarmName": "ecclesia-staging-workerinsights-cpu-high",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "ClusterName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+      }
+     },
+     {
+      "Name": "ServiceName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-WorkerService:ExportsOutputFnGetAttInsightsConsumerService21B3948DName147EC207"
+      }
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "CPUUtilization",
+    "Namespace": "AWS/ECS",
+    "Period": 300,
+    "Statistic": "Average",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 85,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-RuntimeObservability/WorkerInsightsCpuAlarm/Resource"
+   }
+  },
+  "WorkerInsightsMemoryAlarmDACBB907": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::ImportValue": "Ecclesia-Staging-Observability:ExportsOutputRefAlertTopic2720D5359ADB6D3E"
+     }
+    ],
+    "AlarmDescription": "Milestone 10 §9 - WorkerInsights ECS service memory sustained above 85% (apps/api's own HealthController RSS ceiling is a related, application-level signal - see INFRA_RUNTIME.md's sizing note).",
+    "AlarmName": "ecclesia-staging-workerinsights-memory-high",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "ClusterName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+      }
+     },
+     {
+      "Name": "ServiceName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-WorkerService:ExportsOutputFnGetAttInsightsConsumerService21B3948DName147EC207"
+      }
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "MemoryUtilization",
+    "Namespace": "AWS/ECS",
+    "Period": 300,
+    "Statistic": "Average",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 85,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-RuntimeObservability/WorkerInsightsMemoryAlarm/Resource"
+   }
+  },
+  "WorkerInsightsRunningTaskCountAlarmB5CDC579": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::ImportValue": "Ecclesia-Staging-Observability:ExportsOutputRefAlertTopic2720D5359ADB6D3E"
+     }
+    ],
+    "AlarmDescription": "Milestone 10 §9 - WorkerInsights ECS service running fewer tasks than desired (1) for a sustained period - task failures.",
+    "AlarmName": "ecclesia-staging-workerinsights-running-task-count-low",
+    "ComparisonOperator": "LessThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "ClusterName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+      }
+     },
+     {
+      "Name": "ServiceName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-WorkerService:ExportsOutputFnGetAttInsightsConsumerService21B3948DName147EC207"
+      }
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "RunningTaskCount",
+    "Namespace": "AWS/ECS",
+    "Period": 300,
+    "Statistic": "Minimum",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 1,
+    "TreatMissingData": "breaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-RuntimeObservability/WorkerInsightsRunningTaskCountAlarm/Resource"
+   }
+  },
+  "WorkerNotificationCpuAlarmD9ADE7BD": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::ImportValue": "Ecclesia-Staging-Observability:ExportsOutputRefAlertTopic2720D5359ADB6D3E"
+     }
+    ],
+    "AlarmDescription": "Milestone 10 §9 - WorkerNotification ECS service CPU sustained above 85%.",
+    "AlarmName": "ecclesia-staging-workernotification-cpu-high",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "ClusterName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+      }
+     },
+     {
+      "Name": "ServiceName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-WorkerService:ExportsOutputFnGetAttNotificationConsumerService11D9D27AName982E5A26"
+      }
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "CPUUtilization",
+    "Namespace": "AWS/ECS",
+    "Period": 300,
+    "Statistic": "Average",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 85,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-RuntimeObservability/WorkerNotificationCpuAlarm/Resource"
+   }
+  },
+  "WorkerNotificationMemoryAlarmABF3183B": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::ImportValue": "Ecclesia-Staging-Observability:ExportsOutputRefAlertTopic2720D5359ADB6D3E"
+     }
+    ],
+    "AlarmDescription": "Milestone 10 §9 - WorkerNotification ECS service memory sustained above 85% (apps/api's own HealthController RSS ceiling is a related, application-level signal - see INFRA_RUNTIME.md's sizing note).",
+    "AlarmName": "ecclesia-staging-workernotification-memory-high",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "ClusterName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+      }
+     },
+     {
+      "Name": "ServiceName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-WorkerService:ExportsOutputFnGetAttNotificationConsumerService11D9D27AName982E5A26"
+      }
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "MemoryUtilization",
+    "Namespace": "AWS/ECS",
+    "Period": 300,
+    "Statistic": "Average",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 85,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-RuntimeObservability/WorkerNotificationMemoryAlarm/Resource"
+   }
+  },
+  "WorkerNotificationRunningTaskCountAlarm186B3D87": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::ImportValue": "Ecclesia-Staging-Observability:ExportsOutputRefAlertTopic2720D5359ADB6D3E"
+     }
+    ],
+    "AlarmDescription": "Milestone 10 §9 - WorkerNotification ECS service running fewer tasks than desired (1) for a sustained period - task failures.",
+    "AlarmName": "ecclesia-staging-workernotification-running-task-count-low",
+    "ComparisonOperator": "LessThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "ClusterName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+      }
+     },
+     {
+      "Name": "ServiceName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-WorkerService:ExportsOutputFnGetAttNotificationConsumerService11D9D27AName982E5A26"
+      }
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "RunningTaskCount",
+    "Namespace": "AWS/ECS",
+    "Period": 300,
+    "Statistic": "Minimum",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 1,
+    "TreatMissingData": "breaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-RuntimeObservability/WorkerNotificationRunningTaskCountAlarm/Resource"
+   }
+  },
+  "WorkerAuditCpuAlarmE21395CF": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::ImportValue": "Ecclesia-Staging-Observability:ExportsOutputRefAlertTopic2720D5359ADB6D3E"
+     }
+    ],
+    "AlarmDescription": "Milestone 10 §9 - WorkerAudit ECS service CPU sustained above 85%.",
+    "AlarmName": "ecclesia-staging-workeraudit-cpu-high",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "ClusterName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+      }
+     },
+     {
+      "Name": "ServiceName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-WorkerService:ExportsOutputFnGetAttAuditConsumerService08114978NameCE0846F7"
+      }
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "CPUUtilization",
+    "Namespace": "AWS/ECS",
+    "Period": 300,
+    "Statistic": "Average",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 85,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-RuntimeObservability/WorkerAuditCpuAlarm/Resource"
+   }
+  },
+  "WorkerAuditMemoryAlarm6D558F91": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::ImportValue": "Ecclesia-Staging-Observability:ExportsOutputRefAlertTopic2720D5359ADB6D3E"
+     }
+    ],
+    "AlarmDescription": "Milestone 10 §9 - WorkerAudit ECS service memory sustained above 85% (apps/api's own HealthController RSS ceiling is a related, application-level signal - see INFRA_RUNTIME.md's sizing note).",
+    "AlarmName": "ecclesia-staging-workeraudit-memory-high",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "ClusterName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+      }
+     },
+     {
+      "Name": "ServiceName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-WorkerService:ExportsOutputFnGetAttAuditConsumerService08114978NameCE0846F7"
+      }
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "MemoryUtilization",
+    "Namespace": "AWS/ECS",
+    "Period": 300,
+    "Statistic": "Average",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 85,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-RuntimeObservability/WorkerAuditMemoryAlarm/Resource"
+   }
+  },
+  "WorkerAuditRunningTaskCountAlarm71C174E8": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::ImportValue": "Ecclesia-Staging-Observability:ExportsOutputRefAlertTopic2720D5359ADB6D3E"
+     }
+    ],
+    "AlarmDescription": "Milestone 10 §9 - WorkerAudit ECS service running fewer tasks than desired (1) for a sustained period - task failures.",
+    "AlarmName": "ecclesia-staging-workeraudit-running-task-count-low",
+    "ComparisonOperator": "LessThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "ClusterName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+      }
+     },
+     {
+      "Name": "ServiceName",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-WorkerService:ExportsOutputFnGetAttAuditConsumerService08114978NameCE0846F7"
+      }
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "RunningTaskCount",
+    "Namespace": "AWS/ECS",
+    "Period": 300,
+    "Statistic": "Minimum",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 1,
+    "TreatMissingData": "breaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-RuntimeObservability/WorkerAuditRunningTaskCountAlarm/Resource"
+   }
+  },
+  "DatabaseCpuAlarmFB0E33CD": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::ImportValue": "Ecclesia-Staging-Observability:ExportsOutputRefAlertTopic2720D5359ADB6D3E"
+     }
+    ],
+    "AlarmDescription": "Milestone 10 §9 - RDS CPU sustained above 85%.",
+    "AlarmName": "ecclesia-staging-database-cpu-high",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "DBInstanceIdentifier",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-Database:ExportsOutputRefInstanceC1063A87B325EA17"
+      }
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "CPUUtilization",
+    "Namespace": "AWS/RDS",
+    "Period": 300,
+    "Statistic": "Average",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 85,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-RuntimeObservability/DatabaseCpuAlarm/Resource"
+   }
+  },
+  "DatabaseFreeStorageAlarm02492045": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::ImportValue": "Ecclesia-Staging-Observability:ExportsOutputRefAlertTopic2720D5359ADB6D3E"
+     }
+    ],
+    "AlarmDescription": "Milestone 10 §9 - RDS free storage below 2 GiB - storage autoscaling (maxAllocatedStorageGb) should absorb this, but a sustained breach means it is not keeping up.",
+    "AlarmName": "ecclesia-staging-database-free-storage-low",
+    "ComparisonOperator": "LessThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "DBInstanceIdentifier",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-Database:ExportsOutputRefInstanceC1063A87B325EA17"
+      }
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "FreeStorageSpace",
+    "Namespace": "AWS/RDS",
+    "Period": 300,
+    "Statistic": "Average",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 2147483648,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-RuntimeObservability/DatabaseFreeStorageAlarm/Resource"
+   }
+  },
+  "DatabaseConnectionsAlarm3643818C": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::ImportValue": "Ecclesia-Staging-Observability:ExportsOutputRefAlertTopic2720D5359ADB6D3E"
+     }
+    ],
+    "AlarmDescription": "Milestone 10 §9 - RDS connection count sustained above 80 - approaching t3.small's max_connections ceiling.",
+    "AlarmName": "ecclesia-staging-database-connections-high",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "DBInstanceIdentifier",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-Database:ExportsOutputRefInstanceC1063A87B325EA17"
+      }
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "DatabaseConnections",
+    "Namespace": "AWS/RDS",
+    "Period": 300,
+    "Statistic": "Average",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 80,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-RuntimeObservability/DatabaseConnectionsAlarm/Resource"
+   }
+  },
+  "DatabaseFreeableMemoryAlarmBE751C3E": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::ImportValue": "Ecclesia-Staging-Observability:ExportsOutputRefAlertTopic2720D5359ADB6D3E"
+     }
+    ],
+    "AlarmDescription": "Milestone 10 §9 - RDS freeable memory below 256 MiB.",
+    "AlarmName": "ecclesia-staging-database-freeable-memory-low",
+    "ComparisonOperator": "LessThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "DBInstanceIdentifier",
+      "Value": {
+       "Fn::ImportValue": "Ecclesia-Staging-Database:ExportsOutputRefInstanceC1063A87B325EA17"
+      }
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "FreeableMemory",
+    "Namespace": "AWS/RDS",
+    "Period": 300,
+    "Statistic": "Minimum",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "Threshold": 268435456,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-RuntimeObservability/DatabaseFreeableMemoryAlarm/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/0WIOw6EIBBAz2IPs2ZM7De7J9ADmBE0oggJA1IY727Uwup9ELCuoCwos1R6kdb0sLeR1CIoc6esTzpTVBPsf+Kp9xS0+I3uja+lsF7rluMQzusBZv5siIAIVTGzMTIkF806QPPwBNxHtO94AAAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-RuntimeObservability/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

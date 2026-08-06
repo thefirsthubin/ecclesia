@@ -1,0 +1,1543 @@
+{
+ "Description": "Ecclesia production - VPC/Networking (Cloud Runtime Infrastructure milestone)",
+ "Resources": {
+  "NetworkVpc7FB7348F": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "10.0.0.0/16",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "ecclesia-production-vpc"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/Resource"
+   }
+  },
+  "NetworkVpcpublicSubnet1Subnet00617657": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "eu-west-1a",
+    "CidrBlock": "10.0.0.0/24",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/publicSubnet1"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/publicSubnet1/Subnet"
+   }
+  },
+  "NetworkVpcpublicSubnet1RouteTableDFE49ED6": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/publicSubnet1"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/publicSubnet1/RouteTable"
+   }
+  },
+  "NetworkVpcpublicSubnet1RouteTableAssociation203B743E": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "NetworkVpcpublicSubnet1RouteTableDFE49ED6"
+    },
+    "SubnetId": {
+     "Ref": "NetworkVpcpublicSubnet1Subnet00617657"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/publicSubnet1/RouteTableAssociation"
+   }
+  },
+  "NetworkVpcpublicSubnet1DefaultRoute19622567": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "NetworkVpcIGW6BEA7B02"
+    },
+    "RouteTableId": {
+     "Ref": "NetworkVpcpublicSubnet1RouteTableDFE49ED6"
+    }
+   },
+   "DependsOn": [
+    "NetworkVpcVPCGW8F3799B5"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/publicSubnet1/DefaultRoute"
+   }
+  },
+  "NetworkVpcpublicSubnet1EIPC41EF705": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/publicSubnet1"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/publicSubnet1/EIP"
+   }
+  },
+  "NetworkVpcpublicSubnet1NATGateway939C8F7E": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "NetworkVpcpublicSubnet1EIPC41EF705",
+      "AllocationId"
+     ]
+    },
+    "SubnetId": {
+     "Ref": "NetworkVpcpublicSubnet1Subnet00617657"
+    },
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/publicSubnet1"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ]
+   },
+   "DependsOn": [
+    "NetworkVpcpublicSubnet1DefaultRoute19622567",
+    "NetworkVpcpublicSubnet1RouteTableAssociation203B743E"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/publicSubnet1/NATGateway"
+   }
+  },
+  "NetworkVpcpublicSubnet2SubnetDCAA7C9A": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "eu-west-1b",
+    "CidrBlock": "10.0.1.0/24",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/publicSubnet2"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/publicSubnet2/Subnet"
+   }
+  },
+  "NetworkVpcpublicSubnet2RouteTable216E89B0": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/publicSubnet2"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/publicSubnet2/RouteTable"
+   }
+  },
+  "NetworkVpcpublicSubnet2RouteTableAssociationA4B52C34": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "NetworkVpcpublicSubnet2RouteTable216E89B0"
+    },
+    "SubnetId": {
+     "Ref": "NetworkVpcpublicSubnet2SubnetDCAA7C9A"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/publicSubnet2/RouteTableAssociation"
+   }
+  },
+  "NetworkVpcpublicSubnet2DefaultRouteF6C22611": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "NetworkVpcIGW6BEA7B02"
+    },
+    "RouteTableId": {
+     "Ref": "NetworkVpcpublicSubnet2RouteTable216E89B0"
+    }
+   },
+   "DependsOn": [
+    "NetworkVpcVPCGW8F3799B5"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/publicSubnet2/DefaultRoute"
+   }
+  },
+  "NetworkVpcpublicSubnet2EIPFC8511D4": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/publicSubnet2"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/publicSubnet2/EIP"
+   }
+  },
+  "NetworkVpcpublicSubnet2NATGatewayCA65A467": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "NetworkVpcpublicSubnet2EIPFC8511D4",
+      "AllocationId"
+     ]
+    },
+    "SubnetId": {
+     "Ref": "NetworkVpcpublicSubnet2SubnetDCAA7C9A"
+    },
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/publicSubnet2"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ]
+   },
+   "DependsOn": [
+    "NetworkVpcpublicSubnet2DefaultRouteF6C22611",
+    "NetworkVpcpublicSubnet2RouteTableAssociationA4B52C34"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/publicSubnet2/NATGateway"
+   }
+  },
+  "NetworkVpcpublicSubnet3SubnetB6CE113A": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "eu-west-1c",
+    "CidrBlock": "10.0.2.0/24",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/publicSubnet3"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/publicSubnet3/Subnet"
+   }
+  },
+  "NetworkVpcpublicSubnet3RouteTableC81D91ED": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/publicSubnet3"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/publicSubnet3/RouteTable"
+   }
+  },
+  "NetworkVpcpublicSubnet3RouteTableAssociation70793AFA": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "NetworkVpcpublicSubnet3RouteTableC81D91ED"
+    },
+    "SubnetId": {
+     "Ref": "NetworkVpcpublicSubnet3SubnetB6CE113A"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/publicSubnet3/RouteTableAssociation"
+   }
+  },
+  "NetworkVpcpublicSubnet3DefaultRouteB75369CF": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "NetworkVpcIGW6BEA7B02"
+    },
+    "RouteTableId": {
+     "Ref": "NetworkVpcpublicSubnet3RouteTableC81D91ED"
+    }
+   },
+   "DependsOn": [
+    "NetworkVpcVPCGW8F3799B5"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/publicSubnet3/DefaultRoute"
+   }
+  },
+  "NetworkVpcpublicSubnet3EIPEA3072B7": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/publicSubnet3"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/publicSubnet3/EIP"
+   }
+  },
+  "NetworkVpcpublicSubnet3NATGatewayE8F8204A": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "NetworkVpcpublicSubnet3EIPEA3072B7",
+      "AllocationId"
+     ]
+    },
+    "SubnetId": {
+     "Ref": "NetworkVpcpublicSubnet3SubnetB6CE113A"
+    },
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/publicSubnet3"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ]
+   },
+   "DependsOn": [
+    "NetworkVpcpublicSubnet3DefaultRouteB75369CF",
+    "NetworkVpcpublicSubnet3RouteTableAssociation70793AFA"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/publicSubnet3/NATGateway"
+   }
+  },
+  "NetworkVpcprivateappSubnet1SubnetDECE09AB": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "eu-west-1a",
+    "CidrBlock": "10.0.3.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "private-app"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/private-appSubnet1"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-appSubnet1/Subnet"
+   }
+  },
+  "NetworkVpcprivateappSubnet1RouteTableA9814DD4": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/private-appSubnet1"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-appSubnet1/RouteTable"
+   }
+  },
+  "NetworkVpcprivateappSubnet1RouteTableAssociationD11F2099": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "NetworkVpcprivateappSubnet1RouteTableA9814DD4"
+    },
+    "SubnetId": {
+     "Ref": "NetworkVpcprivateappSubnet1SubnetDECE09AB"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-appSubnet1/RouteTableAssociation"
+   }
+  },
+  "NetworkVpcprivateappSubnet1DefaultRoute48FA8AE7": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "NetworkVpcpublicSubnet1NATGateway939C8F7E"
+    },
+    "RouteTableId": {
+     "Ref": "NetworkVpcprivateappSubnet1RouteTableA9814DD4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-appSubnet1/DefaultRoute"
+   }
+  },
+  "NetworkVpcprivateappSubnet2Subnet524A959C": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "eu-west-1b",
+    "CidrBlock": "10.0.4.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "private-app"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/private-appSubnet2"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-appSubnet2/Subnet"
+   }
+  },
+  "NetworkVpcprivateappSubnet2RouteTableB048C5F0": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/private-appSubnet2"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-appSubnet2/RouteTable"
+   }
+  },
+  "NetworkVpcprivateappSubnet2RouteTableAssociationA1F74673": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "NetworkVpcprivateappSubnet2RouteTableB048C5F0"
+    },
+    "SubnetId": {
+     "Ref": "NetworkVpcprivateappSubnet2Subnet524A959C"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-appSubnet2/RouteTableAssociation"
+   }
+  },
+  "NetworkVpcprivateappSubnet2DefaultRoute0804C940": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "NetworkVpcpublicSubnet2NATGatewayCA65A467"
+    },
+    "RouteTableId": {
+     "Ref": "NetworkVpcprivateappSubnet2RouteTableB048C5F0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-appSubnet2/DefaultRoute"
+   }
+  },
+  "NetworkVpcprivateappSubnet3SubnetB9F08E7A": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "eu-west-1c",
+    "CidrBlock": "10.0.5.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "private-app"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/private-appSubnet3"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-appSubnet3/Subnet"
+   }
+  },
+  "NetworkVpcprivateappSubnet3RouteTableF7C227D0": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/private-appSubnet3"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-appSubnet3/RouteTable"
+   }
+  },
+  "NetworkVpcprivateappSubnet3RouteTableAssociation57374B5B": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "NetworkVpcprivateappSubnet3RouteTableF7C227D0"
+    },
+    "SubnetId": {
+     "Ref": "NetworkVpcprivateappSubnet3SubnetB9F08E7A"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-appSubnet3/RouteTableAssociation"
+   }
+  },
+  "NetworkVpcprivateappSubnet3DefaultRoute403A4DA1": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "NetworkVpcpublicSubnet3NATGatewayE8F8204A"
+    },
+    "RouteTableId": {
+     "Ref": "NetworkVpcprivateappSubnet3RouteTableF7C227D0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-appSubnet3/DefaultRoute"
+   }
+  },
+  "NetworkVpcprivatedbSubnet1Subnet04D949B4": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "eu-west-1a",
+    "CidrBlock": "10.0.6.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "private-db"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Isolated"
+     },
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/private-dbSubnet1"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-dbSubnet1/Subnet"
+   }
+  },
+  "NetworkVpcprivatedbSubnet1RouteTableDD179716": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/private-dbSubnet1"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-dbSubnet1/RouteTable"
+   }
+  },
+  "NetworkVpcprivatedbSubnet1RouteTableAssociationAD74077C": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "NetworkVpcprivatedbSubnet1RouteTableDD179716"
+    },
+    "SubnetId": {
+     "Ref": "NetworkVpcprivatedbSubnet1Subnet04D949B4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-dbSubnet1/RouteTableAssociation"
+   }
+  },
+  "NetworkVpcprivatedbSubnet2Subnet4F98F618": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "eu-west-1b",
+    "CidrBlock": "10.0.7.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "private-db"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Isolated"
+     },
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/private-dbSubnet2"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-dbSubnet2/Subnet"
+   }
+  },
+  "NetworkVpcprivatedbSubnet2RouteTableB1A65CC0": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/private-dbSubnet2"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-dbSubnet2/RouteTable"
+   }
+  },
+  "NetworkVpcprivatedbSubnet2RouteTableAssociation3F5DD355": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "NetworkVpcprivatedbSubnet2RouteTableB1A65CC0"
+    },
+    "SubnetId": {
+     "Ref": "NetworkVpcprivatedbSubnet2Subnet4F98F618"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-dbSubnet2/RouteTableAssociation"
+   }
+  },
+  "NetworkVpcprivatedbSubnet3SubnetDCE61600": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "eu-west-1c",
+    "CidrBlock": "10.0.8.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "private-db"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Isolated"
+     },
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/private-dbSubnet3"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-dbSubnet3/Subnet"
+   }
+  },
+  "NetworkVpcprivatedbSubnet3RouteTable76CD242B": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "Ecclesia-Production-Network/Network/Vpc/private-dbSubnet3"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-dbSubnet3/RouteTable"
+   }
+  },
+  "NetworkVpcprivatedbSubnet3RouteTableAssociationDC134CF4": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "NetworkVpcprivatedbSubnet3RouteTable76CD242B"
+    },
+    "SubnetId": {
+     "Ref": "NetworkVpcprivatedbSubnet3SubnetDCE61600"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/private-dbSubnet3/RouteTableAssociation"
+   }
+  },
+  "NetworkVpcIGW6BEA7B02": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "ecclesia-production-vpc"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/IGW"
+   }
+  },
+  "NetworkVpcVPCGW8F3799B5": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "InternetGatewayId": {
+     "Ref": "NetworkVpcIGW6BEA7B02"
+    },
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/VPCGW"
+   }
+  },
+  "NetworkVpcS3Endpoint87783328": {
+   "Type": "AWS::EC2::VPCEndpoint",
+   "Properties": {
+    "RouteTableIds": [
+     {
+      "Ref": "NetworkVpcprivateappSubnet1RouteTableA9814DD4"
+     },
+     {
+      "Ref": "NetworkVpcprivateappSubnet2RouteTableB048C5F0"
+     },
+     {
+      "Ref": "NetworkVpcprivateappSubnet3RouteTableF7C227D0"
+     },
+     {
+      "Ref": "NetworkVpcpublicSubnet1RouteTableDFE49ED6"
+     },
+     {
+      "Ref": "NetworkVpcpublicSubnet2RouteTable216E89B0"
+     },
+     {
+      "Ref": "NetworkVpcpublicSubnet3RouteTableC81D91ED"
+     },
+     {
+      "Ref": "NetworkVpcprivatedbSubnet1RouteTableDD179716"
+     },
+     {
+      "Ref": "NetworkVpcprivatedbSubnet2RouteTableB1A65CC0"
+     },
+     {
+      "Ref": "NetworkVpcprivatedbSubnet3RouteTable76CD242B"
+     }
+    ],
+    "ServiceName": {
+     "Fn::Join": [
+      "",
+      [
+       "com.amazonaws.",
+       {
+        "Ref": "AWS::Region"
+       },
+       ".s3"
+      ]
+     ]
+    },
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "ecclesia-production-vpc"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcEndpointType": "Gateway",
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/Vpc/S3Endpoint/Resource"
+   }
+  },
+  "NetworkAlbSecurityGroup641F8E74": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Application Load Balancer - allows inbound HTTP/HTTPS from the internet, per Milestone 10 §6/§7.",
+    "GroupName": "ecclesia-production-alb-sg",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "HTTP from the internet",
+      "FromPort": 80,
+      "IpProtocol": "tcp",
+      "ToPort": 80
+     },
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "HTTPS from the internet (once a certificate is configured)",
+      "FromPort": 443,
+      "IpProtocol": "tcp",
+      "ToPort": 443
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/AlbSecurityGroup/Resource"
+   }
+  },
+  "NetworkEcsSecurityGroup48ECD65A": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "ECS Fargate tasks (apps/api, apps/worker) - inbound only from the ALB, per Milestone 10 §7 (least privilege).",
+    "GroupName": "ecclesia-production-ecs-sg",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/EcsSecurityGroup/Resource"
+   }
+  },
+  "NetworkEcsSecurityGroupfromEcclesiaProductionNetworkAlbSecurityGroupBE5F94533000EFA0CBFA": {
+   "Type": "AWS::EC2::SecurityGroupIngress",
+   "Properties": {
+    "Description": "API container port from the ALB only",
+    "FromPort": 3000,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "NetworkEcsSecurityGroup48ECD65A",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "SourceSecurityGroupId": {
+     "Fn::GetAtt": [
+      "NetworkAlbSecurityGroup641F8E74",
+      "GroupId"
+     ]
+    },
+    "ToPort": 3000
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/EcsSecurityGroup/from EcclesiaProductionNetworkAlbSecurityGroupBE5F9453:3000"
+   }
+  },
+  "NetworkDatabaseSecurityGroup2B3F4679": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "RDS PostgreSQL - inbound only from the ECS security group on 5432, per Milestone 10 §7 (private database, least privilege).",
+    "GroupName": "ecclesia-production-db-sg",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "255.255.255.255/32",
+      "Description": "Disallow all traffic",
+      "FromPort": 252,
+      "IpProtocol": "icmp",
+      "ToPort": 86
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/DatabaseSecurityGroup/Resource"
+   }
+  },
+  "NetworkDatabaseSecurityGroupfromEcclesiaProductionNetworkEcsSecurityGroup52DEEB795432F729F14B": {
+   "Type": "AWS::EC2::SecurityGroupIngress",
+   "Properties": {
+    "Description": "PostgreSQL from ECS Fargate tasks only",
+    "FromPort": 5432,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "NetworkDatabaseSecurityGroup2B3F4679",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "SourceSecurityGroupId": {
+     "Fn::GetAtt": [
+      "NetworkEcsSecurityGroup48ECD65A",
+      "GroupId"
+     ]
+    },
+    "ToPort": 5432
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/Network/DatabaseSecurityGroup/from EcclesiaProductionNetworkEcsSecurityGroup52DEEB79:5432"
+   }
+  },
+  "VpcIdParamE55A048C": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Description": "Ecclesia production - networking/vpc-id (written by the infra CDK app, see infra/lib/common/parameters.ts)",
+    "Name": "/ecclesia/production/networking/vpc-id",
+    "Tags": {
+     "Environment": "production",
+     "ManagedBy": "CDK",
+     "Project": "Ecclesia"
+    },
+    "Type": "String",
+    "Value": {
+     "Ref": "NetworkVpc7FB7348F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/VpcIdParam/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/32QQYuDQAyFf0vv43SZwt5LKcXLVnTxWuKY7abVjMxkKkX874ut6G1Pee/jEV5itPnc6Y8N9CGx9T1pqNJDIWDvCvpwGdAaPZSdVYcfLrODymLVkC1ixSgTW1XuouA3VA2ufGX7EJwlEHK8hCdxTLNpfIGcQLCHp8o8PUBwXZyyoGdcAu8ms9uLgP1tkUXNpOzskevOEcscXWyBNnqS58m72L1a/gtSvnoMYVQhtNNTPPE1Aw8tCvopvZhxVDkGF719HXWO0kUZFbsa9S1sH8ZoY/RucwtEiY8s1KLO3/MPbUTlroIBAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Production-Network/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "Exportecclesiaproductionvpcid": {
+   "Value": {
+    "Ref": "NetworkVpc7FB7348F"
+   },
+   "Export": {
+    "Name": "ecclesia-production-vpc-id"
+   }
+  },
+  "ExportsOutputRefNetworkVpcprivatedbSubnet1Subnet04D949B4E9328776": {
+   "Value": {
+    "Ref": "NetworkVpcprivatedbSubnet1Subnet04D949B4"
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Network:ExportsOutputRefNetworkVpcprivatedbSubnet1Subnet04D949B4E9328776"
+   }
+  },
+  "ExportsOutputRefNetworkVpcprivatedbSubnet2Subnet4F98F618BBD2B093": {
+   "Value": {
+    "Ref": "NetworkVpcprivatedbSubnet2Subnet4F98F618"
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Network:ExportsOutputRefNetworkVpcprivatedbSubnet2Subnet4F98F618BBD2B093"
+   }
+  },
+  "ExportsOutputRefNetworkVpcprivatedbSubnet3SubnetDCE61600FFF90932": {
+   "Value": {
+    "Ref": "NetworkVpcprivatedbSubnet3SubnetDCE61600"
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Network:ExportsOutputRefNetworkVpcprivatedbSubnet3SubnetDCE61600FFF90932"
+   }
+  },
+  "ExportsOutputFnGetAttNetworkDatabaseSecurityGroup2B3F4679GroupId6435BE23": {
+   "Value": {
+    "Fn::GetAtt": [
+     "NetworkDatabaseSecurityGroup2B3F4679",
+     "GroupId"
+    ]
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Network:ExportsOutputFnGetAttNetworkDatabaseSecurityGroup2B3F4679GroupId6435BE23"
+   }
+  },
+  "ExportsOutputFnGetAttNetworkAlbSecurityGroup641F8E74GroupId11D74044": {
+   "Value": {
+    "Fn::GetAtt": [
+     "NetworkAlbSecurityGroup641F8E74",
+     "GroupId"
+    ]
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Network:ExportsOutputFnGetAttNetworkAlbSecurityGroup641F8E74GroupId11D74044"
+   }
+  },
+  "ExportsOutputRefNetworkVpcpublicSubnet1Subnet0061765704A2C53F": {
+   "Value": {
+    "Ref": "NetworkVpcpublicSubnet1Subnet00617657"
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Network:ExportsOutputRefNetworkVpcpublicSubnet1Subnet0061765704A2C53F"
+   }
+  },
+  "ExportsOutputRefNetworkVpcpublicSubnet2SubnetDCAA7C9A31F49033": {
+   "Value": {
+    "Ref": "NetworkVpcpublicSubnet2SubnetDCAA7C9A"
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Network:ExportsOutputRefNetworkVpcpublicSubnet2SubnetDCAA7C9A31F49033"
+   }
+  },
+  "ExportsOutputRefNetworkVpcpublicSubnet3SubnetB6CE113A045205EB": {
+   "Value": {
+    "Ref": "NetworkVpcpublicSubnet3SubnetB6CE113A"
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Network:ExportsOutputRefNetworkVpcpublicSubnet3SubnetB6CE113A045205EB"
+   }
+  },
+  "ExportsOutputRefNetworkVpc7FB7348F649FC110": {
+   "Value": {
+    "Ref": "NetworkVpc7FB7348F"
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Network:ExportsOutputRefNetworkVpc7FB7348F649FC110"
+   }
+  },
+  "ExportsOutputRefNetworkVpcprivateappSubnet1SubnetDECE09AB18DFBCE7": {
+   "Value": {
+    "Ref": "NetworkVpcprivateappSubnet1SubnetDECE09AB"
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Network:ExportsOutputRefNetworkVpcprivateappSubnet1SubnetDECE09AB18DFBCE7"
+   }
+  },
+  "ExportsOutputRefNetworkVpcprivateappSubnet2Subnet524A959CCBC4E3D3": {
+   "Value": {
+    "Ref": "NetworkVpcprivateappSubnet2Subnet524A959C"
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Network:ExportsOutputRefNetworkVpcprivateappSubnet2Subnet524A959CCBC4E3D3"
+   }
+  },
+  "ExportsOutputRefNetworkVpcprivateappSubnet3SubnetB9F08E7A709084B7": {
+   "Value": {
+    "Ref": "NetworkVpcprivateappSubnet3SubnetB9F08E7A"
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Network:ExportsOutputRefNetworkVpcprivateappSubnet3SubnetB9F08E7A709084B7"
+   }
+  },
+  "ExportsOutputFnGetAttNetworkEcsSecurityGroup48ECD65AGroupId5442D37D": {
+   "Value": {
+    "Fn::GetAtt": [
+     "NetworkEcsSecurityGroup48ECD65A",
+     "GroupId"
+    ]
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Network:ExportsOutputFnGetAttNetworkEcsSecurityGroup48ECD65AGroupId5442D37D"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

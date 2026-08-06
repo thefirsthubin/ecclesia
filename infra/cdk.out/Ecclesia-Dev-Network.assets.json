@@ -1,0 +1,21 @@
+{
+  "version": "54.0.0",
+  "files": {
+    "42bdb96fcf24ab4266f6734d7f6bc1babb5f6b43637fd82c46e88781170464a4": {
+      "displayName": "Ecclesia-Dev-Network Template",
+      "source": {
+        "path": "Ecclesia-Dev-Network.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-eu-west-1-8f4b5163": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1",
+          "objectKey": "42bdb96fcf24ab4266f6734d7f6bc1babb5f6b43637fd82c46e88781170464a4.json",
+          "region": "eu-west-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-eu-west-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

@@ -1,0 +1,40 @@
+{
+  "name": "infra",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "infra",
+  "tags": ["scope:infra"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/cdk.out"],
+      "options": {
+        "cwd": "infra",
+        "commands": ["npx tsc --noEmit -p tsconfig.json", "npx cdk synth --quiet"],
+        "parallel": false
+      }
+    },
+    "synth": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/cdk.out"],
+      "options": {
+        "cwd": "infra",
+        "command": "npx cdk synth"
+      }
+    },
+    "diff": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "infra",
+        "command": "npx cdk diff --all"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["infra/**/*.ts"]
+      }
+    }
+  }
+}

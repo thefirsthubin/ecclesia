@@ -1,0 +1,21 @@
+{
+  "version": "54.0.0",
+  "files": {
+    "d6dfa0d649029c3b94bf66d97ff638416dd677225a5b81c889ea27ab6189089c": {
+      "displayName": "Ecclesia-Dev-EcsCluster Template",
+      "source": {
+        "path": "Ecclesia-Dev-EcsCluster.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-eu-west-1-de65c4dc": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1",
+          "objectKey": "d6dfa0d649029c3b94bf66d97ff638416dd677225a5b81c889ea27ab6189089c.json",
+          "region": "eu-west-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-eu-west-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

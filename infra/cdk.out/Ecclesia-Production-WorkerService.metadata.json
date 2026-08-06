@@ -1,0 +1,418 @@
+{
+  "/Ecclesia-Production-WorkerService": [
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:136:25)",
+        "...node internals, .pnpm, .pnpm, .pnpm..."
+      ]
+    },
+    {
+      "type": "aws:cdk:stack-tags",
+      "data": [
+        {
+          "key": "Environment",
+          "value": "production"
+        },
+        {
+          "key": "ManagedBy",
+          "value": "CDK"
+        },
+        {
+          "key": "Project",
+          "value": "Ecclesia"
+        }
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/InsightsConsumer/Service": [
+    {
+      "type": "aws:cdk:warning",
+      "data": "minHealthyPercent has not been configured so the default value of 50% is used. The number of running tasks will decrease below the desired count during deployments etc. See https://github.com/aws/aws-cdk/issues/31705 [ack: @aws-cdk/aws-ecs:minHealthyPercent]",
+      "trace": [
+        "Annotations.addMessage (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/annotations.js:1:3506)",
+        "Annotations.addWarningV2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/annotations.js:1:2194)",
+        "new BaseService2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/aws-ecs/lib/base/base-service.js:1:16295)",
+        "new BaseService2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/no-box-stack-traces.js:1:345)",
+        "new FargateService2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/aws-ecs/lib/fargate/fargate-service.js:1:7829)",
+        "new FargateService2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/prop-injectable.js:1:855)",
+        "new FargateService (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/constructs/fargate-service.construct.ts:144:20)",
+        "buildConsumer (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:92:7)",
+        "new WorkerServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:120:29)",
+        "Object.<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:136:25)",
+        "Module._compile (node:internal/modules/cjs/loader:1781:14)",
+        "Module.m._compile (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/index.ts:1618:23)",
+        "node:internal/modules/cjs/loader:1913:10",
+        "Object.require.extensions.<computed> [as .ts] (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/index.ts:1621:12)",
+        "Module.load (node:internal/modules/cjs/loader:1505:32)",
+        "Function._load (node:internal/modules/cjs/loader:1309:12)",
+        "wrapModuleLoad (node:internal/modules/cjs/loader:254:19)",
+        "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)",
+        "phase4 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/bin.ts:649:14)",
+        "bootstrap (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/bin.ts:95:10)",
+        "main (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/bin.ts:55:10)",
+        "Object.<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/bin.ts:800:3)",
+        "Module._compile (node:internal/modules/cjs/loader:1781:14)",
+        "Object.<anonymous> (node:internal/modules/cjs/loader:1913:10)",
+        "Module.load (node:internal/modules/cjs/loader:1505:32)",
+        "Function._load (node:internal/modules/cjs/loader:1309:12)",
+        "wrapModuleLoad (node:internal/modules/cjs/loader:254:19)",
+        "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)",
+        "node:internal/main/run_main_module:36:49"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/NotificationConsumer/Service": [
+    {
+      "type": "aws:cdk:warning",
+      "data": "minHealthyPercent has not been configured so the default value of 50% is used. The number of running tasks will decrease below the desired count during deployments etc. See https://github.com/aws/aws-cdk/issues/31705 [ack: @aws-cdk/aws-ecs:minHealthyPercent]",
+      "trace": [
+        "Annotations.addMessage (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/annotations.js:1:3506)",
+        "Annotations.addWarningV2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/annotations.js:1:2194)",
+        "new BaseService2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/aws-ecs/lib/base/base-service.js:1:16295)",
+        "new BaseService2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/no-box-stack-traces.js:1:345)",
+        "new FargateService2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/aws-ecs/lib/fargate/fargate-service.js:1:7829)",
+        "new FargateService2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/prop-injectable.js:1:855)",
+        "new FargateService (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/constructs/fargate-service.construct.ts:144:20)",
+        "buildConsumer (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:92:7)",
+        "new WorkerServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:121:33)",
+        "Object.<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:136:25)",
+        "Module._compile (node:internal/modules/cjs/loader:1781:14)",
+        "Module.m._compile (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/index.ts:1618:23)",
+        "node:internal/modules/cjs/loader:1913:10",
+        "Object.require.extensions.<computed> [as .ts] (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/index.ts:1621:12)",
+        "Module.load (node:internal/modules/cjs/loader:1505:32)",
+        "Function._load (node:internal/modules/cjs/loader:1309:12)",
+        "wrapModuleLoad (node:internal/modules/cjs/loader:254:19)",
+        "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)",
+        "phase4 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/bin.ts:649:14)",
+        "bootstrap (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/bin.ts:95:10)",
+        "main (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/bin.ts:55:10)",
+        "Object.<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/bin.ts:800:3)",
+        "Module._compile (node:internal/modules/cjs/loader:1781:14)",
+        "Object.<anonymous> (node:internal/modules/cjs/loader:1913:10)",
+        "Module.load (node:internal/modules/cjs/loader:1505:32)",
+        "Function._load (node:internal/modules/cjs/loader:1309:12)",
+        "wrapModuleLoad (node:internal/modules/cjs/loader:254:19)",
+        "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)",
+        "node:internal/main/run_main_module:36:49"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/AuditConsumer/Service": [
+    {
+      "type": "aws:cdk:warning",
+      "data": "minHealthyPercent has not been configured so the default value of 50% is used. The number of running tasks will decrease below the desired count during deployments etc. See https://github.com/aws/aws-cdk/issues/31705 [ack: @aws-cdk/aws-ecs:minHealthyPercent]",
+      "trace": [
+        "Annotations.addMessage (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/annotations.js:1:3506)",
+        "Annotations.addWarningV2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/annotations.js:1:2194)",
+        "new BaseService2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/aws-ecs/lib/base/base-service.js:1:16295)",
+        "new BaseService2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/no-box-stack-traces.js:1:345)",
+        "new FargateService2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/aws-ecs/lib/fargate/fargate-service.js:1:7829)",
+        "new FargateService2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/prop-injectable.js:1:855)",
+        "new FargateService (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/constructs/fargate-service.construct.ts:144:20)",
+        "buildConsumer (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:92:7)",
+        "new WorkerServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:122:26)",
+        "Object.<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:136:25)",
+        "Module._compile (node:internal/modules/cjs/loader:1781:14)",
+        "Module.m._compile (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/index.ts:1618:23)",
+        "node:internal/modules/cjs/loader:1913:10",
+        "Object.require.extensions.<computed> [as .ts] (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/index.ts:1621:12)",
+        "Module.load (node:internal/modules/cjs/loader:1505:32)",
+        "Function._load (node:internal/modules/cjs/loader:1309:12)",
+        "wrapModuleLoad (node:internal/modules/cjs/loader:254:19)",
+        "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)",
+        "phase4 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/bin.ts:649:14)",
+        "bootstrap (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/bin.ts:95:10)",
+        "main (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/bin.ts:55:10)",
+        "Object.<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.7.42_@types+node@20.19.43_typescript@5.6.3/node_modules/ts-node/src/bin.ts:800:3)",
+        "Module._compile (node:internal/modules/cjs/loader:1781:14)",
+        "Object.<anonymous> (node:internal/modules/cjs/loader:1913:10)",
+        "Module.load (node:internal/modules/cjs/loader:1505:32)",
+        "Function._load (node:internal/modules/cjs/loader:1309:12)",
+        "wrapModuleLoad (node:internal/modules/cjs/loader:254:19)",
+        "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)",
+        "node:internal/main/run_main_module:36:49"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/InsightsConsumerServiceNameParam/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "InsightsConsumerServiceNameParam65E8871F"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new StringParameter2 in .pnpm...",
+        "writeParameter (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/common/parameters.ts:23:10)",
+        "new WorkerServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:124:19)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:136:25)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/NotificationConsumerServiceNameParam/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "NotificationConsumerServiceNameParam0102A6CE"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new StringParameter2 in .pnpm...",
+        "writeParameter (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/common/parameters.ts:23:10)",
+        "new WorkerServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:125:19)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:136:25)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/AuditConsumerServiceNameParam/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuditConsumerServiceNameParam3DE05085"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new StringParameter2 in .pnpm...",
+        "writeParameter (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/common/parameters.ts:23:10)",
+        "new WorkerServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:126:19)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:136:25)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/Exports/Output{\"Fn::GetAtt\":[\"InsightsConsumerService21B3948D\",\"Name\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttInsightsConsumerService21B3948DName147EC207"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/Exports/Output{\"Fn::GetAtt\":[\"NotificationConsumerService11D9D27A\",\"Name\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttNotificationConsumerService11D9D27AName982E5A26"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/Exports/Output{\"Fn::GetAtt\":[\"AuditConsumerService08114978\",\"Name\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttAuditConsumerService08114978NameCE0846F7"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/InsightsConsumer/LogGroup/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "InsightsConsumerLogGroupFB8E9FFD"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new LogGroup2 in .pnpm...",
+        "new FargateService (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/constructs/fargate-service.construct.ts:87:21)",
+        "buildConsumer (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:92:7)",
+        "new WorkerServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:120:29)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:136:25)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/InsightsConsumer/TaskDefinition/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "InsightsConsumerTaskDefinition2633E542"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new FargateTaskDefinition2 in .pnpm...",
+        "new FargateService (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/constructs/fargate-service.construct.ts:117:27)",
+        "buildConsumer (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:92:7)",
+        "new WorkerServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:120:29)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:136:25)",
+        "...node internals, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/InsightsConsumer/Service/Service": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "InsightsConsumerService21B3948D"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new FargateService2 in .pnpm...",
+        "new FargateService (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/constructs/fargate-service.construct.ts:144:20)",
+        "buildConsumer (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:92:7)",
+        "new WorkerServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:120:29)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:136:25)",
+        "...node internals, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/NotificationConsumer/LogGroup/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "NotificationConsumerLogGroupB083D0F3"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new LogGroup2 in .pnpm...",
+        "new FargateService (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/constructs/fargate-service.construct.ts:87:21)",
+        "buildConsumer (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:92:7)",
+        "new WorkerServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:121:33)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:136:25)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/NotificationConsumer/TaskDefinition/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "NotificationConsumerTaskDefinitionF9DFA5EC"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new FargateTaskDefinition2 in .pnpm...",
+        "new FargateService (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/constructs/fargate-service.construct.ts:117:27)",
+        "buildConsumer (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:92:7)",
+        "new WorkerServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:121:33)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:136:25)",
+        "...node internals, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/NotificationConsumer/Service/Service": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "NotificationConsumerService11D9D27A"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new FargateService2 in .pnpm...",
+        "new FargateService (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/constructs/fargate-service.construct.ts:144:20)",
+        "buildConsumer (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:92:7)",
+        "new WorkerServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:121:33)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:136:25)",
+        "...node internals, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/AuditConsumer/LogGroup/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuditConsumerLogGroup9A0913DA"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new LogGroup2 in .pnpm...",
+        "new FargateService (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/constructs/fargate-service.construct.ts:87:21)",
+        "buildConsumer (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:92:7)",
+        "new WorkerServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:122:26)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:136:25)",
+        "...node internals, .pnpm, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/AuditConsumer/TaskDefinition/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuditConsumerTaskDefinition8D4987DD"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new FargateTaskDefinition2 in .pnpm...",
+        "new FargateService (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/constructs/fargate-service.construct.ts:117:27)",
+        "buildConsumer (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:92:7)",
+        "new WorkerServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:122:26)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:136:25)",
+        "...node internals, .pnpm..."
+      ]
+    }
+  ],
+  "/Ecclesia-Production-WorkerService/AuditConsumer/Service/Service": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuditConsumerService08114978"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new FargateService2 in .pnpm...",
+        "new FargateService (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/constructs/fargate-service.construct.ts:144:20)",
+        "buildConsumer (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:92:7)",
+        "new WorkerServiceStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/worker-service-stack.ts:122:26)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:136:25)",
+        "...node internals, .pnpm..."
+      ]
+    }
+  ]
+}

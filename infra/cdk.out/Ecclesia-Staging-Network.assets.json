@@ -1,0 +1,21 @@
+{
+  "version": "54.0.0",
+  "files": {
+    "1108b34b2612828d8a0ae08320e8739dc9e3321ec608f488497106a799db58bf": {
+      "displayName": "Ecclesia-Staging-Network Template",
+      "source": {
+        "path": "Ecclesia-Staging-Network.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-eu-west-1-d0ed8769": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1",
+          "objectKey": "1108b34b2612828d8a0ae08320e8739dc9e3321ec608f488497106a799db58bf.json",
+          "region": "eu-west-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-eu-west-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

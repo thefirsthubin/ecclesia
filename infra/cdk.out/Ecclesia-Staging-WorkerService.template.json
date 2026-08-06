@@ -1,0 +1,917 @@
+{
+ "Description": "Ecclesia staging - apps/worker Fargate services (Cloud Runtime Infrastructure milestone)",
+ "Resources": {
+  "InsightsConsumerLogGroupFB8E9FFD": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/ecs/ecclesia-staging-worker-consume-insights",
+    "RetentionInDays": 30,
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-WorkerService/InsightsConsumer/LogGroup/Resource"
+   }
+  },
+  "InsightsConsumerTaskDefinition2633E542": {
+   "Type": "AWS::ECS::TaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Command": [
+       "node",
+       "main.js",
+       "consume:insights"
+      ],
+      "Environment": [
+       {
+        "Name": "NODE_ENV",
+        "Value": "production"
+       },
+       {
+        "Name": "LOG_LEVEL",
+        "Value": "debug"
+       },
+       {
+        "Name": "DB_HOST",
+        "Value": {
+         "Fn::ImportValue": "Ecclesia-Staging-Database:ExportsOutputFnGetAttInstanceC1063A87EndpointAddress6BABBCD4"
+        }
+       },
+       {
+        "Name": "DB_PORT",
+        "Value": {
+         "Fn::ImportValue": "Ecclesia-Staging-Database:ExportsOutputFnGetAttInstanceC1063A87EndpointPort47E55A33"
+        }
+       },
+       {
+        "Name": "DB_NAME",
+        "Value": "ecclesia"
+       },
+       {
+        "Name": "DB_MASTER_USER",
+        "Value": "ecclesia"
+       },
+       {
+        "Name": "DB_APP_USER",
+        "Value": "ecclesia_app"
+       },
+       {
+        "Name": "AWS_REGION",
+        "Value": "eu-west-1"
+       },
+       {
+        "Name": "EVENTBRIDGE_BUS_NAME",
+        "Value": {
+         "Fn::ImportValue": "Ecclesia-Staging-Eventing:ExportsOutputRefEngagementSignalBus4E37EDB7874996B9"
+        }
+       },
+       {
+        "Name": "SQS_INSIGHTS_QUEUE_URL",
+        "Value": {
+         "Fn::ImportValue": "Ecclesia-Staging-Eventing:ExportsOutputRefEngagementSignalBusInsightsQueue529C3DCE9FD643FA"
+        }
+       },
+       {
+        "Name": "SQS_NOTIFICATION_QUEUE_URL",
+        "Value": {
+         "Fn::ImportValue": "Ecclesia-Staging-Eventing:ExportsOutputRefEngagementSignalBusNotificationQueueA0130601FD834939"
+        }
+       },
+       {
+        "Name": "SQS_AUDIT_QUEUE_URL",
+        "Value": {
+         "Fn::ImportValue": "Ecclesia-Staging-Eventing:ExportsOutputRefEngagementSignalBusAuditQueueE693E9DFC5BA9B47"
+        }
+       }
+      ],
+      "Essential": true,
+      "HealthCheck": {
+       "Command": [
+        "CMD-SHELL",
+        "node -e \"process.exit(0)\""
+       ],
+       "Interval": 30,
+       "Retries": 3,
+       "StartPeriod": 30,
+       "Timeout": 5
+      },
+      "Image": {
+       "Fn::Sub": "${AWS::AccountId}.dkr.ecr.eu-west-1.${AWS::URLSuffix}/cdk-hnb659fds-container-assets-${AWS::AccountId}-eu-west-1:7c1553d58c0a2441e1cde77d0c1a9109c9de02d01db26fa3d84b6cd04d570aed"
+      },
+      "LogConfiguration": {
+       "LogDriver": "awslogs",
+       "Options": {
+        "awslogs-group": {
+         "Ref": "InsightsConsumerLogGroupFB8E9FFD"
+        },
+        "awslogs-stream-prefix": "ecclesia-staging-worker-consume-insights",
+        "awslogs-region": "eu-west-1"
+       }
+      },
+      "Name": "ecclesia-staging-worker-consume-insights",
+      "Secrets": [
+       {
+        "Name": "DB_MASTER_PASSWORD",
+        "ValueFrom": {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::ImportValue": "Ecclesia-Staging-Secrets:ExportsOutputRefDatabaseCredentials8547B3E729671DA7"
+           },
+           ":password::"
+          ]
+         ]
+        }
+       },
+       {
+        "Name": "DB_APP_PASSWORD",
+        "ValueFrom": {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::ImportValue": "Ecclesia-Staging-Database:ExportsOutputRefAppRoleCredentials98175E56B8700645"
+           },
+           ":password::"
+          ]
+         ]
+        }
+       }
+      ]
+     }
+    ],
+    "Cpu": "256",
+    "ExecutionRoleArn": {
+     "Fn::ImportValue": "Ecclesia-Staging-Iam:ExportsOutputFnGetAttWorkerTaskExecutionRole67BF844FArn88FD1CB4"
+    },
+    "Family": "ecclesia-staging-worker-consume-insights",
+    "Memory": "512",
+    "NetworkMode": "awsvpc",
+    "RequiresCompatibilities": [
+     "FARGATE"
+    ],
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "TaskRoleArn": {
+     "Fn::ImportValue": "Ecclesia-Staging-Iam:ExportsOutputFnGetAttWorkerTaskRole013F226AArnCC93AE7B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-WorkerService/InsightsConsumer/TaskDefinition/Resource"
+   }
+  },
+  "InsightsConsumerService21B3948D": {
+   "Type": "AWS::ECS::Service",
+   "Properties": {
+    "Cluster": {
+     "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+    },
+    "DeploymentConfiguration": {
+     "Alarms": {
+      "AlarmNames": [],
+      "Enable": false,
+      "Rollback": false
+     },
+     "DeploymentCircuitBreaker": {
+      "Enable": true,
+      "Rollback": true
+     },
+     "MaximumPercent": 200,
+     "MinimumHealthyPercent": 50
+    },
+    "DeploymentController": {
+     "Type": "ECS"
+    },
+    "DesiredCount": 1,
+    "EnableECSManagedTags": false,
+    "LaunchType": "FARGATE",
+    "NetworkConfiguration": {
+     "AwsvpcConfiguration": {
+      "AssignPublicIp": "DISABLED",
+      "SecurityGroups": [
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-Network:ExportsOutputFnGetAttNetworkEcsSecurityGroup48ECD65AGroupId5442D37D"
+       }
+      ],
+      "Subnets": [
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-Network:ExportsOutputRefNetworkVpcprivateappSubnet1SubnetDECE09AB18DFBCE7"
+       },
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-Network:ExportsOutputRefNetworkVpcprivateappSubnet2Subnet524A959CCBC4E3D3"
+       },
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-Network:ExportsOutputRefNetworkVpcprivateappSubnet3SubnetB9F08E7A709084B7"
+       }
+      ]
+     }
+    },
+    "ServiceName": "ecclesia-staging-worker-consume-insights",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "TaskDefinition": {
+     "Ref": "InsightsConsumerTaskDefinition2633E542"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-WorkerService/InsightsConsumer/Service/Service"
+   }
+  },
+  "NotificationConsumerLogGroupB083D0F3": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/ecs/ecclesia-staging-worker-consume-notification",
+    "RetentionInDays": 30,
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-WorkerService/NotificationConsumer/LogGroup/Resource"
+   }
+  },
+  "NotificationConsumerTaskDefinitionF9DFA5EC": {
+   "Type": "AWS::ECS::TaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Command": [
+       "node",
+       "main.js",
+       "consume:notification"
+      ],
+      "Environment": [
+       {
+        "Name": "NODE_ENV",
+        "Value": "production"
+       },
+       {
+        "Name": "LOG_LEVEL",
+        "Value": "debug"
+       },
+       {
+        "Name": "DB_HOST",
+        "Value": {
+         "Fn::ImportValue": "Ecclesia-Staging-Database:ExportsOutputFnGetAttInstanceC1063A87EndpointAddress6BABBCD4"
+        }
+       },
+       {
+        "Name": "DB_PORT",
+        "Value": {
+         "Fn::ImportValue": "Ecclesia-Staging-Database:ExportsOutputFnGetAttInstanceC1063A87EndpointPort47E55A33"
+        }
+       },
+       {
+        "Name": "DB_NAME",
+        "Value": "ecclesia"
+       },
+       {
+        "Name": "DB_MASTER_USER",
+        "Value": "ecclesia"
+       },
+       {
+        "Name": "DB_APP_USER",
+        "Value": "ecclesia_app"
+       },
+       {
+        "Name": "AWS_REGION",
+        "Value": "eu-west-1"
+       },
+       {
+        "Name": "EVENTBRIDGE_BUS_NAME",
+        "Value": {
+         "Fn::ImportValue": "Ecclesia-Staging-Eventing:ExportsOutputRefEngagementSignalBus4E37EDB7874996B9"
+        }
+       },
+       {
+        "Name": "SQS_INSIGHTS_QUEUE_URL",
+        "Value": {
+         "Fn::ImportValue": "Ecclesia-Staging-Eventing:ExportsOutputRefEngagementSignalBusInsightsQueue529C3DCE9FD643FA"
+        }
+       },
+       {
+        "Name": "SQS_NOTIFICATION_QUEUE_URL",
+        "Value": {
+         "Fn::ImportValue": "Ecclesia-Staging-Eventing:ExportsOutputRefEngagementSignalBusNotificationQueueA0130601FD834939"
+        }
+       },
+       {
+        "Name": "SQS_AUDIT_QUEUE_URL",
+        "Value": {
+         "Fn::ImportValue": "Ecclesia-Staging-Eventing:ExportsOutputRefEngagementSignalBusAuditQueueE693E9DFC5BA9B47"
+        }
+       }
+      ],
+      "Essential": true,
+      "HealthCheck": {
+       "Command": [
+        "CMD-SHELL",
+        "node -e \"process.exit(0)\""
+       ],
+       "Interval": 30,
+       "Retries": 3,
+       "StartPeriod": 30,
+       "Timeout": 5
+      },
+      "Image": {
+       "Fn::Sub": "${AWS::AccountId}.dkr.ecr.eu-west-1.${AWS::URLSuffix}/cdk-hnb659fds-container-assets-${AWS::AccountId}-eu-west-1:7c1553d58c0a2441e1cde77d0c1a9109c9de02d01db26fa3d84b6cd04d570aed"
+      },
+      "LogConfiguration": {
+       "LogDriver": "awslogs",
+       "Options": {
+        "awslogs-group": {
+         "Ref": "NotificationConsumerLogGroupB083D0F3"
+        },
+        "awslogs-stream-prefix": "ecclesia-staging-worker-consume-notification",
+        "awslogs-region": "eu-west-1"
+       }
+      },
+      "Name": "ecclesia-staging-worker-consume-notification",
+      "Secrets": [
+       {
+        "Name": "DB_MASTER_PASSWORD",
+        "ValueFrom": {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::ImportValue": "Ecclesia-Staging-Secrets:ExportsOutputRefDatabaseCredentials8547B3E729671DA7"
+           },
+           ":password::"
+          ]
+         ]
+        }
+       },
+       {
+        "Name": "DB_APP_PASSWORD",
+        "ValueFrom": {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::ImportValue": "Ecclesia-Staging-Database:ExportsOutputRefAppRoleCredentials98175E56B8700645"
+           },
+           ":password::"
+          ]
+         ]
+        }
+       }
+      ]
+     }
+    ],
+    "Cpu": "256",
+    "ExecutionRoleArn": {
+     "Fn::ImportValue": "Ecclesia-Staging-Iam:ExportsOutputFnGetAttWorkerTaskExecutionRole67BF844FArn88FD1CB4"
+    },
+    "Family": "ecclesia-staging-worker-consume-notification",
+    "Memory": "512",
+    "NetworkMode": "awsvpc",
+    "RequiresCompatibilities": [
+     "FARGATE"
+    ],
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "TaskRoleArn": {
+     "Fn::ImportValue": "Ecclesia-Staging-Iam:ExportsOutputFnGetAttWorkerTaskRole013F226AArnCC93AE7B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-WorkerService/NotificationConsumer/TaskDefinition/Resource"
+   }
+  },
+  "NotificationConsumerService11D9D27A": {
+   "Type": "AWS::ECS::Service",
+   "Properties": {
+    "Cluster": {
+     "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+    },
+    "DeploymentConfiguration": {
+     "Alarms": {
+      "AlarmNames": [],
+      "Enable": false,
+      "Rollback": false
+     },
+     "DeploymentCircuitBreaker": {
+      "Enable": true,
+      "Rollback": true
+     },
+     "MaximumPercent": 200,
+     "MinimumHealthyPercent": 50
+    },
+    "DeploymentController": {
+     "Type": "ECS"
+    },
+    "DesiredCount": 1,
+    "EnableECSManagedTags": false,
+    "LaunchType": "FARGATE",
+    "NetworkConfiguration": {
+     "AwsvpcConfiguration": {
+      "AssignPublicIp": "DISABLED",
+      "SecurityGroups": [
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-Network:ExportsOutputFnGetAttNetworkEcsSecurityGroup48ECD65AGroupId5442D37D"
+       }
+      ],
+      "Subnets": [
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-Network:ExportsOutputRefNetworkVpcprivateappSubnet1SubnetDECE09AB18DFBCE7"
+       },
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-Network:ExportsOutputRefNetworkVpcprivateappSubnet2Subnet524A959CCBC4E3D3"
+       },
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-Network:ExportsOutputRefNetworkVpcprivateappSubnet3SubnetB9F08E7A709084B7"
+       }
+      ]
+     }
+    },
+    "ServiceName": "ecclesia-staging-worker-consume-notification",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "TaskDefinition": {
+     "Ref": "NotificationConsumerTaskDefinitionF9DFA5EC"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-WorkerService/NotificationConsumer/Service/Service"
+   }
+  },
+  "AuditConsumerLogGroup9A0913DA": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/ecs/ecclesia-staging-worker-consume-audit",
+    "RetentionInDays": 30,
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-WorkerService/AuditConsumer/LogGroup/Resource"
+   }
+  },
+  "AuditConsumerTaskDefinition8D4987DD": {
+   "Type": "AWS::ECS::TaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Command": [
+       "node",
+       "main.js",
+       "consume:audit"
+      ],
+      "Environment": [
+       {
+        "Name": "NODE_ENV",
+        "Value": "production"
+       },
+       {
+        "Name": "LOG_LEVEL",
+        "Value": "debug"
+       },
+       {
+        "Name": "DB_HOST",
+        "Value": {
+         "Fn::ImportValue": "Ecclesia-Staging-Database:ExportsOutputFnGetAttInstanceC1063A87EndpointAddress6BABBCD4"
+        }
+       },
+       {
+        "Name": "DB_PORT",
+        "Value": {
+         "Fn::ImportValue": "Ecclesia-Staging-Database:ExportsOutputFnGetAttInstanceC1063A87EndpointPort47E55A33"
+        }
+       },
+       {
+        "Name": "DB_NAME",
+        "Value": "ecclesia"
+       },
+       {
+        "Name": "DB_MASTER_USER",
+        "Value": "ecclesia"
+       },
+       {
+        "Name": "DB_APP_USER",
+        "Value": "ecclesia_app"
+       },
+       {
+        "Name": "AWS_REGION",
+        "Value": "eu-west-1"
+       },
+       {
+        "Name": "EVENTBRIDGE_BUS_NAME",
+        "Value": {
+         "Fn::ImportValue": "Ecclesia-Staging-Eventing:ExportsOutputRefEngagementSignalBus4E37EDB7874996B9"
+        }
+       },
+       {
+        "Name": "SQS_INSIGHTS_QUEUE_URL",
+        "Value": {
+         "Fn::ImportValue": "Ecclesia-Staging-Eventing:ExportsOutputRefEngagementSignalBusInsightsQueue529C3DCE9FD643FA"
+        }
+       },
+       {
+        "Name": "SQS_NOTIFICATION_QUEUE_URL",
+        "Value": {
+         "Fn::ImportValue": "Ecclesia-Staging-Eventing:ExportsOutputRefEngagementSignalBusNotificationQueueA0130601FD834939"
+        }
+       },
+       {
+        "Name": "SQS_AUDIT_QUEUE_URL",
+        "Value": {
+         "Fn::ImportValue": "Ecclesia-Staging-Eventing:ExportsOutputRefEngagementSignalBusAuditQueueE693E9DFC5BA9B47"
+        }
+       }
+      ],
+      "Essential": true,
+      "HealthCheck": {
+       "Command": [
+        "CMD-SHELL",
+        "node -e \"process.exit(0)\""
+       ],
+       "Interval": 30,
+       "Retries": 3,
+       "StartPeriod": 30,
+       "Timeout": 5
+      },
+      "Image": {
+       "Fn::Sub": "${AWS::AccountId}.dkr.ecr.eu-west-1.${AWS::URLSuffix}/cdk-hnb659fds-container-assets-${AWS::AccountId}-eu-west-1:7c1553d58c0a2441e1cde77d0c1a9109c9de02d01db26fa3d84b6cd04d570aed"
+      },
+      "LogConfiguration": {
+       "LogDriver": "awslogs",
+       "Options": {
+        "awslogs-group": {
+         "Ref": "AuditConsumerLogGroup9A0913DA"
+        },
+        "awslogs-stream-prefix": "ecclesia-staging-worker-consume-audit",
+        "awslogs-region": "eu-west-1"
+       }
+      },
+      "Name": "ecclesia-staging-worker-consume-audit",
+      "Secrets": [
+       {
+        "Name": "DB_MASTER_PASSWORD",
+        "ValueFrom": {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::ImportValue": "Ecclesia-Staging-Secrets:ExportsOutputRefDatabaseCredentials8547B3E729671DA7"
+           },
+           ":password::"
+          ]
+         ]
+        }
+       },
+       {
+        "Name": "DB_APP_PASSWORD",
+        "ValueFrom": {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::ImportValue": "Ecclesia-Staging-Database:ExportsOutputRefAppRoleCredentials98175E56B8700645"
+           },
+           ":password::"
+          ]
+         ]
+        }
+       }
+      ]
+     }
+    ],
+    "Cpu": "256",
+    "ExecutionRoleArn": {
+     "Fn::ImportValue": "Ecclesia-Staging-Iam:ExportsOutputFnGetAttWorkerTaskExecutionRole67BF844FArn88FD1CB4"
+    },
+    "Family": "ecclesia-staging-worker-consume-audit",
+    "Memory": "512",
+    "NetworkMode": "awsvpc",
+    "RequiresCompatibilities": [
+     "FARGATE"
+    ],
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "TaskRoleArn": {
+     "Fn::ImportValue": "Ecclesia-Staging-Iam:ExportsOutputFnGetAttWorkerTaskRole013F226AArnCC93AE7B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-WorkerService/AuditConsumer/TaskDefinition/Resource"
+   }
+  },
+  "AuditConsumerService08114978": {
+   "Type": "AWS::ECS::Service",
+   "Properties": {
+    "Cluster": {
+     "Fn::ImportValue": "Ecclesia-Staging-EcsCluster:ExportsOutputRefClusterEB0386A796A0E3FE"
+    },
+    "DeploymentConfiguration": {
+     "Alarms": {
+      "AlarmNames": [],
+      "Enable": false,
+      "Rollback": false
+     },
+     "DeploymentCircuitBreaker": {
+      "Enable": true,
+      "Rollback": true
+     },
+     "MaximumPercent": 200,
+     "MinimumHealthyPercent": 50
+    },
+    "DeploymentController": {
+     "Type": "ECS"
+    },
+    "DesiredCount": 1,
+    "EnableECSManagedTags": false,
+    "LaunchType": "FARGATE",
+    "NetworkConfiguration": {
+     "AwsvpcConfiguration": {
+      "AssignPublicIp": "DISABLED",
+      "SecurityGroups": [
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-Network:ExportsOutputFnGetAttNetworkEcsSecurityGroup48ECD65AGroupId5442D37D"
+       }
+      ],
+      "Subnets": [
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-Network:ExportsOutputRefNetworkVpcprivateappSubnet1SubnetDECE09AB18DFBCE7"
+       },
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-Network:ExportsOutputRefNetworkVpcprivateappSubnet2Subnet524A959CCBC4E3D3"
+       },
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-Network:ExportsOutputRefNetworkVpcprivateappSubnet3SubnetB9F08E7A709084B7"
+       }
+      ]
+     }
+    },
+    "ServiceName": "ecclesia-staging-worker-consume-audit",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "TaskDefinition": {
+     "Ref": "AuditConsumerTaskDefinition8D4987DD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-WorkerService/AuditConsumer/Service/Service"
+   }
+  },
+  "InsightsConsumerServiceNameParam65E8871F": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Description": "Ecclesia staging - compute/worker-insights-service-name (written by the infra CDK app, see infra/lib/common/parameters.ts)",
+    "Name": "/ecclesia/staging/compute/worker-insights-service-name",
+    "Tags": {
+     "Environment": "staging",
+     "ManagedBy": "CDK",
+     "Project": "Ecclesia"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "InsightsConsumerService21B3948D",
+      "Name"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-WorkerService/InsightsConsumerServiceNameParam/Resource"
+   }
+  },
+  "NotificationConsumerServiceNameParam0102A6CE": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Description": "Ecclesia staging - compute/worker-notification-service-name (written by the infra CDK app, see infra/lib/common/parameters.ts)",
+    "Name": "/ecclesia/staging/compute/worker-notification-service-name",
+    "Tags": {
+     "Environment": "staging",
+     "ManagedBy": "CDK",
+     "Project": "Ecclesia"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "NotificationConsumerService11D9D27A",
+      "Name"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-WorkerService/NotificationConsumerServiceNameParam/Resource"
+   }
+  },
+  "AuditConsumerServiceNameParam3DE05085": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Description": "Ecclesia staging - compute/worker-audit-service-name (written by the infra CDK app, see infra/lib/common/parameters.ts)",
+    "Name": "/ecclesia/staging/compute/worker-audit-service-name",
+    "Tags": {
+     "Environment": "staging",
+     "ManagedBy": "CDK",
+     "Project": "Ecclesia"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "AuditConsumerService08114978",
+      "Name"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-WorkerService/AuditConsumerServiceNameParam/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/12OQUsDQQyFf0vvs1Gm0LtalIIH2e29xGk6pNudlCTbIsv+dxmtIp7y8pL38SLE1RLuF3i1Ju375sTvMHWOqQ94td10kmwwvUp+URnP4elQfvQcKBlMz6gZnbZo/ZoOXNhZSv3770hx5EL6x7tlO9ILJ6qhm6xs3aEZucFaUk+6GTDTQ3XqDVo6i7GLfjyiUTAbam3lkt9QcSAnrbzfZZ5DSyajJgpflM4xc8lzKLInONrdJUaIEZaLozE3OhbngaD9np9dWhe7JwEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-WorkerService/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "ExportsOutputFnGetAttInsightsConsumerService21B3948DName147EC207": {
+   "Value": {
+    "Fn::GetAtt": [
+     "InsightsConsumerService21B3948D",
+     "Name"
+    ]
+   },
+   "Export": {
+    "Name": "Ecclesia-Staging-WorkerService:ExportsOutputFnGetAttInsightsConsumerService21B3948DName147EC207"
+   }
+  },
+  "ExportsOutputFnGetAttNotificationConsumerService11D9D27AName982E5A26": {
+   "Value": {
+    "Fn::GetAtt": [
+     "NotificationConsumerService11D9D27A",
+     "Name"
+    ]
+   },
+   "Export": {
+    "Name": "Ecclesia-Staging-WorkerService:ExportsOutputFnGetAttNotificationConsumerService11D9D27AName982E5A26"
+   }
+  },
+  "ExportsOutputFnGetAttAuditConsumerService08114978NameCE0846F7": {
+   "Value": {
+    "Fn::GetAtt": [
+     "AuditConsumerService08114978",
+     "Name"
+    ]
+   },
+   "Export": {
+    "Name": "Ecclesia-Staging-WorkerService:ExportsOutputFnGetAttAuditConsumerService08114978NameCE0846F7"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

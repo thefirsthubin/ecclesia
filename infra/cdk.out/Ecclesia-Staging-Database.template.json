@@ -1,0 +1,529 @@
+{
+ "Description": "Ecclesia staging - RDS PostgreSQL (Cloud Runtime Infrastructure milestone)",
+ "Resources": {
+  "DatabaseSubnetGroup": {
+   "Type": "AWS::RDS::DBSubnetGroup",
+   "Properties": {
+    "DBSubnetGroupDescription": "Ecclesia staging RDS subnet group - isolated private-db subnets only (Milestone 10 §1).",
+    "DBSubnetGroupName": "ecclesia-staging-db-subnet-group",
+    "SubnetIds": [
+     {
+      "Fn::ImportValue": "Ecclesia-Staging-Network:ExportsOutputRefNetworkVpcprivatedbSubnet1Subnet04D949B4E9328776"
+     },
+     {
+      "Fn::ImportValue": "Ecclesia-Staging-Network:ExportsOutputRefNetworkVpcprivatedbSubnet2Subnet4F98F618BBD2B093"
+     },
+     {
+      "Fn::ImportValue": "Ecclesia-Staging-Network:ExportsOutputRefNetworkVpcprivatedbSubnet3SubnetDCE61600FFF90932"
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-Database/DatabaseSubnetGroup/Default"
+   }
+  },
+  "DatabaseParameterGroupC9757D64": {
+   "Type": "AWS::RDS::DBParameterGroup",
+   "Properties": {
+    "Description": "Ecclesia staging PostgreSQL 16 parameter group - forces SSL (Milestone 10 §2).",
+    "Family": "postgres16",
+    "Parameters": {
+     "rds.force_ssl": "1"
+    },
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-Database/DatabaseParameterGroup/Resource"
+   }
+  },
+  "InstanceC1063A87": {
+   "Type": "AWS::RDS::DBInstance",
+   "Properties": {
+    "AllocatedStorage": "20",
+    "AutoMinorVersionUpgrade": true,
+    "BackupRetentionPeriod": 7,
+    "CopyTagsToSnapshot": true,
+    "DBInstanceClass": "db.t3.small",
+    "DBInstanceIdentifier": "ecclesia-staging-postgres",
+    "DBName": "ecclesia",
+    "DBParameterGroupName": {
+     "Ref": "DatabaseParameterGroupC9757D64"
+    },
+    "DBSubnetGroupName": {
+     "Ref": "DatabaseSubnetGroup"
+    },
+    "DeletionProtection": false,
+    "EnableCloudwatchLogsExports": [
+     "postgresql"
+    ],
+    "EnablePerformanceInsights": true,
+    "Engine": "postgres",
+    "EngineVersion": "16",
+    "MasterUserPassword": {
+     "Fn::Join": [
+      "",
+      [
+       "{{resolve:secretsmanager:",
+       {
+        "Fn::ImportValue": "Ecclesia-Staging-Secrets:ExportsOutputRefDatabaseCredentials8547B3E729671DA7"
+       },
+       ":SecretString:password::}}"
+      ]
+     ]
+    },
+    "MasterUsername": "ecclesia",
+    "MaxAllocatedStorage": 100,
+    "MultiAZ": false,
+    "PerformanceInsightsRetentionPeriod": 7,
+    "Port": "5432",
+    "StorageEncrypted": true,
+    "StorageType": "gp2",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ],
+    "VPCSecurityGroups": [
+     {
+      "Fn::ImportValue": "Ecclesia-Staging-Network:ExportsOutputFnGetAttNetworkDatabaseSecurityGroup2B3F4679GroupId6435BE23"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-Database/Instance/Resource"
+   }
+  },
+  "InstanceLogRetentionpostgresql4CD12757": {
+   "Type": "Custom::LogRetention",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+      "Arn"
+     ]
+    },
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/rds/instance/",
+       {
+        "Ref": "InstanceC1063A87"
+       },
+       "/postgresql"
+      ]
+     ]
+    },
+    "RetentionInDays": 30
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-Database/Instance/LogRetentionpostgresql/Resource"
+   }
+  },
+  "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-Database/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/Resource"
+   }
+  },
+  "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:PutRetentionPolicy",
+        "logs:DeleteRetentionPolicy"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+    "Roles": [
+     {
+      "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-Database/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Handler": "index.handler",
+    "Runtime": "nodejs24.x",
+    "Timeout": 900,
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
+     },
+     "S3Key": "2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d.zip"
+    },
+    "Role": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+      "Arn"
+     ]
+    },
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ]
+   },
+   "DependsOn": [
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-Database/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Resource",
+    "aws:asset:path": "asset.2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "AppRoleCredentials98175E56": {
+   "Type": "AWS::SecretsManager::Secret",
+   "Properties": {
+    "Description": "RLS-scoped 'ecclesia_app' Postgres role credentials (Milestone 10 §2, db/ROW_LEVEL_SECURITY_DESIGN_NOTES.md). Generated password does not yet match the role's real password until the manual reconciliation step in INFRA_RUNTIME.md is run once - see this stack's own doc comment.",
+    "GenerateSecretString": {
+     "ExcludePunctuation": true,
+     "GenerateStringKey": "password",
+     "PasswordLength": 32,
+     "SecretStringTemplate": {
+      "Fn::Join": [
+       "",
+       [
+        "{\"username\":\"ecclesia_app\",\"host\":\"",
+        {
+         "Fn::GetAtt": [
+          "InstanceC1063A87",
+          "Endpoint.Address"
+         ]
+        },
+        "\",\"port\":",
+        {
+         "Fn::GetAtt": [
+          "InstanceC1063A87",
+          "Endpoint.Port"
+         ]
+        },
+        ",\"dbname\":\"ecclesia\"}"
+       ]
+      ]
+     }
+    },
+    "Name": "ecclesia-staging-app-role-credentials",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Ecclesia"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-Database/AppRoleCredentials/Resource"
+   }
+  },
+  "DbEndpointParam817B3C29": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Description": "Ecclesia staging - database/endpoint (written by the infra CDK app, see infra/lib/common/parameters.ts)",
+    "Name": "/ecclesia/staging/database/endpoint",
+    "Tags": {
+     "Environment": "staging",
+     "ManagedBy": "CDK",
+     "Project": "Ecclesia"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "InstanceC1063A87",
+      "Endpoint.Address"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-Database/DbEndpointParam/Resource"
+   }
+  },
+  "DbPortParam5E563526": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Description": "Ecclesia staging - database/port (written by the infra CDK app, see infra/lib/common/parameters.ts)",
+    "Name": "/ecclesia/staging/database/port",
+    "Tags": {
+     "Environment": "staging",
+     "ManagedBy": "CDK",
+     "Project": "Ecclesia"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "InstanceC1063A87",
+      "Endpoint.Port"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-Database/DbPortParam/Resource"
+   }
+  },
+  "DbSecretArnParam501D2D97": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Description": "Ecclesia staging - database/secret-arn (written by the infra CDK app, see infra/lib/common/parameters.ts)",
+    "Name": "/ecclesia/staging/database/secret-arn",
+    "Tags": {
+     "Environment": "staging",
+     "ManagedBy": "CDK",
+     "Project": "Ecclesia"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::ImportValue": "Ecclesia-Staging-Secrets:ExportsOutputRefDatabaseCredentials8547B3E729671DA7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-Database/DbSecretArnParam/Resource"
+   }
+  },
+  "DbAppRoleSecretArnParam3F63D9E3": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Description": "Ecclesia staging - database/app-role-secret-arn (written by the infra CDK app, see infra/lib/common/parameters.ts)",
+    "Name": "/ecclesia/staging/database/app-role-secret-arn",
+    "Tags": {
+     "Environment": "staging",
+     "ManagedBy": "CDK",
+     "Project": "Ecclesia"
+    },
+    "Type": "String",
+    "Value": {
+     "Ref": "AppRoleCredentials98175E56"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-Database/DbAppRoleSecretArnParam/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/11Py2rDMBD8ltzlbZGh97iBUig02B8Q1vJWKLaloF01BKN/L5ZJCD3NY4dhVoN+q+F1h1euzDBWk+th6QTNqPDKpyUODEuXek/yEUO6qPcff2iejSNGnEkoPt3/eQcU7JHp07OgN7SF7iqrKViGr2BbEvLigldcn5CZhGG/guIammRGkgaZlMMZljZMpajgMUzO3Fa5sayYTCThGT1airB0Ra+JjWXFPK+vRuftY29puIucSz9xSNGQepAyqRO0zts18Z3kkiQrHwaCM7/8ag1aQ707s3NVTF7cTNBu+Ae7gSamcQEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "Ecclesia-Staging-Database/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "EndpointOutput": {
+   "Description": "RDS PostgreSQL endpoint",
+   "Value": {
+    "Fn::GetAtt": [
+     "InstanceC1063A87",
+     "Endpoint.Address"
+    ]
+   }
+  },
+  "PortOutput": {
+   "Description": "RDS PostgreSQL port",
+   "Value": {
+    "Fn::GetAtt": [
+     "InstanceC1063A87",
+     "Endpoint.Port"
+    ]
+   }
+  },
+  "SecretArnOutput": {
+   "Description": "Master credentials Secrets Manager ARN",
+   "Value": {
+    "Fn::ImportValue": "Ecclesia-Staging-Secrets:ExportsOutputRefDatabaseCredentials8547B3E729671DA7"
+   }
+  },
+  "AppRoleSecretArnOutput": {
+   "Description": "ecclesia_app role credentials Secrets Manager ARN (see this stack's doc comment - manual reconciliation required once)",
+   "Value": {
+    "Ref": "AppRoleCredentials98175E56"
+   }
+  },
+  "ExportsOutputFnGetAttInstanceC1063A87EndpointAddress6BABBCD4": {
+   "Value": {
+    "Fn::GetAtt": [
+     "InstanceC1063A87",
+     "Endpoint.Address"
+    ]
+   },
+   "Export": {
+    "Name": "Ecclesia-Staging-Database:ExportsOutputFnGetAttInstanceC1063A87EndpointAddress6BABBCD4"
+   }
+  },
+  "ExportsOutputFnGetAttInstanceC1063A87EndpointPort47E55A33": {
+   "Value": {
+    "Fn::GetAtt": [
+     "InstanceC1063A87",
+     "Endpoint.Port"
+    ]
+   },
+   "Export": {
+    "Name": "Ecclesia-Staging-Database:ExportsOutputFnGetAttInstanceC1063A87EndpointPort47E55A33"
+   }
+  },
+  "ExportsOutputRefAppRoleCredentials98175E56B8700645": {
+   "Value": {
+    "Ref": "AppRoleCredentials98175E56"
+   },
+   "Export": {
+    "Name": "Ecclesia-Staging-Database:ExportsOutputRefAppRoleCredentials98175E56B8700645"
+   }
+  },
+  "ExportsOutputRefInstanceC1063A87B325EA17": {
+   "Value": {
+    "Ref": "InstanceC1063A87"
+   },
+   "Export": {
+    "Name": "Ecclesia-Staging-Database:ExportsOutputRefInstanceC1063A87B325EA17"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

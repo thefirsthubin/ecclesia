@@ -1,0 +1,36 @@
+{
+  "name": "domain-ministry",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/domain/ministry/src",
+  "tags": [
+    "scope:domain-ministry"
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/libs/domain/ministry",
+        "main": "libs/domain/ministry/src/index.ts",
+        "tsConfig": "libs/domain/ministry/tsconfig.lib.json",
+        "assets": [
+          "libs/domain/ministry/*.md"
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "libs/domain/ministry/**/*.ts"
+        ]
+      }
+    }
+  }
+}

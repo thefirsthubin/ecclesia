@@ -1,0 +1,65 @@
+{
+  "name": "mobile",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/mobile/src",
+  "tags": [
+    "scope:app-native"
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nx/react-native:bundle",
+      "outputs": [
+        "{options.bundleOutput}"
+      ],
+      "options": {
+        "entryFile": "src/main.tsx",
+        "platform": "ios",
+        "bundleOutput": "dist/apps/mobile/ios/main.jsbundle",
+        "config": "metro.config.js"
+      }
+    },
+    "start": {
+      "executor": "@nx/react-native:start",
+      "options": {
+        "port": 8081
+      }
+    },
+    "run-ios": {
+      "executor": "@nx/react-native:run-ios",
+      "options": {}
+    },
+    "run-android": {
+      "executor": "@nx/react-native:run-android",
+      "options": {}
+    },
+    "bundle": {
+      "executor": "@nx/react-native:bundle",
+      "outputs": [
+        "{options.bundleOutput}"
+      ],
+      "options": {
+        "entryFile": "src/main.tsx",
+        "platform": "ios",
+        "bundleOutput": "dist/apps/mobile/ios/main.jsbundle",
+        "config": "metro.config.js"
+      }
+    },
+    "pod-install": {
+      "executor": "@nx/react-native:pod-install",
+      "options": {}
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "apps/mobile/**/*.ts",
+          "apps/mobile/**/*.tsx"
+        ]
+      }
+    }
+  }
+}

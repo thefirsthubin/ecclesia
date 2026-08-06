@@ -3,7 +3,7 @@
     {
       "type": "aws:cdk:creationStack",
       "data": [
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:78:3)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:82:15)",
         "...node internals, .pnpm, .pnpm, .pnpm..."
       ]
     },
@@ -11,19 +11,19 @@
       "type": "aws:cdk:warning",
       "data": "No cross-stack-reference strength configured, defaulting to \"strong\". We recommend you set feature flag \"@aws-cdk/core:defaultCrossStackReferences\" to \"both\", then deploy everywhere, then set it to \"weak\". Alternatively, set it to \"strong\" explicitly to lock in the current producer-protecting behavior. (See: https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/README.md#reference-strength) [ack: @aws-cdk/core:crossStackReferencesDefaultStrong]",
       "trace": [
-        "Annotations.addMessage (/Users/king/Documents/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/annotations.js:1:3506)",
-        "Annotations.addWarningV2 (/Users/king/Documents/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/annotations.js:1:2194)",
-        "resolveValue (/Users/king/Documents/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/private/refs.js:1:6980)",
-        "resolveReferences (/Users/king/Documents/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/private/refs.js:1:4848)",
-        "prepareApp (/Users/king/Documents/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/private/prepare-app.js:1:1503)",
-        "synthesize (/Users/king/Documents/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:2625)",
-        "App.synth (/Users/king/Documents/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/stage.js:1:5061)",
-        "App.synth (/Users/king/Documents/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/app.js:1:5050)",
-        "process.<anonymous> (/Users/king/Documents/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/app.js:1:3936)",
+        "Annotations.addMessage (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/annotations.js:1:3506)",
+        "Annotations.addWarningV2 (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/annotations.js:1:2194)",
+        "resolveValue (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/private/refs.js:1:6980)",
+        "resolveReferences (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/private/refs.js:1:4848)",
+        "prepareApp (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/private/prepare-app.js:1:1503)",
+        "synthesize (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:2625)",
+        "App.synth (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/stage.js:1:5061)",
+        "App.synth (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/app.js:1:5050)",
+        "process.<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/aws-cdk-lib@2.263.0_constructs@10.8.1/node_modules/aws-cdk-lib/core/lib/app.js:1:3936)",
         "Object.onceWrapper (node:events:634:26)",
         "process.emit (node:events:519:28)",
         "process.emit (node:domain:489:12)",
-        "process.emit.sharedData.processEmitHook.installedValue [as emit] (/Users/king/Documents/ecclesia/node_modules/.pnpm/@cspotcode+source-map-support@0.8.1/node_modules/@cspotcode/source-map-support/source-map-support.js:745:40)"
+        "process.emit.sharedData.processEmitHook.installedValue [as emit] (/sessions/festive-loving-gauss/mnt/ecclesia/node_modules/.pnpm/@cspotcode+source-map-support@0.8.1/node_modules/@cspotcode/source-map-support/source-map-support.js:745:40)"
       ]
     },
     {
@@ -79,9 +79,9 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new Role2 in .pnpm...",
-        "IamStack.buildExecutionRole (/Users/king/Documents/ecclesia/infra/lib/stacks/iam-stack.ts:136:12)",
-        "new IamStack (/Users/king/Documents/ecclesia/infra/lib/stacks/iam-stack.ts:68:38)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:78:3)",
+        "IamStack.buildExecutionRole (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/iam-stack.ts:136:12)",
+        "new IamStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/iam-stack.ts:68:38)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:82:15)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -95,9 +95,9 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new Role2 in .pnpm...",
-        "IamStack.buildExecutionRole (/Users/king/Documents/ecclesia/infra/lib/stacks/iam-stack.ts:136:12)",
-        "new IamStack (/Users/king/Documents/ecclesia/infra/lib/stacks/iam-stack.ts:69:41)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:78:3)",
+        "IamStack.buildExecutionRole (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/iam-stack.ts:136:12)",
+        "new IamStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/iam-stack.ts:69:41)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:82:15)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -111,8 +111,8 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new Role2 in .pnpm...",
-        "new IamStack (/Users/king/Documents/ecclesia/infra/lib/stacks/iam-stack.ts:71:24)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:78:3)",
+        "new IamStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/iam-stack.ts:71:24)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:82:15)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -126,8 +126,8 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new Role2 in .pnpm...",
-        "new IamStack (/Users/king/Documents/ecclesia/infra/lib/stacks/iam-stack.ts:113:27)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:78:3)",
+        "new IamStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/iam-stack.ts:113:27)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:82:15)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -141,9 +141,9 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new StringParameter2 in .pnpm...",
-        "writeParameter (/Users/king/Documents/ecclesia/infra/lib/common/parameters.ts:23:10)",
-        "new IamStack (/Users/king/Documents/ecclesia/infra/lib/stacks/iam-stack.ts:131:19)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:78:3)",
+        "writeParameter (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/common/parameters.ts:23:10)",
+        "new IamStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/iam-stack.ts:131:19)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:82:15)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -157,9 +157,9 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new StringParameter2 in .pnpm...",
-        "writeParameter (/Users/king/Documents/ecclesia/infra/lib/common/parameters.ts:23:10)",
-        "new IamStack (/Users/king/Documents/ecclesia/infra/lib/stacks/iam-stack.ts:132:19)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:78:3)",
+        "writeParameter (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/common/parameters.ts:23:10)",
+        "new IamStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/iam-stack.ts:132:19)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:82:15)",
         "...node internals, .pnpm, .pnpm..."
       ]
     }
@@ -168,6 +168,58 @@
     {
       "type": "aws:cdk:logicalId",
       "data": "CDKMetadata"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-Iam/Exports/Output{\"Fn::GetAtt\":[\"ApiTaskExecutionRole3D69C76E\",\"Arn\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttApiTaskExecutionRole3D69C76EArn7BB68CCC"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-Iam/Exports/Output{\"Fn::GetAtt\":[\"ApiTaskRole12FAD4A7\",\"Arn\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttApiTaskRole12FAD4A7ArnA37BDEAD"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-Iam/Exports/Output{\"Fn::GetAtt\":[\"WorkerTaskExecutionRole67BF844F\",\"Arn\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttWorkerTaskExecutionRole67BF844FArn88FD1CB4"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "....pnpm, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/Ecclesia-Dev-Iam/Exports/Output{\"Fn::GetAtt\":[\"WorkerTaskRole013F226A\",\"Arn\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttWorkerTaskRole013F226AArnCC93AE7B"
     },
     {
       "type": "aws:cdk:creationStack",
@@ -186,8 +238,8 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...WrappedClass.grantPutEventsTo in .pnpm...",
-        "new IamStack (/Users/king/Documents/ecclesia/infra/lib/stacks/iam-stack.ts:79:27)",
-        "<anonymous> (/Users/king/Documents/ecclesia/infra/bin/infra.ts:78:3)",
+        "new IamStack (/sessions/festive-loving-gauss/mnt/ecclesia/infra/lib/stacks/iam-stack.ts:79:27)",
+        "<anonymous> (/sessions/festive-loving-gauss/mnt/ecclesia/infra/bin/infra.ts:82:15)",
         "...node internals..."
       ]
     }

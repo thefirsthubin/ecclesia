@@ -748,7 +748,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/z2NQQ6CMBBFz8K+jKYkHkDjWsQDmAqjKbQFOx2IaXp3U0jYzPvv5ycjQZ4qOBZqobLthtLoF8RHUO0g1ELPiDO6QBCvmWcmcXm7PTdsMBeZSdCXIN4Zee22sN56NLr97eWmSRDZ/Mpr96mVVxYD+jzaJaWsNw4ThyTc2CH0dJilBFmBLHrSuvTsgrYIzcY/yHkqGs8AAAA="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/z2NQQ6CMBBFz8K+jKYkHkDjWsQDmAqjKbQFOx2IaXp3U0jYzPvv5ycjQZ4qOBZqobLthtLoF8RHUO0g1ELPiDO6QBCvmWcmcXm7PTdsMBeZSdCXIN4Zee22sN56NLr97eWmSRDZ/Mpr96mVVxYD+jzaJaWsNw4ThyTc2CH0dJilBCmhKnrSuvTsgrYIzcY/L3gnjM8AAAA="
    },
    "Metadata": {
     "aws:cdk:path": "Ecclesia-Production-Eventing/CDKMetadata/Default"
@@ -905,6 +905,38 @@
    },
    "Export": {
     "Name": "Ecclesia-Production-Eventing:ExportsOutputFnGetAttEngagementSignalBusAuditDlq248BABFFQueueName9225AD00"
+   }
+  },
+  "ExportsOutputRefEngagementSignalBus4E37EDB7874996B9": {
+   "Value": {
+    "Ref": "EngagementSignalBus4E37EDB7"
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Eventing:ExportsOutputRefEngagementSignalBus4E37EDB7874996B9"
+   }
+  },
+  "ExportsOutputRefEngagementSignalBusInsightsQueue529C3DCE9FD643FA": {
+   "Value": {
+    "Ref": "EngagementSignalBusInsightsQueue529C3DCE"
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Eventing:ExportsOutputRefEngagementSignalBusInsightsQueue529C3DCE9FD643FA"
+   }
+  },
+  "ExportsOutputRefEngagementSignalBusNotificationQueueA0130601FD834939": {
+   "Value": {
+    "Ref": "EngagementSignalBusNotificationQueueA0130601"
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Eventing:ExportsOutputRefEngagementSignalBusNotificationQueueA0130601FD834939"
+   }
+  },
+  "ExportsOutputRefEngagementSignalBusAuditQueueE693E9DFC5BA9B47": {
+   "Value": {
+    "Ref": "EngagementSignalBusAuditQueueE693E9DF"
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Eventing:ExportsOutputRefEngagementSignalBusAuditQueueE693E9DFC5BA9B47"
    }
   }
  },

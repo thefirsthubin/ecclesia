@@ -1,16 +1,16 @@
 {
   "version": "54.0.0",
   "files": {
-    "de595142415a795e80360fc783c59edfdd69d5ffb91a15bb04f828694b349393": {
+    "8dbeb70f0e4c6550897d02fc25182aad445cdd0c6cd5f39a1b0c3aa3926e2a9b": {
       "displayName": "Ecclesia-Production-Cognito Template",
       "source": {
         "path": "Ecclesia-Production-Cognito.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "current_account-eu-west-1-61d3814c": {
+        "current_account-eu-west-1-6831b953": {
           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1",
-          "objectKey": "de595142415a795e80360fc783c59edfdd69d5ffb91a15bb04f828694b349393.json",
+          "objectKey": "8dbeb70f0e4c6550897d02fc25182aad445cdd0c6cd5f39a1b0c3aa3926e2a9b.json",
           "region": "eu-west-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-eu-west-1"
         }

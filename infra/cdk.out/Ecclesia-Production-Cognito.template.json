@@ -300,7 +300,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02NTQ6CMBCFz8K+jKYkXoADSDCuTYWRDPTHdAZZNL27aYjE1fve+xZPg740cK7MxvUwLrWlJ6SbmGFRZuNHGsLkSQKkO2PsQrCqffmDf9BaQi//al+yIuMg9cFikSWzYnblIpKfOhONQ8FY7FFyLvW6ynuVrHwYEWY+fbQG3YCuZiaq4+qFHEK/5xfziMAoxwAAAA=="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02NTQ6CMBCFz8K+jKYkXoADSDCuTYWRDPTHdAZZNL27aYjE1fve+xZPg740cK7MxvUwLrWlJ6SbmGFRZuNHGsLkSQKkO2PsQrCqffmDf9BaQi//al+yIuMg9cFikSWzYnblIpKfOhONQ8FY7FFyLvW6ynuVrHwYEWY+fbQGraGpZiaq4+qFHEK/5xcUic2+xwAAAA=="
    },
    "Metadata": {
     "aws:cdk:path": "Ecclesia-Production-Cognito/CDKMetadata/Default"
@@ -324,6 +324,22 @@
    "Description": "Web Admin Cognito client ID",
    "Value": {
     "Ref": "UserPoolWebAdminClientC4D35E36"
+   }
+  },
+  "ExportsOutputRefUserPool6BA7E5F296FD7236": {
+   "Value": {
+    "Ref": "UserPool6BA7E5F2"
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Cognito:ExportsOutputRefUserPool6BA7E5F296FD7236"
+   }
+  },
+  "ExportsOutputRefUserPoolWebAdminClientC4D35E36833160BD": {
+   "Value": {
+    "Ref": "UserPoolWebAdminClientC4D35E36"
+   },
+   "Export": {
+    "Name": "Ecclesia-Production-Cognito:ExportsOutputRefUserPoolWebAdminClientC4D35E36833160BD"
    }
   }
  },

@@ -1,16 +1,16 @@
 {
   "version": "54.0.0",
   "files": {
-    "5fe51004c9221a380b93284f0de54abd2153c2c9fb66ee03b8f2502c81e4456f": {
+    "e266c20a503a601a435de597a08270ad9bdccdbbaec13bedee44df40f6a0ffc3": {
       "displayName": "Ecclesia-Staging-Iam Template",
       "source": {
         "path": "Ecclesia-Staging-Iam.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "current_account-eu-west-1-f97b49c8": {
+        "current_account-eu-west-1-bd67d26f": {
           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1",
-          "objectKey": "5fe51004c9221a380b93284f0de54abd2153c2c9fb66ee03b8f2502c81e4456f.json",
+          "objectKey": "e266c20a503a601a435de597a08270ad9bdccdbbaec13bedee44df40f6a0ffc3.json",
           "region": "eu-west-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-eu-west-1"
         }
