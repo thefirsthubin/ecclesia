@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { Sidebar, TopBar, Breadcrumbs, NotificationBell, UserMenu, useTheme, Text } from '@ecclesia/ui-web';
-import type { BreadcrumbItem } from '@ecclesia/ui-web';
+import { Sidebar, TopBar, Breadcrumbs, CommandPalette, NotificationBell, UserMenu, useTheme, Text } from '@ecclesia/ui-web';
+import type { BreadcrumbItem, CommandItem } from '@ecclesia/ui-web';
 import type { AlertResponseDto, PersonResponseDto } from '@ecclesia/contracts';
 
 import { Link, useLocation, useNavigate } from '../router/router';
@@ -40,6 +40,30 @@ export function AppShell({ children, breadcrumbs, notifications = [], navVariant
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isCompact, setIsCompact] = useState(false);
+  const [isPaletteOpen, setIsPaletteOpen] = useState(false);
+
+  // `[Product Experience Sprint I]` Objective 4 - `CommandPalette`
+  // (`@ecclesia/ui-web`) has existed since the Nav/Data/Layout tier of the
+  // UI Foundation sprint but was never actually mounted anywhere in
+  // `apps/web-admin` (confirmed via grep before wiring this) - the
+  // component's own doc comment is explicit that owning the global
+  // Cmd/Ctrl+K keypress is deliberately an app-shell concern, not
+  // something the component does itself. Ignored while focus is already
+  // inside a text input/textarea/select or a `contentEditable` region so
+  // it never hijacks normal typing (e.g. a Ctrl+K inside a `Search` box).
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!(event.key === 'k' && (event.metaKey || event.ctrlKey))) return;
+      const target = event.target as HTMLElement | null;
+      const tag = target?.tagName;
+      const isTypingTarget = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || target?.isContentEditable;
+      if (isTypingTarget) return;
+      event.preventDefault();
+      setIsPaletteOpen((open) => !open);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   useEffect(() => {
     // Design System §6.11: sidebar collapses below the `md` (tablet)
@@ -83,6 +107,18 @@ export function AppShell({ children, breadcrumbs, notifications = [], navVariant
     href: item.href,
     icon: item.icon,
     active: path === item.href,
+  }));
+
+  // Same `navItemsForRole` data `Sidebar`/`PillNav` already render - no
+  // second nav taxonomy to keep in sync. `onSelect` calls the router
+  // directly rather than rendering an `<a>` inside the palette, since
+  // `CommandItem` is a plain callback, not a link-shaped prop.
+  const paletteItems: CommandItem[] = items.map((item) => ({
+    id: item.href,
+    label: item.label,
+    icon: item.icon,
+    group: 'Navigate',
+    onSelect: () => navigate(item.href),
   }));
 
   const openAlerts = notifications.filter((alert) => alert.status === 'OPEN');
@@ -130,10 +166,19 @@ export function AppShell({ children, breadcrumbs, notifications = [], navVariant
     </a>
   );
 
+  // `[Product Experience Sprint I]` Rendered once, shared by both nav
+  // variants below - `CommandPalette` portals to `document.body` itself
+  // (`createPortal`, same as `Modal`/`Drawer`), so its position in this
+  // tree doesn't affect layout either way.
+  const commandPalette = (
+    <CommandPalette isOpen={isPaletteOpen} onClose={() => setIsPaletteOpen(false)} items={paletteItems} testId="command-palette" />
+  );
+
   if (navVariant === 'pill') {
     return (
       <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
         {skipLink}
+        {commandPalette}
         <div style={{ padding: `${theme.spacing[5]}px ${theme.spacing[6]}px ${theme.spacing[3]}px` }}>
           <PillNav items={items} linkAs={Link} rightSlot={identitySlot} />
         </div>
@@ -146,6 +191,7 @@ export function AppShell({ children, breadcrumbs, notifications = [], navVariant
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
+      {commandPalette}
       {skipLink}
 
       <TopBar

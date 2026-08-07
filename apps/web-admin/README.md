@@ -41,6 +41,23 @@ disclosed reasoning in `Stewardship/STEWARDSHIP_PAGE_DESIGN_NOTES.md`
 real dashboard; no page in this app falls back to the generic
 "coming soon" stub anymore except genuinely unbuilt roles (e.g. `WORKER`).
 
+**Product Experience Sprint I:** engineering is now considered complete;
+this sprint polished the product surface instead. `docs/
+ECCLESIA_DESIGN_SYSTEM.md` (new) is the single implementation-facing
+reference for every token/component/pattern this app uses — read that
+before building a new screen. Church Pulse is now the flagship dashboard
+feature (`ChurchPulseInsightsPanel.tsx`, Resident Pastor dashboard only —
+sub-metrics, an actionable insight line, a Branch Comparison preview).
+Cmd/Ctrl+K opens a command palette from anywhere in the app
+(`AppShell.tsx`) for fast cross-page navigation — a component that
+existed since the UI Foundation sprint but was never mounted until now.
+Every persona dashboard's KPI grid now shares the same responsive
+column-count behavior. An audit of empty/loading/error states across
+every major page found the existing three-state contract
+(`Skeleton`/`ErrorState`/`EmptyState`) already consistently applied — see
+`DashboardPage/DASHBOARD_REDESIGN_NOTES.md`'s own addendum for the full
+account, including what was deliberately left unchanged.
+
 See `app/router/router.tsx`'s own doc comment for why this app has a
 small hand-built router instead of `react-router-dom` (no package-registry
 access anywhere in this project's history), and each page's own

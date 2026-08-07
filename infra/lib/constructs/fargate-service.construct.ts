@@ -97,22 +97,48 @@ export class FargateService extends Construct {
     // CloudWatch log group (created *here*, in the caller's stack) is
     // passed to `ecs.LogDrivers.awsLogs()`, which auto-grants
     // `logs:CreateLogStream`/`PutLogEvents` on the execution role by
-    // attaching a policy statement to it - but that role lives in
-    // `IamStack`, so CDK tried to make `IamStack` depend on *this* stack's
-    // log group ARN, while this stack already depends on `IamStack` for
-    // the role itself. Re-importing both roles by ARN with `mutable:
-    // false` makes any further `.grant*()` call against them a no-op
-    // (documented CDK behavior, `FromRoleArnOptions.addGrantsToResources`
-    // defaults to `false`) instead of trying to modify a role that lives
-    // in an already-upstream stack - safe here because
-    // `AmazonECSTaskExecutionRolePolicy` (attached in `iam-stack.ts`'s own
-    // `buildExecutionRole()`) already grants `logs:CreateLogStream`/
-    // `PutLogEvents` with `Resource: "*"`, so the auto-grant this skips
-    // was redundant, not load-bearing - and every *task*-role permission
-    // (SQS/EventBridge/Secrets Manager grants) was already applied inside
-    // `IamStack` itself, not here.
-    const importedTaskRole = iam.Role.fromRoleArn(this, 'ImportedTaskRole', props.taskRole.roleArn, { mutable: false });
-    const importedExecutionRole = iam.Role.fromRoleArn(this, 'ImportedExecutionRole', props.executionRole.roleArn, { mutable: false });
+    // attaching a policy statement *directly to that live Role
+    // construct's own resource* - but that resource lives in `IamStack`,
+    // so CDK tried to make `IamStack` depend on *this* stack's log group
+    // ARN, while this stack already depends on `IamStack` for the role
+    // itself. Re-importing both roles by ARN (`iam.Role.fromRoleArn`)
+    // fixes that: an imported role is its own construct, scoped to
+    // *this* stack, so any policy statement `.grant*()`/`addContainer()`
+    // attaches to it becomes a new `iam.Policy` resource declared here,
+    // not an edit to `IamStack`'s own role resource.
+    //
+    // `[Bug fix, this pass]` The imports were additionally made `mutable:
+    // false`, which - per CDK's own documented `Grant.addToPrincipal`
+    // behavior - makes `addToPrincipalPolicy()` a no-op instead of merely
+    // "attach elsewhere," so every subsequent grant attempt falls back to
+    // `Grant.addToPrincipalOrResource`'s *resource*-policy branch. For
+    // `ecs.TaskDefinition.addContainer()`'s `secrets` prop (`ecs.Secret.
+    // fromSecretsManager(...)`), that fallback calls the secret's own
+    // `.addToResourcePolicy()` - a real CloudFormation resource policy on
+    // the secret itself (`SecretsStack`/`DatabaseStack`, not this stack),
+    // naming this execution role's ARN as `Principal`. That is a second,
+    // *reverse* `DependencyCycle`, this time between `SecretsStack` and
+    // `IamStack` (confirmed via a real `nx run infra:test` failure on
+    // `runtime-observability-stack.spec.ts`: `IamStack` already depends on
+    // `SecretsStack` for the *task* role's own direct grants in
+    // `iam-stack.ts`, so the resource-policy fallback's reverse edge
+    // completed the cycle). `mutable: true` (the default - simply omitting
+    // the option) keeps every grant on the *identity* side: the new
+    // `iam.Policy` this construct's own imported-role construct creates
+    // lives in *this* stack (`ApiServiceStack`/`WorkerServiceStack`),
+    // referencing the role by its already-cross-stack ARN (an edge to
+    // `IamStack` that already exists - this stack receives the role via
+    // props) and the secret by its ARN (an edge to `SecretsStack`/
+    // `DatabaseStack` that already exists the same way) - never touching
+    // `IamStack`'s or `SecretsStack`'s own template, so no reverse edge is
+    // possible. `AmazonECSTaskExecutionRolePolicy` (attached in
+    // `iam-stack.ts`'s own `buildExecutionRole()`) still makes the log
+    // group grant specifically redundant (not load-bearing either way);
+    // the secrets grant is the opposite - load-bearing, since nothing
+    // else grants the execution role `secretsmanager:GetSecretValue` on
+    // these secrets.
+    const importedTaskRole = iam.Role.fromRoleArn(this, 'ImportedTaskRole', props.taskRole.roleArn);
+    const importedExecutionRole = iam.Role.fromRoleArn(this, 'ImportedExecutionRole', props.executionRole.roleArn);
 
     this.taskDefinition = new ecs.FargateTaskDefinition(this, 'TaskDefinition', {
       family: props.resourceName,

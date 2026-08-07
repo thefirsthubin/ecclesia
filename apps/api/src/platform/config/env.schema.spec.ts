@@ -44,6 +44,11 @@ describe('validateEnv', () => {
       LOG_LEVEL: 'info',
       API_DOCS_ENABLED: true,
       EVENTBRIDGE_BUS_NAME: 'ecclesia-engagement-signals',
+      // `[Remaining Engineering Sprint, Milestone 11]` `RECEIPT_STORAGE_DIR`
+      // is a new documented-default env var backing `StorageService`
+      // (`platform/storage/storage.service.ts`) - added here to keep this
+      // exhaustive `toEqual` in sync with `env.schema.ts`'s real shape.
+      RECEIPT_STORAGE_DIR: './uploads/receipts',
       ...VALID_ENV,
     });
   });
@@ -184,6 +189,7 @@ describe('validateEnv', () => {
       LOG_LEVEL: 'warn',
       API_DOCS_ENABLED: false,
       EVENTBRIDGE_BUS_NAME: 'ecclesia-engagement-signals',
+      RECEIPT_STORAGE_DIR: './uploads/receipts',
       ...VALID_ENV,
     });
   });

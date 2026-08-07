@@ -310,3 +310,53 @@ render output, including a deliberately shaped `ADMIN`-role `fetch` mock
 (see the spec's own inline comment on why `/insights/branch-dashboard`
 needs a real `{ pulseScore, alerts }` shape while every other endpoint
 tolerates the generic `[]` every other test in the file already used).
+
+## Sprint 12 addendum — Product Experience Sprint I
+
+Closes Objectives 2/3/6 of the "Dashboard Experience & Design System
+Foundation" brief. Full token/component reference is now
+`docs/ECCLESIA_DESIGN_SYSTEM.md` (new, Objective 1) — this addendum only
+covers what changed in `DashboardPage/` specifically.
+
+**Church Pulse elevated (Objective 3)**: `ChurchPulseInsightsPanel.tsx`
+(new) replaces `ChurchPulseCard` on `ResidentPastorDashboard` only —
+same real score/band/`testId="church-pulse-card"`/heading text (so
+`DashboardPage.spec.tsx`'s pre-existing RESIDENT_PASTOR assertions are
+unaffected), plus a sub-metric row (Attendance/Giving/Volunteer Health
+read from the already-real `DEMO_KPIS`, Pastoral Care Alerts from the
+real `openAlertCount`, Follow-up Health/Engagement Trend from two new,
+disclosed-demo `dashboardDemoData.ts` fields), one computed actionable
+insight sentence (open alerts beat a declining KPI beat a positive
+default — reuses each KPI's own `actionLabel` copy rather than a second
+prose-generation system), and an optional Branch Comparison strip
+(`DEMO_COUNCIL_BRANCHES`, same Horizon-3-preview disclosure
+`CouncilAdministratorDashboard` already established). `ChurchPulseCard`
+itself is untouched and still used exactly as before on its other five
+call sites (`InsightsPage`, `ClusterInsightsView`,
+`CouncilAdministratorDashboard`, `BranchPastorDashboard`) — deliberately
+not swapped everywhere; those are compact/read-only/cluster-scoped
+contexts where the full flagship density would be wrong, not a gap.
+
+**Responsive consistency (Objective 6)**: `MinistryLeaderDashboard`,
+`FinanceOfficerDashboard`, and `CouncilAdministratorDashboard`'s KPI
+grids previously jumped straight from 3–4 columns to 1 below `sm`,
+skipping the tablet-range 2-column step `ResidentPastorDashboard`'s own
+KPI grid already had. All three now read `isCompact` from
+`useDashboardBreakpoint` the same way. `BranchPastorDashboard` has no
+KPI grid to fix (its two-card pair grids already collapse correctly).
+
+**Command palette (Objective 4, `AppShell.tsx` not this folder)**:
+`CommandPalette` (`@ecclesia/ui-web`) existed since the Nav/Data/Layout
+tier of the UI Foundation sprint but was never mounted anywhere in
+`apps/web-admin` — confirmed via grep before wiring it. Cmd/Ctrl+K now
+opens it from any page (ignored while a text field already has focus),
+listing every nav destination `navItemsForRole` already resolves for the
+current role. New `AppShell.spec.tsx` (this app had none before) covers
+open/close/typing-suppression.
+
+**Verification**: `tsc --noEmit -p apps/web-admin/tsconfig.app.json` and
+`tsconfig.spec.json` both clean, covering every new/changed file above.
+`pnpm`/`eslint`/`jest` remain unavailable in this sandbox session (same
+disclosed limitation as every prior sprint) — every new spec assertion
+was manually traced against the real component/hook code instead of
+left unverified.

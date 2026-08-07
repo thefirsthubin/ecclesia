@@ -54,7 +54,7 @@ export function MinistryLeaderDashboard() {
   const accessToken = state.status === 'authenticated' ? state.accessToken : undefined;
   const personId = state.status === 'authenticated' ? state.actor.personId : undefined;
   const groupId = state.status === 'authenticated' ? state.actor.basontaId : undefined;
-  const { isNarrow } = useDashboardBreakpoint();
+  const { isCompact, isNarrow } = useDashboardBreakpoint();
 
   const personState = useAsyncData<PersonResponseDto>(
     (signal) => {
@@ -80,7 +80,12 @@ export function MinistryLeaderDashboard() {
     );
   }
 
-  const kpiColumns = isNarrow ? 1 : 3;
+  // `[Product Experience Sprint I]` Objective 6 - adds the `isCompact`
+  // (tablet, 2-column) tier `ResidentPastorDashboard`'s own KPI grid
+  // already has, so a Basonta Leader on a tablet doesn't see the same
+  // abrupt 3-columns-to-1 jump every other persona dashboard had before
+  // this pass.
+  const kpiColumns = isNarrow ? 1 : isCompact ? 2 : 3;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5], maxWidth: 1280 }}>

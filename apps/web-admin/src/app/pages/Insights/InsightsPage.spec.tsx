@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { ThemeProvider } from '@ecclesia/ui-web';
 
+import { RouterProvider } from '../../router/router';
 import { InsightsPage } from './InsightsPage';
 
 const mockUseAuth = jest.fn();
@@ -26,10 +27,24 @@ function branchDashboard() {
   };
 }
 
+/**
+ * `[Remaining Engineering Sprint, Milestone 11 - real jest run fix]` Now
+ * wraps `RouterProvider` too. `InsightsPage` renders `ResidentPastorDashboard`
+ * for `RESIDENT_PASTOR`/`ACTING_RESIDENT_PASTOR` (§ "same Branch dashboard
+ * as /dashboard"), which renders `QuickActionsRow` - `useNavigate()`
+ * throws outside a `RouterProvider` by design (`router.tsx`'s own
+ * `useRouterContext()`). This dependency predates Milestone 11 (the
+ * Dashboard Redesign sprint wired `QuickActionsRow` into
+ * `ResidentPastorDashboard`), but `jest` never actually executed in any
+ * sandbox session before now to catch it - the first real run surfaced a
+ * latent gap, not a regression this sprint introduced.
+ */
 function renderPage() {
   return render(
     <ThemeProvider>
-      <InsightsPage />
+      <RouterProvider>
+        <InsightsPage />
+      </RouterProvider>
     </ThemeProvider>,
   );
 }

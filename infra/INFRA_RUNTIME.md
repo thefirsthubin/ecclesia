@@ -227,12 +227,17 @@ not just manual review:
   1. `EcsClusterStack` threw `MustBeCapacityProviderAdded` - fixed by
      setting `enableFargateCapacityProviders: true`.
   2. `FargateService`/`DatabaseStack` cross-stack IAM/secret grants
-     created real cycles - fixed by importing IAM roles as immutable
-     (`iam.Role.fromRoleArn(..., { mutable: false })`) and switching RDS
-     credentials from `Credentials.fromSecret()` (which auto-attaches the
-     secret, the cycle's actual source per `aws-rds/lib/instance.js`'s own
-     code) to `Credentials.fromPassword()` extracting just the password
-     value.
+     created real cycles - fixed at the time by importing IAM roles as
+     immutable (`iam.Role.fromRoleArn(..., { mutable: false })`) and
+     switching RDS credentials from `Credentials.fromSecret()` (which
+     auto-attaches the secret, the cycle's actual source per
+     `aws-rds/lib/instance.js`'s own code) to `Credentials.fromPassword()`
+     extracting just the password value. `[Superseded]` The `mutable:
+     false` half of that fix turned out to cause a *different* real
+     `DependencyCycle` once `ecs.TaskDefinition.addContainer()`'s
+     automatic execution-role secret grants were exercised - see §11
+     below, which replaces it with `mutable: true` (the default). The
+     `Credentials.fromPassword()` half is unaffected and still stands.
 - **One real subnet-count bug, found via a real synth** - `maxAzs` alone
   produced 6 subnets, not 9, with no concrete AWS account in scope. Fixed
   via explicit `availabilityZones` (§3 above).
@@ -281,3 +286,77 @@ CloudWatch, IAM - all comparatively small, mostly request-based pricing).
 A real AWS Cost Explorer review after a real deployment, per Blueprint
 §13.5's own cost-stewardship principle, is what should replace this
 estimate - not the other way around.
+
+## 11. Post-Milestone-10 bugfix pass - CDK validation warnings + a real circular dependency
+
+Two real, user-surfaced `nx run infra:test` failures, fixed in this pass -
+neither caught at the time §9 above was written, since `jest` could not
+run in that sandbox either and these only showed up once the user ran the
+suite for real on their own machine.
+
+**1. `network.construct.ts` - CloudFormation-Validate `W3010`/`F3031`.**
+`database-stack.spec.ts`'s `Template.fromStack()` call runs CDK's
+CloudFormation-Validate synthesis check, which flagged two real, separate
+issues in `Network`:
+
+- **`F3031`** - the three `SecurityGroup` `description` strings each
+  contained a literal `§` character (`'...per Milestone 10 §6/§7.'` etc.),
+  which CloudFormation's `GroupDescription` allowed-character pattern
+  (`^([a-z,A-Z,0-9,. _\-:/()#,@[\]+=&;{}!$*])*$`) does not permit - a
+  genuine violation, not a false positive. Fixed by rewording to ASCII
+  (`'Part 6'`/`'Part 7'` in place of `§6`/`§7`).
+- **`W3010`** - the explicit `availabilityZones` array (§3's own
+  documented fix for CDK's AZ-count lookup silently defaulting to 2 AZs
+  with no concrete account in scope) is flagged as "hardcoded," which is
+  correct in general but not the bug that warning exists to catch here -
+  removing it would reintroduce the real 6-subnets-not-9 bug §9 already
+  found and fixed once. Acknowledged, not reverted, via
+  `Annotations.of(this).acknowledgeWarning('CloudFormation-Validate::W3010',
+  '<reason>')` (`Annotations.of(...).acknowledgeWarning()` is CDK's own
+  documented API for exactly this - suppressing one specific, deliberately
+  -accepted warning by rule ID, confirmed present in the installed
+  `aws-cdk-lib@2.263.0`).
+
+**2. `IamStack` <-> `SecretsStack` - a second, different real
+`DependencyCycle`.** `runtime-observability-stack.spec.ts` failed with
+`'TestSecretsStack' depends on 'TestIamStack'` (via
+`ApiTaskExecutionRole/Resource.Arn`) - the reverse of the
+already-legitimate `IamStack -> SecretsStack` edge (`iam-stack.ts`'s own
+`secrets.databaseCredentials.grantRead(this.apiTaskRole)` calls). Root
+cause traced by reading `aws-cdk-lib`'s installed source directly (not
+assumed): `fargate-service.construct.ts` imports both IAM roles via
+`iam.Role.fromRoleArn(..., { mutable: false })` (§9's fix #2 above).
+`ecs.ContainerDefinition.addSecret()` (invoked internally by
+`addContainer()`'s `secrets` prop, used by both `ApiServiceStack` and
+`WorkerServiceStack` for `DB_MASTER_PASSWORD`/`DB_APP_PASSWORD`)
+unconditionally calls `secret.grantRead(executionRole)` for every secret.
+`Grant.addToPrincipalOrResource()` tries the identity (role) side first;
+for an immutable imported role that is a documented no-op, so it falls
+back to `resource.addToResourcePolicy()` - a real CloudFormation resource
+policy declared *on the secret* (living in `SecretsStack`/`DatabaseStack`)
+naming the execution role's ARN (a token from `IamStack`) as `Principal`.
+That resource policy is what created the reverse edge, completing the
+cycle against `IamStack`'s own, already-existing forward dependency on
+`SecretsStack`.
+
+Fixed by changing both `iam.Role.fromRoleArn()` calls in
+`fargate-service.construct.ts` from `{ mutable: false }` to the default
+(`mutable: true`) - still importing by ARN (so no policy statement is ever
+attached to the *real* Role resource living in `IamStack`, which is what
+originally caused §9's log-group cycle), but now `addToPrincipalPolicy()`
+succeeds against the *imported* role construct, which creates a new
+`iam.Policy` resource in the *importing* stack (`ApiServiceStack`/
+`WorkerServiceStack`) instead of a resource policy on the secret. Every
+edge that results (`ApiServiceStack -> IamStack` for the role,
+`ApiServiceStack -> SecretsStack`/`DatabaseStack` for the secret) already
+existed - no new edge, no cycle. Confirmed via a real `npx cdk synth`
+(all 39 stacks, all 3 environments) in this sandbox: "Successfully
+synthesized," and `cdk.out/*.json` contains zero remaining references to
+`W3010`, `F3031`, or `CloudFormation-Validate` for any stack.
+
+**Not re-verified in this sandbox**: `jest` still cannot execute here
+(§9's own disclosed `@swc/core` limitation, unchanged) - the real
+`nx run infra:test` pass/fail signal is still the user's own machine's
+job. `npx tsc --noEmit` (both `tsconfig.app.json` and `tsconfig.spec.json`)
+and a real `npx cdk synth --all` were the verification available here, and
+both are clean.

@@ -39,7 +39,7 @@ export function FinanceOfficerDashboard() {
   const { state } = useAuth();
   const accessToken = state.status === 'authenticated' ? state.accessToken : undefined;
   const personId = state.status === 'authenticated' ? state.actor.personId : undefined;
-  const { isNarrow } = useDashboardBreakpoint();
+  const { isCompact, isNarrow } = useDashboardBreakpoint();
 
   const personState = useAsyncData<PersonResponseDto>(
     (signal) => {
@@ -72,7 +72,11 @@ export function FinanceOfficerDashboard() {
       ? transactionsState.data.filter((t) => t.currentState === 'VERIFIED' || t.currentState === 'RECONCILED').reduce((sum, t) => sum + Number(t.amountMinor), 0)
       : undefined;
 
-  const kpiColumns = isNarrow ? 1 : 4;
+  // `[Product Experience Sprint I]` Objective 6 - same `isCompact`
+  // (tablet, 2-column) tier added consistently across every persona
+  // dashboard's KPI grid this pass - see `MinistryLeaderDashboard.tsx`'s
+  // matching comment.
+  const kpiColumns = isNarrow ? 1 : isCompact ? 2 : 4;
   const kpis: { id: string; label: string; icon: 'clock' | 'alertTriangle' | 'coins' | 'checkCircle'; value: number | undefined; caption: string; href: string }[] = [
     { id: 'pending', label: 'PENDING VERIFICATION', icon: 'clock', value: recordedCount, caption: 'Awaiting Verify/Flag', href: '/stewardship' },
     { id: 'flagged', label: 'FLAGGED', icon: 'alertTriangle', value: flaggedCount, caption: 'Needs investigation', href: '/stewardship' },

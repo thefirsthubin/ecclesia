@@ -89,13 +89,29 @@ export class Network extends Construct {
       ],
     });
 
+    // `[Bug fix, this pass]` CDK's CloudFormation-Validate synthesis check
+    // flags the explicit `availabilityZones` list above with W3010
+    // ("hardcoded availability zone"), which is exactly backwards here:
+    // that list isn't an accidental hardcode, it's the deliberate,
+    // documented fix (see the comment above) for CDK's own AZ-count
+    // lookup silently under-provisioning AZs when no concrete account is
+    // in scope. Removing it would reintroduce the real bug it fixed, so
+    // the warning is acknowledged rather than "resolved" by reverting the
+    // fix. `acknowledgeWarning` on this construct's own scope covers the
+    // VPC and its generated subnets (child scopes), per its own doc
+    // comment ("The acknowledgement will apply to all child scopes").
+    cdk.Annotations.of(this).acknowledgeWarning(
+      'CloudFormation-Validate::W3010',
+      'Explicit availabilityZones is intentional - derived from the per-environment `region`, not a literal AZ list - and works around CDK silently defaulting to 2 AZs when no account is in scope at synth time. See the availabilityZones comment above.',
+    );
+
     // Free gateway endpoint - see this class's own doc comment.
     this.vpc.addGatewayEndpoint('S3Endpoint', { service: ec2.GatewayVpcEndpointAwsService.S3 });
 
     this.albSecurityGroup = new ec2.SecurityGroup(this, 'AlbSecurityGroup', {
       vpc: this.vpc,
       securityGroupName: `ecclesia-${envName}-alb-sg`,
-      description: 'Application Load Balancer - allows inbound HTTP/HTTPS from the internet, per Milestone 10 §6/§7.',
+      description: 'Application Load Balancer - allows inbound HTTP/HTTPS from the internet, per Milestone 10 Part 6/Part 7.',
       allowAllOutbound: true,
     });
     this.albSecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(80), 'HTTP from the internet');
@@ -104,14 +120,14 @@ export class Network extends Construct {
     this.ecsSecurityGroup = new ec2.SecurityGroup(this, 'EcsSecurityGroup', {
       vpc: this.vpc,
       securityGroupName: `ecclesia-${envName}-ecs-sg`,
-      description: 'ECS Fargate tasks (apps/api, apps/worker) - inbound only from the ALB, per Milestone 10 §7 (least privilege).',
+      description: 'ECS Fargate tasks (apps/api, apps/worker) - inbound only from the ALB, per Milestone 10 Part 7 (least privilege).',
       allowAllOutbound: true, // Fargate tasks need outbound to ECR/Cognito/EventBridge/SQS/Secrets Manager/RDS - see this construct's own doc comment on why those aren't endpoint-scoped yet.
     });
 
     this.databaseSecurityGroup = new ec2.SecurityGroup(this, 'DatabaseSecurityGroup', {
       vpc: this.vpc,
       securityGroupName: `ecclesia-${envName}-db-sg`,
-      description: 'RDS PostgreSQL - inbound only from the ECS security group on 5432, per Milestone 10 §7 (private database, least privilege).',
+      description: 'RDS PostgreSQL - inbound only from the ECS security group on 5432, per Milestone 10 Part 7 (private database, least privilege).',
       allowAllOutbound: false,
     });
     this.databaseSecurityGroup.addIngressRule(this.ecsSecurityGroup, ec2.Port.tcp(5432), 'PostgreSQL from ECS Fargate tasks only');

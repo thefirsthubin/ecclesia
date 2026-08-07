@@ -211,6 +211,34 @@ export function getTodaysPrayerFocus(): PrayerFocusDatum {
 }
 
 /**
+ * `[Product Experience Sprint I]` Church Pulse sub-metrics with no
+ * existing backing endpoint or demo export to reuse - `Attendance`/
+ * `Giving`/`Volunteers` trends already exist as `DEMO_KPIS` entries and
+ * are read from there directly by `ChurchPulseInsightsPanel`, so they are
+ * NOT duplicated here. Only the two genuinely new sub-metrics get new
+ * exports: **Follow-up Health** (Pastoral Care's on-time completion rate
+ * - `FollowUpTask` has no aggregate "completion rate" endpoint, only a
+ * per-task list) and **Engagement Trend** (Insights' own broader signal,
+ * distinct from the single Church Pulse score). Same disclosure as every
+ * other export in this file: realistic, internally-consistent numbers,
+ * not lorem ipsum, swappable for a real fetch later without a component
+ * rewrite.
+ */
+export interface ChurchPulseSubMetricsDatum {
+  followUpHealthPercent: number;
+  followUpHealthTrend: TrendDirection;
+  engagementTrendPercent: number;
+  engagementTrendDirection: TrendDirection;
+}
+
+export const DEMO_CHURCH_PULSE_SUBMETRICS: ChurchPulseSubMetricsDatum = {
+  followUpHealthPercent: 82,
+  followUpHealthTrend: 'up',
+  engagementTrendPercent: 6,
+  engagementTrendDirection: 'up',
+};
+
+/**
  * `[Remaining Engineering Sprint, Milestone 11]` Demo data for the four
  * newly-built persona dashboards - same disclosure as every export above:
  * no backing `apps/api` aggregate endpoint exists for any of these yet,

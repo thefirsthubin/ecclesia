@@ -8,7 +8,8 @@ import { useAsyncData } from '../../lib/useAsyncData';
 import { roleLabel } from '../../shell/nav-items';
 import { AlertPriorityCard } from './AlertPriorityCard';
 import { BacentaLeaderboardCard } from './BacentaLeaderboardCard';
-import { ChurchPulseCard } from './ChurchPulseCard';
+import { ChurchPulseInsightsPanel } from './ChurchPulseInsightsPanel';
+import { DEMO_CHURCH_PULSE_SUBMETRICS, DEMO_COUNCIL_BRANCHES } from './dashboardDemoData';
 import { DashboardHeader } from './DashboardHeader';
 import { KpiCard } from './KpiCard';
 import { PerformanceChartCard } from './PerformanceChartCard';
@@ -93,10 +94,14 @@ export function ResidentPastorDashboard() {
           design system's own "exactly one hero metric" rule this
           dashboard otherwise still follows. */}
       <div {...fadeIn(20)}>
-        <ChurchPulseCard
+        <ChurchPulseInsightsPanel
           status={dashboardState.status}
           pulseScore={dashboardState.status === 'success' ? dashboardState.data.pulseScore : undefined}
           onRetry={dashboardState.refetch}
+          openAlertCount={openAlertCount}
+          kpis={demoState.status === 'success' ? demoState.data.kpis : undefined}
+          subMetrics={DEMO_CHURCH_PULSE_SUBMETRICS}
+          branches={DEMO_COUNCIL_BRANCHES}
         />
       </div>
 

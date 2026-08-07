@@ -54,7 +54,7 @@ const ministry_module_1 = __webpack_require__(140);
 const pastoral_care_module_1 = __webpack_require__(32);
 const people_module_1 = __webpack_require__(33);
 const stewardship_module_1 = __webpack_require__(155);
-const platform_module_1 = __webpack_require__(178);
+const platform_module_1 = __webpack_require__(184);
 /**
  * Root module. Bounded-context modules (Blueprint Ch.1 §4.2 module
  * inventory: PeopleModule, PastoralCareModule, MinistryModule,
@@ -3549,7 +3549,7 @@ exports.alertListResponseSchema = zod_1.z.array(exports.alertResponseSchema);
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.overcommitmentFlagListResponseSchema = exports.overcommitmentFlagResponseSchema = exports.rosterResponseSchema = exports.rosterMemberResponseSchema = exports.workerAvailabilityResponseSchema = exports.recordWorkerAvailabilitySchema = exports.staffingTargetResponseSchema = exports.createStaffingTargetSchema = void 0;
+exports.overcommitmentFlagListResponseSchema = exports.overcommitmentFlagResponseSchema = exports.rosterResponseSchema = exports.rosterMemberResponseSchema = exports.workerAvailabilityResponseSchema = exports.recordWorkerAvailabilitySchema = exports.staffingTargetListResponseSchema = exports.staffingTargetResponseSchema = exports.createStaffingTargetSchema = void 0;
 const zod_1 = __webpack_require__(49);
 /**
  * Shared Zod schemas for the Ministry bounded context (PRD §13.3). See
@@ -3598,6 +3598,10 @@ exports.staffingTargetResponseSchema = zod_1.z.object({
     createdAt: zod_1.z.string().datetime(),
     updatedAt: zod_1.z.string().datetime(),
 });
+/** `[Remaining Engineering Sprint, Milestone 11]` `GET /ministry/staffing-targets?groupId=`'s
+ * response shape - the same `z.array(...)` convention `rosterResponseSchema`/
+ * `overcommitmentFlagListResponseSchema` below already use for their own list endpoints. */
+exports.staffingTargetListResponseSchema = zod_1.z.array(exports.staffingTargetResponseSchema);
 /**
  * §16.3's "Worker availability self-service (H2)": "lets a worker mark
  * themselves unavailable for a date range." Date-only (`z.string().date()`),
@@ -10323,6 +10327,22 @@ let StaffingTargetController = class StaffingTargetController {
     create(actor, body) {
         return this.staffingTargetService.create(actor, body);
     }
+    /**
+     * `[Remaining Engineering Sprint, Milestone 11]` `GET
+     * /ministry/staffing-targets?groupId=` - the Staffing Overview list the
+     * Web Admin Staffing Targets UI needs (`MINISTRY_PAGE_DESIGN_NOTES.md`'s
+     * disclosed gap). Declared before `:id`, the same readability convention
+     * every other module's list + getById pair follows - the two paths never
+     * actually collide (this route has no path segment after
+     * `staffing-targets`, `:id` requires one), so ordering here is only a
+     * convention, not a correctness requirement.
+     */
+    list(groupId) {
+        if (!groupId) {
+            throw new common_1.NotFoundException("Query must include a 'groupId'");
+        }
+        return this.staffingTargetService.listByGroup(groupId);
+    }
     getById(id) {
         return this.staffingTargetService.getById(id);
     }
@@ -10338,6 +10358,15 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", [Object, Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], StaffingTargetController.prototype, "create", null);
+tslib_1.__decorate([
+    (0, common_1.Get)(),
+    (0, rbac_1.RequirePermission)('ministry.staffing_target.read'),
+    (0, common_1.UseGuards)(staffing_target_resource_context_guard_1.StaffingTargetListResourceContextGuard, rbac_1.RbacGuard),
+    tslib_1.__param(0, (0, common_1.Query)('groupId')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String]),
+    tslib_1.__metadata("design:returntype", void 0)
+], StaffingTargetController.prototype, "list", null);
 tslib_1.__decorate([
     (0, common_1.Get)(':id'),
     (0, rbac_1.RequirePermission)('ministry.staffing_target.read'),
@@ -10358,9 +10387,9 @@ exports.StaffingTargetController = StaffingTargetController = tslib_1.__decorate
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
-var _a, _b, _c, _d, _e;
+var _a, _b, _c, _d, _e, _f, _g;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.StaffingTargetResourceContextGuard = exports.StaffingTargetCreateResourceContextGuard = void 0;
+exports.StaffingTargetResourceContextGuard = exports.StaffingTargetListResourceContextGuard = exports.StaffingTargetCreateResourceContextGuard = void 0;
 const tslib_1 = __webpack_require__(8);
 const common_1 = __webpack_require__(2);
 const branch_configuration_service_1 = __webpack_require__(31);
@@ -10390,6 +10419,34 @@ exports.StaffingTargetCreateResourceContextGuard = StaffingTargetCreateResourceC
     (0, common_1.Injectable)(),
     tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof branch_configuration_service_1.BranchConfigurationService !== "undefined" && branch_configuration_service_1.BranchConfigurationService) === "function" ? _a : Object, typeof (_b = typeof group_scope_service_1.GroupScopeService !== "undefined" && group_scope_service_1.GroupScopeService) === "function" ? _b : Object])
 ], StaffingTargetCreateResourceContextGuard);
+/**
+ * `[Remaining Engineering Sprint, Milestone 11]` `GET
+ * /ministry/staffing-targets?groupId=` - the new Staffing Overview list.
+ * Resolves scope from the query param the same way
+ * `StaffingTargetCreateResourceContextGuard` resolves it from the request
+ * body - both ultimately just need "which Basonta is this about," and
+ * `GroupScopeService.loadResourceContext` doesn't care where the id came
+ * from.
+ */
+let StaffingTargetListResourceContextGuard = class StaffingTargetListResourceContextGuard extends ecclesia_context_guard_base_1.EcclesiaContextGuardBase {
+    groupScopeService;
+    constructor(branchConfigurationService, groupScopeService) {
+        super(branchConfigurationService);
+        this.groupScopeService = groupScopeService;
+    }
+    async loadResource(request, _actor) {
+        const groupId = request.query?.groupId;
+        if (!groupId) {
+            throw new common_1.NotFoundException("Query must include a 'groupId'");
+        }
+        return this.groupScopeService.loadResourceContext(groupId);
+    }
+};
+exports.StaffingTargetListResourceContextGuard = StaffingTargetListResourceContextGuard;
+exports.StaffingTargetListResourceContextGuard = StaffingTargetListResourceContextGuard = tslib_1.__decorate([
+    (0, common_1.Injectable)(),
+    tslib_1.__metadata("design:paramtypes", [typeof (_c = typeof branch_configuration_service_1.BranchConfigurationService !== "undefined" && branch_configuration_service_1.BranchConfigurationService) === "function" ? _c : Object, typeof (_d = typeof group_scope_service_1.GroupScopeService !== "undefined" && group_scope_service_1.GroupScopeService) === "function" ? _d : Object])
+], StaffingTargetListResourceContextGuard);
 /** `GET /ministry/staffing-targets/:id`. */
 let StaffingTargetResourceContextGuard = class StaffingTargetResourceContextGuard extends ecclesia_context_guard_base_1.EcclesiaContextGuardBase {
     staffingTargetRepository;
@@ -10411,7 +10468,7 @@ let StaffingTargetResourceContextGuard = class StaffingTargetResourceContextGuar
 exports.StaffingTargetResourceContextGuard = StaffingTargetResourceContextGuard;
 exports.StaffingTargetResourceContextGuard = StaffingTargetResourceContextGuard = tslib_1.__decorate([
     (0, common_1.Injectable)(),
-    tslib_1.__metadata("design:paramtypes", [typeof (_c = typeof branch_configuration_service_1.BranchConfigurationService !== "undefined" && branch_configuration_service_1.BranchConfigurationService) === "function" ? _c : Object, typeof (_d = typeof staffing_target_repository_1.StaffingTargetRepository !== "undefined" && staffing_target_repository_1.StaffingTargetRepository) === "function" ? _d : Object, typeof (_e = typeof group_scope_service_1.GroupScopeService !== "undefined" && group_scope_service_1.GroupScopeService) === "function" ? _e : Object])
+    tslib_1.__metadata("design:paramtypes", [typeof (_e = typeof branch_configuration_service_1.BranchConfigurationService !== "undefined" && branch_configuration_service_1.BranchConfigurationService) === "function" ? _e : Object, typeof (_f = typeof staffing_target_repository_1.StaffingTargetRepository !== "undefined" && staffing_target_repository_1.StaffingTargetRepository) === "function" ? _f : Object, typeof (_g = typeof group_scope_service_1.GroupScopeService !== "undefined" && group_scope_service_1.GroupScopeService) === "function" ? _g : Object])
 ], StaffingTargetResourceContextGuard);
 
 
@@ -10449,6 +10506,20 @@ let StaffingTargetRepository = class StaffingTargetRepository {
     }
     findById(id) {
         return this.prisma.staffingTarget.findUnique({ where: { id } });
+    }
+    /**
+     * `[Remaining Engineering Sprint, Milestone 11]` `GET /ministry/staffing-targets?groupId=`
+     * (the "Staffing Overview" list `MINISTRY_PAGE_DESIGN_NOTES.md` already
+     * disclosed as a gap: "no 'list staffing targets for this Basonta'
+     * endpoint"). Additive only - `upsert`/`findById` above are unchanged.
+     * Ordered by `gatheringId` so the same Gathering's target always sorts
+     * together across repeated reads (no richer sort key - e.g. Gathering
+     * date - is available without a join this repository deliberately
+     * doesn't perform, matching `findById`'s own "no join, compute-on-read
+     * happens in the service" precedent).
+     */
+    findByGroupId(groupId) {
+        return this.prisma.staffingTarget.findMany({ where: { groupId }, orderBy: { gatheringId: 'asc' } });
     }
 };
 exports.StaffingTargetRepository = StaffingTargetRepository;
@@ -10504,6 +10575,17 @@ let StaffingTargetService = class StaffingTargetService {
     async getById(id) {
         const target = await this.requireTarget(id);
         return this.toResponseDto(target);
+    }
+    /**
+     * `[Remaining Engineering Sprint, Milestone 11]` Backs the new
+     * "Staffing Overview" list endpoint - every Staffing Target set against
+     * a given Basonta, each with the same live-computed adequacy every
+     * single-record read already gets. Additive: `create`/`getById` above
+     * are byte-for-byte unchanged.
+     */
+    async listByGroup(groupId) {
+        const targets = await this.staffingTargetRepository.findByGroupId(groupId);
+        return Promise.all(targets.map((target) => this.toResponseDto(target)));
     }
     async toResponseDto(target) {
         const rosteredCount = await this.groupRosterService.countActiveMembers(target.groupId);
@@ -10726,27 +10808,28 @@ const common_1 = __webpack_require__(2);
 const database_module_1 = __webpack_require__(12);
 const events_module_1 = __webpack_require__(27);
 const rbac_platform_module_1 = __webpack_require__(30);
+const storage_module_1 = __webpack_require__(156);
 const people_module_1 = __webpack_require__(33);
-const bank_deposit_confirmation_controller_1 = __webpack_require__(156);
-const expense_controller_1 = __webpack_require__(161);
-const financial_transaction_controller_1 = __webpack_require__(167);
-const pledge_controller_1 = __webpack_require__(170);
-const project_controller_1 = __webpack_require__(175);
-const bank_deposit_confirmation_resource_context_guard_1 = __webpack_require__(157);
-const expense_resource_context_guard_1 = __webpack_require__(162);
-const financial_transaction_resource_context_guard_1 = __webpack_require__(168);
-const pledge_resource_context_guard_1 = __webpack_require__(171);
-const project_resource_context_guard_1 = __webpack_require__(176);
-const bank_deposit_confirmation_repository_1 = __webpack_require__(159);
-const expense_repository_1 = __webpack_require__(163);
-const financial_transaction_repository_1 = __webpack_require__(160);
-const pledge_repository_1 = __webpack_require__(172);
-const project_repository_1 = __webpack_require__(174);
-const bank_deposit_confirmation_service_1 = __webpack_require__(158);
-const expense_service_1 = __webpack_require__(164);
-const financial_transaction_service_1 = __webpack_require__(169);
-const pledge_service_1 = __webpack_require__(173);
-const project_service_1 = __webpack_require__(177);
+const bank_deposit_confirmation_controller_1 = __webpack_require__(161);
+const expense_controller_1 = __webpack_require__(166);
+const financial_transaction_controller_1 = __webpack_require__(173);
+const pledge_controller_1 = __webpack_require__(176);
+const project_controller_1 = __webpack_require__(181);
+const bank_deposit_confirmation_resource_context_guard_1 = __webpack_require__(162);
+const expense_resource_context_guard_1 = __webpack_require__(168);
+const financial_transaction_resource_context_guard_1 = __webpack_require__(174);
+const pledge_resource_context_guard_1 = __webpack_require__(177);
+const project_resource_context_guard_1 = __webpack_require__(182);
+const bank_deposit_confirmation_repository_1 = __webpack_require__(164);
+const expense_repository_1 = __webpack_require__(169);
+const financial_transaction_repository_1 = __webpack_require__(165);
+const pledge_repository_1 = __webpack_require__(178);
+const project_repository_1 = __webpack_require__(180);
+const bank_deposit_confirmation_service_1 = __webpack_require__(163);
+const expense_service_1 = __webpack_require__(170);
+const financial_transaction_service_1 = __webpack_require__(175);
+const pledge_service_1 = __webpack_require__(179);
+const project_service_1 = __webpack_require__(183);
 /**
  * StewardshipModule (PRD §13.5 / Blueprint §4.2 module inventory) - the
  * fourth bounded-context module. Internal layout mirrors
@@ -10762,13 +10845,17 @@ const project_service_1 = __webpack_require__(177);
  * Exports nothing yet - no other bounded-context module currently
  * consumes a Stewardship service, unlike People/Pastoral Care's mutual
  * dependency or Gatherings' consumption of both.
+ *
+ * `[Remaining Engineering Sprint, Milestone 11]` Also imports
+ * `StorageModule` now - `ExpenseController`'s new Receipt Upload endpoints
+ * are this module's first consumer of `StorageService`.
  */
 let StewardshipModule = class StewardshipModule {
 };
 exports.StewardshipModule = StewardshipModule;
 exports.StewardshipModule = StewardshipModule = tslib_1.__decorate([
     (0, common_1.Module)({
-        imports: [database_module_1.DatabaseModule, rbac_platform_module_1.RbacPlatformModule, events_module_1.EventsModule, people_module_1.PeopleModule],
+        imports: [database_module_1.DatabaseModule, rbac_platform_module_1.RbacPlatformModule, events_module_1.EventsModule, people_module_1.PeopleModule, storage_module_1.StorageModule],
         controllers: [financial_transaction_controller_1.FinancialTransactionController, expense_controller_1.ExpenseController, project_controller_1.ProjectController, pledge_controller_1.PledgeController, bank_deposit_confirmation_controller_1.BankDepositConfirmationController],
         providers: [
             financial_transaction_repository_1.FinancialTransactionRepository,
@@ -10803,6 +10890,186 @@ exports.StewardshipModule = StewardshipModule = tslib_1.__decorate([
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.StorageModule = void 0;
+const tslib_1 = __webpack_require__(8);
+const common_1 = __webpack_require__(2);
+const storage_service_1 = __webpack_require__(157);
+/** `[Remaining Engineering Sprint, Milestone 11]` See `StorageService`'s
+ * own doc comment. A plain feature module (not global) - imported
+ * explicitly by `StewardshipModule`, the same pattern every other
+ * cross-cutting-but-not-platform-wide service in this codebase follows
+ * (e.g. `EventsModule`), rather than added to `PlatformModule`'s always-on
+ * export list for a capability only one module needs today. */
+let StorageModule = class StorageModule {
+};
+exports.StorageModule = StorageModule;
+exports.StorageModule = StorageModule = tslib_1.__decorate([
+    (0, common_1.Module)({
+        providers: [storage_service_1.StorageService],
+        exports: [storage_service_1.StorageService],
+    })
+], StorageModule);
+
+
+/***/ }),
+/* 157 */
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+var StorageService_1;
+var _a;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.StorageService = void 0;
+const tslib_1 = __webpack_require__(8);
+const common_1 = __webpack_require__(2);
+const config_1 = __webpack_require__(4);
+const node_crypto_1 = __webpack_require__(158);
+const promises_1 = __webpack_require__(159);
+const path = tslib_1.__importStar(__webpack_require__(160));
+/**
+ * `[Remaining Engineering Sprint, Milestone 11]` Minimal file-storage
+ * adapter behind an injectable service, closing the Stewardship Receipt
+ * Upload gap `attachExpenseReceiptSchema`'s own doc comment named:
+ * "this milestone does not implement the file upload itself... only
+ * recording the storage key of an already-uploaded receipt."
+ * `ExpenseController`'s new `POST /expenses/:id/receipt/upload` is the
+ * first (and, today, only) consumer.
+ *
+ * `[Design Decision, disclosed]` Backed by the local filesystem, not
+ * AWS S3 - deliberately, per this sprint's own brief ("Out of scope: AWS
+ * Deployment... implement [storage] using the project's existing
+ * architectural conventions... Do NOT introduce unnecessary
+ * dependencies"). This codebase has no AWS SDK dependency anywhere in
+ * `apps/api` yet (only `apps/api`'s `EventBridgePublisherService` talks
+ * to AWS, via `@aws-sdk/client-eventbridge`) and no S3 bucket exists in
+ * `infra/` today - adding one would be exactly the "AWS Deployment" work
+ * this sprint is scoped away from. `RECEIPT_STORAGE_DIR` (default
+ * `./uploads/receipts`, `env.schema.ts`) is a normal, git-ignored working
+ * directory under the API process, the same class of local state
+ * `db/migrations` or a dev SQLite file would be - fine for local/dev use,
+ * exactly as `ECCLESIA_ROADMAP.md`'s "not yet deployed" Cloud Runtime
+ * status already describes this whole application's current reality.
+ *
+ * **Known limitation, disclosed rather than hidden**: once the Cloud
+ * Runtime Infrastructure (`apps/api` on ECS Fargate) is actually deployed,
+ * a Fargate task's filesystem is ephemeral and not shared across task
+ * instances - a receipt uploaded to one task's disk would not be visible
+ * to a request served by a different task, and would be lost on
+ * redeploy/restart. This is a real, disclosed pre-condition for
+ * production readiness, the same way `AlertPriorityCard`'s "forward to
+ * Assistant Pastor" gap or the `apps/worker` "system actor" gap are
+ * disclosed rather than silently left for someone to discover later. The
+ * fix (swap `StorageService`'s body for an S3-backed implementation) is a
+ * one-file change precisely because every consumer only depends on this
+ * class's two public methods, never on "it's a local file" as an
+ * assumption.
+ */
+let StorageService = StorageService_1 = class StorageService {
+    logger = new common_1.Logger(StorageService_1.name);
+    baseDir;
+    constructor(configService) {
+        this.baseDir = path.resolve(process.cwd(), configService.get('RECEIPT_STORAGE_DIR', { infer: true }));
+    }
+    /**
+     * Persists `buffer` under a freshly generated, collision-proof storage
+     * key (never derived from the caller-supplied file name, which is
+     * untrusted input - no path traversal is possible since the key alone
+     * determines the on-disk path). Returns the key
+     * `attachExpenseReceiptSchema`'s `receiptStorageKey` expects.
+     */
+    async save(buffer, mimeType) {
+        await (0, promises_1.mkdir)(this.baseDir, { recursive: true });
+        const extension = extensionForMimeType(mimeType);
+        const storageKey = `${(0, node_crypto_1.randomUUID)()}${extension}`;
+        await (0, promises_1.writeFile)(path.join(this.baseDir, storageKey), buffer);
+        this.logger.debug(`Stored receipt upload as '${storageKey}' (${buffer.length} bytes)`);
+        return { storageKey, sizeBytes: buffer.length };
+    }
+    /** Reads a previously `save()`d file back, for the Preview Receipt flow (`GET /expenses/:id/receipt`). */
+    async read(storageKey) {
+        assertSafeStorageKey(storageKey);
+        try {
+            const buffer = await (0, promises_1.readFile)(path.join(this.baseDir, storageKey));
+            return { buffer, mimeType: mimeTypeForExtension(path.extname(storageKey)) };
+        }
+        catch {
+            throw new common_1.NotFoundException(`No stored file found for key '${storageKey}'`);
+        }
+    }
+    /**
+     * Deletes a previously `save()`d file - the Replace Receipt flow's
+     * cleanup step (the old file is removed once the new one has been
+     * attached), and Remove Receipt's own action. Best-effort: a missing
+     * file is not an error here (the caller may be cleaning up a key that
+     * was never actually written, or was already removed).
+     */
+    async remove(storageKey) {
+        assertSafeStorageKey(storageKey);
+        try {
+            await (0, promises_1.unlink)(path.join(this.baseDir, storageKey));
+        }
+        catch {
+            // Already gone - nothing further to do.
+        }
+    }
+};
+exports.StorageService = StorageService;
+exports.StorageService = StorageService = StorageService_1 = tslib_1.__decorate([
+    (0, common_1.Injectable)(),
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof config_1.ConfigService !== "undefined" && config_1.ConfigService) === "function" ? _a : Object])
+], StorageService);
+/** Guards against a `receiptStorageKey` containing a path separator or
+ * traversal sequence reaching outside `baseDir` - defense in depth, even
+ * though every key this service itself ever produces is a bare
+ * `randomUUID() + extension` with no such characters. */
+function assertSafeStorageKey(storageKey) {
+    if (storageKey.includes('/') || storageKey.includes('\\') || storageKey.includes('..')) {
+        throw new common_1.NotFoundException(`Invalid storage key '${storageKey}'`);
+    }
+}
+/** Small, deliberately narrow allow-list - the same set
+ * `RECEIPT_UPLOAD_ALLOWED_MIME_TYPES` (`ExpenseController`) validates an
+ * incoming upload against, so every key this service ever produces has an
+ * extension this map also recognizes on the way back out. */
+const MIME_TO_EXTENSION = {
+    'image/jpeg': '.jpg',
+    'image/png': '.png',
+    'image/webp': '.webp',
+    'application/pdf': '.pdf',
+};
+const EXTENSION_TO_MIME = Object.fromEntries(Object.entries(MIME_TO_EXTENSION).map(([mime, extension]) => [extension, mime]));
+function extensionForMimeType(mimeType) {
+    return MIME_TO_EXTENSION[mimeType] ?? '.bin';
+}
+function mimeTypeForExtension(extension) {
+    return EXTENSION_TO_MIME[extension] ?? 'application/octet-stream';
+}
+
+
+/***/ }),
+/* 158 */
+/***/ ((module) => {
+
+module.exports = require("node:crypto");
+
+/***/ }),
+/* 159 */
+/***/ ((module) => {
+
+module.exports = require("node:fs/promises");
+
+/***/ }),
+/* 160 */
+/***/ ((module) => {
+
+module.exports = require("node:path");
+
+/***/ }),
+/* 161 */
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
 var _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BankDepositConfirmationController = void 0;
@@ -10812,8 +11079,8 @@ const rbac_1 = __webpack_require__(35);
 const contracts_1 = __webpack_require__(46);
 const current_actor_decorator_1 = __webpack_require__(57);
 const zod_validation_pipe_1 = __webpack_require__(58);
-const bank_deposit_confirmation_resource_context_guard_1 = __webpack_require__(157);
-const bank_deposit_confirmation_service_1 = __webpack_require__(158);
+const bank_deposit_confirmation_resource_context_guard_1 = __webpack_require__(162);
+const bank_deposit_confirmation_service_1 = __webpack_require__(163);
 /**
  * FR-STW-07's bank-deposit comparison half. `GET /reconciliation` is
  * declared with no `:id` route on this controller to conflict with, so
@@ -10861,7 +11128,7 @@ exports.BankDepositConfirmationController = BankDepositConfirmationController = 
 
 
 /***/ }),
-/* 157 */
+/* 162 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -10932,7 +11199,7 @@ exports.BankDepositConfirmationListResourceContextGuard = BankDepositConfirmatio
 
 
 /***/ }),
-/* 158 */
+/* 163 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -10941,8 +11208,8 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BankDepositConfirmationService = void 0;
 const tslib_1 = __webpack_require__(8);
 const common_1 = __webpack_require__(2);
-const bank_deposit_confirmation_repository_1 = __webpack_require__(159);
-const financial_transaction_repository_1 = __webpack_require__(160);
+const bank_deposit_confirmation_repository_1 = __webpack_require__(164);
+const financial_transaction_repository_1 = __webpack_require__(165);
 const MILLISECONDS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
 function toDateOnlyString(date) {
     return date.toISOString().slice(0, 10);
@@ -11043,7 +11310,7 @@ exports.BankDepositConfirmationService = BankDepositConfirmationService = tslib_
 
 
 /***/ }),
-/* 159 */
+/* 164 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -11113,7 +11380,7 @@ exports.BankDepositConfirmationRepository = BankDepositConfirmationRepository = 
 
 
 /***/ }),
-/* 160 */
+/* 165 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -11292,26 +11559,38 @@ exports.FinancialTransactionRepository = FinancialTransactionRepository = tslib_
 
 
 /***/ }),
-/* 161 */
+/* 166 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
-var _a;
+var _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ExpenseController = void 0;
 const tslib_1 = __webpack_require__(8);
 const common_1 = __webpack_require__(2);
+const platform_express_1 = __webpack_require__(167);
 const rbac_1 = __webpack_require__(35);
 const contracts_1 = __webpack_require__(46);
 const current_actor_decorator_1 = __webpack_require__(57);
 const zod_validation_pipe_1 = __webpack_require__(58);
-const expense_resource_context_guard_1 = __webpack_require__(162);
-const expense_service_1 = __webpack_require__(164);
+const storage_service_1 = __webpack_require__(157);
+const expense_resource_context_guard_1 = __webpack_require__(168);
+const expense_service_1 = __webpack_require__(170);
+/** `[Remaining Engineering Sprint, Milestone 11]` Same allow-list
+ * `StorageService.MIME_TO_EXTENSION` recognizes - a receipt is either a
+ * photo of a paper receipt or a PDF, never anything else. */
+const RECEIPT_UPLOAD_ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+/** 10 MB - generous for a phone photo of a receipt, small enough that this
+ * process's local disk (`StorageService`'s own doc comment on why it's
+ * local, not S3, for now) can't be filled by a handful of uploads. */
+const RECEIPT_UPLOAD_MAX_BYTES = 10 * 1024 * 1024;
 /** PRD §17.3's "Expense: request/approve" rows, FR-STW-09, BR-STW-07/08. */
 let ExpenseController = class ExpenseController {
     expenseService;
-    constructor(expenseService) {
+    storageService;
+    constructor(expenseService, storageService) {
         this.expenseService = expenseService;
+        this.storageService = storageService;
     }
     request(actor, body) {
         return this.expenseService.request(actor, body);
@@ -11344,6 +11623,42 @@ let ExpenseController = class ExpenseController {
     }
     attachReceipt(actor, id, body) {
         return this.expenseService.attachReceipt(actor, id, body);
+    }
+    /**
+     * `[Remaining Engineering Sprint, Milestone 11]` The Receipt Upload
+     * workflow's actual "upload a file" step - `attachReceipt` above (kept
+     * unchanged) still only records an already-uploaded key. Same guard/
+     * permission as `attachReceipt` (this *is* that action, just with the
+     * upload folded into the one request rather than a separate
+     * upload-then-attach round trip the Web Admin client would otherwise
+     * have to sequence itself). `FileInterceptor('file', ...)` matches the
+     * `FormData` field name the frontend's `ReceiptUploadPanel` sends.
+     */
+    async uploadReceipt(actor, id, file) {
+        if (!file) {
+            throw new common_1.BadRequestException('A receipt file is required');
+        }
+        if (!RECEIPT_UPLOAD_ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+            throw new common_1.BadRequestException(`Unsupported file type '${file.mimetype}' - only JPEG, PNG, WebP, or PDF receipts are accepted`);
+        }
+        const { storageKey } = await this.storageService.save(file.buffer, file.mimetype);
+        return this.expenseService.attachReceipt(actor, id, { receiptStorageKey: storageKey });
+    }
+    /**
+     * `[Remaining Engineering Sprint, Milestone 11]` Preview Receipt -
+     * streams a previously uploaded receipt back. Gated by the same
+     * `.read` permission/guard every other `getById`-shaped read on this
+     * controller uses, since a receipt is just an attachment of the Expense
+     * record the caller can already read.
+     */
+    async getReceipt(id, res) {
+        const expense = await this.expenseService.getById(id);
+        if (!expense.receiptStorageKey) {
+            throw new common_1.BadRequestException('This Expense has no receipt attached yet');
+        }
+        const { buffer, mimeType } = await this.storageService.read(expense.receiptStorageKey);
+        res.set({ 'Content-Type': mimeType, 'Cache-Control': 'private, max-age=0, no-store' });
+        return buffer;
     }
 };
 exports.ExpenseController = ExpenseController;
@@ -11418,14 +11733,42 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", [Object, String, Object]),
     tslib_1.__metadata("design:returntype", void 0)
 ], ExpenseController.prototype, "attachReceipt", null);
+tslib_1.__decorate([
+    (0, common_1.Post)(':id/receipt/upload'),
+    (0, rbac_1.RequirePermission)('stewardship.expense.receipt'),
+    (0, common_1.UseGuards)(expense_resource_context_guard_1.ExpenseResourceContextGuard, rbac_1.RbacGuard),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', { limits: { fileSize: RECEIPT_UPLOAD_MAX_BYTES } })),
+    tslib_1.__param(0, (0, current_actor_decorator_1.CurrentActor)()),
+    tslib_1.__param(1, (0, common_1.Param)('id')),
+    tslib_1.__param(2, (0, common_1.UploadedFile)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [Object, String, Object]),
+    tslib_1.__metadata("design:returntype", Promise)
+], ExpenseController.prototype, "uploadReceipt", null);
+tslib_1.__decorate([
+    (0, common_1.Get)(':id/receipt'),
+    (0, rbac_1.RequirePermission)('stewardship.expense.read'),
+    (0, common_1.UseGuards)(expense_resource_context_guard_1.ExpenseResourceContextGuard, rbac_1.RbacGuard),
+    tslib_1.__param(0, (0, common_1.Param)('id')),
+    tslib_1.__param(1, (0, common_1.Res)({ passthrough: true })),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String, Object]),
+    tslib_1.__metadata("design:returntype", Promise)
+], ExpenseController.prototype, "getReceipt", null);
 exports.ExpenseController = ExpenseController = tslib_1.__decorate([
     (0, common_1.Controller)('expenses'),
-    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof expense_service_1.ExpenseService !== "undefined" && expense_service_1.ExpenseService) === "function" ? _a : Object])
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof expense_service_1.ExpenseService !== "undefined" && expense_service_1.ExpenseService) === "function" ? _a : Object, typeof (_b = typeof storage_service_1.StorageService !== "undefined" && storage_service_1.StorageService) === "function" ? _b : Object])
 ], ExpenseController);
 
 
 /***/ }),
-/* 162 */
+/* 167 */
+/***/ ((module) => {
+
+module.exports = require("@nestjs/platform-express");
+
+/***/ }),
+/* 168 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -11437,7 +11780,7 @@ const common_1 = __webpack_require__(2);
 const branch_configuration_service_1 = __webpack_require__(31);
 const ecclesia_context_guard_base_1 = __webpack_require__(60);
 const person_scope_service_1 = __webpack_require__(66);
-const expense_repository_1 = __webpack_require__(163);
+const expense_repository_1 = __webpack_require__(169);
 /**
  * `POST /v1/expenses` (FR-STW-09). `db/schema.prisma`'s `Expense` has no
  * `groupId` field of its own (only `requestedByPersonId`) - scope is
@@ -11521,7 +11864,7 @@ exports.ExpenseListResourceContextGuard = ExpenseListResourceContextGuard = tsli
 
 
 /***/ }),
-/* 163 */
+/* 169 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -11563,7 +11906,7 @@ exports.ExpenseRepository = ExpenseRepository = tslib_1.__decorate([
 
 
 /***/ }),
-/* 164 */
+/* 170 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -11572,9 +11915,9 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ExpenseService = void 0;
 const tslib_1 = __webpack_require__(8);
 const common_1 = __webpack_require__(2);
-const domain_stewardship_1 = __webpack_require__(165);
-const expense_repository_1 = __webpack_require__(163);
-const financial_transaction_repository_1 = __webpack_require__(160);
+const domain_stewardship_1 = __webpack_require__(171);
+const expense_repository_1 = __webpack_require__(169);
+const financial_transaction_repository_1 = __webpack_require__(165);
 function toResponseDto(expense, transaction) {
     return {
         id: expense.id,
@@ -11739,17 +12082,17 @@ exports.ExpenseService = ExpenseService = tslib_1.__decorate([
 
 
 /***/ }),
-/* 165 */
+/* 171 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const tslib_1 = __webpack_require__(8);
-tslib_1.__exportStar(__webpack_require__(166), exports);
+tslib_1.__exportStar(__webpack_require__(172), exports);
 
 
 /***/ }),
-/* 166 */
+/* 172 */
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -11847,7 +12190,7 @@ function checkOutboundTransactionTransition(from, to) {
 
 
 /***/ }),
-/* 167 */
+/* 173 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -11860,8 +12203,8 @@ const rbac_1 = __webpack_require__(35);
 const contracts_1 = __webpack_require__(46);
 const current_actor_decorator_1 = __webpack_require__(57);
 const zod_validation_pipe_1 = __webpack_require__(58);
-const financial_transaction_resource_context_guard_1 = __webpack_require__(168);
-const financial_transaction_service_1 = __webpack_require__(169);
+const financial_transaction_resource_context_guard_1 = __webpack_require__(174);
+const financial_transaction_service_1 = __webpack_require__(175);
 /**
  * PRD §17.3's "Financial Transaction: record/verify/reconcile" rows,
  * FR-STW-01 through FR-STW-05/FR-STW-07. `verify`/`flag`/`escalate` all
@@ -11982,7 +12325,7 @@ exports.FinancialTransactionController = FinancialTransactionController = tslib_
 
 
 /***/ }),
-/* 168 */
+/* 174 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -11994,7 +12337,7 @@ const common_1 = __webpack_require__(2);
 const branch_configuration_service_1 = __webpack_require__(31);
 const ecclesia_context_guard_base_1 = __webpack_require__(60);
 const group_scope_service_1 = __webpack_require__(61);
-const financial_transaction_repository_1 = __webpack_require__(160);
+const financial_transaction_repository_1 = __webpack_require__(165);
 /**
  * `POST /v1/financial-transactions` (FR-STW-01). §12.7's edge case:
  * `sourceGroupId` present means a Bacenta-collected offering (resolved via
@@ -12102,7 +12445,7 @@ exports.FinancialTransactionListResourceContextGuard = FinancialTransactionListR
 
 
 /***/ }),
-/* 169 */
+/* 175 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -12112,9 +12455,9 @@ exports.FinancialTransactionService = void 0;
 const tslib_1 = __webpack_require__(8);
 const crypto_1 = __webpack_require__(69);
 const common_1 = __webpack_require__(2);
-const domain_stewardship_1 = __webpack_require__(165);
+const domain_stewardship_1 = __webpack_require__(171);
 const eventbridge_publisher_service_1 = __webpack_require__(28);
-const financial_transaction_repository_1 = __webpack_require__(160);
+const financial_transaction_repository_1 = __webpack_require__(165);
 function toResponseDto(transaction, recordedByPersonId) {
     return {
         id: transaction.id,
@@ -12294,7 +12637,7 @@ exports.FinancialTransactionService = FinancialTransactionService = tslib_1.__de
 
 
 /***/ }),
-/* 170 */
+/* 176 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -12307,8 +12650,8 @@ const rbac_1 = __webpack_require__(35);
 const contracts_1 = __webpack_require__(46);
 const current_actor_decorator_1 = __webpack_require__(57);
 const zod_validation_pipe_1 = __webpack_require__(58);
-const pledge_resource_context_guard_1 = __webpack_require__(171);
-const pledge_service_1 = __webpack_require__(173);
+const pledge_resource_context_guard_1 = __webpack_require__(177);
+const pledge_service_1 = __webpack_require__(179);
 /** [INFERRED - no PRD §17.3 row, H2] FR-STW-08. */
 let PledgeController = class PledgeController {
     pledgeService;
@@ -12362,7 +12705,7 @@ exports.PledgeController = PledgeController = tslib_1.__decorate([
 
 
 /***/ }),
-/* 171 */
+/* 177 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -12373,7 +12716,7 @@ const tslib_1 = __webpack_require__(8);
 const common_1 = __webpack_require__(2);
 const branch_configuration_service_1 = __webpack_require__(31);
 const ecclesia_context_guard_base_1 = __webpack_require__(60);
-const pledge_repository_1 = __webpack_require__(172);
+const pledge_repository_1 = __webpack_require__(178);
 /** `POST /v1/pledges` (FR-STW-08/H2) - always the acting Member's own
  * commitment (`SELF` scope) - see `PledgeService`'s doc comment. */
 let PledgeCreateResourceContextGuard = class PledgeCreateResourceContextGuard extends ecclesia_context_guard_base_1.EcclesiaContextGuardBase {
@@ -12413,7 +12756,7 @@ exports.PledgeResourceContextGuard = PledgeResourceContextGuard = tslib_1.__deco
 
 
 /***/ }),
-/* 172 */
+/* 178 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -12470,7 +12813,7 @@ exports.PledgeRepository = PledgeRepository = tslib_1.__decorate([
 
 
 /***/ }),
-/* 173 */
+/* 179 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -12479,9 +12822,9 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.PledgeService = void 0;
 const tslib_1 = __webpack_require__(8);
 const common_1 = __webpack_require__(2);
-const financial_transaction_repository_1 = __webpack_require__(160);
-const pledge_repository_1 = __webpack_require__(172);
-const project_repository_1 = __webpack_require__(174);
+const financial_transaction_repository_1 = __webpack_require__(165);
+const pledge_repository_1 = __webpack_require__(178);
+const project_repository_1 = __webpack_require__(180);
 function toResponseDto(pledge) {
     return {
         id: pledge.id,
@@ -12573,7 +12916,7 @@ exports.PledgeService = PledgeService = tslib_1.__decorate([
 
 
 /***/ }),
-/* 174 */
+/* 180 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -12604,7 +12947,7 @@ exports.ProjectRepository = ProjectRepository = tslib_1.__decorate([
 
 
 /***/ }),
-/* 175 */
+/* 181 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -12617,8 +12960,8 @@ const rbac_1 = __webpack_require__(35);
 const contracts_1 = __webpack_require__(46);
 const current_actor_decorator_1 = __webpack_require__(57);
 const zod_validation_pipe_1 = __webpack_require__(58);
-const project_resource_context_guard_1 = __webpack_require__(176);
-const project_service_1 = __webpack_require__(177);
+const project_resource_context_guard_1 = __webpack_require__(182);
+const project_service_1 = __webpack_require__(183);
 /** [INFERRED - no PRD §17.3 row, H2] FR-STW-08. */
 let ProjectController = class ProjectController {
     projectService;
@@ -12659,7 +13002,7 @@ exports.ProjectController = ProjectController = tslib_1.__decorate([
 
 
 /***/ }),
-/* 176 */
+/* 182 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -12670,7 +13013,7 @@ const tslib_1 = __webpack_require__(8);
 const common_1 = __webpack_require__(2);
 const branch_configuration_service_1 = __webpack_require__(31);
 const ecclesia_context_guard_base_1 = __webpack_require__(60);
-const project_repository_1 = __webpack_require__(174);
+const project_repository_1 = __webpack_require__(180);
 /** `POST /v1/projects` (FR-STW-08/H2) - a Branch-level structural entity,
  * not owned by any single Group; resource is simply the actor's own
  * Branch. */
@@ -12711,7 +13054,7 @@ exports.ProjectResourceContextGuard = ProjectResourceContextGuard = tslib_1.__de
 
 
 /***/ }),
-/* 177 */
+/* 183 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -12720,8 +13063,8 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ProjectService = void 0;
 const tslib_1 = __webpack_require__(8);
 const common_1 = __webpack_require__(2);
-const pledge_repository_1 = __webpack_require__(172);
-const project_repository_1 = __webpack_require__(174);
+const pledge_repository_1 = __webpack_require__(178);
+const project_repository_1 = __webpack_require__(180);
 /** `progress` is `null` when `targetAmountMinor` is `0` - nothing to
  * divide by, and a Project with no target has no percentage to report,
  * rather than a misleading `0` or `Infinity`. Not capped at 100 - a
@@ -12802,7 +13145,7 @@ exports.ProjectService = ProjectService = tslib_1.__decorate([
 
 
 /***/ }),
-/* 178 */
+/* 184 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -12814,12 +13157,12 @@ const config_1 = __webpack_require__(4);
 const core_1 = __webpack_require__(3);
 const terminus_1 = __webpack_require__(26);
 const nestjs_pino_1 = __webpack_require__(6);
-const audit_module_1 = __webpack_require__(179);
-const auth_module_1 = __webpack_require__(180);
-const env_schema_1 = __webpack_require__(189);
+const audit_module_1 = __webpack_require__(185);
+const auth_module_1 = __webpack_require__(186);
+const env_schema_1 = __webpack_require__(194);
 const database_module_1 = __webpack_require__(12);
-const all_exceptions_filter_1 = __webpack_require__(190);
-const health_controller_1 = __webpack_require__(191);
+const all_exceptions_filter_1 = __webpack_require__(195);
+const health_controller_1 = __webpack_require__(196);
 const rbac_platform_module_1 = __webpack_require__(30);
 /**
  * PlatformModule (Sprint 1.2) - the module named but not yet built in
@@ -12896,7 +13239,7 @@ exports.PlatformModule = PlatformModule = tslib_1.__decorate([
 
 
 /***/ }),
-/* 179 */
+/* 185 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -12924,7 +13267,7 @@ exports.AuditModule = AuditModule = tslib_1.__decorate([
 
 
 /***/ }),
-/* 180 */
+/* 186 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -12933,15 +13276,15 @@ exports.AuthModule = void 0;
 const tslib_1 = __webpack_require__(8);
 const common_1 = __webpack_require__(2);
 const core_1 = __webpack_require__(3);
-const audit_module_1 = __webpack_require__(179);
+const audit_module_1 = __webpack_require__(185);
 const database_module_1 = __webpack_require__(12);
 const actor_context_resolver_service_1 = __webpack_require__(21);
-const auth_mode_1 = __webpack_require__(181);
+const auth_mode_1 = __webpack_require__(187);
 const auth_guard_1 = __webpack_require__(15);
-const cognito_verifier_service_1 = __webpack_require__(182);
-const auth_controller_1 = __webpack_require__(184);
-const dev_auth_controller_1 = __webpack_require__(185);
-const dev_auth_service_1 = __webpack_require__(186);
+const cognito_verifier_service_1 = __webpack_require__(188);
+const auth_controller_1 = __webpack_require__(190);
+const dev_auth_controller_1 = __webpack_require__(191);
+const dev_auth_service_1 = __webpack_require__(192);
 const token_verifier_interface_1 = __webpack_require__(24);
 /**
  * Wires JWT verification + `ActorContext` resolution (Sprint 1.4, extended
@@ -13029,7 +13372,7 @@ exports.AuthModule = AuthModule = tslib_1.__decorate([
 
 
 /***/ }),
-/* 181 */
+/* 187 */
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -13096,7 +13439,7 @@ function assertAuthModeIsSafe(env) {
 
 
 /***/ }),
-/* 182 */
+/* 188 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -13106,7 +13449,7 @@ exports.CognitoVerifierService = void 0;
 const tslib_1 = __webpack_require__(8);
 const common_1 = __webpack_require__(2);
 const config_1 = __webpack_require__(4);
-const aws_jwt_verify_1 = __webpack_require__(183);
+const aws_jwt_verify_1 = __webpack_require__(189);
 /**
  * Verifies AWS Cognito-issued access tokens (Sprint 1.4, Blueprint §8.1
  * ADR-004 / §8.3). `apps/api` is a pure OIDC resource server per §8.1's
@@ -13192,13 +13535,13 @@ exports.CognitoVerifierService = CognitoVerifierService = tslib_1.__decorate([
 
 
 /***/ }),
-/* 183 */
+/* 189 */
 /***/ ((module) => {
 
 module.exports = require("aws-jwt-verify");
 
 /***/ }),
-/* 184 */
+/* 190 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -13274,7 +13617,7 @@ exports.AuthController = AuthController = tslib_1.__decorate([
 
 
 /***/ }),
-/* 185 */
+/* 191 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -13286,7 +13629,7 @@ const common_1 = __webpack_require__(2);
 const zod_1 = __webpack_require__(49);
 const zod_validation_pipe_1 = __webpack_require__(58);
 const public_decorator_1 = __webpack_require__(23);
-const dev_auth_service_1 = __webpack_require__(186);
+const dev_auth_service_1 = __webpack_require__(192);
 const devLoginSchema = zod_1.z.object({ devUserId: zod_1.z.string().min(1) });
 /**
  * Development Authentication sprint - STEP 6's login experience,
@@ -13350,7 +13693,7 @@ exports.DevAuthController = DevAuthController = tslib_1.__decorate([
 
 
 /***/ }),
-/* 186 */
+/* 192 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -13358,10 +13701,10 @@ var _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DevAuthService = void 0;
 const tslib_1 = __webpack_require__(8);
-const node_crypto_1 = __webpack_require__(187);
+const node_crypto_1 = __webpack_require__(158);
 const common_1 = __webpack_require__(2);
 const prisma_root_service_1 = __webpack_require__(22);
-const dev_users_1 = __webpack_require__(188);
+const dev_users_1 = __webpack_require__(193);
 /**
  * Development Authentication sprint - STEP 3's "Development Identity
  * Provider." Only ever constructed when `AUTH_MODE=development`
@@ -13492,13 +13835,7 @@ exports.DevAuthService = DevAuthService = tslib_1.__decorate([
 
 
 /***/ }),
-/* 187 */
-/***/ ((module) => {
-
-module.exports = require("node:crypto");
-
-/***/ }),
-/* 188 */
+/* 193 */
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -13597,14 +13934,14 @@ exports.DEV_USER_SEEDS = [
 
 
 /***/ }),
-/* 189 */
+/* 194 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.validateEnv = validateEnv;
 const zod_1 = __webpack_require__(49);
-const auth_mode_1 = __webpack_require__(181);
+const auth_mode_1 = __webpack_require__(187);
 /**
  * Process environment schema for apps/api (Sprint 1.2, Blueprint §6.2's
  * "typed configuration loading" applied to bootstrap/process config).
@@ -13752,6 +14089,25 @@ const baseEnvSchema = zod_1.z.object({
      * shared bus, they do not each get their own).
      */
     EVENTBRIDGE_BUS_NAME: zod_1.z.string().min(1).default('ecclesia-engagement-signals'),
+    /**
+     * `[Remaining Engineering Sprint, Milestone 11]` Local filesystem
+     * directory `StorageService` writes uploaded files under (Expense
+     * receipts today - BR-STW-08 - the only attachment surface this
+     * codebase has). `attachExpenseReceiptSchema`'s own doc comment records
+     * that file upload itself was explicitly out of scope for the original
+     * application-layer milestone; this sprint closes that gap with the
+     * simplest storage adapter that fits this codebase's existing
+     * conventions - a local disk directory behind an injectable
+     * `StorageService`, no new runtime dependency (no AWS SDK, no
+     * multipart library beyond `multer`, which `@nestjs/platform-express`
+     * already ships). `INFRA_RUNTIME.md`/`ECCLESIA_ROADMAP.md` disclose that
+     * a real deployment (an ECS task with an ephemeral filesystem) would
+     * need this swapped for a durable backing store (S3, most likely) -
+     * `StorageService`'s own doc comment repeats this, and swapping it is a
+     * one-file change (the interface every consumer depends on is just
+     * `save`/`read`), not a call-site rewrite.
+     */
+    RECEIPT_STORAGE_DIR: zod_1.z.string().min(1).default('./uploads/receipts'),
 });
 /**
  * Development Authentication sprint. Two effects layered onto the base
@@ -13824,7 +14180,7 @@ function validateEnv(rawConfig) {
 
 
 /***/ }),
-/* 190 */
+/* 195 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -13908,7 +14264,7 @@ exports.AllExceptionsFilter = AllExceptionsFilter = AllExceptionsFilter_1 = tsli
 
 
 /***/ }),
-/* 191 */
+/* 196 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -13982,7 +14338,7 @@ exports.HealthController = HealthController = tslib_1.__decorate([
 
 
 /***/ }),
-/* 192 */
+/* 197 */
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -14079,7 +14435,7 @@ const config_1 = __webpack_require__(4);
 const swagger_1 = __webpack_require__(5);
 const nestjs_pino_1 = __webpack_require__(6);
 const app_module_1 = __webpack_require__(7);
-const cors_1 = __webpack_require__(192);
+const cors_1 = __webpack_require__(197);
 async function bootstrap() {
     // `bufferLogs: true` holds Nest's own bootstrap log lines until the real
     // pino logger below is attached, so nothing is lost or logged twice

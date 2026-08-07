@@ -52,7 +52,7 @@ export function CouncilAdministratorDashboard() {
   const { state } = useAuth();
   const accessToken = state.status === 'authenticated' ? state.accessToken : undefined;
   const personId = state.status === 'authenticated' ? state.actor.personId : undefined;
-  const { isNarrow } = useDashboardBreakpoint();
+  const { isCompact, isNarrow } = useDashboardBreakpoint();
 
   const personState = useAsyncData<PersonResponseDto>(
     (signal) => {
@@ -82,7 +82,11 @@ export function CouncilAdministratorDashboard() {
     [accessToken],
   );
 
-  const kpiColumns = isNarrow ? 1 : 3;
+  // `[Product Experience Sprint I]` Objective 6 - same `isCompact`
+  // (tablet, 2-column) tier added consistently across every persona
+  // dashboard's KPI grid this pass - see `MinistryLeaderDashboard.tsx`'s
+  // matching comment.
+  const kpiColumns = isNarrow ? 1 : isCompact ? 2 : 3;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5], maxWidth: 1280 }}>
