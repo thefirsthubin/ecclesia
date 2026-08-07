@@ -43,6 +43,18 @@ export class StaffingTargetService {
     return this.toResponseDto(target);
   }
 
+  /**
+   * `[Remaining Engineering Sprint, Milestone 11]` Backs the new
+   * "Staffing Overview" list endpoint - every Staffing Target set against
+   * a given Basonta, each with the same live-computed adequacy every
+   * single-record read already gets. Additive: `create`/`getById` above
+   * are byte-for-byte unchanged.
+   */
+  async listByGroup(groupId: string): Promise<StaffingTargetResponseDto[]> {
+    const targets = await this.staffingTargetRepository.findByGroupId(groupId);
+    return Promise.all(targets.map((target) => this.toResponseDto(target)));
+  }
+
   private async toResponseDto(target: StaffingTarget): Promise<StaffingTargetResponseDto> {
     const rosteredCount = await this.groupRosterService.countActiveMembers(target.groupId);
     const adequacy = computeStaffingAdequacy(target.targetCount, rosteredCount);

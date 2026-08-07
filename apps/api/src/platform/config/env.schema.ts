@@ -167,6 +167,26 @@ const baseEnvSchema = z.object({
    * shared bus, they do not each get their own).
    */
   EVENTBRIDGE_BUS_NAME: z.string().min(1).default('ecclesia-engagement-signals'),
+
+  /**
+   * `[Remaining Engineering Sprint, Milestone 11]` Local filesystem
+   * directory `StorageService` writes uploaded files under (Expense
+   * receipts today - BR-STW-08 - the only attachment surface this
+   * codebase has). `attachExpenseReceiptSchema`'s own doc comment records
+   * that file upload itself was explicitly out of scope for the original
+   * application-layer milestone; this sprint closes that gap with the
+   * simplest storage adapter that fits this codebase's existing
+   * conventions - a local disk directory behind an injectable
+   * `StorageService`, no new runtime dependency (no AWS SDK, no
+   * multipart library beyond `multer`, which `@nestjs/platform-express`
+   * already ships). `INFRA_RUNTIME.md`/`ECCLESIA_ROADMAP.md` disclose that
+   * a real deployment (an ECS task with an ephemeral filesystem) would
+   * need this swapped for a durable backing store (S3, most likely) -
+   * `StorageService`'s own doc comment repeats this, and swapping it is a
+   * one-file change (the interface every consumer depends on is just
+   * `save`/`read`), not a call-site rewrite.
+   */
+  RECEIPT_STORAGE_DIR: z.string().min(1).default('./uploads/receipts'),
 });
 
 /**

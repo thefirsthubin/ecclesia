@@ -3,7 +3,7 @@ import { StaffingTargetRepository } from './staffing-target.repository';
 describe('StaffingTargetRepository', () => {
   function buildRepository() {
     const prisma = {
-      staffingTarget: { upsert: jest.fn(), findUnique: jest.fn() },
+      staffingTarget: { upsert: jest.fn(), findUnique: jest.fn(), findMany: jest.fn() },
     };
     const repository = new StaffingTargetRepository(prisma as never);
     return { repository, prisma };
@@ -38,5 +38,15 @@ describe('StaffingTargetRepository', () => {
 
     expect(prisma.staffingTarget.findUnique).toHaveBeenCalledWith({ where: { id: 'target-1' } });
     expect(result).toEqual({ id: 'target-1' });
+  });
+
+  it('findByGroupId() lists every Staffing Target for a Basonta, ordered by gatheringId', async () => {
+    const { repository, prisma } = buildRepository();
+    prisma.staffingTarget.findMany.mockResolvedValue([{ id: 'target-1' }, { id: 'target-2' }]);
+
+    const result = await repository.findByGroupId('basonta-1');
+
+    expect(prisma.staffingTarget.findMany).toHaveBeenCalledWith({ where: { groupId: 'basonta-1' }, orderBy: { gatheringId: 'asc' } });
+    expect(result).toEqual([{ id: 'target-1' }, { id: 'target-2' }]);
   });
 });

@@ -52,6 +52,10 @@ export const staffingTargetResponseSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 export type StaffingTargetResponseDto = z.infer<typeof staffingTargetResponseSchema>;
+/** `[Remaining Engineering Sprint, Milestone 11]` `GET /ministry/staffing-targets?groupId=`'s
+ * response shape - the same `z.array(...)` convention `rosterResponseSchema`/
+ * `overcommitmentFlagListResponseSchema` below already use for their own list endpoints. */
+export const staffingTargetListResponseSchema = z.array(staffingTargetResponseSchema);
 
 /**
  * §16.3's "Worker availability self-service (H2)": "lets a worker mark

@@ -77,7 +77,7 @@ function AppRoutes() {
       <Route
         path="/dashboard"
         element={
-          <ProtectedRoute breadcrumbs={[{ label: 'Dashboard' }]}>
+          <ProtectedRoute breadcrumbs={[{ label: 'Dashboard' }]} navVariant="pill">
             <DashboardPage />
           </ProtectedRoute>
         }

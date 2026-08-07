@@ -9,7 +9,7 @@ import type {
   RequestExpenseInput,
 } from '@ecclesia/contracts';
 
-import { apiGet, apiPost } from '../../lib/api-client';
+import { API_BASE_URL, apiGet, apiPost, apiUpload } from '../../lib/api-client';
 import { useAsyncData } from '../../lib/useAsyncData';
 import type { AsyncDataResult } from '../../lib/useAsyncData';
 
@@ -148,6 +148,37 @@ export const RECORD_TRANSACTION_CHANNEL_OPTIONS: { value: FinancialTransactionCh
  * (amount/currency/description/category). */
 export function requestExpense(accessToken: string, input: RequestExpenseInput): Promise<ExpenseResponseDto> {
   return apiPost<ExpenseResponseDto>('/expenses', input, { authToken: accessToken });
+}
+
+/** `[Remaining Engineering Sprint, Milestone 11]` `POST
+ * /expenses/:id/receipt/upload` - `ReceiptUploadPanel.tsx`'s submit
+ * action. See `apiUpload`'s own doc comment for why this isn't `apiPost`. */
+export function uploadExpenseReceipt(
+  accessToken: string,
+  expenseId: string,
+  file: File,
+  onProgress?: (percent: number) => void,
+): Promise<ExpenseResponseDto> {
+  return apiUpload<ExpenseResponseDto>(`/expenses/${expenseId}/receipt/upload`, file, { authToken: accessToken, onProgress });
+}
+
+/**
+ * `[Remaining Engineering Sprint, Milestone 11]` Preview Receipt -
+ * `GET /expenses/:id/receipt` requires the same `Authorization: Bearer`
+ * header every other call in this file sends, which a plain `<img src>`/
+ * `<a href>` cannot attach - so the file is fetched as a `Blob` here and
+ * handed back as an object URL the caller opens/renders, then revokes
+ * once done (`ReceiptUploadPanel.tsx` owns that lifecycle).
+ */
+export async function fetchExpenseReceiptObjectUrl(accessToken: string, expenseId: string): Promise<string> {
+  const response = await fetch(`${API_BASE_URL}/expenses/${expenseId}/receipt`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  if (!response.ok) {
+    throw new Error(`Couldn't load the receipt (status ${response.status})`);
+  }
+  const blob = await response.blob();
+  return URL.createObjectURL(blob);
 }
 
 /**

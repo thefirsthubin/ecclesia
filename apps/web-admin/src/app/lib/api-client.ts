@@ -125,3 +125,55 @@ export async function apiPost<T>(path: string, body: unknown, options: ApiPostOp
   }
   return (await response.json()) as T;
 }
+
+export interface ApiUploadOptions {
+  authToken?: string;
+  /** 0-100. `fetch` has no upload-progress event at all (no dependency was
+   * added just for this - `XMLHttpRequest` is a browser built-in), so
+   * `apiUpload` is the one call in this file not built on `fetch` - see
+   * `ReceiptUploadPanel.tsx`'s own doc comment for why the Receipt Upload
+   * workflow's progress bar needs this and no other page in this app has
+   * needed it yet. */
+  onProgress?: (percent: number) => void;
+}
+
+/**
+ * `[Remaining Engineering Sprint, Milestone 11]` Multipart upload -
+ * `POST /expenses/:id/receipt/upload` is the first (and, today, only)
+ * consumer. Deliberately not built on `apiPost`/`fetch`: a `FormData` body
+ * must not set its own `Content-Type` header (the browser has to compute
+ * the multipart boundary itself), and real upload-progress events require
+ * `XMLHttpRequest`'s `upload.onprogress`, which `fetch` does not expose.
+ */
+export function apiUpload<T>(path: string, file: File, options: ApiUploadOptions = {}): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${API_BASE_URL}${path}`);
+    xhr.responseType = 'text';
+    if (options.authToken) {
+      xhr.setRequestHeader('Authorization', `Bearer ${options.authToken}`);
+    }
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable && options.onProgress) {
+        options.onProgress(Math.round((event.loaded / event.total) * 100));
+      }
+    };
+    xhr.onerror = () => reject(new ApiError(`Request to ${path} failed - network error`, 0));
+    xhr.onload = () => {
+      let body: unknown;
+      try {
+        body = xhr.responseText ? JSON.parse(xhr.responseText) : undefined;
+      } catch {
+        body = undefined;
+      }
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(body as T);
+      } else {
+        reject(new ApiError(`Request to ${path} failed with status ${xhr.status}`, xhr.status, body));
+      }
+    };
+    const formData = new FormData();
+    formData.append('file', file);
+    xhr.send(formData);
+  });
+}

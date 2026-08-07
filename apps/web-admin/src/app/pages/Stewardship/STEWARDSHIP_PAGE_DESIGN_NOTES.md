@@ -212,3 +212,62 @@ is a byte-identical copy of that same already-verified function — and
 reviewed by hand, but genuinely needs the user's own `npx tsc --noEmit`/
 `pnpm build`, in addition to `pnpm lint && pnpm test`, before being
 trusted.
+
+## 10. Milestone 11 addendum — Receipt Upload
+
+Closes Objective 3: Upload/Replace/Remove/Preview Receipt, upload
+progress, validation, error/success states.
+
+**Backend, additive only** (brief: "if storage infrastructure is
+required, implement it using the project's existing architectural
+conventions, do NOT introduce unnecessary dependencies"): a new
+`StorageService` (`apps/api/src/platform/storage/`) backed by the local
+filesystem (`RECEIPT_STORAGE_DIR`), using `multer`/`FileInterceptor`
+already available transitively via `@nestjs/platform-express` — no new
+package added. `ExpenseController` gained two new routes,
+`POST :id/receipt/upload` and `GET :id/receipt`; `create`/`approve`/`pay`
+etc. are byte-for-byte unchanged. Local-disk storage is disclosed in the
+service's own doc comment as a stand-in for a future S3-backed adapter —
+correct for a single-instance deployment, but not durable across an
+ECS/Fargate task restart if the API is ever run on ephemeral storage.
+Out of scope (AWS Deployment) to fix in this sprint.
+
+**Client-side-only Replace/Remove** — `expense.service.ts`'s own
+existing doc comments establish `RECEIPT_RETAINED` as a genuinely
+terminal state in the Expense state machine (no `PATCH`/replace
+transition exists once a receipt is retained). Replace/Remove are
+therefore scoped to the pre-submit staging flow only: a user can clear
+or swap the file they're about to upload, but cannot swap a receipt
+already accepted by the backend. Disclosed rather than fabricating a
+backend capability that doesn't exist.
+
+**`ReceiptUploadPanel.tsx`** (new, `pages/Stewardship/`) — renders
+nothing before `PAID` (no receipt slot exists yet); at `PAID` with no
+receipt shows the Upload affordance, client-side MIME validation
+(JPEG/PNG/WebP/PDF only), a staged-file preview with Remove, and a
+Submit that calls the new `apiUpload()` helper
+(`XMLHttpRequest`-based — `fetch` has no upload-progress event) via
+`uploadExpenseReceipt`, rendering a live progress bar from
+`xhr.upload.onprogress`. At `RECEIPT_RETAINED` shows an "attached" badge
+and Preview (streams `GET :id/receipt` as an object URL via
+`fetchExpenseReceiptObjectUrl`, opened in a new tab). Embedded per-row
+in `StewardshipPage.tsx`'s expense list.
+
+**Bugs found and fixed during manual spec-tracing** (`jest` cannot
+execute in this sandbox — traced `ReceiptUploadPanel.spec.tsx` by hand
+against the component instead): two `getByText`/`accessibilityLabel`
+mismatches, both corrected to `getByRole('button', { name: <the
+accessibilityLabel string> } )` — see the spec file's own inline
+comments for the two specific cases.
+
+## 11. Milestone 11 tsc note
+
+Unlike §9's account of an earlier sprint, this sprint's `tsc --noEmit`
+against `apps/web-admin`'s `tsconfig.app.json` **did** complete cleanly,
+covering every file this addendum touches
+(`ReceiptUploadPanel.tsx`/`useStewardshipData.ts`/`api-client.ts`'s new
+`apiUpload`/`StewardshipPage.tsx`). `pnpm`/`eslint`/`jest` remain
+unavailable this sandbox session (`pnpm` binary missing, `corepack
+enable` hits `EACCES`, `npx pnpm@9.12.0` hits a `403` from the npm
+registry) — still needs a real `pnpm lint && pnpm test` pass on the
+user's machine.

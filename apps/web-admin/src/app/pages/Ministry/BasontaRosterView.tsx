@@ -2,6 +2,7 @@ import { Badge, Card, Divider, EmptyState, ErrorState, Heading, Skeleton, Text, 
 
 import { useAuth } from '../../auth/AuthContext';
 import { PersonNameText } from '../PastoralCare/PersonNameText';
+import { StaffingTargetsPanel } from './StaffingTargetsPanel';
 import { useOvercommitmentFlags, useRoster } from './useMinistryData';
 
 function formatDate(iso: string): string {
@@ -21,11 +22,20 @@ function formatDate(iso: string): string {
  * `groupId` without a route round-trip, and `BasontaRosterPage` can render
  * it for whichever `:groupId` the directory linked to - same
  * view-component/route-wrapper split `PersonDetailPage`'s siblings use.
+ *
+ * `[Remaining Engineering Sprint, Milestone 11]` Now also renders
+ * `StaffingTargetsPanel` below the roster - the exact gap this file's own
+ * doc comment named above ("why Staffing Target adequacy is not shown
+ * here too") is closed by this addition, not by a new page. `canEdit`
+ * is `true` only for `BASONTA_LEADER` - the only role
+ * `ministry.staffing_target.create` actually grants (Resident Pastor/Admin
+ * reaching this same view via the directory only ever hold `.read`).
  */
 export function BasontaRosterView({ groupId }: { groupId: string }) {
   const theme = useTheme();
   const { state } = useAuth();
   const accessToken = state.status === 'authenticated' ? state.accessToken : undefined;
+  const canEditStaffingTargets = state.status === 'authenticated' && state.actor?.role === 'BASONTA_LEADER';
 
   const rosterState = useRoster(accessToken, groupId);
   const overcommitmentState = useOvercommitmentFlags(accessToken, groupId);
@@ -85,6 +95,8 @@ export function BasontaRosterView({ groupId }: { groupId: string }) {
           </div>
         </Card>
       )}
+
+      <StaffingTargetsPanel groupId={groupId} canEdit={canEditStaffingTargets} />
     </div>
   );
 }

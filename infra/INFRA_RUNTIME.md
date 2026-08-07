@@ -182,12 +182,19 @@ from ECS SG only, no other ingress, no egress at all).
    user after this milestone's predecessor, per the conversation history -
    these seven are new and undeployed as of this milestone).
 2. **`ecclesia_app` password reconciliation** (§4 above, and
-   `database-stack.ts`'s own doc comment): after first deploying
-   `DatabaseStack` and running `prisma migrate deploy` against the real
-   RDS endpoint (which creates `ecclesia_app` with the migration's
-   hardcoded password), run `ALTER ROLE ecclesia_app WITH PASSWORD
-   '<value from the AppRoleCredentials secret>'` once so the generated
-   secret this stack created actually matches the role's real password.
+   `database-stack.ts`'s own doc comment): after running the migration
+   (which creates `ecclesia_app` with the migration's hardcoded password),
+   run `ALTER ROLE ecclesia_app WITH PASSWORD '<value from the
+   AppRoleCredentials secret>'` once so the generated secret this stack
+   created actually matches the role's real password. **`[Bug fix,
+   found while writing the deploy walkthrough]`** Neither this nor
+   `prisma migrate deploy` can run from a laptop - RDS lives in isolated
+   subnets with no route in. Both run as one-off `aws ecs run-task`
+   invocations against the already-deployed `ApiService` task definition
+   instead, from inside the VPC. This also required adding the Prisma CLI
+   and `db/migrations/` to `apps/api/Dockerfile`'s runtime image, neither
+   of which the webpack build or `npm install --omit=dev` shipped
+   originally. `infra/DEPLOYMENT.md`'s walkthrough has the exact commands.
 3. **Docker must be installed** on whatever machine runs `cdk deploy` for
    `ApiService`/`WorkerService` - `cdk synth` does not need it (§9 below),
    but asset *publishing* (`docker build`/`docker push` to the CDK-managed

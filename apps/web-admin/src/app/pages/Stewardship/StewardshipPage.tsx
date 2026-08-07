@@ -9,6 +9,7 @@ import type { ExpenseResponseDto, FinancialTransactionChannelDto, FinancialTrans
 import { useAuth } from '../../auth/AuthContext';
 import { GroupNameText } from '../People/GroupNameText';
 import { PersonNameText } from '../PastoralCare/PersonNameText';
+import { ReceiptUploadPanel } from './ReceiptUploadPanel';
 import {
   approveExpense,
   escalateTransaction,
@@ -559,6 +560,7 @@ export function StewardshipPage() {
                             </Button>
                           </div>
                         )}
+                        <ReceiptUploadPanel expense={expense} accessToken={state.accessToken} onUploaded={expensesState.refetch} />
                       </div>
                     </div>
                   );

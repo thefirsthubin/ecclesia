@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { ThemeProvider } from '@ecclesia/ui-web';
+import { ThemeProvider, ToastProvider } from '@ecclesia/ui-web';
 
 import { BasontaRosterView } from './BasontaRosterView';
 
@@ -25,10 +25,19 @@ function personResponse(id: string, firstName: string, lastName: string) {
   };
 }
 
+/**
+ * `[Remaining Engineering Sprint, Milestone 11]` Now also wraps
+ * `ToastProvider` - the newly-embedded `StaffingTargetsPanel` calls
+ * `useToast()` unconditionally, which throws outside a `ToastProvider` by
+ * that hook's own design (`app.tsx` always mounts one at the real app
+ * root).
+ */
 function renderView() {
   return render(
     <ThemeProvider>
-      <BasontaRosterView groupId="basonta-1" />
+      <ToastProvider>
+        <BasontaRosterView groupId="basonta-1" />
+      </ToastProvider>
     </ThemeProvider>,
   );
 }

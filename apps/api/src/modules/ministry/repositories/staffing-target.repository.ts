@@ -35,4 +35,19 @@ export class StaffingTargetRepository {
   findById(id: string): Promise<StaffingTarget | null> {
     return this.prisma.staffingTarget.findUnique({ where: { id } });
   }
+
+  /**
+   * `[Remaining Engineering Sprint, Milestone 11]` `GET /ministry/staffing-targets?groupId=`
+   * (the "Staffing Overview" list `MINISTRY_PAGE_DESIGN_NOTES.md` already
+   * disclosed as a gap: "no 'list staffing targets for this Basonta'
+   * endpoint"). Additive only - `upsert`/`findById` above are unchanged.
+   * Ordered by `gatheringId` so the same Gathering's target always sorts
+   * together across repeated reads (no richer sort key - e.g. Gathering
+   * date - is available without a join this repository deliberately
+   * doesn't perform, matching `findById`'s own "no join, compute-on-read
+   * happens in the service" precedent).
+   */
+  findByGroupId(groupId: string): Promise<StaffingTarget[]> {
+    return this.prisma.staffingTarget.findMany({ where: { groupId }, orderBy: { gatheringId: 'asc' } });
+  }
 }

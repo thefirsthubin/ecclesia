@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { DatabaseModule } from '../../platform/database/database.module';
 import { EventsModule } from '../../platform/events/events.module';
 import { RbacPlatformModule } from '../../platform/rbac/rbac-platform.module';
+import { StorageModule } from '../../platform/storage/storage.module';
 import { PeopleModule } from '../people/people.module';
 import { BankDepositConfirmationController } from './controllers/bank-deposit-confirmation.controller';
 import { ExpenseController } from './controllers/expense.controller';
@@ -51,9 +52,13 @@ import { ProjectService } from './services/project.service';
  * Exports nothing yet - no other bounded-context module currently
  * consumes a Stewardship service, unlike People/Pastoral Care's mutual
  * dependency or Gatherings' consumption of both.
+ *
+ * `[Remaining Engineering Sprint, Milestone 11]` Also imports
+ * `StorageModule` now - `ExpenseController`'s new Receipt Upload endpoints
+ * are this module's first consumer of `StorageService`.
  */
 @Module({
-  imports: [DatabaseModule, RbacPlatformModule, EventsModule, PeopleModule],
+  imports: [DatabaseModule, RbacPlatformModule, EventsModule, PeopleModule, StorageModule],
   controllers: [FinancialTransactionController, ExpenseController, ProjectController, PledgeController, BankDepositConfirmationController],
   providers: [
     FinancialTransactionRepository,

@@ -5,3 +5,34 @@ body {
   margin: 0;
   font-family: system-ui, sans-serif;
 }
+
+/* Dashboard Redesign sprint - a staggered entrance for the dashboard's
+   section cards (`ResidentPastorDashboard.tsx` applies this className +
+   a per-section `animationDelay`). Every other animation/transition in
+   `ui-web` (Card's hover shadow, Button's background-color transition,
+   Skeleton's pulse) is inline-style-driven via `theme.motion`, but a
+   `@keyframes` rule itself cannot be expressed as a React inline style -
+   this is the one, narrowly-scoped exception, kept in this already-global
+   stylesheet rather than injected per-component. Respects
+   `prefers-reduced-motion` the same way `Skeleton`'s `useReducedMotion`
+   does, for the same reason (Design System v1.0 Part 6.7). */
+@keyframes ecclesia-dashboard-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ecclesia-dashboard-fade-in {
+  animation: ecclesia-dashboard-fade-in-up 320ms cubic-bezier(0, 0, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ecclesia-dashboard-fade-in {
+    animation: none;
+  }
+}

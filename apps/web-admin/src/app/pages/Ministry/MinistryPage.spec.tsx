@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { ThemeProvider } from '@ecclesia/ui-web';
+import { ThemeProvider, ToastProvider } from '@ecclesia/ui-web';
 
 import { RouterProvider } from '../../router/router';
 import { MinistryPage } from './MinistryPage';
@@ -19,12 +19,17 @@ function actorWithRole(role: string, extra: Record<string, unknown> = {}) {
   };
 }
 
+/** `[Remaining Engineering Sprint, Milestone 11]` Now also wraps
+ * `ToastProvider` - a Basonta Leader's roster view now embeds
+ * `StaffingTargetsPanel`, which calls `useToast()` unconditionally. */
 function renderPage() {
   return render(
     <ThemeProvider>
-      <RouterProvider>
-        <MinistryPage />
-      </RouterProvider>
+      <ToastProvider>
+        <RouterProvider>
+          <MinistryPage />
+        </RouterProvider>
+      </ToastProvider>
     </ThemeProvider>,
   );
 }

@@ -63,6 +63,23 @@ RUN npm install --omit=dev
 # image for this to be valid.
 COPY --from=builder /workspace/node_modules/.prisma ./node_modules/.prisma
 
+# `[Added for real deploy operability]` RDS lives in isolated subnets
+# (`network.construct.ts`) - unreachable from a laptop, and this image
+# doesn't self-migrate on boot (entrypoint.sh only composes env vars and
+# execs the given command). The real way to run `prisma migrate deploy`
+# is a one-off `aws ecs run-task` against this same task definition/image,
+# from inside the VPC, with the container command overridden - see
+# `infra/DEPLOYMENT.md`'s migration step. That requires two things this
+# image didn't otherwise ship: the Prisma CLI itself (`prisma` is a
+# devDependency, stripped by `npm install --omit=dev` above - `--no-save`
+# keeps it out of package.json, pinned to match `@prisma/client`'s own
+# version so CLI and generated client agree) and the actual migration SQL
+# files (`db/migrations/` - the webpack build only emits the generated
+# client, not the raw migrations Prisma's CLI needs to read).
+RUN npm install --no-save prisma@^5.20.0
+COPY db/schema.prisma ./db/schema.prisma
+COPY db/migrations ./db/migrations
+
 COPY apps/api/entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 

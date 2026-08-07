@@ -29,6 +29,33 @@ export class StaffingTargetCreateResourceContextGuard extends EcclesiaContextGua
   }
 }
 
+/**
+ * `[Remaining Engineering Sprint, Milestone 11]` `GET
+ * /ministry/staffing-targets?groupId=` - the new Staffing Overview list.
+ * Resolves scope from the query param the same way
+ * `StaffingTargetCreateResourceContextGuard` resolves it from the request
+ * body - both ultimately just need "which Basonta is this about," and
+ * `GroupScopeService.loadResourceContext` doesn't care where the id came
+ * from.
+ */
+@Injectable()
+export class StaffingTargetListResourceContextGuard extends EcclesiaContextGuardBase {
+  constructor(
+    branchConfigurationService: BranchConfigurationService,
+    private readonly groupScopeService: GroupScopeService,
+  ) {
+    super(branchConfigurationService);
+  }
+
+  protected async loadResource(request: RequestWithActorContext, _actor: ActorContext): Promise<ResourceContext> {
+    const groupId = (request.query as Record<string, unknown> | undefined)?.groupId as string | undefined;
+    if (!groupId) {
+      throw new NotFoundException("Query must include a 'groupId'");
+    }
+    return this.groupScopeService.loadResourceContext(groupId);
+  }
+}
+
 /** `GET /ministry/staffing-targets/:id`. */
 @Injectable()
 export class StaffingTargetResourceContextGuard extends EcclesiaContextGuardBase {

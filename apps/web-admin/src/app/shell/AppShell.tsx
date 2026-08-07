@@ -8,12 +8,22 @@ import { useAuth } from '../auth/AuthContext';
 import { apiGet } from '../lib/api-client';
 import { useAsyncData } from '../lib/useAsyncData';
 import { navItemsForRole, roleLabel } from './nav-items';
+import { PillNav } from './PillNav';
 
 export interface AppShellProps {
   children: ReactNode;
   breadcrumbs: BreadcrumbItem[];
   /** Open alerts to show in the notification bell - `undefined` while the current page has none to report (most stub pages). */
   notifications?: AlertResponseDto[];
+  /**
+   * `[Dashboard Redesign sprint, reference-image iteration]` `'sidebar'`
+   * (default) is unchanged, existing behavior - every page but the
+   * dashboard keeps the persistent sidebar. `'pill'` is a deliberate,
+   * page-scoped exception: a top pill nav instead of the sidebar,
+   * requested specifically for the dashboard (see
+   * `DASHBOARD_REDESIGN_NOTES.md`) rather than a sitewide nav redesign.
+   */
+  navVariant?: 'sidebar' | 'pill';
 }
 
 /**
@@ -23,7 +33,7 @@ export interface AppShellProps {
  * keyboard/screen-reader users can bypass the nav on every page, and the
  * page content is wrapped in a `<main>` landmark.
  */
-export function AppShell({ children, breadcrumbs, notifications = [] }: AppShellProps) {
+export function AppShell({ children, breadcrumbs, notifications = [], navVariant = 'sidebar' }: AppShellProps) {
   const theme = useTheme();
   const { state, logout } = useAuth();
   const { path } = useLocation();
@@ -77,51 +87,71 @@ export function AppShell({ children, breadcrumbs, notifications = [] }: AppShell
 
   const openAlerts = notifications.filter((alert) => alert.status === 'OPEN');
 
+  const identitySlot = (
+    <>
+      <NotificationBell count={openAlerts.length}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }}>
+          {openAlerts.map((alert) => (
+            <Text key={alert.id} variant="bodySmall">
+              {alert.message ?? alert.alertType}
+            </Text>
+          ))}
+        </div>
+      </NotificationBell>
+      <UserMenu
+        name={displayName}
+        roleLabel={roleLabel(state.actor.role)}
+        onLogout={() => {
+          void logout().then(() => navigate('/login', { replace: true }));
+        }}
+      />
+    </>
+  );
+
+  const skipLink = (
+    <a
+      href="#main-content"
+      style={{
+        position: 'absolute',
+        left: -9999,
+        top: 0,
+        zIndex: theme.zIndex.toast,
+        padding: theme.spacing[2],
+        backgroundColor: theme.colors.surface.raised,
+      }}
+      onFocus={(event) => {
+        event.currentTarget.style.left = '8px';
+      }}
+      onBlur={(event) => {
+        event.currentTarget.style.left = '-9999px';
+      }}
+    >
+      Skip to main content
+    </a>
+  );
+
+  if (navVariant === 'pill') {
+    return (
+      <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
+        {skipLink}
+        <div style={{ padding: `${theme.spacing[5]}px ${theme.spacing[6]}px ${theme.spacing[3]}px` }}>
+          <PillNav items={items} linkAs={Link} rightSlot={identitySlot} />
+        </div>
+        <main id="main-content" style={{ flex: 1, padding: `0 ${theme.spacing[6]}px ${theme.spacing[6]}px` }}>
+          {children}
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
-      <a
-        href="#main-content"
-        style={{
-          position: 'absolute',
-          left: -9999,
-          top: 0,
-          zIndex: theme.zIndex.toast,
-          padding: theme.spacing[2],
-          backgroundColor: theme.colors.surface.raised,
-        }}
-        onFocus={(event) => {
-          event.currentTarget.style.left = '8px';
-        }}
-        onBlur={(event) => {
-          event.currentTarget.style.left = '-9999px';
-        }}
-      >
-        Skip to main content
-      </a>
+      {skipLink}
 
       <TopBar
         onToggleSidebar={isCompact ? () => setSidebarOpen((open) => !open) : undefined}
         left={<Breadcrumbs items={breadcrumbs} linkAs={Link} />}
-        right={
-          <>
-            <NotificationBell count={openAlerts.length}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }}>
-                {openAlerts.map((alert) => (
-                  <Text key={alert.id} variant="bodySmall">
-                    {alert.message ?? alert.alertType}
-                  </Text>
-                ))}
-              </div>
-            </NotificationBell>
-            <UserMenu
-              name={displayName}
-              roleLabel={roleLabel(state.actor.role)}
-              onLogout={() => {
-                void logout().then(() => navigate('/login', { replace: true }));
-              }}
-            />
-          </>
-        }
+        right={identitySlot}
       />
 
       <div style={{ display: 'flex', flex: 1 }}>

@@ -152,3 +152,42 @@ existed.
 Same as every prior sprint: no `pnpm`/`tsc`/`eslint`/`jest` execution in
 this sandbox. Statically reviewed only — needs a real
 `pnpm lint && pnpm test && pnpm build` pass on the user's machine.
+
+## 12. Milestone 11 addendum — Staffing Targets UI + Ministry Leader dashboard
+
+Closes the two gaps §5 above (and `ECCLESIA_ROADMAP.md`) named as still
+open: "no Staffing Targets UI" and "no Ministry Leader Web Admin
+dashboard."
+
+**Backend, additive only** (brief: "Do NOT rewrite backend logic"):
+`GET /ministry/staffing-targets?groupId=` — a new `list()` on
+`StaffingTargetController`/`StaffingTargetService.listByGroup`/
+`StaffingTargetRepository.findByGroupId`, guarded by a new
+`StaffingTargetListResourceContextGuard` that resolves scope from the
+query param the same way the existing Create guard resolves it from the
+request body. `create()`/`getById()` are byte-for-byte unchanged.
+
+**`StaffingTargetsPanel.tsx`** (new, `pages/Ministry/`) — Staffing
+Overview (list + Adequate/Understaffed filter + Gathering-type search),
+current/target staff counts + a vacancy count, a progress-bar capacity
+indicator per target, "+ Set target"/row-level "Edit" (both call the same
+upsert-shaped `POST /ministry/staffing-targets`), and "+ Assign
+volunteer" (`RecordPicker` over `GET /people?search=`, submits
+`POST /people/:personId/group-memberships` — an existing endpoint, no
+backend change). Embedded in two places: `BasontaRosterView.tsx` (closing
+that file's own §"why Staffing Target adequacy is not shown here too"
+disclosure) and `MinistryLeaderDashboard.tsx`'s compact variant.
+`canEdit` is `true` only for `BASONTA_LEADER` — the only role
+`ministry.staffing_target.create` grants; Resident Pastor/Admin reaching
+the roster view via the directory see it read-only.
+
+**`MinistryLeaderDashboard.tsx`** (new, `pages/DashboardPage/`) — the
+Ministry Leader (`BASONTA_LEADER`) persona's `/dashboard`. Real data:
+roster, overcommitment flags, `StaffingTargetsPanel`, Upcoming Gatherings
+(`ownerGroupId` = this Basonta — `BASONTA_LEADER` holds
+`gatherings.gathering.read` at `OWN_GROUP`). Demo data, disclosed:
+Ministry Attendance trend, Recent Ministry Activity — no aggregate
+attendance-by-Basonta or activity-feed endpoint exists.
+`DashboardPage.tsx`'s router no longer groups `BASONTA_LEADER` with
+`BACENTA_LEADER`'s mobile-only stub — see that file's own doc comment for
+the full reasoning.

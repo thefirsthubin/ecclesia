@@ -49,6 +49,21 @@ export function useGatheringsList(accessToken: string | undefined, query: ListGa
   );
 }
 
+/** `[Remaining Engineering Sprint, Milestone 11]` `GET /gatherings/:id` -
+ * `StaffingTargetsPanel`'s own need to show a human-readable label
+ * (type + date) for a Staffing Target's `gatheringId`, the same
+ * "resolve a raw id into display text via a small dedicated hook" pattern
+ * `usePersonName`/`useGroupName` already establish for their own domains. */
+export function useGathering(accessToken: string | undefined, gatheringId: string | undefined): AsyncDataResult<GatheringResponseDto> {
+  return useAsyncData<GatheringResponseDto>(
+    (signal) => {
+      if (!accessToken || !gatheringId) return Promise.reject(new Error('not authenticated or no Gathering id'));
+      return apiGet<GatheringResponseDto>(`/gatherings/${gatheringId}`, { authToken: accessToken, signal });
+    },
+    [accessToken, gatheringId],
+  );
+}
+
 /** `GET /gatherings/:id/attendance-records/completeness` (FR-GTH-05).
  * Not backed by a `libs/contracts` response schema - the endpoint returns
  * `libs/domain/gatherings`'s `AttendanceCompletenessOutcome` shape

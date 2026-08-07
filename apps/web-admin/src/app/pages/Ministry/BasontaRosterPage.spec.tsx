@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { ThemeProvider } from '@ecclesia/ui-web';
+import { ThemeProvider, ToastProvider } from '@ecclesia/ui-web';
 
 import { BasontaRosterPage } from './BasontaRosterPage';
 
@@ -25,7 +25,9 @@ describe('BasontaRosterPage', () => {
 
     render(
       <ThemeProvider>
-        <BasontaRosterPage />
+        <ToastProvider>
+          <BasontaRosterPage />
+        </ToastProvider>
       </ThemeProvider>,
     );
 

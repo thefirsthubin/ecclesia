@@ -89,6 +89,19 @@ export const ICON_REGISTRY = {
    * `lucide-react` and `lucide-react-native` before adding
    * (`node_modules/lucide-react{,-native}/dist/esm/icons/user-plus.mjs`). */
   userPlus: 'UserPlus',
+  /** `[Dashboard Redesign sprint]` Added for `apps/web-admin`'s premium
+   * dashboard rebuild - `church` (header/Prayer Focus card - a literal
+   * church-identity glyph, closer than `home`/`building`'s generic
+   * fits), `heart` (Prayer Focus card), and `userCheck` (Volunteers KPI
+   * card - "an engaged/confirmed person", a closer fit than plain
+   * `users`, which is already the People nav icon). Same "no existing
+   * entry close enough in meaning" reasoning as every prior addition
+   * above; confirmed present as `Church`/`Heart`/`UserCheck` in both
+   * `lucide-react` and `lucide-react-native` before adding
+   * (`node_modules/lucide-react{,-native}/dist/esm/icons/{church,heart,user-check}.mjs`). */
+  church: 'Church',
+  heart: 'Heart',
+  userCheck: 'UserCheck',
 } as const;
 
 export type IconName = keyof typeof ICON_REGISTRY;

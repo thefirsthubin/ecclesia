@@ -9,6 +9,8 @@ import { useLocation, useNavigate } from './router';
 export interface ProtectedRouteProps {
   children: ReactNode;
   breadcrumbs: BreadcrumbItem[];
+  /** `[Dashboard Redesign sprint]` Forwarded to `AppShell` as-is - see that component's own doc comment. Defaults to `AppShell`'s own default (`'sidebar'`) when omitted. */
+  navVariant?: 'sidebar' | 'pill';
 }
 
 const REDIRECT_STORAGE_KEY = 'ecclesia.postLoginRedirect';
@@ -28,7 +30,7 @@ export function consumeIntendedPath(): string {
  * originally-requested path through login". Every non-login route in
  * `app.tsx` is wrapped in this.
  */
-export function ProtectedRoute({ children, breadcrumbs }: ProtectedRouteProps) {
+export function ProtectedRoute({ children, breadcrumbs, navVariant }: ProtectedRouteProps) {
   const { state } = useAuth();
   const { path } = useLocation();
   const navigate = useNavigate();
@@ -56,7 +58,7 @@ export function ProtectedRoute({ children, breadcrumbs }: ProtectedRouteProps) {
   }
 
   return (
-    <AppShell breadcrumbs={breadcrumbs}>
+    <AppShell breadcrumbs={breadcrumbs} navVariant={navVariant}>
       {children}
     </AppShell>
   );

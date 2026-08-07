@@ -1,0 +1,21 @@
+{
+  "run": {
+    "command": "nx run mobile:start",
+    "startTime": "2026-08-06T12:01:42.108Z",
+    "endTime": "2026-08-06T12:01:44.124Z",
+    "inner": false
+  },
+  "tasks": [
+    {
+      "taskId": "mobile:start",
+      "target": "start",
+      "projectName": "mobile",
+      "hash": "2059251235980105493",
+      "startTime": "2026-08-06T12:01:42.126Z",
+      "endTime": "2026-08-06T12:01:44.123Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 1
+    }
+  ]
+}

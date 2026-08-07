@@ -1,5 +1,5 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import { ThemeProvider } from '@ecclesia/ui-web';
+import { ThemeProvider, ToastProvider } from '@ecclesia/ui-web';
 
 import { StewardshipPage } from './StewardshipPage';
 
@@ -55,10 +55,21 @@ function expense(overrides: Record<string, unknown> = {}) {
   };
 }
 
+/**
+ * `[Remaining Engineering Sprint, Milestone 11]` Now also wraps
+ * `ToastProvider` - `ReceiptUploadPanel` (rendered per Expense row) calls
+ * `useToast()` unconditionally (React's rules of hooks mean it can't be
+ * called only for PAID/RECEIPT_RETAINED rows), which throws outside a
+ * `ToastProvider` by that hook's own design. `app.tsx` always mounts
+ * `ToastProvider` at the real app root, so this just matches production
+ * reality, the same way this helper already wraps `ThemeProvider`.
+ */
 function renderPage() {
   return render(
     <ThemeProvider>
-      <StewardshipPage />
+      <ToastProvider>
+        <StewardshipPage />
+      </ToastProvider>
     </ThemeProvider>,
   );
 }

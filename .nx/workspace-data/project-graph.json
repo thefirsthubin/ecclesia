@@ -17644,12 +17644,12 @@
       },
       {
         "source": "web-admin",
-        "target": "rbac",
+        "target": "ui-core",
         "type": "static"
       },
       {
         "source": "web-admin",
-        "target": "ui-core",
+        "target": "rbac",
         "type": "static"
       },
       {
@@ -17918,12 +17918,17 @@
       },
       {
         "source": "api",
-        "target": "domain-stewardship",
+        "target": "npm:@nestjs/platform-express",
         "type": "static"
       },
       {
         "source": "api",
         "target": "npm:express",
+        "type": "static"
+      },
+      {
+        "source": "api",
+        "target": "domain-stewardship",
         "type": "static"
       },
       {
