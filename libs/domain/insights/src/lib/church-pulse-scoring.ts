@@ -221,6 +221,45 @@ export const DEFAULT_CHURCH_PULSE_WEIGHTS: Record<ChurchPulseSignalType, number>
 };
 
 /**
+ * Normalizes `platform.configurations.church_pulse_weights` (raw JSONB,
+ * `apps/api`'s `PulseScoreRepository`/`apps/worker`'s
+ * `ChurchPulseRecomputeRepository`) into the shape `computeChurchPulseScore`
+ * expects, falling back to `DEFAULT_CHURCH_PULSE_WEIGHTS` when a Branch has
+ * no weights configured yet.
+ *
+ * `church_pulse_weights` is a `NOT NULL` JSONB column defaulting to `{}`
+ * (`db/schema.prisma`) - not SQL `NULL` - so "unconfigured" is not just
+ * `raw == null`; a bare `{}` (or a value containing no recognized
+ * signal-type key) must fall back too, or `computeChurchPulseScore`
+ * receives a weights record with every entry `undefined`, every category's
+ * weight resolves to 0, and the resulting Church Pulse score is silently
+ * always 0 for every Branch that hasn't explicitly configured weights -
+ * i.e. every Branch in this milestone (FR-INS-02's configuration screen is
+ * H2, not built here). Checking `Object.keys(weights).length` after
+ * filtering (not just `!raw` up front) catches both the empty-object case
+ * and a configured-but-unrecognized-keys case identically.
+ *
+ * Single authoritative implementation - `PulseScoreService` (`apps/api`)
+ * and `ChurchPulseRecomputeJob` (`apps/worker`) both call this instead of
+ * keeping their own copy, so a future fix to this logic can't silently
+ * apply to only one of the two call sites the way this bug did.
+ */
+export function toChurchPulseWeightsRecord(
+  raw: Record<string, number> | null | undefined,
+): Partial<Record<ChurchPulseSignalType, number>> {
+  if (!raw) {
+    return DEFAULT_CHURCH_PULSE_WEIGHTS;
+  }
+  const weights: Partial<Record<ChurchPulseSignalType, number>> = {};
+  for (const type of CHURCH_PULSE_SIGNAL_TYPES) {
+    if (typeof raw[type] === 'number') {
+      weights[type] = raw[type];
+    }
+  }
+  return Object.keys(weights).length > 0 ? weights : DEFAULT_CHURCH_PULSE_WEIGHTS;
+}
+
+/**
  * **`[INFERRED - PROVISIONAL]`, not a citation.** Neither the PRD nor the
  * Blueprint specify how a raw signal *count* within the trailing window
  * becomes a 0-100 sub-score for a category - §12.8 explicitly defers "the

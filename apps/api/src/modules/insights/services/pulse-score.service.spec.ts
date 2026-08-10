@@ -145,4 +145,18 @@ describe('PulseScoreService', () => {
     await expect(service.computeAndStoreBranchScore('branch-1')).resolves.toBeDefined();
     expect(pulseScoreRepository.findChurchPulseWeights).toHaveBeenCalledWith('branch-1');
   });
+
+  it('produces a non-zero score when church_pulse_weights is {} - the actual NOT NULL column default, not just when it is null (regression test for "Church Pulse always 0")', async () => {
+    const { service, engagementSignalRepository, pulseScoreRepository } = buildService();
+    engagementSignalRepository.countByTypeInWindow.mockResolvedValue([{ signalType: 'attendance.recorded', count: 10 }]);
+    // {} - a Branch that has never touched the weight-configuration screen,
+    // not `null`. This is what `platform.configurations.church_pulse_weights`
+    // actually holds by default (a NOT NULL JSONB column).
+    pulseScoreRepository.findChurchPulseWeights.mockResolvedValue({});
+    pulseScoreRepository.upsert.mockResolvedValue(pulseScoreRecord());
+
+    await service.computeAndStoreBranchScore('branch-1');
+
+    expect(pulseScoreRepository.upsert).toHaveBeenCalledWith(expect.objectContaining({ score: expect.closeTo(100 / 6, 1) }));
+  });
 });

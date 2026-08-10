@@ -11,6 +11,7 @@ import {
   ENGAGEMENT_SIGNAL_CHURCH_PULSE_CLASSIFICATION,
   isChurchPulseSignalType,
   mapEngagementSignalToChurchPulseCategory,
+  toChurchPulseWeightsRecord,
 } from './church-pulse-scoring';
 import type { ChurchPulseClassification } from './church-pulse-scoring';
 
@@ -192,5 +193,44 @@ describe('computeChurchPulseScore (BR-INS-01)', () => {
   it('returns 0 when the supplied weights are all zero (defensive against a totally-unconfigured Branch)', () => {
     const zeroWeights = { ATTENDANCE: 0, GROUP_MEMBERSHIP: 0, FINANCIAL_GIVING: 0, FOLLOW_UP_OUTCOME: 0, ROLE_ASSIGNMENT: 0, VISITOR_CONVERSION: 0 };
     expect(computeChurchPulseScore({ ATTENDANCE: 10 }, zeroWeights)).toBe(0);
+  });
+});
+
+/**
+ * Regression test for the "Church Pulse always 0" defect: `raw` here
+ * stands in for `platform.configurations.church_pulse_weights`, a `NOT
+ * NULL` JSONB column that defaults to `{}` (db/schema.prisma) - not SQL
+ * `NULL`. A naive `if (!raw) return DEFAULT_CHURCH_PULSE_WEIGHTS;` never
+ * fires for `{}` (a truthy JS value), so every Branch that has not yet
+ * touched the weight-configuration screen - i.e. every Branch in this
+ * milestone - got an empty weights record, every category's weight
+ * resolved to 0, and `computeChurchPulseScore` returned 0 unconditionally.
+ */
+describe('toChurchPulseWeightsRecord', () => {
+  it('falls back to DEFAULT_CHURCH_PULSE_WEIGHTS for null (no platform.configurations row yet)', () => {
+    expect(toChurchPulseWeightsRecord(null)).toEqual(DEFAULT_CHURCH_PULSE_WEIGHTS);
+  });
+
+  it('falls back to DEFAULT_CHURCH_PULSE_WEIGHTS for undefined', () => {
+    expect(toChurchPulseWeightsRecord(undefined)).toEqual(DEFAULT_CHURCH_PULSE_WEIGHTS);
+  });
+
+  it('falls back to DEFAULT_CHURCH_PULSE_WEIGHTS for {} - the actual NOT NULL column default, not just the null case', () => {
+    expect(toChurchPulseWeightsRecord({})).toEqual(DEFAULT_CHURCH_PULSE_WEIGHTS);
+  });
+
+  it('falls back to DEFAULT_CHURCH_PULSE_WEIGHTS when every key is unrecognized', () => {
+    expect(toChurchPulseWeightsRecord({ NOT_A_REAL_CATEGORY: 1, another_bogus_key: 5 })).toEqual(DEFAULT_CHURCH_PULSE_WEIGHTS);
+  });
+
+  it('keeps a real, explicitly-configured weights record as-is, without merging in defaults', () => {
+    expect(toChurchPulseWeightsRecord({ ATTENDANCE: 1 })).toEqual({ ATTENDANCE: 1 });
+  });
+
+  it('keeps only the recognized keys from a partially garbage-keyed record, without falling back', () => {
+    expect(toChurchPulseWeightsRecord({ ATTENDANCE: 0.5, GROUP_MEMBERSHIP: 0.5, bogus: 99 })).toEqual({
+      ATTENDANCE: 0.5,
+      GROUP_MEMBERSHIP: 0.5,
+    });
   });
 });

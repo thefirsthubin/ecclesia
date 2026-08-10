@@ -92,6 +92,21 @@ draft, and the open questions that remain genuinely unresolved.
    A single `ALTER TYPE ... ADD VALUE` statement - no table changes, no
    new `GRANT`s needed.
 
+**Local Release 1 integration verification sprint addition:**
+
+9. `20260810000000_audit_log_null_branch_carve_out` - fixes
+   `audit_log_branch_isolation` (migration 1) to allow a NULL `branch_id`
+   row, and to use `current_setting`'s two-argument `missing_ok` form.
+   Closes a RED finding from the Local Release 1 integration verification
+   pass: `AuthGuard`'s own auth-failure audit write (`platform.users`
+   lookup not yet possible, so no Branch is known either) runs entirely
+   outside `PrismaService.runInBranchScope` - the one legitimate case
+   where `platform.audit_log` is written to with no Branch scope active at
+   all - and the original policy had no path for that, turning every
+   failed-authentication request into a 500 instead of the intended 401.
+   Policy-only change, no new table/grant. Needs the same real-Postgres
+   verification pass as every migration above before being trusted.
+
 **Do not edit a migration.sql file after it has been applied.** Prisma
 records a checksum of each migration when it's applied; editing the file
 afterward (rather than adding a new migration) causes `prisma migrate

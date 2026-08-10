@@ -94,6 +94,26 @@ describe('ChurchPulseRecomputeJob', () => {
     );
   });
 
+  it('produces a non-zero score when church_pulse_weights is {} - the actual NOT NULL column default, not just when it is null (regression test for "Church Pulse always 0")', async () => {
+    const { job, repository, branchDirectory } = buildJob();
+    branchDirectory.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
+    repository.listActiveBacentaGroups.mockResolvedValue([]);
+    repository.countSignalsByTypeInWindow.mockResolvedValue([{ signalType: 'attendance.recorded', count: 10 }]);
+    // {} - a Branch that has never touched the weight-configuration screen,
+    // not `null`. This is what `platform.configurations.church_pulse_weights`
+    // actually holds by default (a NOT NULL JSONB column).
+    repository.findChurchPulseWeights.mockResolvedValue({});
+    repository.upsertPulseScore.mockResolvedValue({});
+    repository.appendPulseScoreHistory.mockResolvedValue({});
+    repository.findRecentHistoryByScope.mockResolvedValue([]);
+
+    await job.run();
+
+    expect(repository.upsertPulseScore).toHaveBeenCalledWith(
+      expect.objectContaining({ branchId: 'branch-1', scopeType: 'BRANCH', score: expect.closeTo(100 / 6, 1) }),
+    );
+  });
+
   it('does not let a real, published-but-excluded event type (an SLA-breach alert, not an engagement action) contribute to the score', async () => {
     const { job, repository, branchDirectory } = buildJob();
     branchDirectory.listBranches.mockResolvedValue([{ id: 'branch-1' }]);

@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import {
-  CHURCH_PULSE_SIGNAL_TYPES,
   computeChurchPulseScore,
-  DEFAULT_CHURCH_PULSE_WEIGHTS,
   DEFAULT_CHURCH_PULSE_WINDOW_DAYS,
   DEFAULT_PULSE_TREND_WINDOW_DAYS,
   evaluatePulseTrend,
   mapEngagementSignalToChurchPulseCategory,
+  toChurchPulseWeightsRecord,
 } from '@ecclesia/domain-insights';
 import type { ChurchPulseSignalType } from '@ecclesia/domain-insights';
 import type { PulseScoreScopeType } from '@prisma/client';
@@ -21,19 +20,6 @@ import { PrismaService } from '../../platform/database/prisma.service';
  * `PULSE_DECLINE_ALERT_TYPE`, duplicated rather than imported for the
  * same Nx app-to-app boundary reason as everything else in this file. */
 const PULSE_DECLINE_ALERT_TYPE = 'PULSE_DECLINE';
-
-function toWeightsRecord(raw: Record<string, number> | null): Partial<Record<ChurchPulseSignalType, number>> {
-  if (!raw) {
-    return DEFAULT_CHURCH_PULSE_WEIGHTS;
-  }
-  const weights: Partial<Record<ChurchPulseSignalType, number>> = {};
-  for (const type of CHURCH_PULSE_SIGNAL_TYPES) {
-    if (typeof raw[type] === 'number') {
-      weights[type] = raw[type];
-    }
-  }
-  return weights;
-}
 
 /**
  * The church-pulse-recompute sweep (Blueprint §10.8's own worked example:
@@ -124,7 +110,7 @@ export class ChurchPulseRecomputeJob {
     }
 
     const rawWeights = await this.repository.findChurchPulseWeights(branchId);
-    const weights = toWeightsRecord(rawWeights);
+    const weights = toChurchPulseWeightsRecord(rawWeights);
     const score = computeChurchPulseScore(signalCountsByType, weights);
 
     await this.repository.upsertPulseScore({ branchId, scopeType, scopeId, score, computedAt: now });

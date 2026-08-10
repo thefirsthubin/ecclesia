@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import type { PulseScoreResponseDto } from '@ecclesia/contracts';
 import {
-  CHURCH_PULSE_SIGNAL_TYPES,
   computeChurchPulseScore,
-  DEFAULT_CHURCH_PULSE_WEIGHTS,
   DEFAULT_CHURCH_PULSE_WINDOW_DAYS,
   mapEngagementSignalToChurchPulseCategory,
+  toChurchPulseWeightsRecord,
 } from '@ecclesia/domain-insights';
 import type { ChurchPulseSignalType } from '@ecclesia/domain-insights';
 import type { PulseScore, PulseScoreScopeType } from '@prisma/client';
@@ -24,25 +23,6 @@ function toResponseDto(pulseScore: PulseScore): PulseScoreResponseDto {
     score: pulseScore.score.toNumber(),
     computedAt: pulseScore.computedAt.toISOString(),
   };
-}
-
-/** Falls back to `DEFAULT_CHURCH_PULSE_WEIGHTS` (OQ-10's equal-sixths
- * placeholder) when a Branch has no `church_pulse_weights` configured
- * yet, or when its configured value contains no recognized signal-type
- * keys - defensive against a partially/incorrectly configured Branch,
- * matching `computeChurchPulseScore()`'s own "missing category = 0"
- * philosophy rather than throwing. */
-function toWeightsRecord(raw: Record<string, number> | null): Partial<Record<ChurchPulseSignalType, number>> {
-  if (!raw) {
-    return DEFAULT_CHURCH_PULSE_WEIGHTS;
-  }
-  const weights: Partial<Record<ChurchPulseSignalType, number>> = {};
-  for (const type of CHURCH_PULSE_SIGNAL_TYPES) {
-    if (typeof raw[type] === 'number') {
-      weights[type] = raw[type];
-    }
-  }
-  return weights;
 }
 
 /**
@@ -106,7 +86,7 @@ export class PulseScoreService {
     }
 
     const rawWeights = await this.pulseScoreRepository.findChurchPulseWeights(branchId);
-    const weights = toWeightsRecord(rawWeights);
+    const weights = toChurchPulseWeightsRecord(rawWeights);
     const score = computeChurchPulseScore(signalCountsByType, weights);
 
     const pulseScore = await this.pulseScoreRepository.upsert({ branchId, scopeType, scopeId, score, computedAt: now });
