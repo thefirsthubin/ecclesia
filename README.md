@@ -1313,15 +1313,16 @@ corepack prepare pnpm@9.12.0 --activate
 ```bash
 pnpm install       # installs dependencies and runs `prepare` (Husky hooks)
 npx nx show projects
+pnpm typecheck     # nx run-many --target=typecheck --all
 pnpm lint          # nx run-many --target=lint --all
 pnpm test          # nx run-many --target=test --all
 pnpm build         # nx run-many --target=build --all
 pnpm format:check  # prettier --check .
 ```
 
-All five commands above must pass before a change is considered done —
-this is enforced automatically on every push and pull request by
-`.github/workflows/ci.yml`.
+`typecheck`/`lint`/`test`/`build` are enforced automatically on every push
+and pull request by `.github/workflows/ci.yml`; `format:check` is not yet
+wired into CI, so run it locally before pushing.
 
 ## Repository layout
 

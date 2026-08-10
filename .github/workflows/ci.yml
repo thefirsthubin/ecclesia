@@ -3,14 +3,18 @@ name: CI
 # Sprint 1.0 - Repository Protection (guardrail, not a feature milestone).
 #
 # Runs the exact same gate documented in the README's "Getting started"
-# section (pnpm install, lint, test, build) against a clean checkout on
-# every push and pull request. This exists because Sprint 0's repair work
-# repeatedly found that "passes on a developer's machine" and "passes from
-# a clean install" are not the same claim - stale local state, missing
-# dependencies, and version drift all slipped through manual verification
-# and were only caught by actually running the full sequence from scratch.
-# CI is that verification, automated, on every change instead of only when
-# something has already broken.
+# section (pnpm install, typecheck, lint, test, build) against a clean
+# checkout on every push and pull request. This exists because Sprint 0's
+# repair work repeatedly found that "passes on a developer's machine" and
+# "passes from a clean install" are not the same claim - stale local
+# state, missing dependencies, and version drift all slipped through
+# manual verification and were only caught by actually running the full
+# sequence from scratch. CI is that verification, automated, on every
+# change instead of only when something has already broken.
+#
+# Typecheck added once `pnpm typecheck` became real (previously wired to
+# a broken invocation that silently checked zero files workspace-wide -
+# see the `Typecheck` step's own comment below).
 on:
   push:
     branches: [main]
@@ -25,7 +29,7 @@ concurrency:
 
 jobs:
   verify:
-    name: Install, lint, test, build
+    name: Install, typecheck, lint, test, build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -47,6 +51,17 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      # `pnpm typecheck` (nx run-many --target=typecheck --all) - the
+      # `@nx/js/typescript` plugin's `tsc --build` target, correctly
+      # resolving TS project references. Previously ran nothing: `tsc -p
+      # <project>` (the pattern used everywhere before this fix) silently
+      # checks zero files against this workspace's solution-style
+      # tsconfig.json (`files: [], include: [], references: [...]`),
+      # which plain `tsc -p` doesn't follow. Every project now typechecks
+      # for real, including `infra`'s CDK stacks.
+      - name: Typecheck
+        run: pnpm typecheck
 
       - name: Lint
         run: pnpm lint
