@@ -238,6 +238,8 @@ importers:
         specifier: ^5.1.4
         version: 5.1.4(webpack@5.109.2)
 
+  libs/contracts: {}
+
 packages:
 
   '@adobe/css-tools@4.3.3':
