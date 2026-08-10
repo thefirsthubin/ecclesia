@@ -136,6 +136,15 @@ export class ApiServiceStack extends EcclesiaStack {
 
     this.fargateService.attachToAlb(alb.httpListener, '/health');
 
+    // `[Bug fix]` Granted here, against the imported `fargateService.taskRole`,
+    // rather than in `IamStack` against the live `apiTaskRole` object - see
+    // `FargateService.taskRole`'s own doc comment and `iam-stack.ts`'s
+    // matching comment for why granting from `IamStack` directly recreates
+    // the exact `DependencyCycle` this construct already fixed once for the
+    // execution role's ECS-native secret injection above.
+    secrets.mobileMoneyProviderSecret.grantRead(this.fargateService.taskRole);
+    secrets.smsGatewaySecret.grantRead(this.fargateService.taskRole);
+
     writeParameter(this, 'ApiServiceNameParam', config.envName, 'compute', 'api-service-name', this.fargateService.service.serviceName);
 
     new cdk.CfnOutput(this, 'ApiServiceNameOutput', { value: this.fargateService.service.serviceName });

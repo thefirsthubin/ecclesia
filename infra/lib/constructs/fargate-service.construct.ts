@@ -80,6 +80,15 @@ export class FargateService extends Construct {
   public readonly service: ecs.FargateService;
   public readonly logGroup: logs.LogGroup;
   public readonly container: ecs.ContainerDefinition;
+  /** The same imported-by-ARN task role `taskDefinition.taskRole` uses
+   * (see this constructor's own `[Bug fix]` comment on why it's imported
+   * rather than the live `IamStack` role object) - exposed so a caller
+   * can grant this service's *own* runtime AWS SDK access (e.g. a Secrets
+   * Manager read no ECS-native `secrets` prop already covers) through the
+   * same safe, non-cyclic identity-side path, instead of granting from
+   * `IamStack` directly and re-creating the exact cycle this file already
+   * fixed once for the execution role. */
+  public readonly taskRole: iam.IRole;
 
   constructor(scope: Construct, id: string, props: FargateServiceProps) {
     super(scope, id);
@@ -139,6 +148,7 @@ export class FargateService extends Construct {
     // these secrets.
     const importedTaskRole = iam.Role.fromRoleArn(this, 'ImportedTaskRole', props.taskRole.roleArn);
     const importedExecutionRole = iam.Role.fromRoleArn(this, 'ImportedExecutionRole', props.executionRole.roleArn);
+    this.taskRole = importedTaskRole;
 
     this.taskDefinition = new ecs.FargateTaskDefinition(this, 'TaskDefinition', {
       family: props.resourceName,

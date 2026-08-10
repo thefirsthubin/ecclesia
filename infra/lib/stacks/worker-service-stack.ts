@@ -121,6 +121,17 @@ export class WorkerServiceStack extends EcclesiaStack {
     this.notificationConsumer = buildConsumer('NotificationConsumer', 'consume:notification');
     this.auditConsumer = buildConsumer('AuditConsumer', 'consume:audit');
 
+    // `[Bug fix]` Granted here, against one consumer's imported
+    // `taskRole`, rather than in `IamStack` against the live
+    // `workerTaskRole` object - see `FargateService.taskRole`'s own doc
+    // comment and `iam-stack.ts`'s matching comment for why granting from
+    // `IamStack` directly recreates a real `DependencyCycle`. All three
+    // consumers share the same underlying `workerTaskRole` (by ARN/name,
+    // per `buildConsumer`'s own `taskRole: iam.workerTaskRole` above), so
+    // one grant is sufficient - IAM merges every policy attached to a
+    // role regardless of which stack/construct created it.
+    secrets.smsGatewaySecret.grantRead(this.insightsConsumer.taskRole);
+
     writeParameter(this, 'InsightsConsumerServiceNameParam', config.envName, 'compute', 'worker-insights-service-name', this.insightsConsumer.service.serviceName);
     writeParameter(this, 'NotificationConsumerServiceNameParam', config.envName, 'compute', 'worker-notification-service-name', this.notificationConsumer.service.serviceName);
     writeParameter(this, 'AuditConsumerServiceNameParam', config.envName, 'compute', 'worker-audit-service-name', this.auditConsumer.service.serviceName);

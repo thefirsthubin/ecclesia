@@ -55,15 +55,22 @@ export class IamStack extends EcclesiaStack {
   constructor(scope: Construct, id: string, config: EnvironmentConfig, props: IamStackProps) {
     super(scope, id, config, props);
 
-    const { eventing, secrets, ses } = props;
+    const { eventing, ses } = props;
     // No construct reference from `ses` is read directly below (the SES
     // identity ARN is built from `config.ses.emailIdentity` instead - see
     // the comment further down), so CDK would not infer a stack
-    // dependency automatically the way it does for `eventing`/`secrets`
-    // (whose resources ARE referenced directly). Declared explicitly so
+    // dependency automatically the way it does for `eventing` (whose
+    // resources ARE referenced directly). Declared explicitly so
     // `cdk deploy --all`'s dependency graph still deploys SesStack before
     // IamStack in any environment where an identity is configured.
     this.addDependency(ses);
+    // `props.secrets` is intentionally not destructured/read here anymore
+    // - see this constructor's own `[Bug fix]` comments below on why
+    // every `secrets.*.grantRead(...)` call that used to live in this
+    // stack was either dropped (unused) or moved to `ApiServiceStack`/
+    // `WorkerServiceStack`. `secrets: SecretsStack` stays a required prop
+    // on `IamStackProps` regardless - `bin/infra.ts`'s construction order
+    // is unchanged, only what this stack's body does with it.
 
     this.apiTaskExecutionRole = this.buildExecutionRole('ApiTaskExecutionRole', 'api-task-execution-role');
     this.workerTaskExecutionRole = this.buildExecutionRole('WorkerTaskExecutionRole', 'worker-task-execution-role');
@@ -77,12 +84,38 @@ export class IamStack extends EcclesiaStack {
     // Pipeline milestone's own EventBridgePublisherService) - PutEvents on
     // this environment's bus only, nothing else on EventBridge.
     eventing.bus.eventBus.grantPutEventsTo(this.apiTaskRole);
-    // apps/api reads its own database/third-party credentials at boot -
-    // read-only, scoped to exactly these three secrets, not
-    // secretsmanager:* or a wildcard ARN.
-    secrets.databaseCredentials.grantRead(this.apiTaskRole);
-    secrets.mobileMoneyProviderSecret.grantRead(this.apiTaskRole);
-    secrets.smsGatewaySecret.grantRead(this.apiTaskRole);
+    // `[Bug fix]` No `secrets.*.grantRead(this.apiTaskRole)` calls here -
+    // moved to `ApiServiceStack` (granted against `fargateService.taskRole`
+    // instead), and `databaseCredentials` specifically dropped rather than
+    // moved. Both are consequences of the same underlying CDK behavior:
+    // `iam.Grant.addToPrincipalOrResource` can only skip its resource-policy
+    // fallback when it can prove grantee and resource share an AWS account,
+    // which it cannot for a role imported by ARN
+    // (`fargate-service.construct.ts`'s own `[Bug fix]` comment on why the
+    // role is imported at all) - so *any* grant here, from a role live in
+    // this stack, to a secret live in `SecretsStack`, always also writes a
+    // resource policy on that secret naming this stack's role, creating
+    // `SecretsStack -> IamStack`. `SecretsStack -> IamStack` already exists
+    // unavoidably (the *execution* role's automatic grant from
+    // `ecs.TaskDefinition.addContainer()`'s `secrets` prop, load-bearing -
+    // nothing else lets ECS inject `DB_MASTER_PASSWORD`/`DB_APP_PASSWORD`),
+    // so adding `IamStack -> SecretsStack` on top, from *any* secret granted
+    // here, is a real `DependencyCycle` CDK correctly refuses to synth
+    // (confirmed via a real `nx run infra:test` failure across three specs).
+    // Two different fixes for two different secrets:
+    //   - `databaseCredentials`: dropped outright, not moved - a
+    //     repository-wide search confirms neither `apps/api/src` nor
+    //     `apps/worker/src` ever call the Secrets Manager SDK directly;
+    //     `apps/api/entrypoint.sh` composes `DATABASE_URL`/`APP_DATABASE_URL`
+    //     purely from env vars the execution role's grant already lets ECS
+    //     inject. This grant was excess privilege the task role never used.
+    //   - `mobileMoneyProviderSecret`/`smsGatewaySecret`: real, intended
+    //     future runtime access (Horizon 2 - this file's own top doc
+    //     comment), not unused - moved to `ApiServiceStack`/
+    //     `WorkerServiceStack`, granted against `fargateService.taskRole`
+    //     (also an ARN import, `fargate-service.construct.ts`), so the grant
+    //     flows the same direction as the execution role's already-necessary
+    //     one instead of the opposite one.
     // apps/api sends Cognito-adjacent transactional email once the SES
     // identity exists (ses-stack.ts's own [Known limitation] on why
     // Cognito isn't wired to it yet). aws-ses's EmailIdentity construct
@@ -125,8 +158,10 @@ export class IamStack extends EcclesiaStack {
     // (Source: 'ecclesia.worker'), used by scheduled sweeps emitting
     // synthetic signals (Blueprint §10.8, e.g. silent-drift-sweep).
     eventing.bus.eventBus.grantPutEventsTo(this.workerTaskRole);
-    secrets.databaseCredentials.grantRead(this.workerTaskRole);
-    secrets.smsGatewaySecret.grantRead(this.workerTaskRole);
+    // `[Bug fix]` No `secrets.*.grantRead(this.workerTaskRole)` calls here
+    // either - same reasoning as `apiTaskRole` above. `smsGatewaySecret` is
+    // granted in `WorkerServiceStack` instead; `databaseCredentials` is
+    // dropped outright (unused - see above).
 
     writeParameter(this, 'ApiTaskRoleArnParam', config.envName, 'iam', 'api-task-role-arn', this.apiTaskRole.roleArn);
     writeParameter(this, 'WorkerTaskRoleArnParam', config.envName, 'iam', 'worker-task-role-arn', this.workerTaskRole.roleArn);
