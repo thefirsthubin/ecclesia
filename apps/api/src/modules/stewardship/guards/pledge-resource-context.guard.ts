@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import type { ActorContext, ResourceContext } from '@ecclesia/rbac';
 
 import { BranchConfigurationService } from '../../../platform/rbac/branch-configuration.service';
+import { PrismaService } from '../../../platform/database/prisma.service';
 import { EcclesiaContextGuardBase } from '../../../platform/rbac/ecclesia-context.guard-base';
 import type { RequestWithActorContext } from '../../../platform/auth/auth.guard';
 import { PledgeRepository } from '../repositories/pledge.repository';
@@ -10,8 +11,8 @@ import { PledgeRepository } from '../repositories/pledge.repository';
  * commitment (`SELF` scope) - see `PledgeService`'s doc comment. */
 @Injectable()
 export class PledgeCreateResourceContextGuard extends EcclesiaContextGuardBase {
-  constructor(branchConfigurationService: BranchConfigurationService) {
-    super(branchConfigurationService);
+  constructor(branchConfigurationService: BranchConfigurationService, prisma: PrismaService) {
+    super(branchConfigurationService, prisma);
   }
 
   protected async loadResource(_request: RequestWithActorContext, actor: ActorContext): Promise<ResourceContext> {
@@ -24,9 +25,10 @@ export class PledgeCreateResourceContextGuard extends EcclesiaContextGuardBase {
 export class PledgeResourceContextGuard extends EcclesiaContextGuardBase {
   constructor(
     branchConfigurationService: BranchConfigurationService,
+    prisma: PrismaService,
     private readonly pledgeRepository: PledgeRepository,
   ) {
-    super(branchConfigurationService);
+    super(branchConfigurationService, prisma);
   }
 
   protected async loadResource(request: RequestWithActorContext, _actor: ActorContext): Promise<ResourceContext> {

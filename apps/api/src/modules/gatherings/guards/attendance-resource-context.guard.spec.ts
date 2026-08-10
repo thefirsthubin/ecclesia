@@ -11,6 +11,7 @@ function buildContext(request: Partial<RequestWithActorContext>): ExecutionConte
 }
 
 const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
 const actor: ActorContext = { personId: 'usher-1', role: 'BACENTA_LEADER', branchId: 'branch-1' };
 
 describe('AttendanceResourceContextGuard', () => {
@@ -19,6 +20,7 @@ describe('AttendanceResourceContextGuard', () => {
     const groupScopeService = { loadResourceContext: jest.fn() };
     const guard = new AttendanceResourceContextGuard(
       branchConfigurationService as never,
+      prisma as never,
       gatheringRepository as never,
       groupScopeService as never,
     );
@@ -34,6 +36,7 @@ describe('AttendanceResourceContextGuard', () => {
     };
     const guard = new AttendanceResourceContextGuard(
       branchConfigurationService as never,
+      prisma as never,
       gatheringRepository as never,
       groupScopeService as never,
     );
@@ -52,6 +55,7 @@ describe('AttendanceResourceContextGuard', () => {
     const groupScopeService = { loadResourceContext: jest.fn() };
     const guard = new AttendanceResourceContextGuard(
       branchConfigurationService as never,
+      prisma as never,
       gatheringRepository as never,
       groupScopeService as never,
     );

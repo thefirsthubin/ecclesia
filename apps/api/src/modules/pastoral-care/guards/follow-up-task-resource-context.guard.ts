@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import type { ActorContext, ResourceContext } from '@ecclesia/rbac';
 
 import { BranchConfigurationService } from '../../../platform/rbac/branch-configuration.service';
+import { PrismaService } from '../../../platform/database/prisma.service';
 import { EcclesiaContextGuardBase } from '../../../platform/rbac/ecclesia-context.guard-base';
 import type { RequestWithActorContext } from '../../../platform/auth/auth.guard';
 import { GroupScopeService } from '../../people/services/group-scope.service';
@@ -17,9 +18,10 @@ import { FollowUpTaskRepository } from '../repositories/follow-up-task.repositor
 export class FollowUpTaskCreateResourceContextGuard extends EcclesiaContextGuardBase {
   constructor(
     branchConfigurationService: BranchConfigurationService,
+    prisma: PrismaService,
     private readonly personScopeService: PersonScopeService,
   ) {
-    super(branchConfigurationService);
+    super(branchConfigurationService, prisma);
   }
 
   protected loadResource(request: RequestWithActorContext, actor: ActorContext): Promise<ResourceContext> {
@@ -38,10 +40,11 @@ export class FollowUpTaskCreateResourceContextGuard extends EcclesiaContextGuard
 export class FollowUpTaskResourceContextGuard extends EcclesiaContextGuardBase {
   constructor(
     branchConfigurationService: BranchConfigurationService,
+    prisma: PrismaService,
     private readonly followUpTaskRepository: FollowUpTaskRepository,
     private readonly personScopeService: PersonScopeService,
   ) {
-    super(branchConfigurationService);
+    super(branchConfigurationService, prisma);
   }
 
   protected async loadResource(request: RequestWithActorContext, actor: ActorContext): Promise<ResourceContext> {
@@ -67,9 +70,10 @@ export class FollowUpTaskResourceContextGuard extends EcclesiaContextGuardBase {
 export class FollowUpTaskListResourceContextGuard extends EcclesiaContextGuardBase {
   constructor(
     branchConfigurationService: BranchConfigurationService,
+    prisma: PrismaService,
     private readonly groupScopeService: GroupScopeService,
   ) {
-    super(branchConfigurationService);
+    super(branchConfigurationService, prisma);
   }
 
   protected loadResource(request: RequestWithActorContext, _actor: ActorContext): Promise<ResourceContext> {
@@ -91,9 +95,10 @@ export class FollowUpTaskListResourceContextGuard extends EcclesiaContextGuardBa
 export class FollowUpTaskListForActorResourceContextGuard extends EcclesiaContextGuardBase {
   constructor(
     branchConfigurationService: BranchConfigurationService,
+    prisma: PrismaService,
     private readonly groupScopeService: GroupScopeService,
   ) {
-    super(branchConfigurationService);
+    super(branchConfigurationService, prisma);
   }
 
   protected loadResource(request: RequestWithActorContext, actor: ActorContext): Promise<ResourceContext> {

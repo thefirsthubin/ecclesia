@@ -14,6 +14,7 @@ function buildContext(request: Partial<RequestWithActorContext>): ExecutionConte
 }
 
 const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
 const actor: ActorContext = { personId: 'ap-1', role: 'ASSISTANT_PASTOR', branchId: 'branch-1' };
 
 describe('GatheringSeriesCreateResourceContextGuard', () => {
@@ -21,7 +22,7 @@ describe('GatheringSeriesCreateResourceContextGuard', () => {
     const groupScopeService = {
       loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', bacentaId: 'bacenta-1' }),
     };
-    const guard = new GatheringSeriesCreateResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
+    const guard = new GatheringSeriesCreateResourceContextGuard(branchConfigurationService as never, prisma as never, groupScopeService as never);
     const request: Partial<RequestWithActorContext> = { actorContext: actor, body: { groupId: 'bacenta-1' } } as never;
 
     await guard.canActivate(buildContext(request));
@@ -31,7 +32,7 @@ describe('GatheringSeriesCreateResourceContextGuard', () => {
 
   it('falls back to the actor\'s own Branch when no groupId is supplied', async () => {
     const groupScopeService = { loadResourceContext: jest.fn() };
-    const guard = new GatheringSeriesCreateResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
+    const guard = new GatheringSeriesCreateResourceContextGuard(branchConfigurationService as never, prisma as never, groupScopeService as never);
     const request: Partial<RequestWithActorContext> = { actorContext: actor, body: {} } as never;
 
     await guard.canActivate(buildContext(request));
@@ -48,6 +49,7 @@ describe('GatheringSeriesResourceContextGuard', () => {
     const groupScopeService = { loadResourceContext: jest.fn() };
     const guard = new GatheringSeriesResourceContextGuard(
       branchConfigurationService as never,
+      prisma as never,
       gatheringSeriesRepository as never,
       groupScopeService as never,
     );
@@ -65,6 +67,7 @@ describe('GatheringSeriesResourceContextGuard', () => {
     };
     const guard = new GatheringSeriesResourceContextGuard(
       branchConfigurationService as never,
+      prisma as never,
       gatheringSeriesRepository as never,
       groupScopeService as never,
     );

@@ -15,6 +15,7 @@ function buildContext(request: Partial<RequestWithActorContext>): ExecutionConte
 }
 
 const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
 const treasurer: ActorContext = { personId: 'treasurer-1', role: 'TREASURER', branchId: 'branch-1' };
 
 describe('FinancialTransactionCreateResourceContextGuard', () => {
@@ -22,7 +23,7 @@ describe('FinancialTransactionCreateResourceContextGuard', () => {
     const groupScopeService = {
       loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', bacentaId: 'bacenta-1' }),
     };
-    const guard = new FinancialTransactionCreateResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
+    const guard = new FinancialTransactionCreateResourceContextGuard(branchConfigurationService as never, prisma as never, groupScopeService as never);
     const request: Partial<RequestWithActorContext> = { actorContext: treasurer, body: { sourceGroupId: 'bacenta-1' } } as never;
 
     await guard.canActivate(buildContext(request));
@@ -32,7 +33,7 @@ describe('FinancialTransactionCreateResourceContextGuard', () => {
 
   it('falls back to { branchId, ownerId: actor.personId } for an individual entry (no sourceGroupId)', async () => {
     const groupScopeService = { loadResourceContext: jest.fn() };
-    const guard = new FinancialTransactionCreateResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
+    const guard = new FinancialTransactionCreateResourceContextGuard(branchConfigurationService as never, prisma as never, groupScopeService as never);
     const request: Partial<RequestWithActorContext> = { actorContext: treasurer, body: {} } as never;
 
     await guard.canActivate(buildContext(request));
@@ -50,6 +51,7 @@ describe('FinancialTransactionResourceContextGuard', () => {
     const groupScopeService = { loadResourceContext: jest.fn() };
     const guard = new FinancialTransactionResourceContextGuard(
       branchConfigurationService as never,
+      prisma as never,
       financialTransactionRepository as never,
       groupScopeService as never,
     );
@@ -68,6 +70,7 @@ describe('FinancialTransactionResourceContextGuard', () => {
     };
     const guard = new FinancialTransactionResourceContextGuard(
       branchConfigurationService as never,
+      prisma as never,
       financialTransactionRepository as never,
       groupScopeService as never,
     );
@@ -89,6 +92,7 @@ describe('FinancialTransactionResourceContextGuard', () => {
     const groupScopeService = { loadResourceContext: jest.fn() };
     const guard = new FinancialTransactionResourceContextGuard(
       branchConfigurationService as never,
+      prisma as never,
       financialTransactionRepository as never,
       groupScopeService as never,
     );
@@ -104,7 +108,7 @@ describe('FinancialTransactionResourceContextGuard', () => {
 
 describe('FinancialTransactionListResourceContextGuard', () => {
   it('always resolves to just the actor\'s own Branch', async () => {
-    const guard = new FinancialTransactionListResourceContextGuard(branchConfigurationService as never);
+    const guard = new FinancialTransactionListResourceContextGuard(branchConfigurationService as never, prisma as never);
     const request: Partial<RequestWithActorContext> = { actorContext: treasurer, query: {} } as never;
 
     await guard.canActivate(buildContext(request));

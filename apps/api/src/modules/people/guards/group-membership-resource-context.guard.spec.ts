@@ -15,8 +15,10 @@ describe('GroupMembershipResourceContextGuard', () => {
       loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', ownerId: 'person-1' }),
     };
     const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+    const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
     const guard = new GroupMembershipResourceContextGuard(
       branchConfigurationService as never,
+      prisma as never,
       personScopeService as never,
     );
     const actor: ActorContext = { personId: 'bl-1', role: 'BACENTA_LEADER', branchId: 'branch-1' };

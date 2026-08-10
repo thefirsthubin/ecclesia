@@ -11,12 +11,13 @@ function buildContext(request: Partial<RequestWithActorContext>): ExecutionConte
 
 describe('RoleAssignmentResourceContextGuard', () => {
   const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+  const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
 
   it('delegates resource resolution to PersonScopeService, keyed on the :personId param', async () => {
     const personScopeService = {
       loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', ownerId: 'person-1', bacentaId: 'bacenta-1' }),
     };
-    const guard = new RoleAssignmentResourceContextGuard(branchConfigurationService as never, personScopeService as never);
+    const guard = new RoleAssignmentResourceContextGuard(branchConfigurationService as never, prisma as never, personScopeService as never);
     const actor: ActorContext = { personId: 'rp-1', role: 'RESIDENT_PASTOR', branchId: 'branch-1' };
     const request: Partial<RequestWithActorContext> = { actorContext: actor, params: { personId: 'person-1' } } as never;
 
@@ -31,7 +32,7 @@ describe('RoleAssignmentResourceContextGuard', () => {
   it('propagates a NotFoundException from PersonScopeService unchanged', async () => {
     const notFound = new Error('No Person found');
     const personScopeService = { loadResourceContext: jest.fn().mockRejectedValue(notFound) };
-    const guard = new RoleAssignmentResourceContextGuard(branchConfigurationService as never, personScopeService as never);
+    const guard = new RoleAssignmentResourceContextGuard(branchConfigurationService as never, prisma as never, personScopeService as never);
     const actor: ActorContext = { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' };
     const request: Partial<RequestWithActorContext> = { actorContext: actor, params: { personId: 'missing' } } as never;
 

@@ -11,13 +11,14 @@ function buildContext(request: Partial<RequestWithActorContext>): ExecutionConte
 }
 
 const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
 const bacentaLeader: ActorContext = { personId: 'leader-1', role: 'BACENTA_LEADER', branchId: 'branch-1', bacentaId: 'group-1' };
 
 describe('AlertResourceContextGuard', () => {
   it('throws NotFoundException when the Alert does not exist', async () => {
     const alertRepository = { findById: jest.fn().mockResolvedValue(null) };
     const groupScopeService = { loadResourceContext: jest.fn() };
-    const guard = new AlertResourceContextGuard(branchConfigurationService as never, alertRepository as never, groupScopeService as never);
+    const guard = new AlertResourceContextGuard(branchConfigurationService as never, prisma as never, alertRepository as never, groupScopeService as never);
     const request: Partial<RequestWithActorContext> = { actorContext: bacentaLeader, params: { id: 'missing' } } as never;
 
     await expect(guard.canActivate(buildContext(request))).rejects.toThrow(NotFoundException);
@@ -30,7 +31,7 @@ describe('AlertResourceContextGuard', () => {
     const groupScopeService = {
       loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', bacentaId: 'group-1' }),
     };
-    const guard = new AlertResourceContextGuard(branchConfigurationService as never, alertRepository as never, groupScopeService as never);
+    const guard = new AlertResourceContextGuard(branchConfigurationService as never, prisma as never, alertRepository as never, groupScopeService as never);
     const request: Partial<RequestWithActorContext> = { actorContext: bacentaLeader, params: { id: 'alert-1' } } as never;
 
     await guard.canActivate(buildContext(request));
@@ -46,7 +47,7 @@ describe('AlertResourceContextGuard', () => {
       findById: jest.fn().mockResolvedValue({ id: 'alert-2', branchId: 'branch-1', scopeType: 'BRANCH', scopeId: 'branch-1' }),
     };
     const groupScopeService = { loadResourceContext: jest.fn() };
-    const guard = new AlertResourceContextGuard(branchConfigurationService as never, alertRepository as never, groupScopeService as never);
+    const guard = new AlertResourceContextGuard(branchConfigurationService as never, prisma as never, alertRepository as never, groupScopeService as never);
     const request: Partial<RequestWithActorContext> = { actorContext: bacentaLeader, params: { id: 'alert-2' } } as never;
 
     await guard.canActivate(buildContext(request));

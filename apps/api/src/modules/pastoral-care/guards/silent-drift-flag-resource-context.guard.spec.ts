@@ -12,10 +12,11 @@ function buildContext(request: Partial<RequestWithActorContext>): ExecutionConte
 describe('SilentDriftFlagListResourceContextGuard', () => {
   it('resolves scope from the :groupId route param via GroupScopeService', async () => {
     const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+    const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
     const groupScopeService = {
       loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', bacentaId: 'bacenta-1' }),
     };
-    const guard = new SilentDriftFlagListResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
+    const guard = new SilentDriftFlagListResourceContextGuard(branchConfigurationService as never, prisma as never, groupScopeService as never);
     const actor: ActorContext = { personId: 'shepherd-1', role: 'BACENTA_LEADER', branchId: 'branch-1' };
     const request: Partial<RequestWithActorContext> = { actorContext: actor, params: { groupId: 'bacenta-1' } } as never;
 

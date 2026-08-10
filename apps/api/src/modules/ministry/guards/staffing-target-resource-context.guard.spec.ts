@@ -14,12 +14,13 @@ function buildContext(request: Partial<RequestWithActorContext>): ExecutionConte
 }
 
 const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
 const basontaLeader: ActorContext = { personId: 'leader-1', role: 'BASONTA_LEADER', branchId: 'branch-1', basontaId: 'basonta-1' };
 
 describe('StaffingTargetCreateResourceContextGuard', () => {
   it('throws NotFoundException when the request body has no groupId', async () => {
     const groupScopeService = { loadResourceContext: jest.fn() };
-    const guard = new StaffingTargetCreateResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
+    const guard = new StaffingTargetCreateResourceContextGuard(branchConfigurationService as never, prisma as never, groupScopeService as never);
     const request: Partial<RequestWithActorContext> = { actorContext: basontaLeader, body: {} } as never;
 
     await expect(guard.canActivate(buildContext(request))).rejects.toThrow(NotFoundException);
@@ -27,7 +28,7 @@ describe('StaffingTargetCreateResourceContextGuard', () => {
 
   it('delegates to GroupScopeService.loadResourceContext(body.groupId)', async () => {
     const groupScopeService = { loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', basontaId: 'basonta-1' }) };
-    const guard = new StaffingTargetCreateResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
+    const guard = new StaffingTargetCreateResourceContextGuard(branchConfigurationService as never, prisma as never, groupScopeService as never);
     const request: Partial<RequestWithActorContext> = { actorContext: basontaLeader, body: { groupId: 'basonta-1' } } as never;
 
     await guard.canActivate(buildContext(request));
@@ -45,6 +46,7 @@ describe('StaffingTargetResourceContextGuard', () => {
     const groupScopeService = { loadResourceContext: jest.fn() };
     const guard = new StaffingTargetResourceContextGuard(
       branchConfigurationService as never,
+      prisma as never,
       staffingTargetRepository as never,
       groupScopeService as never,
     );
@@ -58,6 +60,7 @@ describe('StaffingTargetResourceContextGuard', () => {
     const groupScopeService = { loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', basontaId: 'basonta-1' }) };
     const guard = new StaffingTargetResourceContextGuard(
       branchConfigurationService as never,
+      prisma as never,
       staffingTargetRepository as never,
       groupScopeService as never,
     );

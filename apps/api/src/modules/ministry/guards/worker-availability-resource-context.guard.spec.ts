@@ -10,11 +10,12 @@ function buildContext(request: Partial<RequestWithActorContext>): ExecutionConte
 }
 
 const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
 const worker: ActorContext = { personId: 'person-1', role: 'WORKER', branchId: 'branch-1' };
 
 describe('WorkerAvailabilityResourceContextGuard', () => {
   it('resolves to { branchId, ownerId: actor.personId } (SELF scope)', async () => {
-    const guard = new WorkerAvailabilityResourceContextGuard(branchConfigurationService as never);
+    const guard = new WorkerAvailabilityResourceContextGuard(branchConfigurationService as never, prisma as never);
     const request: Partial<RequestWithActorContext> = { actorContext: worker } as never;
 
     await guard.canActivate(buildContext(request));

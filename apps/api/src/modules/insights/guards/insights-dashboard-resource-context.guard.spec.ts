@@ -10,11 +10,12 @@ function buildContext(request: Partial<RequestWithActorContext>): ExecutionConte
 }
 
 const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
 const residentPastor: ActorContext = { personId: 'pastor-1', role: 'RESIDENT_PASTOR', branchId: 'branch-1' };
 
 describe('BranchDashboardResourceContextGuard', () => {
   it('resolves to { branchId: actor.branchId }, ignoring any route params', async () => {
-    const guard = new BranchDashboardResourceContextGuard(branchConfigurationService as never);
+    const guard = new BranchDashboardResourceContextGuard(branchConfigurationService as never, prisma as never);
     const request: Partial<RequestWithActorContext> = { actorContext: residentPastor } as never;
 
     await guard.canActivate(buildContext(request));
@@ -30,7 +31,7 @@ describe('GroupDashboardResourceContextGuard', () => {
     const groupScopeService = {
       loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', bacentaId: 'group-1' }),
     };
-    const guard = new GroupDashboardResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
+    const guard = new GroupDashboardResourceContextGuard(branchConfigurationService as never, prisma as never, groupScopeService as never);
     const request: Partial<RequestWithActorContext> = { actorContext: residentPastor, params: { groupId: 'group-1' } } as never;
 
     await guard.canActivate(buildContext(request));

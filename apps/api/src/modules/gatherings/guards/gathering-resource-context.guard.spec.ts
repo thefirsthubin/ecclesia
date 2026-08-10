@@ -15,6 +15,7 @@ function buildContext(request: Partial<RequestWithActorContext>): ExecutionConte
 }
 
 const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
 const actor: ActorContext = { personId: 'ap-1', role: 'ASSISTANT_PASTOR', branchId: 'branch-1' };
 
 describe('GatheringCreateResourceContextGuard', () => {
@@ -22,7 +23,7 @@ describe('GatheringCreateResourceContextGuard', () => {
     const groupScopeService = {
       loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', bacentaId: 'bacenta-1' }),
     };
-    const guard = new GatheringCreateResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
+    const guard = new GatheringCreateResourceContextGuard(branchConfigurationService as never, prisma as never, groupScopeService as never);
     const request: Partial<RequestWithActorContext> = { actorContext: actor, body: { ownerGroupId: 'bacenta-1' } } as never;
 
     await guard.canActivate(buildContext(request));
@@ -35,7 +36,7 @@ describe('GatheringCreateResourceContextGuard', () => {
 
   it('falls back to the actor\'s own Branch for a Branch-wide Gathering (no ownerGroupId)', async () => {
     const groupScopeService = { loadResourceContext: jest.fn() };
-    const guard = new GatheringCreateResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
+    const guard = new GatheringCreateResourceContextGuard(branchConfigurationService as never, prisma as never, groupScopeService as never);
     const request: Partial<RequestWithActorContext> = { actorContext: actor, body: {} } as never;
 
     await guard.canActivate(buildContext(request));
@@ -53,6 +54,7 @@ describe('GatheringResourceContextGuard', () => {
     const groupScopeService = { loadResourceContext: jest.fn() };
     const guard = new GatheringResourceContextGuard(
       branchConfigurationService as never,
+      prisma as never,
       gatheringRepository as never,
       groupScopeService as never,
     );
@@ -68,6 +70,7 @@ describe('GatheringResourceContextGuard', () => {
     };
     const guard = new GatheringResourceContextGuard(
       branchConfigurationService as never,
+      prisma as never,
       gatheringRepository as never,
       groupScopeService as never,
     );
@@ -83,6 +86,7 @@ describe('GatheringResourceContextGuard', () => {
     const groupScopeService = { loadResourceContext: jest.fn() };
     const guard = new GatheringResourceContextGuard(
       branchConfigurationService as never,
+      prisma as never,
       gatheringRepository as never,
       groupScopeService as never,
     );
@@ -102,7 +106,7 @@ describe('GatheringListResourceContextGuard', () => {
     const groupScopeService = {
       loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', bacentaId: 'bacenta-1' }),
     };
-    const guard = new GatheringListResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
+    const guard = new GatheringListResourceContextGuard(branchConfigurationService as never, prisma as never, groupScopeService as never);
     const request: Partial<RequestWithActorContext> = { actorContext: actor, query: { ownerGroupId: 'bacenta-1' } } as never;
 
     await guard.canActivate(buildContext(request));
@@ -115,7 +119,7 @@ describe('GatheringListResourceContextGuard', () => {
 
   it('falls back to the actor\'s own Branch when no ownerGroupId query param is present (Gatherings Web Admin sprint)', async () => {
     const groupScopeService = { loadResourceContext: jest.fn() };
-    const guard = new GatheringListResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
+    const guard = new GatheringListResourceContextGuard(branchConfigurationService as never, prisma as never, groupScopeService as never);
     const request: Partial<RequestWithActorContext> = { actorContext: actor, query: {} } as never;
 
     await guard.canActivate(buildContext(request));

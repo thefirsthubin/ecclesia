@@ -19,7 +19,8 @@ describe('GroupResourceContextGuard', () => {
       loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', bacentaId: 'bacenta-1' }),
     };
     const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
-    const guard = new GroupResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
+    const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
+    const guard = new GroupResourceContextGuard(branchConfigurationService as never, prisma as never, groupScopeService as never);
     const actor: ActorContext = { personId: 'bl-1', role: 'BACENTA_LEADER', branchId: 'branch-1', bacentaId: 'bacenta-1' };
     const request: Partial<RequestWithActorContext> = { actorContext: actor, params: { id: 'bacenta-1' } } as never;
 
@@ -35,7 +36,8 @@ describe('GroupResourceContextGuard', () => {
     const notFound = new Error('No Group found');
     const groupScopeService = { loadResourceContext: jest.fn().mockRejectedValue(notFound) };
     const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
-    const guard = new GroupResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
+    const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
+    const guard = new GroupResourceContextGuard(branchConfigurationService as never, prisma as never, groupScopeService as never);
     const actor: ActorContext = { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' };
     const request: Partial<RequestWithActorContext> = { actorContext: actor, params: { id: 'missing' } } as never;
 
@@ -46,7 +48,8 @@ describe('GroupResourceContextGuard', () => {
 describe('GroupCreateResourceContextGuard', () => {
   it('resolves the resource as the actor’s own Branch, with no database read', async () => {
     const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
-    const guard = new GroupCreateResourceContextGuard(branchConfigurationService as never);
+    const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
+    const guard = new GroupCreateResourceContextGuard(branchConfigurationService as never, prisma as never);
     const actor: ActorContext = { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' };
     const request: Partial<RequestWithActorContext> = { actorContext: actor } as never;
 
@@ -61,7 +64,8 @@ describe('GroupCreateResourceContextGuard', () => {
 describe('GroupListResourceContextGuard (Ministry Web Admin sprint)', () => {
   it('resolves the resource as the actor\'s own Branch, with no database read', async () => {
     const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
-    const guard = new GroupListResourceContextGuard(branchConfigurationService as never);
+    const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
+    const guard = new GroupListResourceContextGuard(branchConfigurationService as never, prisma as never);
     const actor: ActorContext = { personId: 'rp-1', role: 'RESIDENT_PASTOR', branchId: 'branch-1' };
     const request: Partial<RequestWithActorContext> = { actorContext: actor, query: {} } as never;
 

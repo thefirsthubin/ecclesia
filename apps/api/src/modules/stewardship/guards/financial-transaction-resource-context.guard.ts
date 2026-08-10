@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import type { ActorContext, ResourceContext } from '@ecclesia/rbac';
 
 import { BranchConfigurationService } from '../../../platform/rbac/branch-configuration.service';
+import { PrismaService } from '../../../platform/database/prisma.service';
 import { EcclesiaContextGuardBase } from '../../../platform/rbac/ecclesia-context.guard-base';
 import type { RequestWithActorContext } from '../../../platform/auth/auth.guard';
 import { GroupScopeService } from '../../people/services/group-scope.service';
@@ -22,9 +23,10 @@ import { FinancialTransactionRepository } from '../repositories/financial-transa
 export class FinancialTransactionCreateResourceContextGuard extends EcclesiaContextGuardBase {
   constructor(
     branchConfigurationService: BranchConfigurationService,
+    prisma: PrismaService,
     private readonly groupScopeService: GroupScopeService,
   ) {
-    super(branchConfigurationService);
+    super(branchConfigurationService, prisma);
   }
 
   protected async loadResource(request: RequestWithActorContext, actor: ActorContext): Promise<ResourceContext> {
@@ -53,10 +55,11 @@ export class FinancialTransactionCreateResourceContextGuard extends EcclesiaCont
 export class FinancialTransactionResourceContextGuard extends EcclesiaContextGuardBase {
   constructor(
     branchConfigurationService: BranchConfigurationService,
+    prisma: PrismaService,
     private readonly financialTransactionRepository: FinancialTransactionRepository,
     private readonly groupScopeService: GroupScopeService,
   ) {
-    super(branchConfigurationService);
+    super(branchConfigurationService, prisma);
   }
 
   protected async loadResource(request: RequestWithActorContext, _actor: ActorContext): Promise<ResourceContext> {
@@ -99,8 +102,8 @@ export class FinancialTransactionResourceContextGuard extends EcclesiaContextGua
  */
 @Injectable()
 export class FinancialTransactionListResourceContextGuard extends EcclesiaContextGuardBase {
-  constructor(branchConfigurationService: BranchConfigurationService) {
-    super(branchConfigurationService);
+  constructor(branchConfigurationService: BranchConfigurationService, prisma: PrismaService) {
+    super(branchConfigurationService, prisma);
   }
 
   protected async loadResource(_request: RequestWithActorContext, actor: ActorContext): Promise<ResourceContext> {

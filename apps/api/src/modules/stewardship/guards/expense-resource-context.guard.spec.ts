@@ -15,6 +15,7 @@ function buildContext(request: Partial<RequestWithActorContext>): ExecutionConte
 }
 
 const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
 const actor: ActorContext = { personId: 'requester-1', role: 'BACENTA_LEADER', branchId: 'branch-1' };
 
 describe('ExpenseCreateResourceContextGuard', () => {
@@ -22,7 +23,7 @@ describe('ExpenseCreateResourceContextGuard', () => {
     const personScopeService = {
       loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', bacentaId: 'bacenta-1' }),
     };
-    const guard = new ExpenseCreateResourceContextGuard(branchConfigurationService as never, personScopeService as never);
+    const guard = new ExpenseCreateResourceContextGuard(branchConfigurationService as never, prisma as never, personScopeService as never);
     const request: Partial<RequestWithActorContext> = { actorContext: actor, body: {} } as never;
 
     await guard.canActivate(buildContext(request));
@@ -40,6 +41,7 @@ describe('ExpenseResourceContextGuard', () => {
     const personScopeService = { loadResourceContext: jest.fn() };
     const guard = new ExpenseResourceContextGuard(
       branchConfigurationService as never,
+      prisma as never,
       expenseRepository as never,
       personScopeService as never,
     );
@@ -55,6 +57,7 @@ describe('ExpenseResourceContextGuard', () => {
     };
     const guard = new ExpenseResourceContextGuard(
       branchConfigurationService as never,
+      prisma as never,
       expenseRepository as never,
       personScopeService as never,
     );
@@ -71,7 +74,7 @@ describe('ExpenseResourceContextGuard', () => {
 
 describe('ExpenseListResourceContextGuard', () => {
   it('resolves scope to just the actor\'s own Branch, with no repository call', async () => {
-    const guard = new ExpenseListResourceContextGuard(branchConfigurationService as never);
+    const guard = new ExpenseListResourceContextGuard(branchConfigurationService as never, prisma as never);
     const request: Partial<RequestWithActorContext> = { actorContext: actor } as never;
 
     await guard.canActivate(buildContext(request));

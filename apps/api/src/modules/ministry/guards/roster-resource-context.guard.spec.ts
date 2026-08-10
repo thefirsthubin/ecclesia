@@ -10,12 +10,13 @@ function buildContext(request: Partial<RequestWithActorContext>): ExecutionConte
 }
 
 const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
 const basontaLeader: ActorContext = { personId: 'leader-1', role: 'BASONTA_LEADER', branchId: 'branch-1', basontaId: 'basonta-1' };
 
 describe('RosterResourceContextGuard', () => {
   it('delegates to GroupScopeService.loadResourceContext(params.groupId)', async () => {
     const groupScopeService = { loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', basontaId: 'basonta-1' }) };
-    const guard = new RosterResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
+    const guard = new RosterResourceContextGuard(branchConfigurationService as never, prisma as never, groupScopeService as never);
     const request: Partial<RequestWithActorContext> = { actorContext: basontaLeader, params: { groupId: 'basonta-1' } } as never;
 
     await guard.canActivate(buildContext(request));

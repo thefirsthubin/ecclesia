@@ -11,11 +11,12 @@ function buildContext(request: Partial<RequestWithActorContext>): ExecutionConte
 }
 
 const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
 const member: ActorContext = { personId: 'member-1', role: 'MEMBER', branchId: 'branch-1' };
 
 describe('PledgeCreateResourceContextGuard', () => {
   it('resolves to { branchId, ownerId: actor.personId } (SELF scope)', async () => {
-    const guard = new PledgeCreateResourceContextGuard(branchConfigurationService as never);
+    const guard = new PledgeCreateResourceContextGuard(branchConfigurationService as never, prisma as never);
     const request: Partial<RequestWithActorContext> = { actorContext: member, body: {} } as never;
 
     await guard.canActivate(buildContext(request));
@@ -29,7 +30,7 @@ describe('PledgeCreateResourceContextGuard', () => {
 describe('PledgeResourceContextGuard', () => {
   it('throws NotFoundException when the Pledge does not exist', async () => {
     const pledgeRepository = { findById: jest.fn().mockResolvedValue(null) };
-    const guard = new PledgeResourceContextGuard(branchConfigurationService as never, pledgeRepository as never);
+    const guard = new PledgeResourceContextGuard(branchConfigurationService as never, prisma as never, pledgeRepository as never);
     const request: Partial<RequestWithActorContext> = { actorContext: member, params: { id: 'missing' } } as never;
 
     await expect(guard.canActivate(buildContext(request))).rejects.toThrow(NotFoundException);
@@ -37,7 +38,7 @@ describe('PledgeResourceContextGuard', () => {
 
   it('resolves to { branchId, ownerId: pledge.personId }', async () => {
     const pledgeRepository = { findById: jest.fn().mockResolvedValue({ id: 'pledge-1', branchId: 'branch-1', personId: 'member-1' }) };
-    const guard = new PledgeResourceContextGuard(branchConfigurationService as never, pledgeRepository as never);
+    const guard = new PledgeResourceContextGuard(branchConfigurationService as never, prisma as never, pledgeRepository as never);
     const request: Partial<RequestWithActorContext> = { actorContext: member, params: { id: 'pledge-1' } } as never;
 
     await guard.canActivate(buildContext(request));

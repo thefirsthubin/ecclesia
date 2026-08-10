@@ -11,11 +11,12 @@ function buildContext(request: Partial<RequestWithActorContext>): ExecutionConte
 }
 
 const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
 const actor: ActorContext = { personId: 'pastor-1', role: 'RESIDENT_PASTOR', branchId: 'branch-1' };
 
 describe('ProjectCreateResourceContextGuard', () => {
   it('always resolves to just the actor\'s own Branch', async () => {
-    const guard = new ProjectCreateResourceContextGuard(branchConfigurationService as never);
+    const guard = new ProjectCreateResourceContextGuard(branchConfigurationService as never, prisma as never);
     const request: Partial<RequestWithActorContext> = { actorContext: actor, body: {} } as never;
 
     await guard.canActivate(buildContext(request));
@@ -27,7 +28,7 @@ describe('ProjectCreateResourceContextGuard', () => {
 describe('ProjectResourceContextGuard', () => {
   it('throws NotFoundException when the Project does not exist', async () => {
     const projectRepository = { findById: jest.fn().mockResolvedValue(null) };
-    const guard = new ProjectResourceContextGuard(branchConfigurationService as never, projectRepository as never);
+    const guard = new ProjectResourceContextGuard(branchConfigurationService as never, prisma as never, projectRepository as never);
     const request: Partial<RequestWithActorContext> = { actorContext: actor, params: { id: 'missing' } } as never;
 
     await expect(guard.canActivate(buildContext(request))).rejects.toThrow(NotFoundException);
@@ -35,7 +36,7 @@ describe('ProjectResourceContextGuard', () => {
 
   it('resolves to the Project\'s own branchId', async () => {
     const projectRepository = { findById: jest.fn().mockResolvedValue({ id: 'proj-1', branchId: 'branch-1' }) };
-    const guard = new ProjectResourceContextGuard(branchConfigurationService as never, projectRepository as never);
+    const guard = new ProjectResourceContextGuard(branchConfigurationService as never, prisma as never, projectRepository as never);
     const request: Partial<RequestWithActorContext> = { actorContext: actor, params: { id: 'proj-1' } } as never;
 
     await guard.canActivate(buildContext(request));

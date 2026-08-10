@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import type { ActorContext, ResourceContext } from '@ecclesia/rbac';
 
 import { BranchConfigurationService } from '../../../platform/rbac/branch-configuration.service';
+import { PrismaService } from '../../../platform/database/prisma.service';
 import { EcclesiaContextGuardBase } from '../../../platform/rbac/ecclesia-context.guard-base';
 import type { RequestWithActorContext } from '../../../platform/auth/auth.guard';
 import { ProjectRepository } from '../repositories/project.repository';
@@ -11,8 +12,8 @@ import { ProjectRepository } from '../repositories/project.repository';
  * Branch. */
 @Injectable()
 export class ProjectCreateResourceContextGuard extends EcclesiaContextGuardBase {
-  constructor(branchConfigurationService: BranchConfigurationService) {
-    super(branchConfigurationService);
+  constructor(branchConfigurationService: BranchConfigurationService, prisma: PrismaService) {
+    super(branchConfigurationService, prisma);
   }
 
   protected async loadResource(_request: RequestWithActorContext, actor: ActorContext): Promise<ResourceContext> {
@@ -25,9 +26,10 @@ export class ProjectCreateResourceContextGuard extends EcclesiaContextGuardBase 
 export class ProjectResourceContextGuard extends EcclesiaContextGuardBase {
   constructor(
     branchConfigurationService: BranchConfigurationService,
+    prisma: PrismaService,
     private readonly projectRepository: ProjectRepository,
   ) {
-    super(branchConfigurationService);
+    super(branchConfigurationService, prisma);
   }
 
   protected async loadResource(request: RequestWithActorContext, _actor: ActorContext): Promise<ResourceContext> {

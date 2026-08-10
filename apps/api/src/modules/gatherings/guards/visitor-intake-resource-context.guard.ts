@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import type { ActorContext, ResourceContext } from '@ecclesia/rbac';
 
 import { BranchConfigurationService } from '../../../platform/rbac/branch-configuration.service';
+import { PrismaService } from '../../../platform/database/prisma.service';
 import { EcclesiaContextGuardBase } from '../../../platform/rbac/ecclesia-context.guard-base';
 import type { RequestWithActorContext } from '../../../platform/auth/auth.guard';
 import { GroupScopeService } from '../../people/services/group-scope.service';
@@ -20,10 +21,11 @@ import { GatheringRepository } from '../repositories/gathering.repository';
 export class VisitorIntakeResourceContextGuard extends EcclesiaContextGuardBase {
   constructor(
     branchConfigurationService: BranchConfigurationService,
+    prisma: PrismaService,
     private readonly gatheringRepository: GatheringRepository,
     private readonly groupScopeService: GroupScopeService,
   ) {
-    super(branchConfigurationService);
+    super(branchConfigurationService, prisma);
   }
 
   protected async loadResource(request: RequestWithActorContext, actor: ActorContext): Promise<ResourceContext> {

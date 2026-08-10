@@ -15,6 +15,7 @@ function buildContext(request: Partial<RequestWithActorContext>): ExecutionConte
 
 describe('PersonResourceContextGuard', () => {
   const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+  const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
 
   it('delegates resource resolution to PersonScopeService', async () => {
     const personScopeService = {
@@ -22,7 +23,7 @@ describe('PersonResourceContextGuard', () => {
         .fn()
         .mockResolvedValue({ branchId: 'branch-1', ownerId: 'person-1', bacentaId: 'bacenta-1' }),
     };
-    const guard = new PersonResourceContextGuard(branchConfigurationService as never, personScopeService as never);
+    const guard = new PersonResourceContextGuard(branchConfigurationService as never, prisma as never, personScopeService as never);
     const actor: ActorContext = { personId: 'bl-1', role: 'BACENTA_LEADER', branchId: 'branch-1', bacentaId: 'bacenta-1' };
     const request: Partial<RequestWithActorContext> = { actorContext: actor, params: { id: 'person-1' } } as never;
 
@@ -37,7 +38,7 @@ describe('PersonResourceContextGuard', () => {
   it('propagates a NotFoundException from PersonScopeService unchanged', async () => {
     const notFound = new Error('No Person found');
     const personScopeService = { loadResourceContext: jest.fn().mockRejectedValue(notFound) };
-    const guard = new PersonResourceContextGuard(branchConfigurationService as never, personScopeService as never);
+    const guard = new PersonResourceContextGuard(branchConfigurationService as never, prisma as never, personScopeService as never);
     const actor: ActorContext = { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' };
     const request: Partial<RequestWithActorContext> = { actorContext: actor, params: { id: 'missing' } } as never;
 
@@ -48,7 +49,8 @@ describe('PersonResourceContextGuard', () => {
 describe('PersonCreateResourceContextGuard', () => {
   it('resolves the resource as the actor’s own Branch, with no database read', async () => {
     const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
-    const guard = new PersonCreateResourceContextGuard(branchConfigurationService as never);
+    const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
+    const guard = new PersonCreateResourceContextGuard(branchConfigurationService as never, prisma as never);
     const actor: ActorContext = { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' };
     const request: Partial<RequestWithActorContext> = { actorContext: actor } as never;
 
@@ -62,12 +64,13 @@ describe('PersonCreateResourceContextGuard', () => {
 
 describe('PersonListResourceContextGuard', () => {
   const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
+  const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
 
   it('resolves via GroupScopeService when a groupId query param is given', async () => {
     const groupScopeService = {
       loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', bacentaId: 'bacenta-1' }),
     };
-    const guard = new PersonListResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
+    const guard = new PersonListResourceContextGuard(branchConfigurationService as never, prisma as never, groupScopeService as never);
     const actor: ActorContext = { personId: 'bl-1', role: 'BACENTA_LEADER', branchId: 'branch-1', bacentaId: 'bacenta-1' };
     const request: Partial<RequestWithActorContext> = { actorContext: actor, query: { groupId: 'bacenta-1' } } as never;
 
@@ -81,7 +84,7 @@ describe('PersonListResourceContextGuard', () => {
 
   it('falls back to the actor’s own Branch when no groupId is given', async () => {
     const groupScopeService = { loadResourceContext: jest.fn() };
-    const guard = new PersonListResourceContextGuard(branchConfigurationService as never, groupScopeService as never);
+    const guard = new PersonListResourceContextGuard(branchConfigurationService as never, prisma as never, groupScopeService as never);
     const actor: ActorContext = { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' };
     const request: Partial<RequestWithActorContext> = { actorContext: actor, query: {} } as never;
 
