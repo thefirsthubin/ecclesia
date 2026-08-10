@@ -59,6 +59,43 @@
             "configurations": {},
             "parallelism": true
           },
+          "typecheck": {
+            "dependsOn": [
+              "^typecheck"
+            ],
+            "options": {
+              "cwd": "libs/domain/pastoral-care",
+              "command": "tsc --build --pretty --verbose"
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "outputs": [
+              "{workspaceRoot}/dist/out-tsc"
+            ],
+            "syncGenerators": [
+              "@nx/js:typescript-sync"
+            ],
+            "metadata": {
+              "technologies": [
+                "typescript"
+              ],
+              "description": "Runs type-checking for the project.",
+              "help": {
+                "command": "pnpm exec tsc --build --help",
+                "example": {
+                  "args": [
+                    "--force"
+                  ]
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "@nx/js:tsc",
             "outputs": [
@@ -84,9 +121,9 @@
             "cache": true
           }
         },
+        "projectType": "library",
         "name": "domain-pastoral-care",
         "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-        "projectType": "library",
         "sourceRoot": "libs/domain/pastoral-care/src",
         "tags": [
           "scope:domain-pastoral-care"
@@ -153,6 +190,43 @@
             "configurations": {},
             "parallelism": true
           },
+          "typecheck": {
+            "dependsOn": [
+              "^typecheck"
+            ],
+            "options": {
+              "cwd": "libs/domain/stewardship",
+              "command": "tsc --build --pretty --verbose"
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "outputs": [
+              "{workspaceRoot}/dist/out-tsc"
+            ],
+            "syncGenerators": [
+              "@nx/js:typescript-sync"
+            ],
+            "metadata": {
+              "technologies": [
+                "typescript"
+              ],
+              "description": "Runs type-checking for the project.",
+              "help": {
+                "command": "pnpm exec tsc --build --help",
+                "example": {
+                  "args": [
+                    "--force"
+                  ]
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "@nx/js:tsc",
             "outputs": [
@@ -178,9 +252,9 @@
             "cache": true
           }
         },
+        "projectType": "library",
         "name": "domain-stewardship",
         "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-        "projectType": "library",
         "sourceRoot": "libs/domain/stewardship/src",
         "tags": [
           "scope:domain-stewardship"
@@ -247,6 +321,43 @@
             "configurations": {},
             "parallelism": true
           },
+          "typecheck": {
+            "dependsOn": [
+              "^typecheck"
+            ],
+            "options": {
+              "cwd": "libs/domain/gatherings",
+              "command": "tsc --build --pretty --verbose"
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "outputs": [
+              "{workspaceRoot}/dist/out-tsc"
+            ],
+            "syncGenerators": [
+              "@nx/js:typescript-sync"
+            ],
+            "metadata": {
+              "technologies": [
+                "typescript"
+              ],
+              "description": "Runs type-checking for the project.",
+              "help": {
+                "command": "pnpm exec tsc --build --help",
+                "example": {
+                  "args": [
+                    "--force"
+                  ]
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "@nx/js:tsc",
             "outputs": [
@@ -272,9 +383,9 @@
             "cache": true
           }
         },
+        "projectType": "library",
         "name": "domain-gatherings",
         "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-        "projectType": "library",
         "sourceRoot": "libs/domain/gatherings/src",
         "tags": [
           "scope:domain-gatherings"
@@ -341,6 +452,43 @@
             "configurations": {},
             "parallelism": true
           },
+          "typecheck": {
+            "dependsOn": [
+              "^typecheck"
+            ],
+            "options": {
+              "cwd": "libs/domain/insights",
+              "command": "tsc --build --pretty --verbose"
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "outputs": [
+              "{workspaceRoot}/dist/out-tsc"
+            ],
+            "syncGenerators": [
+              "@nx/js:typescript-sync"
+            ],
+            "metadata": {
+              "technologies": [
+                "typescript"
+              ],
+              "description": "Runs type-checking for the project.",
+              "help": {
+                "command": "pnpm exec tsc --build --help",
+                "example": {
+                  "args": [
+                    "--force"
+                  ]
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "@nx/js:tsc",
             "outputs": [
@@ -366,9 +514,9 @@
             "cache": true
           }
         },
+        "projectType": "library",
         "name": "domain-insights",
         "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-        "projectType": "library",
         "sourceRoot": "libs/domain/insights/src",
         "tags": [
           "scope:domain-insights"
@@ -435,6 +583,43 @@
             "configurations": {},
             "parallelism": true
           },
+          "typecheck": {
+            "dependsOn": [
+              "^typecheck"
+            ],
+            "options": {
+              "cwd": "libs/domain/ministry",
+              "command": "tsc --build --pretty --verbose"
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "outputs": [
+              "{workspaceRoot}/dist/out-tsc"
+            ],
+            "syncGenerators": [
+              "@nx/js:typescript-sync"
+            ],
+            "metadata": {
+              "technologies": [
+                "typescript"
+              ],
+              "description": "Runs type-checking for the project.",
+              "help": {
+                "command": "pnpm exec tsc --build --help",
+                "example": {
+                  "args": [
+                    "--force"
+                  ]
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "@nx/js:tsc",
             "outputs": [
@@ -460,9 +645,9 @@
             "cache": true
           }
         },
+        "projectType": "library",
         "name": "domain-ministry",
         "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-        "projectType": "library",
         "sourceRoot": "libs/domain/ministry/src",
         "tags": [
           "scope:domain-ministry"
@@ -529,6 +714,43 @@
             "configurations": {},
             "parallelism": true
           },
+          "typecheck": {
+            "dependsOn": [
+              "^typecheck"
+            ],
+            "options": {
+              "cwd": "libs/domain/people",
+              "command": "tsc --build --pretty --verbose"
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "outputs": [
+              "{workspaceRoot}/dist/out-tsc"
+            ],
+            "syncGenerators": [
+              "@nx/js:typescript-sync"
+            ],
+            "metadata": {
+              "technologies": [
+                "typescript"
+              ],
+              "description": "Runs type-checking for the project.",
+              "help": {
+                "command": "pnpm exec tsc --build --help",
+                "example": {
+                  "args": [
+                    "--force"
+                  ]
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "@nx/js:tsc",
             "outputs": [
@@ -554,9 +776,9 @@
             "cache": true
           }
         },
+        "projectType": "library",
         "name": "domain-people",
         "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-        "projectType": "library",
         "sourceRoot": "libs/domain/people/src",
         "tags": [
           "scope:domain-people"
@@ -623,6 +845,43 @@
             "configurations": {},
             "parallelism": true
           },
+          "typecheck": {
+            "dependsOn": [
+              "^typecheck"
+            ],
+            "options": {
+              "cwd": "libs/contracts",
+              "command": "tsc --build --pretty --verbose"
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "outputs": [
+              "{workspaceRoot}/dist/out-tsc"
+            ],
+            "syncGenerators": [
+              "@nx/js:typescript-sync"
+            ],
+            "metadata": {
+              "technologies": [
+                "typescript"
+              ],
+              "description": "Runs type-checking for the project.",
+              "help": {
+                "command": "pnpm exec tsc --build --help",
+                "example": {
+                  "args": [
+                    "--force"
+                  ]
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "@nx/js:tsc",
             "outputs": [
@@ -648,13 +907,17 @@
             "cache": true
           }
         },
-        "name": "contracts",
-        "$schema": "../../node_modules/nx/schemas/project-schema.json",
         "projectType": "library",
         "sourceRoot": "libs/contracts/src",
+        "name": "contracts",
         "tags": [
+          "npm:private",
           "scope:contracts"
         ],
+        "metadata": {
+          "targetGroups": {}
+        },
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
         "implicitDependencies": []
       }
     },
@@ -718,6 +981,43 @@
             "configurations": {},
             "parallelism": true
           },
+          "typecheck": {
+            "dependsOn": [
+              "^typecheck"
+            ],
+            "options": {
+              "cwd": "libs/ui/native",
+              "command": "tsc --build --pretty --verbose"
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "outputs": [
+              "{workspaceRoot}/dist/out-tsc"
+            ],
+            "syncGenerators": [
+              "@nx/js:typescript-sync"
+            ],
+            "metadata": {
+              "technologies": [
+                "typescript"
+              ],
+              "description": "Runs type-checking for the project.",
+              "help": {
+                "command": "pnpm exec tsc --build --help",
+                "example": {
+                  "args": [
+                    "--force"
+                  ]
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "@nx/js:tsc",
             "outputs": [
@@ -743,9 +1043,9 @@
             "cache": true
           }
         },
+        "projectType": "library",
         "sourceRoot": "libs/ui/native/src",
         "name": "ui-native",
-        "projectType": "library",
         "tags": [
           "npm:private",
           "scope:ui-native"
@@ -816,6 +1116,43 @@
             "configurations": {},
             "parallelism": true
           },
+          "typecheck": {
+            "dependsOn": [
+              "^typecheck"
+            ],
+            "options": {
+              "cwd": "libs/ui/tokens",
+              "command": "tsc --build --pretty --verbose"
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "outputs": [
+              "{workspaceRoot}/dist/out-tsc"
+            ],
+            "syncGenerators": [
+              "@nx/js:typescript-sync"
+            ],
+            "metadata": {
+              "technologies": [
+                "typescript"
+              ],
+              "description": "Runs type-checking for the project.",
+              "help": {
+                "command": "pnpm exec tsc --build --help",
+                "example": {
+                  "args": [
+                    "--force"
+                  ]
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "@nx/js:tsc",
             "outputs": [
@@ -841,9 +1178,9 @@
             "cache": true
           }
         },
+        "projectType": "library",
         "sourceRoot": "libs/ui/tokens/src",
         "name": "ui-tokens",
-        "projectType": "library",
         "tags": [
           "npm:private",
           "scope:ui-tokens"
@@ -915,6 +1252,43 @@
             "configurations": {},
             "parallelism": true
           },
+          "typecheck": {
+            "dependsOn": [
+              "^typecheck"
+            ],
+            "options": {
+              "cwd": "apps/web-admin",
+              "command": "tsc --build --pretty --verbose"
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "outputs": [
+              "{workspaceRoot}/dist/out-tsc"
+            ],
+            "syncGenerators": [
+              "@nx/js:typescript-sync"
+            ],
+            "metadata": {
+              "technologies": [
+                "typescript"
+              ],
+              "description": "Runs type-checking for the project.",
+              "help": {
+                "command": "pnpm exec tsc --build --help",
+                "example": {
+                  "args": [
+                    "--force"
+                  ]
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "@nx/webpack:webpack",
             "outputs": [
@@ -976,9 +1350,9 @@
             "parallelism": true
           }
         },
+        "projectType": "application",
         "name": "web-admin",
         "$schema": "../../node_modules/nx/schemas/project-schema.json",
-        "projectType": "application",
         "sourceRoot": "apps/web-admin/src",
         "tags": [
           "scope:app-web"
@@ -1045,6 +1419,43 @@
             "configurations": {},
             "parallelism": true
           },
+          "typecheck": {
+            "dependsOn": [
+              "^typecheck"
+            ],
+            "options": {
+              "cwd": "libs/testing",
+              "command": "tsc --build --pretty --verbose"
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "outputs": [
+              "{workspaceRoot}/dist/out-tsc"
+            ],
+            "syncGenerators": [
+              "@nx/js:typescript-sync"
+            ],
+            "metadata": {
+              "technologies": [
+                "typescript"
+              ],
+              "description": "Runs type-checking for the project.",
+              "help": {
+                "command": "pnpm exec tsc --build --help",
+                "example": {
+                  "args": [
+                    "--force"
+                  ]
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "@nx/js:tsc",
             "outputs": [
@@ -1070,9 +1481,9 @@
             "cache": true
           }
         },
+        "projectType": "library",
         "name": "testing",
         "$schema": "../../node_modules/nx/schemas/project-schema.json",
-        "projectType": "library",
         "sourceRoot": "libs/testing/src",
         "tags": [
           "scope:testing"
@@ -1139,6 +1550,43 @@
             "configurations": {},
             "parallelism": true
           },
+          "typecheck": {
+            "dependsOn": [
+              "^typecheck"
+            ],
+            "options": {
+              "cwd": "libs/ui/core",
+              "command": "tsc --build --pretty --verbose"
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "outputs": [
+              "{workspaceRoot}/dist/out-tsc"
+            ],
+            "syncGenerators": [
+              "@nx/js:typescript-sync"
+            ],
+            "metadata": {
+              "technologies": [
+                "typescript"
+              ],
+              "description": "Runs type-checking for the project.",
+              "help": {
+                "command": "pnpm exec tsc --build --help",
+                "example": {
+                  "args": [
+                    "--force"
+                  ]
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "@nx/js:tsc",
             "outputs": [
@@ -1164,9 +1612,9 @@
             "cache": true
           }
         },
+        "projectType": "library",
         "sourceRoot": "libs/ui/core/src",
         "name": "ui-core",
-        "projectType": "library",
         "tags": [
           "npm:private",
           "scope:ui-core"
@@ -1237,6 +1685,43 @@
             "configurations": {},
             "parallelism": true
           },
+          "typecheck": {
+            "dependsOn": [
+              "^typecheck"
+            ],
+            "options": {
+              "cwd": "libs/config",
+              "command": "tsc --build --pretty --verbose"
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "outputs": [
+              "{workspaceRoot}/dist/out-tsc"
+            ],
+            "syncGenerators": [
+              "@nx/js:typescript-sync"
+            ],
+            "metadata": {
+              "technologies": [
+                "typescript"
+              ],
+              "description": "Runs type-checking for the project.",
+              "help": {
+                "command": "pnpm exec tsc --build --help",
+                "example": {
+                  "args": [
+                    "--force"
+                  ]
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "@nx/js:tsc",
             "outputs": [
@@ -1262,9 +1747,9 @@
             "cache": true
           }
         },
+        "projectType": "library",
         "name": "config",
         "$schema": "../../node_modules/nx/schemas/project-schema.json",
-        "projectType": "library",
         "sourceRoot": "libs/config/src",
         "tags": [
           "scope:config"
@@ -1332,6 +1817,43 @@
             "configurations": {},
             "parallelism": true
           },
+          "typecheck": {
+            "dependsOn": [
+              "^typecheck"
+            ],
+            "options": {
+              "cwd": "apps/mobile",
+              "command": "tsc --build --pretty --verbose"
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "outputs": [
+              "{workspaceRoot}/dist/out-tsc"
+            ],
+            "syncGenerators": [
+              "@nx/js:typescript-sync"
+            ],
+            "metadata": {
+              "technologies": [
+                "typescript"
+              ],
+              "description": "Runs type-checking for the project.",
+              "help": {
+                "command": "pnpm exec tsc --build --help",
+                "example": {
+                  "args": [
+                    "--force"
+                  ]
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "@nx/react-native:bundle",
             "outputs": [
@@ -1395,9 +1917,9 @@
             "parallelism": true
           }
         },
+        "projectType": "application",
         "name": "mobile",
         "$schema": "../../node_modules/nx/schemas/project-schema.json",
-        "projectType": "application",
         "sourceRoot": "apps/mobile/src",
         "tags": [
           "scope:app-native"
@@ -1465,6 +1987,43 @@
             "configurations": {},
             "parallelism": true
           },
+          "typecheck": {
+            "dependsOn": [
+              "^typecheck"
+            ],
+            "options": {
+              "cwd": "libs/ui/web",
+              "command": "tsc --build --pretty --verbose"
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "outputs": [
+              "{workspaceRoot}/dist/out-tsc"
+            ],
+            "syncGenerators": [
+              "@nx/js:typescript-sync"
+            ],
+            "metadata": {
+              "technologies": [
+                "typescript"
+              ],
+              "description": "Runs type-checking for the project.",
+              "help": {
+                "command": "pnpm exec tsc --build --help",
+                "example": {
+                  "args": [
+                    "--force"
+                  ]
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "@nx/js:tsc",
             "outputs": [
@@ -1490,9 +2049,9 @@
             "cache": true
           }
         },
+        "projectType": "library",
         "sourceRoot": "libs/ui/web/src",
         "name": "ui-web",
-        "projectType": "library",
         "tags": [
           "npm:private",
           "scope:ui-web"
@@ -1563,6 +2122,43 @@
             "configurations": {},
             "parallelism": true
           },
+          "typecheck": {
+            "dependsOn": [
+              "^typecheck"
+            ],
+            "options": {
+              "cwd": "apps/worker",
+              "command": "tsc --build --pretty --verbose"
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "outputs": [
+              "{workspaceRoot}/dist/out-tsc"
+            ],
+            "syncGenerators": [
+              "@nx/js:typescript-sync"
+            ],
+            "metadata": {
+              "technologies": [
+                "typescript"
+              ],
+              "description": "Runs type-checking for the project.",
+              "help": {
+                "command": "pnpm exec tsc --build --help",
+                "example": {
+                  "args": [
+                    "--force"
+                  ]
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "@nx/webpack:webpack",
             "outputs": [
@@ -1613,9 +2209,9 @@
             "parallelism": true
           }
         },
+        "projectType": "application",
         "name": "worker",
         "$schema": "../../node_modules/nx/schemas/project-schema.json",
-        "projectType": "application",
         "sourceRoot": "apps/worker/src",
         "tags": [
           "scope:app-backend"
@@ -1682,6 +2278,43 @@
             "configurations": {},
             "parallelism": true
           },
+          "typecheck": {
+            "dependsOn": [
+              "^typecheck"
+            ],
+            "options": {
+              "cwd": "libs/rbac",
+              "command": "tsc --build --pretty --verbose"
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "outputs": [
+              "{workspaceRoot}/dist/out-tsc"
+            ],
+            "syncGenerators": [
+              "@nx/js:typescript-sync"
+            ],
+            "metadata": {
+              "technologies": [
+                "typescript"
+              ],
+              "description": "Runs type-checking for the project.",
+              "help": {
+                "command": "pnpm exec tsc --build --help",
+                "example": {
+                  "args": [
+                    "--force"
+                  ]
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "@nx/js:tsc",
             "outputs": [
@@ -1707,9 +2340,9 @@
             "cache": true
           }
         },
+        "projectType": "library",
         "name": "rbac",
         "$schema": "../../node_modules/nx/schemas/project-schema.json",
-        "projectType": "library",
         "sourceRoot": "libs/rbac/src",
         "tags": [
           "scope:rbac"
@@ -1776,6 +2409,43 @@
             "configurations": {},
             "parallelism": true
           },
+          "typecheck": {
+            "dependsOn": [
+              "^typecheck"
+            ],
+            "options": {
+              "cwd": "apps/api",
+              "command": "tsc --build --pretty --verbose"
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "outputs": [
+              "{workspaceRoot}/dist/out-tsc"
+            ],
+            "syncGenerators": [
+              "@nx/js:typescript-sync"
+            ],
+            "metadata": {
+              "technologies": [
+                "typescript"
+              ],
+              "description": "Runs type-checking for the project.",
+              "help": {
+                "command": "pnpm exec tsc --build --help",
+                "example": {
+                  "args": [
+                    "--force"
+                  ]
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "@nx/webpack:webpack",
             "outputs": [
@@ -1826,9 +2496,9 @@
             "parallelism": true
           }
         },
+        "projectType": "application",
         "name": "api",
         "$schema": "../../node_modules/nx/schemas/project-schema.json",
-        "projectType": "application",
         "sourceRoot": "apps/api/src",
         "tags": [
           "scope:app-backend"
@@ -1895,6 +2565,43 @@
             "configurations": {},
             "parallelism": true
           },
+          "typecheck": {
+            "dependsOn": [
+              "^typecheck"
+            ],
+            "options": {
+              "cwd": "infra",
+              "command": "tsc --build --pretty --verbose"
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "outputs": [
+              "{workspaceRoot}/dist/out-tsc/infra"
+            ],
+            "syncGenerators": [
+              "@nx/js:typescript-sync"
+            ],
+            "metadata": {
+              "technologies": [
+                "typescript"
+              ],
+              "description": "Runs type-checking for the project.",
+              "help": {
+                "command": "pnpm exec tsc --build --help",
+                "example": {
+                  "args": [
+                    "--force"
+                  ]
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
           "build": {
             "executor": "nx:run-commands",
             "outputs": [
@@ -1941,9 +2648,9 @@
             "parallelism": true
           }
         },
+        "projectType": "application",
         "name": "infra",
         "$schema": "../node_modules/nx/schemas/project-schema.json",
-        "projectType": "application",
         "sourceRoot": "infra",
         "tags": [
           "scope:infra"
@@ -17573,7 +18280,13 @@
     "domain-pastoral-care": [],
     "domain-stewardship": [],
     "domain-gatherings": [],
-    "domain-insights": [],
+    "domain-insights": [
+      {
+        "source": "domain-insights",
+        "target": "contracts",
+        "type": "static"
+      }
+    ],
     "domain-ministry": [],
     "domain-people": [],
     "contracts": [
