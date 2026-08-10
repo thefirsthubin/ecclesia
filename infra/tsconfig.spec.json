@@ -5,7 +5,8 @@
     "module": "commonjs",
     "types": ["jest", "node"],
     "declaration": false,
-    "declarationMap": false
+    "declarationMap": false,
+    "noEmit": true
   },
   "include": ["jest.config.ts", "**/*.spec.ts", "**/*.test.ts", "**/*.d.ts"]
 }

@@ -2,6 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../../dist/out-tsc",
+    "composite": true,
     "declaration": true,
     "types": ["node"]
   },
@@ -12,5 +13,9 @@
     "src/**/*.spec.tsx",
     "src/**/*.test.ts",
     "src/**/*.test.tsx"
+  ],
+  "references": [
+    { "path": "../tokens/tsconfig.lib.json" },
+    { "path": "../core/tsconfig.lib.json" }
   ]
 }

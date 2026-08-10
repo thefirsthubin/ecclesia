@@ -26,8 +26,9 @@ describe('ProjectService', () => {
 
   function buildService() {
     const projectRepository = { create: jest.fn(), findById: jest.fn() };
-    const service = new ProjectService(projectRepository as never);
-    return { service, projectRepository };
+    const pledgeRepository = { sumByProject: jest.fn() };
+    const service = new ProjectService(projectRepository as never, pledgeRepository as never);
+    return { service, projectRepository, pledgeRepository };
   }
 
   describe('create', () => {

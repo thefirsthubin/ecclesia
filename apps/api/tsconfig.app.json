@@ -4,10 +4,16 @@
     "outDir": "../../dist/out-tsc",
     "types": ["node"]
   },
-  "exclude": [
-    "jest.config.ts",
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts"
-  ],
-  "include": ["src/**/*.ts"]
+  "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
+  "include": ["src/**/*.ts"],
+  "references": [
+    { "path": "../../libs/domain/stewardship/tsconfig.lib.json" },
+    { "path": "../../libs/domain/people/tsconfig.lib.json" },
+    { "path": "../../libs/domain/pastoral-care/tsconfig.lib.json" },
+    { "path": "../../libs/domain/ministry/tsconfig.lib.json" },
+    { "path": "../../libs/domain/insights/tsconfig.lib.json" },
+    { "path": "../../libs/domain/gatherings/tsconfig.lib.json" },
+    { "path": "../../libs/contracts/tsconfig.lib.json" },
+    { "path": "../../libs/rbac/tsconfig.lib.json" }
+  ]
 }

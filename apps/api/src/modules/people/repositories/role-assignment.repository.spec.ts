@@ -2,10 +2,17 @@ import { RoleAssignmentRepository } from './role-assignment.repository';
 
 describe('RoleAssignmentRepository', () => {
   function buildRepository() {
-    const prisma = {
+    // Split into two steps so `$transaction`'s mock (which needs to hand
+    // the same mock object back as `tx`) doesn't reference `prisma`
+    // inside its own initializer - a self-referential `const` initializer
+    // TypeScript can't infer a type for (TS7022/TS7024).
+    const prismaBase = {
       roleAssignment: { create: jest.fn(), findFirst: jest.fn(), findMany: jest.fn(), update: jest.fn() },
       user: { findUnique: jest.fn() },
-      $transaction: jest.fn(async (fn: (tx: unknown) => unknown) => fn(prisma)),
+    };
+    const prisma = {
+      ...prismaBase,
+      $transaction: jest.fn(async (fn: (tx: typeof prismaBase) => unknown) => fn(prismaBase)),
     };
     const repository = new RoleAssignmentRepository(prisma as never);
     return { repository, prisma };

@@ -5,5 +5,11 @@
     "types": ["node"]
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"]
+  "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
+  "references": [
+    { "path": "../../libs/domain/pastoral-care/tsconfig.lib.json" },
+    { "path": "../../libs/domain/insights/tsconfig.lib.json" },
+    { "path": "../../libs/domain/gatherings/tsconfig.lib.json" },
+    { "path": "../../libs/contracts/tsconfig.lib.json" }
+  ]
 }

@@ -12,5 +12,11 @@
     "src/**/*.test.ts",
     "src/**/*.test.tsx"
   ],
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"],
+  "references": [
+    { "path": "../../libs/contracts/tsconfig.lib.json" },
+    { "path": "../../libs/ui/tokens/tsconfig.lib.json" },
+    { "path": "../../libs/ui/core/tsconfig.lib.json" },
+    { "path": "../../libs/ui/native/tsconfig.lib.json" }
+  ]
 }

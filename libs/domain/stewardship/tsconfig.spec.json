@@ -8,7 +8,8 @@
       "node"
     ],
     "declaration": false,
-    "declarationMap": false
+    "declarationMap": false,
+    "noEmit": true
   },
   "include": [
     "jest.config.ts",

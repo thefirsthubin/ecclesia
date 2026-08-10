@@ -28,20 +28,22 @@
     "noPropertyAccessFromIndexSignature": false,
     "isolatedModules": true,
     "paths": {
-      "@ecclesia/contracts": ["libs/contracts/src/index.ts"],
-      "@ecclesia/rbac": ["libs/rbac/src/index.ts"],
       "@ecclesia/config": ["libs/config/src/index.ts"],
-      "@ecclesia/testing": ["libs/testing/src/index.ts"],
-      "@ecclesia/domain-people": ["libs/domain/people/src/index.ts"],
-      "@ecclesia/domain-pastoral-care": ["libs/domain/pastoral-care/src/index.ts"],
-      "@ecclesia/domain-ministry": ["libs/domain/ministry/src/index.ts"],
+      "@ecclesia/contracts": ["libs/contracts/src/index.ts"],
       "@ecclesia/domain-gatherings": ["libs/domain/gatherings/src/index.ts"],
-      "@ecclesia/domain-stewardship": ["libs/domain/stewardship/src/index.ts"],
       "@ecclesia/domain-insights": ["libs/domain/insights/src/index.ts"],
-      "@ecclesia/ui-tokens": ["libs/ui/tokens/src/index.ts"],
+      "@ecclesia/domain-ministry": ["libs/domain/ministry/src/index.ts"],
+      "@ecclesia/domain-pastoral-care": [
+        "libs/domain/pastoral-care/src/index.ts"
+      ],
+      "@ecclesia/domain-people": ["libs/domain/people/src/index.ts"],
+      "@ecclesia/domain-stewardship": ["libs/domain/stewardship/src/index.ts"],
+      "@ecclesia/rbac": ["libs/rbac/src/index.ts"],
+      "@ecclesia/testing": ["libs/testing/src/index.ts"],
       "@ecclesia/ui-core": ["libs/ui/core/src/index.ts"],
-      "@ecclesia/ui-web": ["libs/ui/web/src/index.ts"],
-      "@ecclesia/ui-native": ["libs/ui/native/src/index.ts"]
+      "@ecclesia/ui-native": ["libs/ui/native/src/index.ts"],
+      "@ecclesia/ui-tokens": ["libs/ui/tokens/src/index.ts"],
+      "@ecclesia/ui-web": ["libs/ui/web/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp", "dist"]
