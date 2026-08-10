@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventBridgeClient, PutEventsCommand } from '@aws-sdk/client-eventbridge';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
-import type { EngagementSignalEnvelope } from '@ecclesia/contracts';
+import type { PublishableEngagementSignal } from '@ecclesia/contracts';
 
 import type { EnvConfig } from '../config/env.schema';
 
@@ -46,7 +46,15 @@ export class EventBridgePublisherService {
     this.busName = this.configService.get('EVENTBRIDGE_BUS_NAME', { infer: true });
   }
 
-  async publish(envelope: EngagementSignalEnvelope): Promise<void> {
+  /**
+   * `PublishableEngagementSignal`, not the wider `EngagementSignalEnvelope`
+   * - `eventType` is narrowed to the closed `EngagementSignalEventType`
+   * union (`libs/contracts`), so a new/unrecognized literal at a call
+   * site is a compile error here, not a silent gap discovered three
+   * layers downstream in Church Pulse scoring. See that type's own doc
+   * comment for the full anti-drift chain this is one link of.
+   */
+  async publish(envelope: PublishableEngagementSignal): Promise<void> {
     const command = new PutEventsCommand({
       Entries: [
         {

@@ -4,7 +4,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { checkLifecycleTransition, findDuplicateCandidates, requiresGroupMembershipToTransition } from '@ecclesia/domain-people';
 import type {
   CreatePersonInput,
-  EngagementSignalEnvelope,
+  PublishableEngagementSignal,
   LifecycleTransitionRequestInput,
   ListPeopleQuery,
   PersonResponseDto,
@@ -192,7 +192,7 @@ export class PersonService {
     // (authorization already happened at the guard layer, per this class's
     // own doc comment) - see ENGAGEMENT_SIGNAL_PIPELINE_DESIGN_NOTES.md for
     // why no signature change was needed to publish this signal.
-    const envelope: EngagementSignalEnvelope = {
+    const envelope: PublishableEngagementSignal = {
       eventId: randomUUID(),
       eventType: 'lifecycle_stage.transitioned',
       schemaVersion: 1,

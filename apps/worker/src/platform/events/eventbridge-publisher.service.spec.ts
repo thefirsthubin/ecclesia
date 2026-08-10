@@ -1,4 +1,4 @@
-import type { EngagementSignalEnvelope } from '@ecclesia/contracts';
+import type { PublishableEngagementSignal } from '@ecclesia/contracts';
 
 import { EventBridgePublisherService } from './eventbridge-publisher.service';
 
@@ -10,7 +10,7 @@ jest.mock('@aws-sdk/client-eventbridge', () => ({
 }));
 
 describe('EventBridgePublisherService', () => {
-  const envelope: EngagementSignalEnvelope = {
+  const envelope: PublishableEngagementSignal = {
     eventId: '11111111-1111-1111-1111-111111111111',
     eventType: 'pastoral_care.silent_drift_flagged',
     schemaVersion: 1,

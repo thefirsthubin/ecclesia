@@ -43,7 +43,7 @@ describe('PulseScoreService', () => {
 
     it('upserts the current PulseScore and appends a PulseScoreHistory point, then evaluates alerts', async () => {
       const { service, engagementSignalRepository, pulseScoreRepository, pulseScoreHistoryRepository, alertService } = buildService();
-      engagementSignalRepository.countByTypeInWindow.mockResolvedValue([{ signalType: 'ATTENDANCE', count: 10 }]);
+      engagementSignalRepository.countByTypeInWindow.mockResolvedValue([{ signalType: 'attendance.recorded', count: 10 }]);
       pulseScoreRepository.findChurchPulseWeights.mockResolvedValue(null);
       pulseScoreRepository.upsert.mockResolvedValue(pulseScoreRecord());
 
@@ -59,6 +59,42 @@ describe('PulseScoreService', () => {
       expect(result.id).toBe('score-1');
     });
 
+    it('maps a real published event type to its Church Pulse category and produces a non-zero score (regression test for the eventType/category vocabulary gap)', async () => {
+      const { service, engagementSignalRepository, pulseScoreRepository } = buildService();
+      // 'attendance.recorded' is the literal apps/api/src/modules/gatherings/services/attendance-record.service.ts
+      // actually publishes - not the bare 'ATTENDANCE' category name.
+      engagementSignalRepository.countByTypeInWindow.mockResolvedValue([{ signalType: 'attendance.recorded', count: 10 }]);
+      pulseScoreRepository.findChurchPulseWeights.mockResolvedValue(null);
+      pulseScoreRepository.upsert.mockResolvedValue(pulseScoreRecord());
+
+      await service.computeAndStoreBranchScore('branch-1');
+
+      // 10 signals fully saturates ATTENDANCE; equal-sixths weighting caps
+      // one saturated category at 100/6 - identical assertion shape to
+      // libs/domain/insights's own computeChurchPulseScore spec.
+      expect(pulseScoreRepository.upsert).toHaveBeenCalledWith(expect.objectContaining({ score: expect.closeTo(100 / 6, 1) }));
+    });
+
+    it('sums two different real event types that map to the same category, rather than overwriting one with the other', async () => {
+      const { service, engagementSignalRepository, pulseScoreRepository } = buildService();
+      // Both are real, distinct, currently-published event types (see
+      // attendance-record.service.ts) that both map to ATTENDANCE -
+      // countByTypeInWindow groups by the raw signalType, so these arrive
+      // as two separate rows that must be accumulated, not overwritten.
+      engagementSignalRepository.countByTypeInWindow.mockResolvedValue([
+        { signalType: 'attendance.recorded', count: 6 },
+        { signalType: 'bacenta_meeting.attendance_recorded', count: 4 },
+      ]);
+      pulseScoreRepository.findChurchPulseWeights.mockResolvedValue(null);
+      pulseScoreRepository.upsert.mockResolvedValue(pulseScoreRecord());
+
+      await service.computeAndStoreBranchScore('branch-1');
+
+      // 6 + 4 = 10 == full saturation for ATTENDANCE, same result as the
+      // single-event-type test above - proves accumulation, not just mapping.
+      expect(pulseScoreRepository.upsert).toHaveBeenCalledWith(expect.objectContaining({ score: expect.closeTo(100 / 6, 1) }));
+    });
+
     it('ignores unrecognized signalType rows rather than throwing', async () => {
       const { service, engagementSignalRepository, pulseScoreRepository } = buildService();
       engagementSignalRepository.countByTypeInWindow.mockResolvedValue([{ signalType: 'SOMETHING_UNMODELED', count: 99 }]);
@@ -66,6 +102,22 @@ describe('PulseScoreService', () => {
       pulseScoreRepository.upsert.mockResolvedValue(pulseScoreRecord());
 
       await expect(service.computeAndStoreBranchScore('branch-1')).resolves.toBeDefined();
+    });
+
+    it('does not let a real, published-but-excluded event type (an SLA-breach/drift alert, not an engagement action) contribute to the score', async () => {
+      const { service, engagementSignalRepository, pulseScoreRepository } = buildService();
+      // A real event type published by apps/worker's follow-up-sla-sweep -
+      // a breach alert, not a person's engagement action. Must not
+      // contribute to FOLLOW_UP_OUTCOME (or any category).
+      engagementSignalRepository.countByTypeInWindow.mockResolvedValue([
+        { signalType: 'pastoral_care.follow_up_task_sla_breached', count: 50 },
+      ]);
+      pulseScoreRepository.findChurchPulseWeights.mockResolvedValue(null);
+      pulseScoreRepository.upsert.mockResolvedValue(pulseScoreRecord());
+
+      await service.computeAndStoreBranchScore('branch-1');
+
+      expect(pulseScoreRepository.upsert).toHaveBeenCalledWith(expect.objectContaining({ score: 0 }));
     });
   });
 

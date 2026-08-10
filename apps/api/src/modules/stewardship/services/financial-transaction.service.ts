@@ -4,7 +4,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { checkInboundTransactionTransition, isInboundTransactionState } from '@ecclesia/domain-stewardship';
 import type { InboundTransactionState } from '@ecclesia/domain-stewardship';
 import type {
-  EngagementSignalEnvelope,
+  PublishableEngagementSignal,
   FinancialTransactionResponseDto,
   FlagFinancialTransactionInput,
   RecordFinancialTransactionInput,
@@ -86,7 +86,7 @@ export class FinancialTransactionService {
     // giver by design (see this method's own doc comment above), so there
     // is no Person whose engagement this fact could legitimately signal.
     if (transaction.giverPersonId) {
-      const envelope: EngagementSignalEnvelope = {
+      const envelope: PublishableEngagementSignal = {
         eventId: randomUUID(),
         eventType: 'giving.activity_recorded',
         schemaVersion: 1,

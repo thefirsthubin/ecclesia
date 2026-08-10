@@ -5,7 +5,7 @@ import {
   computeChurchPulseScore,
   DEFAULT_CHURCH_PULSE_WEIGHTS,
   DEFAULT_CHURCH_PULSE_WINDOW_DAYS,
-  isChurchPulseSignalType,
+  mapEngagementSignalToChurchPulseCategory,
 } from '@ecclesia/domain-insights';
 import type { ChurchPulseSignalType } from '@ecclesia/domain-insights';
 import type { PulseScore, PulseScoreScopeType } from '@prisma/client';
@@ -95,8 +95,13 @@ export class PulseScoreService {
     const counts = await this.engagementSignalRepository.countByTypeInWindow(branchId, groupIdFilter, windowStart, now);
     const signalCountsByType: Partial<Record<ChurchPulseSignalType, number>> = {};
     for (const row of counts) {
-      if (isChurchPulseSignalType(row.signalType)) {
-        signalCountsByType[row.signalType] = row.count;
+      const category = mapEngagementSignalToChurchPulseCategory(row.signalType);
+      if (category) {
+        // Multiple raw event types can map to one category (e.g.
+        // `attendance.recorded` and `bacenta_meeting.attendance_recorded`
+        // both -> ATTENDANCE), and `countByTypeInWindow` groups by the raw
+        // signalType, not the category - accumulate rather than overwrite.
+        signalCountsByType[category] = (signalCountsByType[category] ?? 0) + row.count;
       }
     }
 

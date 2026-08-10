@@ -1,3 +1,6 @@
+import { ENGAGEMENT_SIGNAL_EVENT_TYPES } from '@ecclesia/contracts';
+import type { EngagementSignalEventType } from '@ecclesia/contracts';
+
 /**
  * PRD §12.8's Church Pulse weighted-scoring model: a stream of typed
  * Engagement Signals, reduced to a per-category sub-score, then combined
@@ -33,6 +36,168 @@ export type ChurchPulseSignalType = (typeof CHURCH_PULSE_SIGNAL_TYPES)[number];
 
 export function isChurchPulseSignalType(value: string): value is ChurchPulseSignalType {
   return (CHURCH_PULSE_SIGNAL_TYPES as readonly string[]).includes(value);
+}
+
+/**
+ * Every Engagement Signal event type must have exactly one explicit
+ * Church Pulse decision - either it contributes to a named category, or
+ * it is explicitly excluded, with a reason. There is deliberately no
+ * third, implicit "nobody decided yet" state.
+ */
+export type ChurchPulseClassification =
+  | { readonly status: 'MAPPED'; readonly category: ChurchPulseSignalType }
+  | { readonly status: 'EXCLUDED'; readonly reason: string };
+
+/**
+ * The authoritative Engagement Signal event type → Church Pulse
+ * classification. **This is the anti-drift guard itself, not a
+ * convenience wrapper around one**: it is typed `Record<EngagementSignalEventType,
+ * ChurchPulseClassification>` - a mapped type over `libs/contracts`'
+ * closed `ENGAGEMENT_SIGNAL_EVENT_TYPES` union - so TypeScript refuses to
+ * compile this object literal unless every currently-known event type has
+ * an entry. Add a 14th event type to `ENGAGEMENT_SIGNAL_EVENT_TYPES`
+ * without adding a corresponding key here, and `tsc` fails right here,
+ * not silently at runtime three layers downstream in Church Pulse
+ * scoring - exactly the failure mode `mapEngagementSignalToChurchPulseCategory`
+ * used to have (see git history: every Engagement Signal was persisted
+ * successfully and then silently excluded from scoring, because nothing
+ * connected the raw `eventType` strings real domain services publish -
+ * `'attendance.recorded'` - to the bare category literals -
+ * `'ATTENDANCE'` - `PulseScoreService`/`ChurchPulseRecomputeJob` expected).
+ *
+ * Every key is a real, currently-published event type
+ * (`ENGAGEMENT_SIGNAL_PIPELINE_DESIGN_NOTES.md`'s own producer table plus
+ * a repository-wide search for `eventType:`/`SIGNAL_TYPE =` literals, not
+ * a guess), classified per that design note's "Signal category (PRD
+ * §8.1)" column, reconciled against this module's own already-disclosed
+ * choice (see file header) to key categories by PRD §12.8's six *signal
+ * source* types rather than §8.1's differently-counted scoring
+ * categories:
+ *
+ * | Event type | Publisher | Classification |
+ * |---|---|---|
+ * | `attendance.recorded` | Gatherings (`attendance-record.service.ts`) | MAPPED → `ATTENDANCE` |
+ * | `bacenta_meeting.attendance_recorded` | Gatherings (same method, Bacenta meetings) | MAPPED → `ATTENDANCE` |
+ * | `role_assignment.active` | People (`role-assignment.service.ts`) | MAPPED → `ROLE_ASSIGNMENT` |
+ * | `basonta_roster.updated` | People (`group-membership.service.ts`) | MAPPED → `GROUP_MEMBERSHIP` |
+ * | `lifecycle_stage.transitioned` | People (`person.service.ts`, `group-membership.service.ts`) | MAPPED → `VISITOR_CONVERSION` |
+ * | `follow_up.completed` | Pastoral Care (`follow-up-task.service.ts`) | MAPPED → `FOLLOW_UP_OUTCOME` |
+ * | `giving.activity_recorded` | Stewardship (`financial-transaction.service.ts`) | MAPPED → `FINANCIAL_GIVING` |
+ * | `insights.alert_action_recorded` | Insights (`alert.service.ts`) | EXCLUDED - ambiguous, see reason below |
+ * | `pastoral_care.silent_drift_flagged` | Worker sweep | EXCLUDED - breach/detection signal |
+ * | `pastoral_care.follow_up_task_sla_breached` | Worker sweep | EXCLUDED - breach/detection signal |
+ * | `stewardship.flagged_transaction_sla_breached` | Worker sweep | EXCLUDED - breach/detection signal |
+ * | `stewardship.pledge_reminder_due` | Worker sweep | EXCLUDED - breach/detection signal |
+ * | `gatherings.attendance_incomplete` | Worker sweep | EXCLUDED - breach/detection signal |
+ */
+export const ENGAGEMENT_SIGNAL_CHURCH_PULSE_CLASSIFICATION: Record<EngagementSignalEventType, ChurchPulseClassification> = {
+  'attendance.recorded': { status: 'MAPPED', category: 'ATTENDANCE' },
+  'bacenta_meeting.attendance_recorded': { status: 'MAPPED', category: 'ATTENDANCE' },
+  'role_assignment.active': { status: 'MAPPED', category: 'ROLE_ASSIGNMENT' },
+  'basonta_roster.updated': { status: 'MAPPED', category: 'GROUP_MEMBERSHIP' },
+  'lifecycle_stage.transitioned': { status: 'MAPPED', category: 'VISITOR_CONVERSION' },
+  'follow_up.completed': { status: 'MAPPED', category: 'FOLLOW_UP_OUTCOME' },
+  'giving.activity_recorded': { status: 'MAPPED', category: 'FINANCIAL_GIVING' },
+  'insights.alert_action_recorded': {
+    status: 'EXCLUDED',
+    reason:
+      "Ambiguous, not omitted by oversight: this module's own file-header comment already discloses that PRD §8.1's " +
+      '"leadership engagement" and "serving activity" scoring categories both plausibly derive from the same Role ' +
+      'Assignment signal source, with nothing in the PRD/Blueprint resolving which - or whether a leader resolving ' +
+      'an Alert should count as either at all. Mapping it to a category would be inventing that resolution, not ' +
+      'reading it off a citation. Excluded pending a product decision.',
+  },
+  'pastoral_care.silent_drift_flagged': {
+    status: 'EXCLUDED',
+    reason:
+      "A system-detected problem signal (a Person going silent), not the person's own positive engagement action - " +
+      'computeCategoryScore treats a higher count as a better score, so counting this would invert what any category ' +
+      'is meant to express.',
+  },
+  'pastoral_care.follow_up_task_sla_breached': {
+    status: 'EXCLUDED',
+    reason:
+      'A breach alert (a follow-up went overdue) - the opposite of follow-up responsiveness, not a form of it. ' +
+      'Counting it toward FOLLOW_UP_OUTCOME would reward poor responsiveness with a higher score.',
+  },
+  'stewardship.flagged_transaction_sla_breached': {
+    status: 'EXCLUDED',
+    reason:
+      'A breach alert (a flagged transaction went unresolved past SLA), not a giving-engagement action. Counting it ' +
+      'toward FINANCIAL_GIVING would reward unresolved verification backlog with a higher score.',
+  },
+  'stewardship.pledge_reminder_due': {
+    status: 'EXCLUDED',
+    reason: 'A reminder-due notice, not an actual giving action - no Person has done anything yet for this signal to represent.',
+  },
+  'gatherings.attendance_incomplete': {
+    status: 'EXCLUDED',
+    reason:
+      'A data-quality flag (attendance recording is incomplete for a Gathering), not an attendance event itself. ' +
+      'Counting it toward ATTENDANCE would reward incomplete record-keeping with a higher score.',
+  },
+};
+
+/**
+ * Every event type in `ENGAGEMENT_SIGNAL_CHURCH_PULSE_CLASSIFICATION`
+ * whose decision is `EXCLUDED` - derived from the classification above,
+ * not hand-maintained separately, so there is exactly one place this
+ * list can drift from.
+ */
+export const CHURCH_PULSE_EXCLUDED_ENGAGEMENT_SIGNAL_TYPES: readonly EngagementSignalEventType[] =
+  ENGAGEMENT_SIGNAL_EVENT_TYPES.filter((type) => ENGAGEMENT_SIGNAL_CHURCH_PULSE_CLASSIFICATION[type].status === 'EXCLUDED');
+
+function isKnownEngagementSignalEventType(value: string): value is EngagementSignalEventType {
+  return (ENGAGEMENT_SIGNAL_EVENT_TYPES as readonly string[]).includes(value);
+}
+
+/**
+ * Resolves a raw, persisted `EngagementSignal.signalType` to the
+ * `ChurchPulseSignalType` category it should count toward, or `undefined`
+ * for a genuinely unrecognized type or one this module's classification
+ * marks `EXCLUDED`. The one function both `PulseScoreService` (apps/api)
+ * and `ChurchPulseRecomputeJob` (apps/worker) call - see
+ * `ENGAGEMENT_SIGNAL_CHURCH_PULSE_CLASSIFICATION`'s doc comment for why a
+ * shared function backed by one exhaustive table, not two lookup tables,
+ * is the point of this module.
+ */
+export function mapEngagementSignalToChurchPulseCategory(signalType: string): ChurchPulseSignalType | undefined {
+  if (!isKnownEngagementSignalEventType(signalType)) {
+    return undefined;
+  }
+  const classification = ENGAGEMENT_SIGNAL_CHURCH_PULSE_CLASSIFICATION[signalType];
+  return classification.status === 'MAPPED' ? classification.category : undefined;
+}
+
+/**
+ * Runtime companion to the compile-time guarantee above - genuinely
+ * redundant for the real, exported constants (their types already make
+ * an incomplete classification a compile error, not a runtime
+ * possibility). Exists for two reasons: (1) a clear, human-readable
+ * failure message a CI log can surface directly instead of a raw `tsc`
+ * diagnostic, and (2) a way to make "a new event type without a
+ * classification decision" an actually-executable, failing Jest test
+ * (see this module's own spec file) rather than only demonstrable via
+ * `@ts-expect-error`. Defaults to checking the real production data;
+ * tests pass explicit arguments to simulate an unclassified event type
+ * without touching the real, exhaustive table.
+ */
+export function assertEngagementSignalEventTypesAreClassified(
+  eventTypes: readonly string[] = ENGAGEMENT_SIGNAL_EVENT_TYPES,
+  classification: Readonly<Partial<Record<string, ChurchPulseClassification>>> = ENGAGEMENT_SIGNAL_CHURCH_PULSE_CLASSIFICATION,
+): void {
+  const unclassified = eventTypes.filter((type) => classification[type] === undefined);
+  if (unclassified.length === 0) {
+    return;
+  }
+  throw new Error(
+    [
+      'UNCLASSIFIED ENGAGEMENT SIGNAL EVENT:',
+      ...unclassified.map((type) => `"${type}"`),
+      '',
+      'Add an explicit Church Pulse mapping or exclusion decision.',
+    ].join('\n'),
+  );
 }
 
 /** PRD §8.1: "Church Pulse Score (congregation-level, trailing 4-week

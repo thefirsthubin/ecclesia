@@ -4,7 +4,7 @@ import { ConflictException, ForbiddenException, Injectable, NotFoundException } 
 import { checkRoleAssignmentEligibility } from '@ecclesia/domain-people';
 import { evaluate, PERMISSION_MATRIX } from '@ecclesia/rbac';
 import type { Action, ActorContext, ResourceContext } from '@ecclesia/rbac';
-import type { CreateRoleAssignmentRequestInput, EngagementSignalEnvelope, RoleAssignmentResponseDto } from '@ecclesia/contracts';
+import type { CreateRoleAssignmentRequestInput, PublishableEngagementSignal, RoleAssignmentResponseDto } from '@ecclesia/contracts';
 import type { RoleAssignment } from '@prisma/client';
 
 import { EventBridgePublisherService } from '../../../platform/events/eventbridge-publisher.service';
@@ -147,7 +147,7 @@ export class RoleAssignmentService {
    * optional on the contract), so the two signals are not redundant.
    */
   private async publishRoleAssignmentActive(assignment: RoleAssignment): Promise<void> {
-    const envelope: EngagementSignalEnvelope = {
+    const envelope: PublishableEngagementSignal = {
       eventId: randomUUID(),
       eventType: 'role_assignment.active',
       schemaVersion: 1,

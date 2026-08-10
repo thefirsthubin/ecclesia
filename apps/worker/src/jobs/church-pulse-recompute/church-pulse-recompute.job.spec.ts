@@ -51,7 +51,7 @@ describe('ChurchPulseRecomputeJob', () => {
     const { job, repository, branchDirectory } = buildJob();
     branchDirectory.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
     repository.listActiveBacentaGroups.mockResolvedValue([{ id: 'group-1' }, { id: 'group-2' }]);
-    repository.countSignalsByTypeInWindow.mockResolvedValue([{ signalType: 'ATTENDANCE', count: 5 }]);
+    repository.countSignalsByTypeInWindow.mockResolvedValue([{ signalType: 'attendance.recorded', count: 5 }]);
     repository.findChurchPulseWeights.mockResolvedValue(null);
     repository.upsertPulseScore.mockResolvedValue({});
     repository.appendPulseScoreHistory.mockResolvedValue({});
@@ -70,6 +70,49 @@ describe('ChurchPulseRecomputeJob', () => {
       expect.objectContaining({ branchId: 'branch-1', scopeType: 'GROUP', scopeId: 'group-2' }),
     );
     expect(repository.appendPulseScoreHistory).toHaveBeenCalledTimes(3);
+  });
+
+  it('maps a real published event type to its Church Pulse category and produces a non-zero score (regression test for the eventType/category vocabulary gap)', async () => {
+    const { job, repository, branchDirectory } = buildJob();
+    branchDirectory.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
+    repository.listActiveBacentaGroups.mockResolvedValue([]);
+    // 'attendance.recorded' is the literal apps/api/src/modules/gatherings/
+    // services/attendance-record.service.ts actually publishes - not the
+    // bare 'ATTENDANCE' category name.
+    repository.countSignalsByTypeInWindow.mockResolvedValue([{ signalType: 'attendance.recorded', count: 10 }]);
+    repository.findChurchPulseWeights.mockResolvedValue(null);
+    repository.upsertPulseScore.mockResolvedValue({});
+    repository.appendPulseScoreHistory.mockResolvedValue({});
+    repository.findRecentHistoryByScope.mockResolvedValue([]);
+
+    await job.run();
+
+    // 10 signals fully saturates ATTENDANCE; equal-sixths weighting caps
+    // one saturated category at 100/6.
+    expect(repository.upsertPulseScore).toHaveBeenCalledWith(
+      expect.objectContaining({ branchId: 'branch-1', scopeType: 'BRANCH', score: expect.closeTo(100 / 6, 1) }),
+    );
+  });
+
+  it('does not let a real, published-but-excluded event type (an SLA-breach alert, not an engagement action) contribute to the score', async () => {
+    const { job, repository, branchDirectory } = buildJob();
+    branchDirectory.listBranches.mockResolvedValue([{ id: 'branch-1' }]);
+    repository.listActiveBacentaGroups.mockResolvedValue([]);
+    // A real event type published by apps/worker's follow-up-sla-sweep - a
+    // breach alert, not a person's engagement action.
+    repository.countSignalsByTypeInWindow.mockResolvedValue([
+      { signalType: 'pastoral_care.follow_up_task_sla_breached', count: 50 },
+    ]);
+    repository.findChurchPulseWeights.mockResolvedValue(null);
+    repository.upsertPulseScore.mockResolvedValue({});
+    repository.appendPulseScoreHistory.mockResolvedValue({});
+    repository.findRecentHistoryByScope.mockResolvedValue([]);
+
+    await job.run();
+
+    expect(repository.upsertPulseScore).toHaveBeenCalledWith(
+      expect.objectContaining({ branchId: 'branch-1', scopeType: 'BRANCH', score: 0 }),
+    );
   });
 
   it('creates a PULSE_DECLINE alert when the trend has declined and none is already open', async () => {

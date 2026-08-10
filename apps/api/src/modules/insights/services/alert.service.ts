@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
-import type { AlertResponseDto, EngagementSignalEnvelope, ResolveAlertInput } from '@ecclesia/contracts';
+import type { AlertResponseDto, PublishableEngagementSignal, ResolveAlertInput } from '@ecclesia/contracts';
 import { DEFAULT_PULSE_TREND_WINDOW_DAYS, evaluatePulseTrend } from '@ecclesia/domain-insights';
 import type { Alert, PulseScoreScopeType } from '@prisma/client';
 
@@ -111,7 +111,7 @@ export class AlertService {
     // is always `'ACTED'` or `'DISMISSED'` here (`ResolveAlertInput`'s
     // `status` enum, `libs/contracts/src/lib/insights.schemas.ts`) - never
     // `'OPEN'`, since `resolve()` only ever transitions out of it.
-    const envelope: EngagementSignalEnvelope = {
+    const envelope: PublishableEngagementSignal = {
       eventId: randomUUID(),
       eventType: 'insights.alert_action_recorded',
       schemaVersion: 1,

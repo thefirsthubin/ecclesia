@@ -5,7 +5,7 @@ import { computeFollowUpTaskDueAt } from '@ecclesia/domain-pastoral-care';
 import type { FollowUpTaskTrigger } from '@ecclesia/domain-pastoral-care';
 import type {
   CreateFollowUpTaskInput,
-  EngagementSignalEnvelope,
+  PublishableEngagementSignal,
   FollowUpTaskResponseDto,
   FollowUpTaskStatusDto,
   ListFollowUpTasksForActorQuery,
@@ -138,7 +138,7 @@ export class FollowUpTaskService {
     // one; inventing a field no domain data backs would be exactly the
     // kind of new business rule this milestone's brief prohibits. See
     // ENGAGEMENT_SIGNAL_PIPELINE_DESIGN_NOTES.md.
-    const envelope: EngagementSignalEnvelope = {
+    const envelope: PublishableEngagementSignal = {
       eventId: randomUUID(),
       eventType: 'follow_up.completed',
       schemaVersion: 1,

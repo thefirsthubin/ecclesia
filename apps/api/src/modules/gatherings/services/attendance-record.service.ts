@@ -3,7 +3,7 @@ import { randomUUID } from 'crypto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { evaluateAttendanceCompleteness } from '@ecclesia/domain-gatherings';
 import type { AttendanceCompletenessOutcome } from '@ecclesia/domain-gatherings';
-import type { AttendanceRecordResponseDto, EngagementSignalEnvelope, RecordAttendanceInput } from '@ecclesia/contracts';
+import type { AttendanceRecordResponseDto, PublishableEngagementSignal, RecordAttendanceInput } from '@ecclesia/contracts';
 import type { ActorContext } from '@ecclesia/rbac';
 import type { AttendanceRecord } from '@prisma/client';
 
@@ -68,7 +68,7 @@ export class AttendanceRecordService {
     // every other gathering type (`'SUNDAY_SERVICE'` and any other
     // Branch-configured value) is treated as the general `attendance.recorded`
     // category. See `ENGAGEMENT_SIGNAL_PIPELINE_DESIGN_NOTES.md`.
-    const envelope: EngagementSignalEnvelope = {
+    const envelope: PublishableEngagementSignal = {
       eventId: randomUUID(),
       eventType: gathering.type === 'BACENTA_MEETING' ? 'bacenta_meeting.attendance_recorded' : 'attendance.recorded',
       schemaVersion: 1,

@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { planGroupMembershipChange } from '@ecclesia/domain-people';
-import type { CreateGroupMembershipRequestInput, EngagementSignalEnvelope, GroupMembershipResponseDto } from '@ecclesia/contracts';
+import type { CreateGroupMembershipRequestInput, PublishableEngagementSignal, GroupMembershipResponseDto } from '@ecclesia/contracts';
 import type { GroupMembership } from '@prisma/client';
 
 import { EventBridgePublisherService } from '../../../platform/events/eventbridge-publisher.service';
@@ -90,7 +90,7 @@ export class GroupMembershipService {
     // underlying fact under two categories. See
     // `ENGAGEMENT_SIGNAL_PIPELINE_DESIGN_NOTES.md`.
     if (group.type === 'MINISTRY') {
-      const envelope: EngagementSignalEnvelope = {
+      const envelope: PublishableEngagementSignal = {
         eventId: randomUUID(),
         eventType: 'basonta_roster.updated',
         schemaVersion: 1,
@@ -114,7 +114,7 @@ export class GroupMembershipService {
     // - there is no single method both paths could share without
     // reintroducing the coupling that rejection exists to prevent.
     if (personLifecycleStageUpdate) {
-      const lifecycleEnvelope: EngagementSignalEnvelope = {
+      const lifecycleEnvelope: PublishableEngagementSignal = {
         eventId: randomUUID(),
         eventType: 'lifecycle_stage.transitioned',
         schemaVersion: 1,

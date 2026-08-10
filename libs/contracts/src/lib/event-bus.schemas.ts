@@ -42,3 +42,59 @@ export const engagementSignalEnvelopeSchema = z.object({
   payload: z.record(z.unknown()),
 });
 export type EngagementSignalEnvelope = z.infer<typeof engagementSignalEnvelopeSchema>;
+
+/**
+ * The closed set of every real Engagement Signal event type currently
+ * published anywhere in this codebase - `apps/api`'s six domain modules
+ * (Gatherings/People x2/Pastoral Care/Stewardship/Insights) and
+ * `apps/worker`'s five sweep jobs (`*SweepJob.SIGNAL_TYPE`). Confirmed via
+ * a repository-wide search for `eventType:`/`SIGNAL_TYPE =` literals, not
+ * assumed from the PRD/Blueprint's own (differently-organized) catalog -
+ * see `ENGAGEMENT_SIGNAL_PIPELINE_DESIGN_NOTES.md` at the repo root and
+ * `libs/domain/insights/src/lib/church-pulse-scoring.ts`'s own
+ * `ENGAGEMENT_SIGNAL_CHURCH_PULSE_CLASSIFICATION`.
+ *
+ * `eventType` on `engagementSignalEnvelopeSchema` above stays a bare
+ * `z.string().min(1)`, deliberately not narrowed to this set - a
+ * consumer off the real SQS queue must still accept a genuinely new event
+ * type (Insights ingests "the whole stream," per `InsightsConsumer`'s own
+ * doc comment) rather than treat it as malformed input. This closed set
+ * instead governs the *publish* side: `EventBridgePublisherService.publish()`
+ * (both apps/api's and apps/worker's copies) takes `PublishableEngagementSignal`
+ * below, not the wider `EngagementSignalEnvelope`, so a brand-new literal
+ * at a publish call site is a compile error until it's added here - and
+ * adding it here is, in turn, a compile error in `libs/domain/insights`'s
+ * `ENGAGEMENT_SIGNAL_CHURCH_PULSE_CLASSIFICATION` (a `Record` keyed by
+ * this same type) until an explicit MAPPED/EXCLUDED decision is recorded
+ * for it. That two-step compile-time chain, not a lint rule or a grep
+ * script, is what makes introducing an unclassified event type silently
+ * impossible.
+ */
+export const ENGAGEMENT_SIGNAL_EVENT_TYPES = [
+  'attendance.recorded',
+  'bacenta_meeting.attendance_recorded',
+  'role_assignment.active',
+  'basonta_roster.updated',
+  'lifecycle_stage.transitioned',
+  'follow_up.completed',
+  'giving.activity_recorded',
+  'insights.alert_action_recorded',
+  'pastoral_care.silent_drift_flagged',
+  'pastoral_care.follow_up_task_sla_breached',
+  'stewardship.flagged_transaction_sla_breached',
+  'stewardship.pledge_reminder_due',
+  'gatherings.attendance_incomplete',
+] as const;
+export type EngagementSignalEventType = (typeof ENGAGEMENT_SIGNAL_EVENT_TYPES)[number];
+
+/**
+ * The envelope shape a producer constructs pre-publish: identical to
+ * `EngagementSignalEnvelope` except `eventType` is narrowed to the closed
+ * `EngagementSignalEventType` union instead of the wire schema's bare
+ * `string`. See `ENGAGEMENT_SIGNAL_EVENT_TYPES`'s own doc comment for why
+ * this narrowing lives at the publish boundary, not the envelope schema
+ * itself.
+ */
+export type PublishableEngagementSignal = Omit<EngagementSignalEnvelope, 'eventType'> & {
+  eventType: EngagementSignalEventType;
+};

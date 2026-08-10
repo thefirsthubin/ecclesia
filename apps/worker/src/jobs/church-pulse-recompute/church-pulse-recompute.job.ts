@@ -6,7 +6,7 @@ import {
   DEFAULT_CHURCH_PULSE_WINDOW_DAYS,
   DEFAULT_PULSE_TREND_WINDOW_DAYS,
   evaluatePulseTrend,
-  isChurchPulseSignalType,
+  mapEngagementSignalToChurchPulseCategory,
 } from '@ecclesia/domain-insights';
 import type { ChurchPulseSignalType } from '@ecclesia/domain-insights';
 import type { PulseScoreScopeType } from '@prisma/client';
@@ -114,8 +114,12 @@ export class ChurchPulseRecomputeJob {
     const counts = await this.repository.countSignalsByTypeInWindow(branchId, groupIdFilter, windowStart, now);
     const signalCountsByType: Partial<Record<ChurchPulseSignalType, number>> = {};
     for (const row of counts) {
-      if (isChurchPulseSignalType(row.signalType)) {
-        signalCountsByType[row.signalType] = row.count;
+      const category = mapEngagementSignalToChurchPulseCategory(row.signalType);
+      if (category) {
+        // See `PulseScoreService.computeAndStore`'s identical comment -
+        // multiple raw event types can map to one category, and counts
+        // are grouped by the raw signalType, not the category.
+        signalCountsByType[category] = (signalCountsByType[category] ?? 0) + row.count;
       }
     }
 
