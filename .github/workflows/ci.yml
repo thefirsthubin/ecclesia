@@ -52,6 +52,21 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # `@prisma/client`'s own postinstall script runs `prisma generate`
+      # automatically, but relying on that alone is fragile against
+      # `actions/setup-node`'s pnpm store cache above: on a cache hit,
+      # pnpm can skip re-running a package's postinstall (it already
+      # considers the package "built"), leaving `node_modules/@prisma/client`
+      # an ungenerated stub - `PrismaClient`/`Prisma`/every model type
+      # missing, exactly the failure this step exists to make impossible
+      # regardless of cache state. `pnpm exec` (this repo's own convention
+      # everywhere else in this file, not `npx`) + an explicit
+      # `--schema=db/schema.prisma` (matching package.json's own `"prisma":
+      # { "schema": "db/schema.prisma" }` config, not relying on it) - so
+      # this step's correctness never depends on reading a second file.
+      - name: Generate Prisma Client
+        run: pnpm exec prisma generate --schema=db/schema.prisma
+
       # `pnpm typecheck` (nx run-many --target=typecheck --all) - the
       # `@nx/js/typescript` plugin's `tsc --build` target, correctly
       # resolving TS project references. Previously ran nothing: `tsc -p
