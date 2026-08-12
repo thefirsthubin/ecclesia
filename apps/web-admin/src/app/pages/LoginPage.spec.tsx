@@ -106,6 +106,31 @@ describe('LoginPage', () => {
     await waitFor(() => expect(loginAsDevUser).toHaveBeenCalledWith('dev-treasurer'));
   });
 
+  /**
+   * `[Product terminology fix]` The backend's own seeded label
+   * (`dev-users.ts`) still says "Assistant Pastor" - this pins that the
+   * picker shows the approved "Branch Pastor" terminology instead
+   * (`roleLabel()`, `shell/nav-items.ts`), not the raw backend label, while
+   * the technical `role` identifier next to it stays untouched.
+   */
+  it('shows the approved role terminology, not the raw backend dev-user label', () => {
+    mockUseAuth.mockReturnValue({
+      state: { status: 'unauthenticated' },
+      mode: 'development',
+      devUsers: [{ id: 'dev-assistant-pastor', label: 'Assistant Pastor', role: 'ASSISTANT_PASTOR' }],
+      login: jest.fn(),
+      submitMfaCode: jest.fn(),
+      loginAsDevUser: jest.fn(),
+      logout: jest.fn(),
+    });
+
+    renderLoginPage();
+
+    expect(screen.getByText('Branch Pastor')).toBeInTheDocument();
+    expect(screen.queryByText('Assistant Pastor')).not.toBeInTheDocument();
+    expect(screen.getByText('(ASSISTANT_PASTOR)')).toBeInTheDocument();
+  });
+
   it('shows a helpful message instead of an empty picker when no development users are seeded', () => {
     mockUseAuth.mockReturnValue({
       state: { status: 'unauthenticated' },

@@ -103,11 +103,18 @@ export function AppShell({ children, breadcrumbs, notifications = [] }: AppShell
   const displayName =
     personState.status === 'success' ? `${personState.data.firstName} ${personState.data.lastName}` : roleLabel(state.actor.role);
 
+  // `[Sidebar grouping fix]` `group` was previously dropped here - this
+  // mapping only copied `label`/`href`/`icon`/`active`, so `Sidebar` (which
+  // already fully supports `item.group` and renders a heading for it) never
+  // received the `Administration` grouping `nav-items.ts` already tags
+  // `Configuration`/`Audit Log` with. Carried through now so the shell
+  // actually renders what `NAV_ITEMS` already declares.
   const items = navItemsForRole(state.actor.role).map((item) => ({
     label: item.label,
     href: item.href,
     icon: item.icon,
     active: path === item.href,
+    group: item.group,
   }));
 
   // Same `navItemsForRole` data `Sidebar` already renders - no second

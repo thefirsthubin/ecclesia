@@ -1,9 +1,11 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Button, Card, Heading, Input, Text, useTheme } from '@ecclesia/ui-web';
+import type { RoleDto } from '@ecclesia/contracts';
 
 import { useAuth } from '../auth/AuthContext';
 import { useNavigate } from '../router/router';
 import { consumeIntendedPath } from '../router/ProtectedRoute';
+import { roleLabel } from '../shell/nav-items';
 
 /**
  * STEP 4's login screen. Blueprint §8.2: Web Admin's primary personas
@@ -114,7 +116,21 @@ export function LoginPage() {
                       />
                       <span>
                         <Text as="span" variant="body">
-                          {user.label}
+                          {/* `[Product terminology fix]` `user.label` is
+                              `DevAuthController.listUsers()`'s own seeded
+                              persona label (`dev-users.ts`), which still
+                              says "Assistant Pastor" - it predates the
+                              approved Final UX Design Specification §18
+                              terminology decision and was never routed
+                              through it. `roleLabel()` (`shell/nav-items.ts`)
+                              is the one already-approved mapping every
+                              other screen in this app uses for this exact
+                              purpose (e.g. `AppShell`'s `UserMenu`) - reused
+                              here instead of a second, competing label
+                              source. Falls back to the raw seed label only
+                              if a future dev role isn't in `ROLE_LABELS`
+                              yet, so this can never render blank. */}
+                          {roleLabel(user.role as RoleDto) || user.label}
                         </Text>{' '}
                         <Text as="span" variant="bodySmall" color={theme.colors.text.secondary}>
                           ({user.role})
