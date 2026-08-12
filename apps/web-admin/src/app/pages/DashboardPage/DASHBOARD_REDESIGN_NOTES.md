@@ -153,10 +153,13 @@ call later is a one-function-body change, not a component rewrite — no
 consumer imports `dashboardDemoData.ts`'s constants directly, only this
 hook's return type.
 
-No "church name" field exists anywhere in `libs/contracts` either
-(`ActorContextResponseDto` only carries `branchId`, a UUID) —
-`DEMO_CHURCH_NAME` in `dashboardDemoData.ts` is the same kind of disclosed
-placeholder.
+**Update, Release 1 blocker fix**: `DEMO_CHURCH_NAME` is gone.
+`ActorContextResponseDto` (`libs/contracts`) now carries a real
+`branchName`, resolved server-side in `AuthController.getCurrentActor()`
+from the actor's own `branchId` (`GET /auth/me`) — `DashboardHeader.tsx`
+renders that real value directly. No new branch-resolution mechanism was
+added; this reuses the `branchId` `AuthGuard` already resolves for every
+request.
 
 ## Test change: `DashboardPage.spec.tsx` now wraps `RouterProvider`
 

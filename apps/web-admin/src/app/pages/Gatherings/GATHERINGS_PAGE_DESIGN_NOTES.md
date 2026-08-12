@@ -32,17 +32,25 @@ Same shape as the three prior domain pages'
 `gatherings.gathering.read`'s scope rows:
 
 - `BACENTA_LEADER` → `{ ownerGroupId: actor.bacentaId }` (OWN_GROUP)
+- `ASSISTANT_PASTOR` → `{ ownerGroupId: actor.clusterBacentaIds[0] }`
+  (CLUSTER) — `[Bug fix, Branch Pastor Gatherings Access]`. Mirrors
+  `resolveDefaultPeopleQuery`'s own `ASSISTANT_PASTOR` branch exactly.
+  Structurally necessary, not a style choice: `ListGatheringsQuery.ownerGroupId`
+  is a single group id, and CLUSTER scope's resource check can never match
+  a resource with no `bacentaId` at all — which is exactly what the `{}`
+  query used to resolve to. `libs/rbac/src/lib/permission-matrix.ts` now
+  also carries the previously-missing `ASSISTANT_PASTOR` /
+  `gatherings.gathering.read` / CLUSTER row this default depends on.
+- `BASONTA_LEADER` → `{ ownerGroupId: actor.basontaId }` (OWN_GROUP) —
+  `[Bug fix, Basonta Leader Gatherings Access]`. `BASONTA_LEADER` already
+  held its own `gatherings.gathering.read` OWN_GROUP grant (Mobile
+  Personas sprint) — not a matrix gap — but this function had no case
+  defaulting it to its own Basonta, so it fell through to the same
+  unreachable `{}` query the Branch Pastor fix above closed for
+  `ASSISTANT_PASTOR`. Same fix, same shape, different role/persona.
 - `RESIDENT_PASTOR` / `ADMIN` → `{}` (BRANCH, falls back to the actor's
   own Branch — and now also picks up Branch-wide Gatherings like Sunday
   Service, which `ownerGroupId`-scoped queries never could)
-
-`ASSISTANT_PASTOR` and `BASONTA_LEADER` hold no `.read` row on this
-action at all — a pre-existing gap `GATHERINGS_DESIGN_NOTES.md`'s own
-"Usher role gap"/RBAC section already leaves open, and not the gap this
-page's backend work closed (§2 only added the ADMIN rows this page
-specifically needed). Both fall through to the same `{}` query and get a
-403 from the backend, same precedent every prior `resolveDefaultXQuery`
-already established for roles with no scoping story of their own.
 
 ## 4. Why completeness is a badge, not a separate report page
 
@@ -94,7 +102,7 @@ filtering would need a Bacenta/Basonta picker control (search-and-select
 across potentially many Groups) that doesn't exist anywhere in
 `libs/ui/web` yet - the same class of "needs a picker component that
 isn't built" deferral Pastoral Care's Escalate action and Ministry's
-Staffing Target view already used. A Basonta Leader/Bacenta Leader is
+Staffing Target view already used. A Bacenta Leader/Assistant Pastor is
 already implicitly Group-filtered via `resolveDefaultGatheringsQuery`
 (§3); RESIDENT_PASTOR/ADMIN see the whole Branch with no way to narrow to
 one Group this pass.
@@ -128,8 +136,10 @@ already existed.
   definition) — a separate, Admin-configuration-shaped surface, not part
   of the calendar itself; also blocked on the unresolved recurrence-rule
   format `GATHERINGS_DESIGN_NOTES.md` already flags.
-- ASSISTANT_PASTOR/BASONTA_LEADER read access — §3, pre-existing RBAC gap
-  not fixed this pass since it wasn't blocking this page's own build.
+
+`ASSISTANT_PASTOR` and `BASONTA_LEADER`'s own default-query gaps (§3) are
+both now closed (Branch Pastor Gatherings Access fix, then the matching
+Basonta Leader fix immediately after) — no longer deferred.
 
 ## 9. Known sandbox limitation
 

@@ -222,6 +222,30 @@ own "mobile-only, no web-admin surface" scope decision (an Usher's job
 happens at the door with a phone/tablet, mirroring every other mobile
 persona) - a deliberate choice now, not a structural block.
 
+**Update (Branch Pastor Gatherings Access fix)**: `gatherings.gathering.read`
+also had no `ASSISTANT_PASTOR` row at all, even though `ASSISTANT_PASTOR`
+already held `.create`/`.update` at CLUSTER scope on this same action -
+the same class of gap item 2 above already fixed for ADMIN. Added a
+matching `ASSISTANT_PASTOR` CLUSTER row. Unlike the ADMIN/BACENTA_LEADER
+fixes, adding the matrix row alone was not sufficient: `resolveDefaultGatheringsQuery`
+(web-admin) had no `ASSISTANT_PASTOR` case either, so it always sent the
+same `{}` query RESIDENT_PASTOR/ADMIN use - which resolves to a
+Branch-only resource with no `bacentaId`, something CLUSTER scope can
+never match by construction (`evaluate.ts`'s own doc comment). Fixed by
+giving `ASSISTANT_PASTOR` the same `{ ownerGroupId: actor.clusterBacentaIds[0] }`
+default `resolveDefaultPeopleQuery` already uses for this exact role/scope
+shape. `BASONTA_LEADER` had a different, frontend-only version of this
+same class of gap - it already held its own `gatherings.gathering.read`
+OWN_GROUP row (Mobile Personas sprint, not a matrix gap), but
+`resolveDefaultGatheringsQuery` had no case defaulting it to
+`{ ownerGroupId: actor.basontaId }` either - initially left open as a
+different role/persona, out of that fix's scope.
+
+**Update (Basonta Leader Gatherings Access fix)**: closed the
+`BASONTA_LEADER` gap immediately above the same way - no matrix change
+needed (the OWN_GROUP row already existed), just a matching
+`resolveDefaultGatheringsQuery` case: `{ ownerGroupId: actor.basontaId }`.
+
 ## Known sandbox limitation
 
 Same disclosed limitation as every prior sprint: no `tsc`/`eslint`/`jest`/
