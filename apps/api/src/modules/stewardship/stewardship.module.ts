@@ -49,13 +49,16 @@ import { ProjectService } from './services/project.service';
  * consumption pattern Gatherings already established. Unlike Gatherings,
  * this module does not need anything from Pastoral Care.
  *
- * Exports nothing yet - no other bounded-context module currently
- * consumes a Stewardship service, unlike People/Pastoral Care's mutual
- * dependency or Gatherings' consumption of both.
- *
  * `[Remaining Engineering Sprint, Milestone 11]` Also imports
  * `StorageModule` now - `ExpenseController`'s new Receipt Upload endpoints
  * are this module's first consumer of `StorageService`.
+ *
+ * **Exports `FinancialTransactionService`** (Resident Pastor Dashboard -
+ * real Giving data milestone) - the first time this module exports
+ * anything. `BranchDashboardSummaryService` (`apps/api/src/modules/insights`)
+ * needs `sumVerifiedAmountForBranch` for the Giving KPI/trend/growth-series,
+ * the same "small, purpose-built public method" cross-module pattern
+ * `PeopleModule`/`GatheringsModule`'s own exports already establish.
  */
 @Module({
   imports: [DatabaseModule, RbacPlatformModule, EventsModule, PeopleModule, StorageModule],
@@ -84,5 +87,6 @@ import { ProjectService } from './services/project.service';
     BankDepositConfirmationCreateResourceContextGuard,
     BankDepositConfirmationListResourceContextGuard,
   ],
+  exports: [FinancialTransactionService],
 })
 export class StewardshipModule {}

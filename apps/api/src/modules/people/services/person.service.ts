@@ -205,4 +205,21 @@ export class PersonService {
 
     return toResponseDto(updated);
   }
+
+  /** `[Resident Pastor Dashboard - real Members data milestone]` Thin
+   * passthrough - see `PersonRepository.countByBranch`'s own doc comment.
+   * No `actor`/authorization parameter, matching this module's other
+   * cross-module-consumed methods (`PersonScopeService.loadResourceContext`)
+   * - the caller (`BranchDashboardSummaryService`) is only ever reached
+   * from an already-RBAC-guarded controller route. */
+  countByBranch(branchId: string): Promise<number> {
+    return this.personRepository.countByBranch(branchId);
+  }
+
+  /** `[Resident Pastor Dashboard - real Members data milestone]` Thin
+   * passthrough - see `PersonRepository.countByBranchCreatedBefore`'s own
+   * doc comment. */
+  countByBranchCreatedBefore(branchId: string, cutoffExclusive: Date): Promise<number> {
+    return this.personRepository.countByBranchCreatedBefore(branchId, cutoffExclusive);
+  }
 }

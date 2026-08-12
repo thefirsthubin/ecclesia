@@ -101,4 +101,14 @@ export class AttendanceRecordService {
       windowHours,
     });
   }
+
+  /** `[Resident Pastor Dashboard - real Attendance data milestone]` Thin
+   * passthrough - see `AttendanceRecordRepository.countPresentInWindow`'s
+   * own doc comment. No `actor`/authorization parameter, matching this
+   * module's other cross-module-consumed service (`GatheringScopeService`)
+   * - the caller (`BranchDashboardSummaryService`) is only ever reached
+   * from an already-RBAC-guarded controller route. */
+  countPresentInWindow(branchId: string, from: Date, to: Date): Promise<number> {
+    return this.attendanceRecordRepository.countPresentInWindow(branchId, from, to);
+  }
 }

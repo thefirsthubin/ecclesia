@@ -11,11 +11,21 @@ import { roleSchema } from './people.schemas';
  * client can learn its own authenticated identity's role/scope, since
  * `ActorContextResolverService.resolve()` computes it entirely
  * server-side from a DB lookup and no Cognito token claim carries it.
+ *
+ * `[Release 1 blocker fix]` `branchName` added — `AuthController` now
+ * looks up the actor's own `Branch.name` (via `actor.branchId`, already
+ * resolved) and includes it here, replacing the dashboard's previous
+ * hardcoded `DEMO_CHURCH_NAME` placeholder (`dashboardDemoData.ts`'s own
+ * doc comment anticipated this exact change). `libs/rbac`'s `ActorContext`
+ * type itself is intentionally left untouched — this is a display-only
+ * addition to the HTTP response shape, not a change to the authorization
+ * context every guard/interceptor evaluates.
  */
 export const actorContextResponseSchema = z.object({
   personId: z.string().uuid(),
   role: roleSchema,
   branchId: z.string().uuid(),
+  branchName: z.string(),
   clusterBacentaIds: z.array(z.string().uuid()).optional(),
   bacentaId: z.string().uuid().optional(),
   basontaId: z.string().uuid().optional(),

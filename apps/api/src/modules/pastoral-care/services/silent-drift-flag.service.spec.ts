@@ -22,8 +22,10 @@ function buildFlag(overrides: Partial<Record<string, unknown>> = {}) {
 }
 
 describe('SilentDriftFlagService', () => {
+  const actor = { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } as never;
+
   function buildService() {
-    const silentDriftFlagRepository = { listByGroup: jest.fn() };
+    const silentDriftFlagRepository = { listByGroup: jest.fn(), listByBranch: jest.fn() };
     const service = new SilentDriftFlagService(silentDriftFlagRepository as never);
     return { service, silentDriftFlagRepository };
   }
@@ -62,6 +64,31 @@ describe('SilentDriftFlagService', () => {
       await service.listForGroup('bacenta-1', ['RESOLVED']);
 
       expect(silentDriftFlagRepository.listByGroup).toHaveBeenCalledWith('bacenta-1', ['RESOLVED']);
+    });
+  });
+
+  /** `[Silent-Drift Detection Branch-wide milestone] GET /pastoral-care/silent-drift-flags` */
+  describe('list', () => {
+    it('delegates to listByGroup when query.groupId is present', async () => {
+      const { service, silentDriftFlagRepository } = buildService();
+      silentDriftFlagRepository.listByGroup.mockResolvedValue([buildFlag()]);
+
+      const result = await service.list(actor, { groupId: 'bacenta-1', status: ['FLAGGED'] } as never);
+
+      expect(silentDriftFlagRepository.listByGroup).toHaveBeenCalledWith('bacenta-1', ['FLAGGED']);
+      expect(silentDriftFlagRepository.listByBranch).not.toHaveBeenCalled();
+      expect(result).toHaveLength(1);
+    });
+
+    it("falls back to listByBranch against the actor's own Branch when query.groupId is absent", async () => {
+      const { service, silentDriftFlagRepository } = buildService();
+      silentDriftFlagRepository.listByBranch.mockResolvedValue([buildFlag()]);
+
+      const result = await service.list(actor, {} as never);
+
+      expect(silentDriftFlagRepository.listByBranch).toHaveBeenCalledWith('branch-1', undefined);
+      expect(silentDriftFlagRepository.listByGroup).not.toHaveBeenCalled();
+      expect(result).toHaveLength(1);
     });
   });
 });

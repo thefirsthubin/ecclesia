@@ -45,4 +45,27 @@ describe('AuditLogService', () => {
       data: expect.objectContaining({ action: 'auth.token.verify', effect: 'DENY', branchId: undefined }),
     });
   });
+
+  describe('findUserIdByPersonId', () => {
+    it("resolves a platform.users id from the actor's personId", async () => {
+      const findUnique = jest.fn().mockResolvedValue({ id: 'user-1' });
+      const prisma = { user: { findUnique } } as unknown as PrismaService;
+      const service = new AuditLogService(prisma);
+
+      const result = await service.findUserIdByPersonId('person-1');
+
+      expect(findUnique).toHaveBeenCalledWith({ where: { personId: 'person-1' }, select: { id: true } });
+      expect(result).toBe('user-1');
+    });
+
+    it('returns undefined when no platform.users row is linked to this personId', async () => {
+      const findUnique = jest.fn().mockResolvedValue(null);
+      const prisma = { user: { findUnique } } as unknown as PrismaService;
+      const service = new AuditLogService(prisma);
+
+      const result = await service.findUserIdByPersonId('person-with-no-user');
+
+      expect(result).toBeUndefined();
+    });
+  });
 });

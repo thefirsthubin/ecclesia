@@ -35,6 +35,7 @@ describe('FinancialTransactionService', () => {
       appendEvent: jest.fn(),
       findRecordedByPersonId: jest.fn(),
       findFirstEventByToState: jest.fn(),
+      sumVerifiedAmountForBranch: jest.fn(),
     };
     const eventPublisher = { publish: jest.fn() };
     const service = new FinancialTransactionService(financialTransactionRepository as never, eventPublisher as never);
@@ -223,6 +224,20 @@ describe('FinancialTransactionService', () => {
       await service.listByBranch(bacentaLeaderWithGroup, 'RECORDED');
 
       expect(financialTransactionRepository.findManyByBranch).toHaveBeenCalledWith('branch-1', 'RECORDED', undefined, 'bacenta-1');
+    });
+  });
+
+  describe('sumVerifiedAmountForBranch', () => {
+    it('delegates directly to financialTransactionRepository.sumVerifiedAmountForBranch', async () => {
+      const { service, financialTransactionRepository } = buildService();
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-09-01T00:00:00.000Z');
+      financialTransactionRepository.sumVerifiedAmountForBranch.mockResolvedValue(2450000n);
+
+      const result = await service.sumVerifiedAmountForBranch('branch-1', from, to);
+
+      expect(financialTransactionRepository.sumVerifiedAmountForBranch).toHaveBeenCalledWith('branch-1', from, to);
+      expect(result).toBe(2450000n);
     });
   });
 });

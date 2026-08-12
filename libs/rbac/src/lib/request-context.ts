@@ -1,3 +1,4 @@
+import type { Action } from './actions';
 import type { ActorContext, AuthorizationDecision, BranchConfiguration, ResourceContext } from './types';
 
 /**
@@ -32,7 +33,25 @@ export const ECCLESIA_REQUEST_CONTEXT_KEY = 'ecclesiaContext' as const;
  */
 export const ECCLESIA_RBAC_DECISION_KEY = 'ecclesiaRbacDecision' as const;
 
+/**
+ * `[Audit Log milestone]` Property name `RbacGuard` writes the
+ * `@RequirePermission`-declared action string to, alongside its decision.
+ * Needed because `AuthorizationDecision.matchedRule` is only present when
+ * at least one matrix row exists for this (role, action) pair at all - the
+ * most common denial shape (a role with zero rows for the action) leaves
+ * `matchedRule` `undefined`, and only the *reason string*, not a
+ * structured field, names the action in that case
+ * (`evaluateRoleAndScope`'s own "No Role Assignment grants '{action}' to
+ * role '{role}'" text). Blueprint §9.6 requires every DENY to be logged
+ * "with the attempted action" - `apps/api`'s exception filter (the single
+ * place every `RbacGuard`-thrown 403 already passes through) needs this
+ * to write a complete `platform.audit_log` row without parsing a
+ * human-readable message string.
+ */
+export const ECCLESIA_RBAC_ACTION_KEY = 'ecclesiaRbacAction' as const;
+
 export interface RequestWithEcclesiaContext {
   [ECCLESIA_REQUEST_CONTEXT_KEY]?: EcclesiaRequestContext;
   [ECCLESIA_RBAC_DECISION_KEY]?: AuthorizationDecision;
+  [ECCLESIA_RBAC_ACTION_KEY]?: Action;
 }

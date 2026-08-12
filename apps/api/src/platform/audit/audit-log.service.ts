@@ -55,4 +55,19 @@ export class AuditLogService {
       },
     });
   }
+
+  /**
+   * `[Audit Log milestone]` `ActorContext` (`libs/rbac`) carries only
+   * `personId`, not the `platform.users.id` an `AuditLogEntry.actorUserId`
+   * needs - the same reverse lookup
+   * `RoleAssignmentRepository.findUserIdByPersonId` already established
+   * for an identical need, duplicated here rather than reached into
+   * People's own repository (schema-ownership rule, Blueprint §7.2) since
+   * `platform.users` is itself Platform-owned, not People-owned - neither
+   * call site is reaching across a domain boundary it doesn't own.
+   */
+  async findUserIdByPersonId(personId: string): Promise<string | undefined> {
+    const user = await this.prisma.user.findUnique({ where: { personId }, select: { id: true } });
+    return user?.id;
+  }
 }

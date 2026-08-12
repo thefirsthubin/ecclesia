@@ -33,6 +33,21 @@ export class PulseScoreRepository {
   }
 
   /**
+   * `[Resident Pastor Dashboard - Bacenta Leaderboard milestone]` Reads
+   * every already-computed `GROUP`-scoped `PulseScore` for a Branch, in
+   * one query - **never recomputes anything** (unlike
+   * `PulseScoreService.computeAndStoreGroupScore`, the compute-on-read path
+   * `GET /insights/bacenta-dashboard/:groupId` uses for a single Bacenta).
+   * The Bacenta Leaderboard only ever wants Branches' worth of Bacentas
+   * that `apps/worker`'s `ChurchPulseRecomputeJob` sweep has already
+   * scored - a plain read over that persisted state, exactly as the
+   * milestone brief requires ("do NOT recalculate the scores").
+   */
+  findByBranchAndScopeType(branchId: string, scopeType: PulseScoreScopeType): Promise<PulseScore[]> {
+    return this.prisma.pulseScore.findMany({ where: { branchId, scopeType } });
+  }
+
+  /**
    * Reads `platform.configurations.church_pulse_weights` for a Branch
    * (FR-INS-02/OQ-10) - queried directly via Prisma rather than through
    * `BranchConfigurationService` (`apps/api/src/platform/rbac`), since

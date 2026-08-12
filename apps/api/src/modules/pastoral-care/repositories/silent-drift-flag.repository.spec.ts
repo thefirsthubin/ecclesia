@@ -30,4 +30,31 @@ describe('SilentDriftFlagRepository', () => {
       expect.objectContaining({ where: { groupId: 'bacenta-1', status: { in: ['RESOLVED'] } } }),
     );
   });
+
+  /** `[Silent-Drift Detection Branch-wide milestone]` */
+  describe('listByBranch', () => {
+    it('defaults to the two still-open statuses, sorted most-recently-flagged first', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.silentDriftFlag.findMany.mockResolvedValue([{ id: 'sdf-1' }]);
+
+      const result = await repository.listByBranch('branch-1');
+
+      expect(prisma.silentDriftFlag.findMany).toHaveBeenCalledWith({
+        where: { branchId: 'branch-1', status: { in: ['FLAGGED', 'ESCALATED'] } },
+        orderBy: { createdAt: 'desc' },
+      });
+      expect(result).toEqual([{ id: 'sdf-1' }]);
+    });
+
+    it('honors an explicit status filter instead of the default', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.silentDriftFlag.findMany.mockResolvedValue([]);
+
+      await repository.listByBranch('branch-1', ['RESOLVED']);
+
+      expect(prisma.silentDriftFlag.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { branchId: 'branch-1', status: { in: ['RESOLVED'] } } }),
+      );
+    });
+  });
 });

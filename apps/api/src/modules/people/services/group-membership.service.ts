@@ -135,4 +135,14 @@ export class GroupMembershipService {
     const memberships = await this.groupMembershipRepository.listByPerson(personId);
     return memberships.map(toResponseDto);
   }
+
+  /** `[Resident Pastor Dashboard - Volunteers milestone]` Thin passthrough
+   * - see `GroupMembershipRepository.countDistinctActiveMinistryMembersByBranch`'s
+   * own doc comment. No `actor`/authorization parameter, matching this
+   * module's other cross-module-consumed methods (`PersonService.countByBranch`)
+   * - the caller (`BranchDashboardSummaryService`) is only ever reached
+   * from an already-RBAC-guarded controller route. */
+  countDistinctActiveMinistryMembersByBranch(branchId: string, asOf?: Date): Promise<number> {
+    return this.groupMembershipRepository.countDistinctActiveMinistryMembersByBranch(branchId, asOf);
+  }
 }

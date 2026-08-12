@@ -25,7 +25,13 @@ describe('GroupService', () => {
   const actor: ActorContext = { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' };
 
   function buildService() {
-    const groupRepository = { create: jest.fn(), findById: jest.fn(), update: jest.fn(), findByBranch: jest.fn() };
+    const groupRepository = {
+      create: jest.fn(),
+      findById: jest.fn(),
+      update: jest.fn(),
+      findByBranch: jest.fn(),
+      findActiveBacentasByBranch: jest.fn(),
+    };
     const service = new GroupService(groupRepository as never);
     return { service, groupRepository };
   }
@@ -98,5 +104,27 @@ describe('GroupService', () => {
       lifecycleStatus: undefined,
     });
     expect(result.name).toBe('Renamed Bacenta');
+  });
+
+  describe('listActiveBacentasForBranch (Resident Pastor Dashboard - Bacenta Leaderboard milestone)', () => {
+    it('maps every Group the repository returns to a response DTO', async () => {
+      const { service, groupRepository } = buildService();
+      groupRepository.findActiveBacentasByBranch.mockResolvedValue([buildGroup(), buildGroup({ id: 'group-2', name: 'Faith Bacenta' })]);
+
+      const result = await service.listActiveBacentasForBranch('branch-1');
+
+      expect(groupRepository.findActiveBacentasByBranch).toHaveBeenCalledWith('branch-1');
+      expect(result).toHaveLength(2);
+      expect(result[1].name).toBe('Faith Bacenta');
+    });
+
+    it('returns an empty array, not an error, when the branch has no active Bacentas', async () => {
+      const { service, groupRepository } = buildService();
+      groupRepository.findActiveBacentasByBranch.mockResolvedValue([]);
+
+      const result = await service.listActiveBacentasForBranch('branch-1');
+
+      expect(result).toEqual([]);
+    });
   });
 });

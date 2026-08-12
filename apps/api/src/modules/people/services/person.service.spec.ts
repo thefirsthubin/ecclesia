@@ -15,6 +15,8 @@ describe('PersonService', () => {
       updateLifecycleStage: jest.fn(),
       findByBranch: jest.fn().mockResolvedValue([]),
       findByIds: jest.fn().mockResolvedValue([]),
+      countByBranch: jest.fn(),
+      countByBranchCreatedBefore: jest.fn(),
     };
     const groupRosterService = {
       listActiveMembers: jest.fn().mockResolvedValue([]),
@@ -206,6 +208,31 @@ describe('PersonService', () => {
       expect(groupRosterService.listActiveMembers).toHaveBeenCalledWith('bacenta-1');
       expect(personRepository.findByIds).toHaveBeenCalledWith(['person-1', 'person-2'], 'Ama');
       expect(personRepository.findByBranch).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('countByBranch', () => {
+    it('delegates directly to personRepository.countByBranch', async () => {
+      const { service, personRepository } = buildService();
+      personRepository.countByBranch.mockResolvedValue(482);
+
+      const result = await service.countByBranch('branch-1');
+
+      expect(personRepository.countByBranch).toHaveBeenCalledWith('branch-1');
+      expect(result).toBe(482);
+    });
+  });
+
+  describe('countByBranchCreatedBefore', () => {
+    it('delegates directly to personRepository.countByBranchCreatedBefore', async () => {
+      const { service, personRepository } = buildService();
+      const cutoff = new Date('2026-08-01T00:00:00.000Z');
+      personRepository.countByBranchCreatedBefore.mockResolvedValue(470);
+
+      const result = await service.countByBranchCreatedBefore('branch-1', cutoff);
+
+      expect(personRepository.countByBranchCreatedBefore).toHaveBeenCalledWith('branch-1', cutoff);
+      expect(result).toBe(470);
     });
   });
 });

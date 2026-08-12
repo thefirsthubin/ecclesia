@@ -178,6 +178,22 @@ export const listSilentDriftFlagsQuerySchema = z.object({
 export type ListSilentDriftFlagsQuery = z.infer<typeof listSilentDriftFlagsQuerySchema>;
 
 /**
+ * `[Silent-Drift Detection Branch-wide milestone]` `GET
+ * /pastoral-care/silent-drift-flags` - the BRANCH-wide/optional-`groupId`
+ * counterpart to the group-scoped route above, byte-for-byte the same
+ * shape `listFollowUpTasksForActorQuerySchema` already established for
+ * the identical gap on Follow-up Tasks: `groupId` present for
+ * OWN_GROUP/CLUSTER-scoped actors naming their own Group, absent for
+ * BRANCH-scoped actors (`RESIDENT_PASTOR`/`ADMIN`, the only two roles
+ * that hold `pastoral_care.silent_drift_flag.read` at BRANCH scope) to
+ * see the whole Branch.
+ */
+export const listSilentDriftFlagsForActorQuerySchema = listSilentDriftFlagsQuerySchema.extend({
+  groupId: z.string().uuid().optional(),
+});
+export type ListSilentDriftFlagsForActorQuery = z.infer<typeof listSilentDriftFlagsForActorQuerySchema>;
+
+/**
  * §16.2's pastoral notes capability, NFR-PRIV-01 permission-sensitive
  * (`pastoral_care.notes.*` explicitly DENIES ADMIN in
  * `libs/rbac/src/lib/permission-matrix.ts`, "configuration authority does

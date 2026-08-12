@@ -3,7 +3,7 @@ import { PersonRepository } from './person.repository';
 describe('PersonRepository', () => {
   function buildRepository() {
     const prisma = {
-      person: { create: jest.fn(), findUnique: jest.fn(), update: jest.fn(), findMany: jest.fn() },
+      person: { create: jest.fn(), findUnique: jest.fn(), update: jest.fn(), findMany: jest.fn(), count: jest.fn() },
       groupMembership: { findMany: jest.fn() },
     };
     const repository = new PersonRepository(prisma as never);
@@ -109,6 +109,43 @@ describe('PersonRepository', () => {
         ],
       },
       orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }],
+    });
+  });
+
+  describe('countByBranch', () => {
+    it('counts Persons filtered to exactly the given branchId - no other filter', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.person.count.mockResolvedValue(482);
+
+      const result = await repository.countByBranch('branch-1');
+
+      expect(prisma.person.count).toHaveBeenCalledWith({ where: { branchId: 'branch-1' } });
+      expect(result).toBe(482);
+    });
+
+    it('never leaks a count across branches - a different branchId produces a different where clause', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.person.count.mockResolvedValue(0);
+
+      await repository.countByBranch('branch-2');
+
+      expect(prisma.person.count).toHaveBeenCalledWith({ where: { branchId: 'branch-2' } });
+      expect(prisma.person.count).not.toHaveBeenCalledWith({ where: { branchId: 'branch-1' } });
+    });
+  });
+
+  describe('countByBranchCreatedBefore', () => {
+    it('counts Persons created strictly before the given cutoff, scoped to the branch', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.person.count.mockResolvedValue(470);
+      const cutoff = new Date('2026-08-01T00:00:00.000Z');
+
+      const result = await repository.countByBranchCreatedBefore('branch-1', cutoff);
+
+      expect(prisma.person.count).toHaveBeenCalledWith({
+        where: { branchId: 'branch-1', createdAt: { lt: cutoff } },
+      });
+      expect(result).toBe(470);
     });
   });
 });

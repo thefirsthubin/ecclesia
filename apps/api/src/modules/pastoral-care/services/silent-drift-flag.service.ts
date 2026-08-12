@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import type { SilentDriftFlagResponseDto, SilentDriftStatusDto } from '@ecclesia/contracts';
+import type { ListSilentDriftFlagsForActorQuery, SilentDriftFlagResponseDto, SilentDriftStatusDto } from '@ecclesia/contracts';
+import type { ActorContext } from '@ecclesia/rbac';
 import type { SilentDriftFlag, SilentDriftStatus } from '@prisma/client';
 
 import { SilentDriftFlagRepository } from '../repositories/silent-drift-flag.repository';
@@ -37,6 +38,19 @@ export class SilentDriftFlagService {
 
   async listForGroup(groupId: string, statuses?: SilentDriftStatusDto[]): Promise<SilentDriftFlagResponseDto[]> {
     const flags = await this.silentDriftFlagRepository.listByGroup(groupId, statuses as SilentDriftStatus[] | undefined);
+    return flags.map(toResponseDto);
+  }
+
+  /** `[Silent-Drift Detection Branch-wide milestone]` `GET
+   * /pastoral-care/silent-drift-flags`. `query.groupId` present -> same
+   * Group-scoped read `listForGroup` already does; absent -> BRANCH-wide,
+   * for the BRANCH-scoped actor `SilentDriftFlagListForActorResourceContextGuard`
+   * already resolved against `actor.branchId`. Byte-for-byte the same
+   * shape `FollowUpTaskService.list` already established. */
+  async list(actor: ActorContext, query: ListSilentDriftFlagsForActorQuery): Promise<SilentDriftFlagResponseDto[]> {
+    const flags = query.groupId
+      ? await this.silentDriftFlagRepository.listByGroup(query.groupId, query.status as SilentDriftStatus[] | undefined)
+      : await this.silentDriftFlagRepository.listByBranch(actor.branchId, query.status as SilentDriftStatus[] | undefined);
     return flags.map(toResponseDto);
   }
 }

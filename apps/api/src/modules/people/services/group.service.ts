@@ -62,6 +62,17 @@ export class GroupService {
     return toResponseDto(group);
   }
 
+  /** `[Resident Pastor Dashboard - Bacenta Leaderboard milestone]` Thin
+   * passthrough - see `GroupRepository.findActiveBacentasByBranch`'s own
+   * doc comment. Takes `branchId` directly rather than `actor: ActorContext`
+   * like `list()` above - the caller (`BranchDashboardSummaryService`) is
+   * only ever reached from an already-RBAC-guarded controller route that
+   * has already resolved `actor.branchId` itself. */
+  async listActiveBacentasForBranch(branchId: string): Promise<GroupResponseDto[]> {
+    const groups = await this.groupRepository.findActiveBacentasByBranch(branchId);
+    return groups.map(toResponseDto);
+  }
+
   /**
    * Existence is already guaranteed on the real HTTP path by
    * `GroupResourceContextGuard` (must load the Group to build

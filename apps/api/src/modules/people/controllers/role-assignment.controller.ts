@@ -6,7 +6,7 @@ import type { CreateRoleAssignmentRequestInput } from '@ecclesia/contracts';
 
 import { CurrentActor } from '../../../platform/auth/decorators/current-actor.decorator';
 import { ZodValidationPipe } from '../../../platform/pipes/zod-validation.pipe';
-import { RoleAssignmentResourceContextGuard } from '../guards/role-assignment-resource-context.guard';
+import { RoleAssignmentResourceContextGuard, RoleAssignmentRevokeResourceContextGuard } from '../guards/role-assignment-resource-context.guard';
 import { RoleAssignmentService } from '../services/role-assignment.service';
 
 /**
@@ -41,5 +41,20 @@ export class RoleAssignmentController {
   @UseGuards(RoleAssignmentResourceContextGuard, RbacGuard)
   listForPerson(@Param('personId') personId: string) {
     return this.roleAssignmentService.listForPerson(personId);
+  }
+
+  /** `[Role Assignment Revoke milestone]` Ends a currently-active
+   * assignment - see `RoleAssignmentService.revoke()`'s own doc comment
+   * for the full temporal-model/no-successor/no-event reasoning. Reuses
+   * the existing `people.role_assignment.update` action (already declared
+   * in the matrix, previously unbacked by any route) rather than
+   * inventing a new `.revoke` action - no data-dependent action selection
+   * is needed here, unlike `grant()`, so the ordinary declarative
+   * pipeline applies. */
+  @Post(':assignmentId/revoke')
+  @RequirePermission('people.role_assignment.update')
+  @UseGuards(RoleAssignmentRevokeResourceContextGuard, RbacGuard)
+  revoke(@Param('personId') personId: string, @Param('assignmentId') assignmentId: string) {
+    return this.roleAssignmentService.revoke(personId, assignmentId);
   }
 }

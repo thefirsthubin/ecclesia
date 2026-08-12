@@ -210,4 +210,14 @@ export class FinancialTransactionService {
 
     return this.financialTransactionRepository.appendEvent(id, existing.currentState, to, actorUserId, reason);
   }
+
+  /** `[Resident Pastor Dashboard - real Giving data milestone]` Thin
+   * passthrough - see `FinancialTransactionRepository.sumVerifiedAmountForBranch`'s
+   * own doc comment. No `actor`/authorization parameter, matching this
+   * module's other cross-module-consumed methods elsewhere in this
+   * codebase - the caller (`BranchDashboardSummaryService`) is only ever
+   * reached from an already-RBAC-guarded controller route. */
+  sumVerifiedAmountForBranch(branchId: string, from: Date, to: Date): Promise<bigint> {
+    return this.financialTransactionRepository.sumVerifiedAmountForBranch(branchId, from, to);
+  }
 }

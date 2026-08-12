@@ -2,24 +2,31 @@ import { FinancialTransactionRepository } from './financial-transaction.reposito
 
 describe('FinancialTransactionRepository', () => {
   function buildRepository() {
-    const txClient = {
-      financialTransaction: { create: jest.fn(), update: jest.fn() },
-      financialTransactionEvent: { create: jest.fn() },
-    };
     const prisma = {
-      $transaction: jest.fn((fn: (tx: typeof txClient) => unknown) => fn(txClient)),
-      financialTransaction: { findUnique: jest.fn(), findMany: jest.fn(), groupBy: jest.fn() },
-      financialTransactionEvent: { findFirst: jest.fn() },
+      financialTransaction: { create: jest.fn(), update: jest.fn(), findUnique: jest.fn(), findMany: jest.fn(), groupBy: jest.fn(), aggregate: jest.fn() },
+      financialTransactionEvent: { create: jest.fn(), findFirst: jest.fn() },
       user: { findUnique: jest.fn() },
     };
     const repository = new FinancialTransactionRepository(prisma as never);
-    return { repository, prisma, txClient };
+    return { repository, prisma };
   }
 
+  /**
+   * `[Bug fix, Stewardship/Role Assignment RLS audit]` `createWithEvent`/
+   * `appendEvent` no longer open their own `this.prisma.$transaction(...)`
+   * - confirmed live against real Postgres that doing so broke RLS (a
+   * second, unscoped transaction that never ran `runInBranchScope`'s `SET
+   * LOCAL app.current_branch_id`, so every statement inside it 500'd with
+   * "unrecognized configuration parameter"). These tests assert directly
+   * against `prisma.X`, not a `tx` stand-in, matching what the fixed
+   * implementation actually calls - atomicity now comes from
+   * `BranchScopeInterceptor`'s own single request-wide transaction, not a
+   * nested one.
+   */
   describe('createWithEvent', () => {
-    it('creates the transaction and its first event (fromState: null) inside one $transaction', async () => {
-      const { repository, prisma, txClient } = buildRepository();
-      txClient.financialTransaction.create.mockResolvedValue({ id: 'ft-1' });
+    it('creates the transaction and its first event (fromState: null)', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.financialTransaction.create.mockResolvedValue({ id: 'ft-1' });
 
       const input = {
         branchId: 'branch-1',
@@ -33,11 +40,10 @@ describe('FinancialTransactionRepository', () => {
 
       const result = await repository.createWithEvent(input);
 
-      expect(prisma.$transaction).toHaveBeenCalled();
-      expect(txClient.financialTransaction.create).toHaveBeenCalledWith({
+      expect(prisma.financialTransaction.create).toHaveBeenCalledWith({
         data: expect.objectContaining({ branchId: 'branch-1', type: 'OFFERING', currentState: 'RECORDED' }),
       });
-      expect(txClient.financialTransactionEvent.create).toHaveBeenCalledWith({
+      expect(prisma.financialTransactionEvent.create).toHaveBeenCalledWith({
         data: { transactionId: 'ft-1', fromState: null, toState: 'RECORDED', actorUserId: 'user-1', reason: undefined },
       });
       expect(result).toEqual({ id: 'ft-1' });
@@ -45,17 +51,16 @@ describe('FinancialTransactionRepository', () => {
   });
 
   describe('appendEvent', () => {
-    it('creates a new event and mirrors toState onto currentState inside one $transaction', async () => {
-      const { repository, prisma, txClient } = buildRepository();
-      txClient.financialTransaction.update.mockResolvedValue({ id: 'ft-1', currentState: 'VERIFIED' });
+    it('creates a new event and mirrors toState onto currentState', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.financialTransaction.update.mockResolvedValue({ id: 'ft-1', currentState: 'VERIFIED' });
 
       const result = await repository.appendEvent('ft-1', 'RECORDED', 'VERIFIED', 'user-2', undefined);
 
-      expect(prisma.$transaction).toHaveBeenCalled();
-      expect(txClient.financialTransactionEvent.create).toHaveBeenCalledWith({
+      expect(prisma.financialTransactionEvent.create).toHaveBeenCalledWith({
         data: { transactionId: 'ft-1', fromState: 'RECORDED', toState: 'VERIFIED', actorUserId: 'user-2', reason: undefined },
       });
-      expect(txClient.financialTransaction.update).toHaveBeenCalledWith({
+      expect(prisma.financialTransaction.update).toHaveBeenCalledWith({
         where: { id: 'ft-1' },
         data: { currentState: 'VERIFIED' },
       });
@@ -183,5 +188,45 @@ describe('FinancialTransactionRepository', () => {
 
     expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { personId: 'person-1' }, select: { id: true } });
     expect(result).toBe('user-1');
+  });
+
+  describe('sumVerifiedAmountForBranch', () => {
+    it('sums amountMinor for VERIFIED/RECONCILED transactions, scoped to the branch and the [from, to) window', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.financialTransaction.aggregate.mockResolvedValue({ _sum: { amountMinor: 2450000n } });
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-09-01T00:00:00.000Z');
+
+      const result = await repository.sumVerifiedAmountForBranch('branch-1', from, to);
+
+      expect(prisma.financialTransaction.aggregate).toHaveBeenCalledWith({
+        where: {
+          branchId: 'branch-1',
+          currentState: { in: ['VERIFIED', 'RECONCILED'] },
+          createdAt: { gte: from, lt: to },
+        },
+        _sum: { amountMinor: true },
+      });
+      expect(result).toBe(2450000n);
+    });
+
+    it('does not filter by sourceGroupId - unlike sumVerifiedAmountByGroupForWeek, individual gifts count toward a Branch-wide total', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.financialTransaction.aggregate.mockResolvedValue({ _sum: { amountMinor: 1000n } });
+
+      await repository.sumVerifiedAmountForBranch('branch-1', new Date(), new Date());
+
+      const call = prisma.financialTransaction.aggregate.mock.calls[0][0];
+      expect(call.where).not.toHaveProperty('sourceGroupId');
+    });
+
+    it('returns 0n, not null/undefined, when nothing is verified in the window', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.financialTransaction.aggregate.mockResolvedValue({ _sum: { amountMinor: null } });
+
+      const result = await repository.sumVerifiedAmountForBranch('branch-1', new Date(), new Date());
+
+      expect(result).toBe(0n);
+    });
   });
 });

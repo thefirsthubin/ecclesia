@@ -13,6 +13,7 @@
         "{options.outputPath}"
       ],
       "defaultConfiguration": "production",
+      "dependsOn": ["^build", "typecheck"],
       "options": {
         "target": "node",
         "compiler": "tsc",
@@ -35,7 +36,7 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "api:build",
-        "runBuildTargetDependencies": false
+        "runBuildTargetDependencies": true
       },
       "configurations": {
         "development": {

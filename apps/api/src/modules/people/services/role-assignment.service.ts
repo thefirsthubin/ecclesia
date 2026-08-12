@@ -168,4 +168,53 @@ export class RoleAssignmentService {
     const assignments = await this.roleAssignmentRepository.listByPerson(personId);
     return assignments.map(toResponseDto);
   }
+
+  /**
+   * `[Role Assignment Revoke milestone]` `POST
+   * /people/:personId/role-assignments/:assignmentId/revoke` - ends a
+   * currently-active assignment by setting `effectiveTo = now`, the same
+   * temporal "close, don't delete" model `createWithSuccession` already
+   * uses to end a prior Bacenta Leader during succession. Declarative RBAC
+   * (`people.role_assignment.update`, an existing matrix action that
+   * previously had no route implementing it at all) is sufficient here -
+   * unlike `grant()`, there is no data-dependent action selection to make
+   * (revoking is always `.update`, regardless of which `role` the
+   * assignment being ended holds).
+   *
+   * **No successor is created, and none is required** - PRD §17.2's
+   * "exactly one active Bacenta Leader per Bacenta at a time" is an
+   * upper-bound constraint, not a lower-bound one; `createWithSuccession`'s
+   * own doc comment already anticipates and accepts a Bacenta having zero
+   * active leaders ("one whose leader stepped down without a same-transaction
+   * successor") as a normal, valid transient state. Revoking any role
+   * (including `BACENTA_LEADER`) is therefore just an ordinary close - no
+   * role-specific branching, no invented "protected role" restriction, and
+   * no restriction on self-revocation - none of these exist as domain
+   * rules anywhere traced for this milestone, so none are added here.
+   *
+   * **No Engagement Signal is published.** `role_assignment.active`
+   * (`publishRoleAssignmentActive` above) is the only Role-Assignment-shaped
+   * event type in the closed `ENGAGEMENT_SIGNAL_EVENT_TYPES` catalog
+   * (`libs/contracts`) - there is no `role_assignment.inactive`/`.ended`/
+   * `.revoked` type modeled anywhere. Inventing one would mean extending a
+   * closed, exhaustively-typed classification map another domain
+   * (`libs/domain/insights`) owns, which is out of this milestone's scope
+   * and not required by any traced rule - so revoke has no EventBridge
+   * side effect at all, confirmed by omission, not overlooked.
+   */
+  async revoke(personId: string, assignmentId: string): Promise<RoleAssignmentResponseDto> {
+    const existing = await this.roleAssignmentRepository.findById(assignmentId);
+    if (!existing || existing.personId !== personId) {
+      throw new NotFoundException(`No Role Assignment found with id '${assignmentId}' for Person '${personId}'`);
+    }
+
+    const now = new Date();
+    const isActive = existing.effectiveFrom <= now && (existing.effectiveTo === null || existing.effectiveTo > now);
+    if (!isActive) {
+      throw new ConflictException(`Role Assignment '${assignmentId}' is not currently active`);
+    }
+
+    const revoked = await this.roleAssignmentRepository.revoke(assignmentId, now);
+    return toResponseDto(revoked);
+  }
 }

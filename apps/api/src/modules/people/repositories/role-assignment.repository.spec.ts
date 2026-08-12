@@ -2,17 +2,9 @@ import { RoleAssignmentRepository } from './role-assignment.repository';
 
 describe('RoleAssignmentRepository', () => {
   function buildRepository() {
-    // Split into two steps so `$transaction`'s mock (which needs to hand
-    // the same mock object back as `tx`) doesn't reference `prisma`
-    // inside its own initializer - a self-referential `const` initializer
-    // TypeScript can't infer a type for (TS7022/TS7024).
-    const prismaBase = {
-      roleAssignment: { create: jest.fn(), findFirst: jest.fn(), findMany: jest.fn(), update: jest.fn() },
-      user: { findUnique: jest.fn() },
-    };
     const prisma = {
-      ...prismaBase,
-      $transaction: jest.fn(async (fn: (tx: typeof prismaBase) => unknown) => fn(prismaBase)),
+      roleAssignment: { create: jest.fn(), findFirst: jest.fn(), findMany: jest.fn(), findUnique: jest.fn(), update: jest.fn() },
+      user: { findUnique: jest.fn() },
     };
     const repository = new RoleAssignmentRepository(prisma as never);
     return { repository, prisma };
@@ -61,7 +53,7 @@ describe('RoleAssignmentRepository', () => {
     expect(result).toEqual({ id: 'ra-prior' });
   });
 
-  it('createWithSuccession closes the prior holder and creates the new one in one transaction', async () => {
+  it('createWithSuccession closes the prior holder and creates the new one (no nested $transaction - see the repository method\'s own doc comment)', async () => {
     const { repository, prisma } = buildRepository();
     const now = new Date('2026-08-01T00:00:00Z');
     prisma.roleAssignment.create.mockResolvedValue({ id: 'ra-new' });
@@ -107,5 +99,31 @@ describe('RoleAssignmentRepository', () => {
       orderBy: { effectiveFrom: 'desc' },
     });
     expect(result).toEqual([{ id: 'ra-2' }, { id: 'ra-1' }]);
+  });
+
+  /** `[Role Assignment Revoke milestone]` */
+  describe('findById', () => {
+    it('delegates directly to prisma.roleAssignment.findUnique', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.roleAssignment.findUnique.mockResolvedValue({ id: 'ra-1' });
+
+      const result = await repository.findById('ra-1');
+
+      expect(prisma.roleAssignment.findUnique).toHaveBeenCalledWith({ where: { id: 'ra-1' } });
+      expect(result).toEqual({ id: 'ra-1' });
+    });
+  });
+
+  describe('revoke', () => {
+    it('closes the assignment by setting effectiveTo, the same temporal update createWithSuccession already uses', async () => {
+      const { repository, prisma } = buildRepository();
+      const now = new Date('2026-08-01T00:00:00Z');
+      prisma.roleAssignment.update.mockResolvedValue({ id: 'ra-1', effectiveTo: now });
+
+      const result = await repository.revoke('ra-1', now);
+
+      expect(prisma.roleAssignment.update).toHaveBeenCalledWith({ where: { id: 'ra-1' }, data: { effectiveTo: now } });
+      expect(result).toEqual({ id: 'ra-1', effectiveTo: now });
+    });
   });
 });

@@ -3,7 +3,9 @@ import { Module } from '@nestjs/common';
 import { DatabaseModule } from '../../platform/database/database.module';
 import { EventsModule } from '../../platform/events/events.module';
 import { RbacPlatformModule } from '../../platform/rbac/rbac-platform.module';
+import { GatheringsModule } from '../gatherings/gatherings.module';
 import { PeopleModule } from '../people/people.module';
+import { StewardshipModule } from '../stewardship/stewardship.module';
 import { AlertController } from './controllers/alert.controller';
 import { DashboardController } from './controllers/dashboard.controller';
 import { AlertResourceContextGuard } from './guards/alert-resource-context.guard';
@@ -13,6 +15,7 @@ import { EngagementSignalRepository } from './repositories/engagement-signal.rep
 import { PulseScoreHistoryRepository } from './repositories/pulse-score-history.repository';
 import { PulseScoreRepository } from './repositories/pulse-score.repository';
 import { AlertService } from './services/alert.service';
+import { BranchDashboardSummaryService } from './services/branch-dashboard-summary.service';
 import { EngagementSignalService } from './services/engagement-signal.service';
 import { PulseScoreService } from './services/pulse-score.service';
 
@@ -35,9 +38,19 @@ import { PulseScoreService } from './services/pulse-score.service';
  * once that architecture is in place. No route in this module calls it -
  * see `EngagementSignalService`'s own doc comment for why it has no
  * controller.
+ *
+ * `[Resident Pastor Dashboard - real Members/Attendance/Giving data
+ * milestone]` Also imports `GatheringsModule` and `StewardshipModule` -
+ * `BranchDashboardSummaryService`'s own real dependencies
+ * (`AttendanceRecordService`, `FinancialTransactionService`). Both are
+ * ordinary imports, not `forwardRef`: neither module imports
+ * `InsightsModule` back (confirmed by reading both modules' own `imports`
+ * arrays before adding this), so there is no cycle to break, the same
+ * "ordinary import" reasoning `GatheringsModule`'s own doc comment already
+ * gives for its own People/Pastoral Care imports.
  */
 @Module({
-  imports: [DatabaseModule, RbacPlatformModule, EventsModule, PeopleModule],
+  imports: [DatabaseModule, RbacPlatformModule, EventsModule, PeopleModule, GatheringsModule, StewardshipModule],
   controllers: [DashboardController, AlertController],
   providers: [
     EngagementSignalRepository,
@@ -47,6 +60,7 @@ import { PulseScoreService } from './services/pulse-score.service';
     EngagementSignalService,
     AlertService,
     PulseScoreService,
+    BranchDashboardSummaryService,
     BranchDashboardResourceContextGuard,
     GroupDashboardResourceContextGuard,
     AlertResourceContextGuard,

@@ -22,4 +22,14 @@ describe('RoleAssignmentController', () => {
 
     expect(roleAssignmentService.listForPerson).toHaveBeenCalledWith('person-1');
   });
+
+  /** `[Role Assignment Revoke milestone]` */
+  it('revoke() delegates to RoleAssignmentService.revoke with the personId and assignmentId params', async () => {
+    const roleAssignmentService = { grant: jest.fn(), listForPerson: jest.fn(), revoke: jest.fn() };
+    const controller = new RoleAssignmentController(roleAssignmentService as never);
+
+    await controller.revoke('person-1', 'ra-1');
+
+    expect(roleAssignmentService.revoke).toHaveBeenCalledWith('person-1', 'ra-1');
+  });
 });

@@ -133,3 +133,88 @@ describe('PERMISSION_MATRIX as an executable specification (Blueprint §9.5)', (
     expect(decision.matchedRule).toBeUndefined();
   });
 });
+
+/**
+ * `[Bug fix, Branch Pastor Gatherings Access]` Focused, human-readable
+ * coverage on top of the generic executable spec above (which already
+ * exercises this exact row via its `describe.each`) - the audit finding
+ * this fixes was specifically "ASSISTANT_PASTOR (labelled 'Branch Pastor'
+ * in Web Admin) can see the Gatherings nav item but the API 403s," so
+ * this block asserts that scenario by name rather than relying solely on
+ * the generic loop to make the intent legible.
+ */
+describe('Branch Pastor (ASSISTANT_PASTOR) Gatherings read access', () => {
+  const CLUSTER_BACENTA_ID = 'cluster-bacenta-1';
+  const OTHER_BRANCH_BACENTA_ID = 'other-branch-bacenta';
+
+  const actor: ActorContext = {
+    personId: 'assistant-pastor-1',
+    role: 'ASSISTANT_PASTOR',
+    branchId: BRANCH_ID,
+    clusterBacentaIds: [CLUSTER_BACENTA_ID],
+  };
+
+  it('is ALLOWED to read a Gathering owned by a Bacenta in their own cluster', () => {
+    const decision = evaluate(
+      actor,
+      'gatherings.gathering.read',
+      { branchId: BRANCH_ID, bacentaId: CLUSTER_BACENTA_ID },
+      GATE_DISABLED,
+      PERMISSION_MATRIX,
+    );
+    expect(decision.effect).toBe('ALLOW');
+  });
+
+  it('is DENIED for a Gathering owned by a Bacenta outside their cluster, even in the same Branch', () => {
+    const decision = evaluate(
+      actor,
+      'gatherings.gathering.read',
+      { branchId: BRANCH_ID, bacentaId: 'a-bacenta-not-in-my-cluster' },
+      GATE_DISABLED,
+      PERMISSION_MATRIX,
+    );
+    expect(decision.effect).toBe('DENY');
+  });
+
+  it('is DENIED for a Gathering in a different Branch entirely', () => {
+    const decision = evaluate(
+      actor,
+      'gatherings.gathering.read',
+      { branchId: 'a-different-branch', bacentaId: OTHER_BRANCH_BACENTA_ID },
+      GATE_DISABLED,
+      PERMISSION_MATRIX,
+    );
+    expect(decision.effect).toBe('DENY');
+  });
+
+  it('is DENIED for an unfiltered/Branch-wide resource (no single owning Bacenta) - CLUSTER scope structurally never matches this', () => {
+    const decision = evaluate(actor, 'gatherings.gathering.read', { branchId: BRANCH_ID }, GATE_DISABLED, PERMISSION_MATRIX);
+    expect(decision.effect).toBe('DENY');
+  });
+
+  it('the permission matrix contains exactly the intended grant: ALLOW, CLUSTER scope, no record-level check', () => {
+    const rows = PERMISSION_MATRIX.filter((rule) => rule.role === 'ASSISTANT_PASTOR' && rule.action === 'gatherings.gathering.read');
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ effect: 'ALLOW', scope: 'CLUSTER' });
+    expect(rows[0].recordLevelCheck).toBeUndefined();
+  });
+
+  it('other roles on gatherings.gathering.read are unchanged by this fix', () => {
+    const residentPastor = PERMISSION_MATRIX.filter((rule) => rule.role === 'RESIDENT_PASTOR' && rule.action === 'gatherings.gathering.read');
+    expect(residentPastor).toEqual([{ role: 'RESIDENT_PASTOR', action: 'gatherings.gathering.read', effect: 'ALLOW', scope: 'BRANCH' }]);
+
+    const bacentaLeader = PERMISSION_MATRIX.filter((rule) => rule.role === 'BACENTA_LEADER' && rule.action === 'gatherings.gathering.read');
+    expect(bacentaLeader).toHaveLength(1);
+    expect(bacentaLeader[0]).toMatchObject({ effect: 'ALLOW', scope: 'OWN_GROUP' });
+
+    // BASONTA_LEADER already held its own OWN_GROUP read grant before this
+    // fix (Mobile Personas sprint) - untouched here, still exactly one row.
+    const basontaLeader = PERMISSION_MATRIX.filter((rule) => rule.role === 'BASONTA_LEADER' && rule.action === 'gatherings.gathering.read');
+    expect(basontaLeader).toHaveLength(1);
+    expect(basontaLeader[0]).toMatchObject({ effect: 'ALLOW', scope: 'OWN_GROUP' });
+
+    const admin = PERMISSION_MATRIX.filter((rule) => rule.role === 'ADMIN' && rule.action === 'gatherings.gathering.read');
+    expect(admin).toHaveLength(1);
+    expect(admin[0]).toMatchObject({ effect: 'ALLOW', scope: 'BRANCH' });
+  });
+});

@@ -6,6 +6,7 @@ import { CurrentActor } from '../../../platform/auth/decorators/current-actor.de
 import { GroupScopeService } from '../../people/services/group-scope.service';
 import { BranchDashboardResourceContextGuard, GroupDashboardResourceContextGuard } from '../guards/insights-dashboard-resource-context.guard';
 import { AlertService } from '../services/alert.service';
+import { BranchDashboardSummaryService } from '../services/branch-dashboard-summary.service';
 import { PulseScoreService } from '../services/pulse-score.service';
 
 /**
@@ -28,6 +29,7 @@ export class DashboardController {
     private readonly pulseScoreService: PulseScoreService,
     private readonly alertService: AlertService,
     private readonly groupScopeService: GroupScopeService,
+    private readonly branchDashboardSummaryService: BranchDashboardSummaryService,
   ) {}
 
   @Get('branch-dashboard')
@@ -37,6 +39,23 @@ export class DashboardController {
     const pulseScore = await this.pulseScoreService.computeAndStoreBranchScore(actor.branchId);
     const alerts = await this.alertService.listForScope('BRANCH', actor.branchId);
     return { branchId: actor.branchId, pulseScore, alerts };
+  }
+
+  /**
+   * `[Resident Pastor Dashboard - real Members/Attendance/Giving data
+   * milestone]` Reuses `insights.branch_dashboard.read` verbatim - same
+   * actor scope (RESIDENT_PASTOR/ACTING_RESIDENT_PASTOR/ADMIN, BRANCH),
+   * same guard chain as `branch-dashboard` immediately above, not a new
+   * permission row. `actor.branchId` (resolved server-side from the
+   * authenticated actor, via the same guard) is the only Branch id this
+   * ever passes down to `BranchDashboardSummaryService` - never a
+   * client-supplied parameter.
+   */
+  @Get('branch-dashboard-summary')
+  @RequirePermission('insights.branch_dashboard.read')
+  @UseGuards(BranchDashboardResourceContextGuard, RbacGuard)
+  getBranchDashboardSummary(@CurrentActor() actor: ActorContext) {
+    return this.branchDashboardSummaryService.getSummary(actor.branchId);
   }
 
   @Get('bacenta-dashboard/:groupId')

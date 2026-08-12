@@ -8,7 +8,7 @@ import type { Action } from '../actions';
 import { REQUIRE_PERMISSION_KEY } from '../decorators/require-permission.decorator';
 import { evaluateRoleAndScope } from '../evaluate';
 import { PERMISSION_MATRIX } from '../permission-matrix';
-import { ECCLESIA_RBAC_DECISION_KEY, ECCLESIA_REQUEST_CONTEXT_KEY } from '../request-context';
+import { ECCLESIA_RBAC_ACTION_KEY, ECCLESIA_RBAC_DECISION_KEY, ECCLESIA_REQUEST_CONTEXT_KEY } from '../request-context';
 import type { RequestWithEcclesiaContext } from '../request-context';
 
 /**
@@ -48,6 +48,7 @@ export class RbacGuard implements CanActivate {
       PERMISSION_MATRIX,
     );
     request[ECCLESIA_RBAC_DECISION_KEY] = decision;
+    request[ECCLESIA_RBAC_ACTION_KEY] = action;
 
     if (decision.effect === 'DENY') {
       throw new ForbiddenException(decision.reason);

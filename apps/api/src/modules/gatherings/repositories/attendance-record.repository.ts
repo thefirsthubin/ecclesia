@@ -40,4 +40,25 @@ export class AttendanceRecordRepository {
   countByGathering(gatheringId: string): Promise<number> {
     return this.prisma.attendanceRecord.count({ where: { gatheringId } });
   }
+
+  /**
+   * `[Resident Pastor Dashboard - real Attendance data milestone]` The
+   * Attendance KPI/trend/growth-series' underlying query - every `PRESENT`
+   * record in `[from, to)`, Branch-wide (`AttendanceRecord.branchId`, not
+   * filtered by which Gathering or Group it belongs to). `PRESENT` only,
+   * not `ABSENT`/`EXCUSED` - "Attendance" means people who showed up.
+   * Not filtered by `Gathering.type` - that field is free-text
+   * (`AttendanceRecordService.record`'s own doc comment: `'BACENTA_MEETING'`
+   * is a convention, not an enum), so there is no principled type to
+   * single out as "the real services" versus any other Gathering a Branch
+   * might configure. `recordedAt` (when the record was entered), not the
+   * Gathering's own `scheduledStart` - per this milestone's explicit
+   * instruction, matching how attendance is actually timestamped in this
+   * table.
+   */
+  countPresentInWindow(branchId: string, from: Date, to: Date): Promise<number> {
+    return this.prisma.attendanceRecord.count({
+      where: { branchId, status: 'PRESENT', recordedAt: { gte: from, lt: to } },
+    });
+  }
 }

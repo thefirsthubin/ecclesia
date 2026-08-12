@@ -62,38 +62,52 @@ export class RoleAssignmentRepository {
   /**
    * PRD §17.2 + §19.4 step 6: granting a new Bacenta Leader for a Bacenta
    * that already has one active must close the prior holder's assignment
-   * (`effectiveTo = now`) in the same transaction as creating the new one
-   * - the same "close-then-open, atomically" pattern
-   * `GroupMembershipRepository.applyChange` already uses for FR-PPL-04's
-   * "automatically closing the prior membership" requirement, applied here
-   * to Role Assignment succession instead of Group Membership succession.
-   * `assignmentIdToClose` is undefined when there is no prior holder to
-   * close (a brand-new Bacenta, or one whose leader stepped down without a
-   * same-transaction successor).
+   * (`effectiveTo = now`) atomically with creating the new one - the same
+   * "close-then-open" pattern `GroupMembershipRepository.applyChange`
+   * uses for FR-PPL-04's "automatically closing the prior membership"
+   * requirement, applied here to Role Assignment succession instead of
+   * Group Membership succession. `assignmentIdToClose` is undefined when
+   * there is no prior holder to close (a brand-new Bacenta, or one whose
+   * leader stepped down without a same-transaction successor).
+   *
+   * `[Bug fix, Stewardship/Role Assignment RLS audit]` No longer wraps
+   * these two statements in their own `this.prisma.$transaction(async
+   * (tx) => ...)` - the exact same mistake found and fixed in
+   * `GroupMembershipRepository.applyChange`: `$transaction` is
+   * deliberately never proxied to the ambient branch-scoped connection,
+   * so that call opened a second, unscoped Postgres transaction that
+   * never ran `runInBranchScope`'s `SET LOCAL app.current_branch_id`,
+   * failing every RLS policy on `people.role_assignments` with
+   * "unrecognized configuration parameter." `RoleAssignmentController.grant`
+   * runs inside `BranchScopeInterceptor`'s one request-wide
+   * `runInBranchScope` transaction regardless of this route's own
+   * imperative (not declarative-guard) authorization - plain sequential
+   * calls against `this.prisma` here share that same outer transaction
+   * and remain atomic. Only this succession path was affected - the
+   * plain `create()` above never opened a nested transaction and was
+   * never broken.
    */
   async createWithSuccession(
     input: CreateRoleAssignmentRecord,
     assignmentIdToClose: string | undefined,
     now: Date,
   ): Promise<RoleAssignment> {
-    return this.prisma.$transaction(async (tx) => {
-      if (assignmentIdToClose) {
-        await tx.roleAssignment.update({
-          where: { id: assignmentIdToClose },
-          data: { effectiveTo: now },
-        });
-      }
-      return tx.roleAssignment.create({
-        data: {
-          personId: input.personId,
-          role: input.role as PrismaRole,
-          branchId: input.branchId,
-          groupId: input.groupId,
-          scopeGroupIds: input.scopeGroupIds,
-          grantedByUserId: input.grantedByUserId,
-          ...(input.effectiveFrom ? { effectiveFrom: input.effectiveFrom } : {}),
-        },
+    if (assignmentIdToClose) {
+      await this.prisma.roleAssignment.update({
+        where: { id: assignmentIdToClose },
+        data: { effectiveTo: now },
       });
+    }
+    return this.prisma.roleAssignment.create({
+      data: {
+        personId: input.personId,
+        role: input.role as PrismaRole,
+        branchId: input.branchId,
+        groupId: input.groupId,
+        scopeGroupIds: input.scopeGroupIds,
+        grantedByUserId: input.grantedByUserId,
+        ...(input.effectiveFrom ? { effectiveFrom: input.effectiveFrom } : {}),
+      },
     });
   }
 
@@ -120,6 +134,28 @@ export class RoleAssignmentRepository {
       where: { personId },
       orderBy: { effectiveFrom: 'desc' },
     });
+  }
+
+  /** `[Role Assignment Revoke milestone]` Single lookup by id - used both
+   * by the new revoke resource-context guard (to resolve scope from the
+   * assignment's own `groupId`/`branchId`) and by `RoleAssignmentService.revoke()`'s
+   * own defense-in-depth existence check, the same "guard already
+   * guarantees it, service re-checks anyway" precedent `GroupService.update()`
+   * already established. */
+  findById(id: string): Promise<RoleAssignment | null> {
+    return this.prisma.roleAssignment.findUnique({ where: { id } });
+  }
+
+  /** `[Role Assignment Revoke milestone]` Closes an assignment by setting
+   * `effectiveTo` - the exact same "end, don't delete" temporal update
+   * `createWithSuccession` above already uses to close a prior Bacenta
+   * Leader's assignment during succession, just reachable directly now
+   * rather than only as an implicit side effect of granting a successor.
+   * A single-statement Prisma call - no nested `$transaction`, so this
+   * inherits the ambient branch-scoped connection correctly, the same
+   * fix already applied to `createWithSuccession`'s own two statements. */
+  revoke(id: string, effectiveTo: Date): Promise<RoleAssignment> {
+    return this.prisma.roleAssignment.update({ where: { id }, data: { effectiveTo } });
   }
 
   // `findPoimenStatus` used to live here, querying `prisma.poimenEnrollment`

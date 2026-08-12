@@ -54,4 +54,21 @@ export class GroupRepository {
       orderBy: { name: 'asc' },
     });
   }
+
+  /**
+   * `[Resident Pastor Dashboard - Bacenta Leaderboard milestone]` The
+   * Bacenta Leaderboard's candidate Group set - the exact same
+   * `{ branchId, type: 'PASTORAL_CARE', lifecycleStatus: 'ACTIVE' }` filter
+   * `apps/worker`'s `ChurchPulseRecomputeRepository.listActiveBacentaGroups`
+   * already uses to decide which Bacentas get a `PulseScore` row computed
+   * in the first place - matching it here guarantees every Bacenta this
+   * method returns is one the worker actually scores (and vice versa), not
+   * two independently-drifting definitions of "active Bacenta."
+   */
+  findActiveBacentasByBranch(branchId: string): Promise<Group[]> {
+    return this.prisma.group.findMany({
+      where: { branchId, type: 'PASTORAL_CARE', lifecycleStatus: 'ACTIVE' },
+      orderBy: { name: 'asc' },
+    });
+  }
 }

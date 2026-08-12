@@ -8,6 +8,7 @@ describe('GroupMembershipService', () => {
       findGroupById: jest.fn(),
       applyChange: jest.fn(),
       listByPerson: jest.fn(),
+      countDistinctActiveMinistryMembersByBranch: jest.fn(),
     };
     const personRepository = {
       findById: jest.fn(),
@@ -143,6 +144,19 @@ describe('GroupMembershipService', () => {
       expect(result).toHaveLength(2);
       expect(result[0].id).toBe('membership-1');
       expect(result[1].endedAt).toBe('2026-02-01T00:00:00.000Z');
+    });
+  });
+
+  describe('countDistinctActiveMinistryMembersByBranch (Resident Pastor Dashboard - Volunteers milestone)', () => {
+    it('delegates directly to groupMembershipRepository.countDistinctActiveMinistryMembersByBranch', async () => {
+      const { service, groupMembershipRepository } = buildService();
+      const asOf = new Date('2026-08-01T00:00:00.000Z');
+      groupMembershipRepository.countDistinctActiveMinistryMembersByBranch.mockResolvedValue(67);
+
+      const result = await service.countDistinctActiveMinistryMembersByBranch('branch-1', asOf);
+
+      expect(groupMembershipRepository.countDistinctActiveMinistryMembersByBranch).toHaveBeenCalledWith('branch-1', asOf);
+      expect(result).toBe(67);
     });
   });
 });

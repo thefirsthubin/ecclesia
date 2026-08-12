@@ -53,4 +53,33 @@ describe('AttendanceRecordRepository', () => {
     expect(prisma.attendanceRecord.count).toHaveBeenCalledWith({ where: { gatheringId: 'g-1' } });
     expect(result).toBe(3);
   });
+
+  describe('countPresentInWindow', () => {
+    it('counts only PRESENT records, scoped to the branch and the [from, to) window', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.attendanceRecord.count.mockResolvedValue(356);
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-09-01T00:00:00.000Z');
+
+      const result = await repository.countPresentInWindow('branch-1', from, to);
+
+      expect(prisma.attendanceRecord.count).toHaveBeenCalledWith({
+        where: { branchId: 'branch-1', status: 'PRESENT', recordedAt: { gte: from, lt: to } },
+      });
+      expect(result).toBe(356);
+    });
+
+    it('never leaks a count across branches - a different branchId produces a different where clause', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.attendanceRecord.count.mockResolvedValue(0);
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-09-01T00:00:00.000Z');
+
+      await repository.countPresentInWindow('branch-2', from, to);
+
+      expect(prisma.attendanceRecord.count).toHaveBeenCalledWith(
+        expect.objectContaining({ where: expect.objectContaining({ branchId: 'branch-2' }) }),
+      );
+    });
+  });
 });

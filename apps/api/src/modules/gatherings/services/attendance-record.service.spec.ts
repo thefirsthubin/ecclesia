@@ -41,7 +41,12 @@ describe('AttendanceRecordService', () => {
   const actor: ActorContext = { personId: 'usher-1', role: 'BACENTA_LEADER', branchId: 'branch-1' };
 
   function buildService() {
-    const attendanceRecordRepository = { upsert: jest.fn(), findByGathering: jest.fn(), countByGathering: jest.fn() };
+    const attendanceRecordRepository = {
+      upsert: jest.fn(),
+      findByGathering: jest.fn(),
+      countByGathering: jest.fn(),
+      countPresentInWindow: jest.fn(),
+    };
     const gatheringRepository = { findById: jest.fn() };
     const eventPublisher = { publish: jest.fn() };
     const service = new AttendanceRecordService(attendanceRecordRepository as never, gatheringRepository as never, eventPublisher as never);
@@ -140,6 +145,20 @@ describe('AttendanceRecordService', () => {
       const result = await service.checkCompleteness('g-1');
 
       expect(result.incomplete).toBe(false);
+    });
+  });
+
+  describe('countPresentInWindow', () => {
+    it('delegates directly to attendanceRecordRepository.countPresentInWindow', async () => {
+      const { service, attendanceRecordRepository } = buildService();
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-09-01T00:00:00.000Z');
+      attendanceRecordRepository.countPresentInWindow.mockResolvedValue(356);
+
+      const result = await service.countPresentInWindow('branch-1', from, to);
+
+      expect(attendanceRecordRepository.countPresentInWindow).toHaveBeenCalledWith('branch-1', from, to);
+      expect(result).toBe(356);
     });
   });
 });

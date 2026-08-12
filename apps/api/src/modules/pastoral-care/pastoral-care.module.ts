@@ -16,7 +16,10 @@ import {
 } from './guards/follow-up-task-resource-context.guard';
 import { PastoralNoteResourceContextGuard } from './guards/pastoral-note-resource-context.guard';
 import { PoimenEnrollmentResourceContextGuard } from './guards/poimen-enrollment-resource-context.guard';
-import { SilentDriftFlagListResourceContextGuard } from './guards/silent-drift-flag-resource-context.guard';
+import {
+  SilentDriftFlagListForActorResourceContextGuard,
+  SilentDriftFlagListResourceContextGuard,
+} from './guards/silent-drift-flag-resource-context.guard';
 import { FollowUpTaskRepository } from './repositories/follow-up-task.repository';
 import { PastoralNoteRepository } from './repositories/pastoral-note.repository';
 import { PoimenEnrollmentRepository } from './repositories/poimen-enrollment.repository';
@@ -68,6 +71,7 @@ import { SilentDriftFlagService } from './services/silent-drift-flag.service';
     SilentDriftFlagRepository,
     SilentDriftFlagService,
     SilentDriftFlagListResourceContextGuard,
+    SilentDriftFlagListForActorResourceContextGuard,
   ],
   // `FollowUpTaskService` is additionally exported (Gatherings milestone)
   // so `VisitorIntakeService` (FR-GTH-04) can auto-create a Follow-up task

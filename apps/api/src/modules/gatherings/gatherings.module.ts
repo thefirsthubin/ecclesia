@@ -50,6 +50,13 @@ import { VisitorIntakeService } from './services/visitor-intake.service';
  * the target Basonta before writing a `StaffingTarget` row. See
  * `MinistryModule`'s own doc comment and
  * `apps/api/src/modules/ministry/MINISTRY_DESIGN_NOTES.md`.
+ *
+ * **Also exports `AttendanceRecordService`** (Resident Pastor Dashboard -
+ * real Attendance data milestone) - `BranchDashboardSummaryService`
+ * (`apps/api/src/modules/insights`) needs `countPresentInWindow` for the
+ * Attendance KPI/trend/growth-series, the same "small, purpose-built
+ * public method" cross-module pattern every export above already
+ * follows, not a new architectural exception.
  */
 @Module({
   imports: [DatabaseModule, RbacPlatformModule, EventsModule, PeopleModule, PastoralCareModule],
@@ -72,6 +79,6 @@ import { VisitorIntakeService } from './services/visitor-intake.service';
     AttendanceResourceContextGuard,
     VisitorIntakeResourceContextGuard,
   ],
-  exports: [GatheringScopeService],
+  exports: [GatheringScopeService, AttendanceRecordService],
 })
 export class GatheringsModule {}

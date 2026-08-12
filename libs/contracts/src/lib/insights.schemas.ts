@@ -116,3 +116,145 @@ export type GroupDashboardResponseDto = z.infer<typeof groupDashboardResponseSch
 
 /** `GET /insights/alerts` (the Alert inbox surface, PRD §16.6). */
 export const alertListResponseSchema = z.array(alertResponseSchema);
+
+/**
+ * `[Resident Pastor Dashboard - real Members/Attendance/Giving data
+ * milestone]` One point in a 6-month monthly-bucketed series
+ * (`BranchDashboardSummaryResponseDto.growthSeries`). `label` is a
+ * pre-formatted 3-letter month abbreviation (e.g. `'Aug'`) - the server
+ * computes it, not the client, so there is exactly one place that decides
+ * "which 6 months" and "what to call them," matching this response's own
+ * `growthSeries` field order.
+ */
+export const growthSeriesPointSchema = z.object({
+  label: z.string(),
+  value: z.number(),
+});
+export type GrowthSeriesPointDto = z.infer<typeof growthSeriesPointSchema>;
+
+/**
+ * `[Resident Pastor Dashboard - Volunteers/Bacenta Leaderboard/Engagement
+ * Trend milestone]` One row of `BranchDashboardSummaryResponseDto.bacentaLeaderboard`
+ * - a Bacenta with an already-computed `PulseScore` (`scopeType: 'GROUP'`),
+ * read as-is, never recomputed here (`apps/worker`'s `ChurchPulseRecomputeJob`
+ * is the only writer). `leaderName` is `null`, not a fabricated placeholder,
+ * when the Bacenta genuinely has no active `BACENTA_LEADER` Role Assignment
+ * right now - a real, honest state (a vacant Bacenta), not an error.
+ */
+export const bacentaLeaderboardEntrySchema = z.object({
+  groupId: z.string().uuid(),
+  name: z.string(),
+  leaderName: z.string().nullable(),
+  score: z.number().min(0).max(100),
+});
+export type BacentaLeaderboardEntryDto = z.infer<typeof bacentaLeaderboardEntrySchema>;
+
+export const engagementTrendDirectionSchema = z.enum(['up', 'down', 'flat']);
+export type EngagementTrendDirectionDto = z.infer<typeof engagementTrendDirectionSchema>;
+
+/**
+ * `[Resident Pastor Dashboard - Volunteers/Bacenta Leaderboard/Engagement
+ * Trend milestone]` `BranchDashboardSummaryResponseDto.engagementTrend` -
+ * a direct read of `libs/domain/insights`'s own `evaluatePulseTrend()`
+ * output (FR-INS-03), applied to the Branch's own `PulseScoreHistory`
+ * (`scopeType: 'BRANCH'`), not a new trend computation. `deltaPoints` is
+ * a signed **Church Pulse point** delta (the score is already a 0-100
+ * scale, so this is not converted to a second, redundant "percentage of
+ * baseline" figure - `evaluatePulseTrend` itself has no such concept).
+ * `direction` is derived from `deltaPoints`' sign - `evaluatePulseTrend`'s
+ * own `declined` field is threshold-gated for alerting purposes ("declined
+ * enough to alert on"), a different question from "which way is it moving
+ * at all," so it is deliberately not surfaced here.
+ */
+export const engagementTrendSchema = z.object({
+  direction: engagementTrendDirectionSchema,
+  deltaPoints: z.number(),
+  windowDays: z.number().int().positive(),
+});
+export type EngagementTrendDto = z.infer<typeof engagementTrendSchema>;
+
+/**
+ * `GET /insights/branch-dashboard-summary` - Resident Pastor Dashboard's
+ * real KPI/growth-chart data (replacing `apps/web-admin`'s previously-demo
+ * `DEMO_KPIS`/`buildGrowthSeries()`/`DEMO_BACENTA_LEADERBOARD`/
+ * `DEMO_CHURCH_PULSE_SUBMETRICS.engagementTrend*` fields one milestone at a
+ * time - see `DASHBOARD_REDESIGN_NOTES.md`'s Milestone 11 addendum and the
+ * two Web Admin Release 1 audit follow-ons that named these as the next
+ * tasks). First milestone: Members/Attendance/Giving. Second milestone
+ * (this one): Volunteers/Bacenta Leaderboard/Engagement Trend. Follow-up
+ * Health, Church name, and Branch Comparison remain demo data - still out
+ * of scope.
+ *
+ * **Field semantics** (see `BranchDashboardSummaryService`'s own doc
+ * comment for the full reasoning):
+ * - `membersCount` - current total People in the Branch (a live snapshot,
+ *   not a period sum).
+ * - `membersTrend` - a signed **count** (not a percentage) of People
+ *   created since the start of the current calendar month - matches the
+ *   demo data it replaces (`'+12 this month'` is an absolute delta, unlike
+ *   Attendance/Giving's percentage trends).
+ * - `attendanceTotal` / `givingTotalMinor` - the current (in-progress)
+ *   calendar month's total: every `AttendanceRecord` with `status:
+ *   'PRESENT'` recorded this month (branch-wide, not filtered by
+ *   Gathering type - `Gathering.type` is free-text, not a fixed enum, so
+ *   there is no principled type to filter to); every `FinancialTransaction`
+ *   with `currentState` `VERIFIED`/`RECONCILED` created this month
+ *   (branch-wide, every `giverPersonId`/`sourceGroupId` - unlike
+ *   `sumVerifiedAmountByGroupForWeek`'s per-Bacenta reconciliation view,
+ *   a Branch-wide Giving KPI has no reason to exclude individual gifts).
+ * - `attendanceTrend` / `givingTrend` - signed **percentage** change vs.
+ *   the immediately preceding full calendar month (i.e. the last two
+ *   points of the corresponding `growthSeries`).
+ * - `givingTotalMinor` is a decimal string in minor currency units
+ *   (pesewas), matching every other `amountMinor`-shaped field in this
+ *   codebase's wire contracts - never a `number` (BigInt precision).
+ * - `growthSeries.giving[].value` is a plain `number`, **also in minor
+ *   units** - deliberately consistent with `givingTotalMinor` rather than
+ *   pre-converted to major currency units; `apps/web-admin`'s own
+ *   `formatAmountMinor`/chart-mapping layer is where minor-to-major
+ *   conversion already happens for every other money value in this app,
+ *   and this endpoint does not special-case itself.
+ * - `growthSeries.membership` is a **cumulative snapshot** per month
+ *   (total People created on or before that month's end), not a
+ *   per-month new-members count - matches the demo data it replaces
+ *   (`MEMBERSHIP_TREND`'s monotonically increasing values). This is
+ *   deliberately different in kind from `attendance`/`giving`'s
+ *   per-month period sums; see `BranchDashboardSummaryService` for why.
+ * - `volunteersCount` - current distinct People with at least one active
+ *   (`endedAt: null`) `MINISTRY`-type Group Membership, Branch-wide - the
+ *   same "distinct person, not membership row count" shape as every other
+ *   headcount here (one Person can hold several concurrent Basonta
+ *   memberships without being double-counted).
+ * - `volunteersTrend` - a signed **count** (not a percentage), the exact
+ *   same "current minus start-of-month" shape as `membersTrend` -
+ *   `GroupMembership.startedAt`/`endedAt` make an honest point-in-time
+ *   reconstruction possible (count active *as of* a past date), the same
+ *   technique `membersTrend`/`growthSeries.membership` already use.
+ * - `bacentaLeaderboard` - every active Bacenta (`type: 'PASTORAL_CARE'`,
+ *   `lifecycleStatus: 'ACTIVE'`) that already has a computed `PulseScore`
+ *   (`scopeType: 'GROUP'`) - **not** every active Bacenta unconditionally;
+ *   one with no score yet (e.g. the nightly `ChurchPulseRecomputeJob`
+ *   sweep hasn't reached it) is omitted, not shown with a fabricated 0.
+ *   Ordered highest score first (leaderboard semantics), matching the
+ *   demo data's own ordering.
+ * - `engagementTrend` - see `engagementTrendSchema`'s own doc comment.
+ */
+export const branchDashboardSummaryResponseSchema = z.object({
+  branchId: z.string().uuid(),
+  membersCount: z.number().int().min(0),
+  membersTrend: z.number().int(),
+  attendanceTotal: z.number().int().min(0),
+  attendanceTrend: z.number(),
+  givingTotalMinor: z.string(),
+  givingTrend: z.number(),
+  growthSeries: z.object({
+    attendance: z.array(growthSeriesPointSchema),
+    membership: z.array(growthSeriesPointSchema),
+    giving: z.array(growthSeriesPointSchema),
+  }),
+  volunteersCount: z.number().int().min(0),
+  volunteersTrend: z.number().int(),
+  bacentaLeaderboard: z.array(bacentaLeaderboardEntrySchema),
+  engagementTrend: engagementTrendSchema,
+});
+export type BranchDashboardSummaryResponseDto = z.infer<typeof branchDashboardSummaryResponseSchema>;

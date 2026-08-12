@@ -153,4 +153,28 @@ export class PersonRepository {
     });
     return memberships.map((m) => ({ id: m.id, groupId: m.groupId, groupType: m.groupType }));
   }
+
+  /**
+   * `[Resident Pastor Dashboard - real Members data milestone]` The
+   * Members KPI's current total - the same `count`-of-`findByBranch`
+   * shape `CouncilAdministratorDashboard` (`apps/web-admin`) already
+   * derives client-side from `GET /people`'s full list, just computed
+   * server-side instead of shipping the whole roster over the wire for a
+   * single number.
+   */
+  countByBranch(branchId: string): Promise<number> {
+    return this.prisma.person.count({ where: { branchId } });
+  }
+
+  /**
+   * `[Resident Pastor Dashboard - real Members data milestone]` Also
+   * backs the Members trend (current total minus this, evaluated at the
+   * start of the current calendar month) and each `growthSeries.membership`
+   * point (evaluated at each of the last 6 months' end boundaries) - see
+   * `BranchDashboardSummaryService`'s own doc comment for why membership is
+   * a cumulative snapshot, not a per-month count, unlike Attendance/Giving.
+   */
+  countByBranchCreatedBefore(branchId: string, cutoffExclusive: Date): Promise<number> {
+    return this.prisma.person.count({ where: { branchId, createdAt: { lt: cutoffExclusive } } });
+  }
 }

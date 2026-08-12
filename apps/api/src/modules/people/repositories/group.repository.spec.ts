@@ -67,4 +67,30 @@ describe('GroupRepository', () => {
       });
     });
   });
+
+  describe('findActiveBacentasByBranch (Resident Pastor Dashboard - Bacenta Leaderboard milestone)', () => {
+    it('filters to PASTORAL_CARE type, ACTIVE lifecycle status, scoped to the branch', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.group.findMany.mockResolvedValue([{ id: 'bacenta-1', name: 'Bacenta 1' }]);
+
+      const result = await repository.findActiveBacentasByBranch('branch-1');
+
+      expect(prisma.group.findMany).toHaveBeenCalledWith({
+        where: { branchId: 'branch-1', type: 'PASTORAL_CARE', lifecycleStatus: 'ACTIVE' },
+        orderBy: { name: 'asc' },
+      });
+      expect(result).toEqual([{ id: 'bacenta-1', name: 'Bacenta 1' }]);
+    });
+
+    it('never leaks another branch\'s Bacentas - a different branchId produces a different where clause', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.group.findMany.mockResolvedValue([]);
+
+      await repository.findActiveBacentasByBranch('branch-2');
+
+      expect(prisma.group.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: expect.objectContaining({ branchId: 'branch-2' }) }),
+      );
+    });
+  });
 });

@@ -203,6 +203,13 @@ const BASE_MATRIX: PermissionRule[] = [
   { role: 'RESIDENT_PASTOR', action: 'gatherings.gathering.read', effect: 'ALLOW', scope: 'BRANCH' },
   { role: 'ASSISTANT_PASTOR', action: 'gatherings.gathering.create', effect: 'ALLOW', scope: 'CLUSTER' },
   { role: 'ASSISTANT_PASTOR', action: 'gatherings.gathering.update', effect: 'ALLOW', scope: 'CLUSTER' },
+  {
+    role: 'ASSISTANT_PASTOR',
+    action: 'gatherings.gathering.read',
+    effect: 'ALLOW',
+    scope: 'CLUSTER',
+    reason: '[Bug fix, Branch Pastor Gatherings Access] same class of gap the Shepherd Dashboard sprint already fixed for BACENTA_LEADER below - ASSISTANT_PASTOR held create/update here but no read at all, so the Web Admin Gatherings page 403\'d despite the nav item being visible to this role.',
+  },
   { role: 'BACENTA_LEADER', action: 'gatherings.gathering.create', effect: 'ALLOW', scope: 'OWN_GROUP' },
   { role: 'BACENTA_LEADER', action: 'gatherings.gathering.update', effect: 'ALLOW', scope: 'OWN_GROUP' },
   {

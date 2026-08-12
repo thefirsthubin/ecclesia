@@ -1,8 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { ActorContext } from '@ecclesia/rbac';
+import type { ActorContextResponseDto } from '@ecclesia/contracts';
 
 import type { EnvConfig } from '../../config/env.schema';
+import { PrismaService } from '../../database/prisma.service';
 import { CurrentActor } from '../decorators/current-actor.decorator';
 import { Public } from '../decorators/public.decorator';
 
@@ -22,14 +24,38 @@ import { Public } from '../decorators/public.decorator';
  * same `ActorContext` `@CurrentActor()` already exposes to every other
  * controller, and is protected by the existing global `AuthGuard` like
  * every other route (no `@Public()`).
+ *
+ * `[Release 1 blocker fix]` Now also resolves `branchName` from the
+ * actor's own `branchId` (already resolved by `AuthGuard` — no new
+ * branch-resolution mechanism, just one small read using the id already
+ * in hand) — the dashboard header's only real source for the church's
+ * actual name, replacing the previous `DEMO_CHURCH_NAME` placeholder
+ * (`dashboardDemoData.ts`'s own doc comment anticipated exactly this: "a
+ * one-line change here" once a real field exists). A direct
+ * `PrismaService` read here, not a repository — matching this module's
+ * own existing precedent (`ActorContextResolverService` reads Prisma
+ * directly too); `platform/auth` has no repository layer at all, unlike
+ * `modules/*`'s domain controllers. By the time this handler runs,
+ * `BranchScopeInterceptor` has already set this request's branch scope
+ * (`AuthGuard` runs first), so the ordinary RLS-scoped `PrismaService` is
+ * safe to use here, unlike `ActorContextResolverService` itself (which
+ * must use `PrismaRootService` instead — see that class's own doc
+ * comment for why).
  */
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly configService: ConfigService<EnvConfig, true>) {}
+  constructor(
+    private readonly configService: ConfigService<EnvConfig, true>,
+    private readonly prisma: PrismaService,
+  ) {}
 
   @Get('me')
-  getCurrentActor(@CurrentActor() actor: ActorContext): ActorContext {
-    return actor;
+  async getCurrentActor(@CurrentActor() actor: ActorContext): Promise<ActorContextResponseDto> {
+    const branch = await this.prisma.branch.findUniqueOrThrow({
+      where: { id: actor.branchId },
+      select: { name: true },
+    });
+    return { ...actor, branchName: branch.name };
   }
 
   /**

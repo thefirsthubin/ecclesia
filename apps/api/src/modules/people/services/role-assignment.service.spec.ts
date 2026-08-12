@@ -11,6 +11,8 @@ describe('RoleAssignmentService', () => {
       findActiveBacentaLeader: jest.fn().mockResolvedValue(null),
       createWithSuccession: jest.fn(),
       listByPerson: jest.fn(),
+      findById: jest.fn(),
+      revoke: jest.fn(),
     };
     const personRepository = { findById: jest.fn() };
     const branchConfigurationService = { loadForBranch: jest.fn().mockResolvedValue({ poimenGateEnabled: false }) };
@@ -201,6 +203,65 @@ describe('RoleAssignmentService', () => {
       expect(result).toHaveLength(2);
       expect(result[0].id).toBe('ra-1');
       expect(result[1].effectiveTo).toBe('2026-03-01T00:00:00.000Z');
+    });
+  });
+
+  /** `[Role Assignment Revoke milestone]` */
+  describe('revoke', () => {
+    it('closes a currently-active assignment by setting effectiveTo to now, and publishes no Engagement Signal', async () => {
+      const { service, roleAssignmentRepository, eventPublisher } = buildService();
+      roleAssignmentRepository.findById.mockResolvedValue(roleAssignmentRow);
+      roleAssignmentRepository.revoke.mockResolvedValue({ ...roleAssignmentRow, effectiveTo: new Date('2026-08-01T00:00:00Z') });
+
+      const result = await service.revoke('person-1', 'ra-1');
+
+      expect(roleAssignmentRepository.revoke).toHaveBeenCalledWith('ra-1', expect.any(Date));
+      expect(result.effectiveTo).toBe('2026-08-01T00:00:00.000Z');
+      expect(eventPublisher.publish).not.toHaveBeenCalled();
+    });
+
+    it('throws NotFoundException when the assignment does not exist', async () => {
+      const { service, roleAssignmentRepository } = buildService();
+      roleAssignmentRepository.findById.mockResolvedValue(null);
+
+      await expect(service.revoke('person-1', 'missing')).rejects.toThrow(NotFoundException);
+      expect(roleAssignmentRepository.revoke).not.toHaveBeenCalled();
+    });
+
+    it('throws NotFoundException when the assignment belongs to a different Person', async () => {
+      const { service, roleAssignmentRepository } = buildService();
+      roleAssignmentRepository.findById.mockResolvedValue({ ...roleAssignmentRow, personId: 'someone-else' });
+
+      await expect(service.revoke('person-1', 'ra-1')).rejects.toThrow(NotFoundException);
+      expect(roleAssignmentRepository.revoke).not.toHaveBeenCalled();
+    });
+
+    it('throws ConflictException when the assignment is already ended', async () => {
+      const { service, roleAssignmentRepository } = buildService();
+      roleAssignmentRepository.findById.mockResolvedValue({ ...roleAssignmentRow, effectiveTo: new Date('2020-01-01T00:00:00Z') });
+
+      await expect(service.revoke('person-1', 'ra-1')).rejects.toThrow(ConflictException);
+      expect(roleAssignmentRepository.revoke).not.toHaveBeenCalled();
+    });
+
+    it('throws ConflictException when the assignment has not started yet (effectiveFrom in the future)', async () => {
+      const { service, roleAssignmentRepository } = buildService();
+      const future = new Date(Date.now() + 24 * 60 * 60 * 1000);
+      roleAssignmentRepository.findById.mockResolvedValue({ ...roleAssignmentRow, effectiveFrom: future });
+
+      await expect(service.revoke('person-1', 'ra-1')).rejects.toThrow(ConflictException);
+    });
+
+    it('revoking a BACENTA_LEADER assignment requires no successor - a plain close, no special-casing', async () => {
+      const { service, roleAssignmentRepository } = buildService();
+      const shepherdRow = { ...roleAssignmentRow, role: 'BACENTA_LEADER', groupId: 'bacenta-1' };
+      roleAssignmentRepository.findById.mockResolvedValue(shepherdRow);
+      roleAssignmentRepository.revoke.mockResolvedValue({ ...shepherdRow, effectiveTo: new Date() });
+
+      await service.revoke('person-1', 'ra-1');
+
+      expect(roleAssignmentRepository.findActiveBacentaLeader).not.toHaveBeenCalled();
+      expect(roleAssignmentRepository.createWithSuccession).not.toHaveBeenCalled();
     });
   });
 });

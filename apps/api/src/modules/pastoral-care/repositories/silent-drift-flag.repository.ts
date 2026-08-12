@@ -29,4 +29,17 @@ export class SilentDriftFlagRepository {
       orderBy: { createdAt: 'desc' },
     });
   }
+
+  /** `[Silent-Drift Detection Branch-wide milestone]` `GET
+   * /pastoral-care/silent-drift-flags` with no `groupId` - the
+   * BRANCH-wide counterpart to `listByGroup`, for a BRANCH-scoped actor
+   * (Resident Pastor, Admin) who has no single Group to name. Same
+   * default-statuses/ordering as `listByGroup`, byte-for-byte the same
+   * shape `FollowUpTaskRepository.listByBranch` already established. */
+  listByBranch(branchId: string, statuses: SilentDriftStatus[] = DEFAULT_STATUSES): Promise<SilentDriftFlag[]> {
+    return this.prisma.silentDriftFlag.findMany({
+      where: { branchId, status: { in: statuses } },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
 }

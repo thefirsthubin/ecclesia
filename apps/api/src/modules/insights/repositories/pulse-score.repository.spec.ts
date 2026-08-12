@@ -3,7 +3,7 @@ import { PulseScoreRepository } from './pulse-score.repository';
 describe('PulseScoreRepository', () => {
   function buildRepository() {
     const prisma = {
-      pulseScore: { upsert: jest.fn(), findUnique: jest.fn() },
+      pulseScore: { upsert: jest.fn(), findUnique: jest.fn(), findMany: jest.fn() },
       configuration: { findUnique: jest.fn() },
     };
     const repository = new PulseScoreRepository(prisma as never);
@@ -63,5 +63,36 @@ describe('PulseScoreRepository', () => {
     const result = await repository.findChurchPulseWeights('branch-1');
 
     expect(result).toBeNull();
+  });
+
+  describe('findByBranchAndScopeType (Resident Pastor Dashboard - Bacenta Leaderboard milestone)', () => {
+    it('reads every score for the branch and scopeType - a plain findMany, never a compute/upsert call', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.pulseScore.findMany.mockResolvedValue([{ id: 'score-1', scopeId: 'bacenta-1', score: 91 }]);
+
+      const result = await repository.findByBranchAndScopeType('branch-1', 'GROUP');
+
+      expect(prisma.pulseScore.findMany).toHaveBeenCalledWith({ where: { branchId: 'branch-1', scopeType: 'GROUP' } });
+      expect(prisma.pulseScore.upsert).not.toHaveBeenCalled();
+      expect(result).toEqual([{ id: 'score-1', scopeId: 'bacenta-1', score: 91 }]);
+    });
+
+    it('never leaks another branch\'s scores - a different branchId produces a different where clause', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.pulseScore.findMany.mockResolvedValue([]);
+
+      await repository.findByBranchAndScopeType('branch-2', 'GROUP');
+
+      expect(prisma.pulseScore.findMany).toHaveBeenCalledWith({ where: { branchId: 'branch-2', scopeType: 'GROUP' } });
+    });
+
+    it('returns an empty array, not an error, when the branch has no scores of that scopeType yet', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.pulseScore.findMany.mockResolvedValue([]);
+
+      const result = await repository.findByBranchAndScopeType('branch-1', 'GROUP');
+
+      expect(result).toEqual([]);
+    });
   });
 });

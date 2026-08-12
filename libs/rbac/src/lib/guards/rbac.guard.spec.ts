@@ -3,7 +3,7 @@ import type { ExecutionContext } from '@nestjs/common';
 import type { Reflector } from '@nestjs/core';
 
 import { REQUIRE_PERMISSION_KEY } from '../decorators/require-permission.decorator';
-import { ECCLESIA_RBAC_DECISION_KEY, ECCLESIA_REQUEST_CONTEXT_KEY } from '../request-context';
+import { ECCLESIA_RBAC_ACTION_KEY, ECCLESIA_RBAC_DECISION_KEY, ECCLESIA_REQUEST_CONTEXT_KEY } from '../request-context';
 import type { EcclesiaRequestContext, RequestWithEcclesiaContext } from '../request-context';
 import { RbacGuard } from './rbac.guard';
 
@@ -60,5 +60,23 @@ describe('RbacGuard (Blueprint §9.4)', () => {
     const guard = new RbacGuard(reflector);
     expect(guard.canActivate(context)).toBe(true);
     expect(request[ECCLESIA_RBAC_DECISION_KEY]?.effect).toBe('ALLOW');
+  });
+
+  /** `[Audit Log milestone]` */
+  it('stashes the attempted action on the request regardless of the decision outcome', () => {
+    const request: RequestWithEcclesiaContext = { [ECCLESIA_REQUEST_CONTEXT_KEY]: ecclesiaContext };
+    const { context, reflector } = buildContext('gatherings.attendance.create', request);
+    const guard = new RbacGuard(reflector);
+    guard.canActivate(context);
+    expect(request[ECCLESIA_RBAC_ACTION_KEY]).toBe('gatherings.attendance.create');
+  });
+
+  it('stashes the attempted action even when no matrix row exists for the role/action pair at all (matchedRule undefined)', () => {
+    const request: RequestWithEcclesiaContext = { [ECCLESIA_REQUEST_CONTEXT_KEY]: ecclesiaContext };
+    const { context, reflector } = buildContext('platform.configuration.create', request);
+    const guard = new RbacGuard(reflector);
+    expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
+    expect(request[ECCLESIA_RBAC_DECISION_KEY]?.matchedRule).toBeUndefined();
+    expect(request[ECCLESIA_RBAC_ACTION_KEY]).toBe('platform.configuration.create');
   });
 });

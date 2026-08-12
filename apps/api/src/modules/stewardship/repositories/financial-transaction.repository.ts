@@ -37,55 +37,75 @@ export class FinancialTransactionRepository {
    * Creates the `FinancialTransaction` row and its first
    * `FinancialTransactionEvent` (`fromState: null`) atomically - PRD
    * §12.7's `[*] --> Recorded`/`[*] --> Requested` initial transitions.
+   *
+   * `[Bug fix, Stewardship/Role Assignment RLS audit]` No longer wraps
+   * these two statements in their own `this.prisma.$transaction(async
+   * (tx) => ...)` - the exact same mistake found and fixed in
+   * `GroupMembershipRepository.applyChange`. `$transaction` is
+   * deliberately never proxied to the ambient branch-scoped connection
+   * (`PrismaService`'s own doc comment), so that call opened a second,
+   * brand-new Postgres transaction that never ran `runInBranchScope`'s
+   * `SET LOCAL app.current_branch_id` - every RLS policy on
+   * `stewardship.financial_transactions`/`financial_transaction_events`
+   * then rejected the query with "unrecognized configuration parameter,"
+   * a real 500 confirmed live against Postgres for both `record()`
+   * (inbound) and `request()` (Expense - `ExpenseService.request` calls
+   * this same method) call sites. `FinancialTransactionController`'s
+   * `record` route (and `ExpenseController`'s `request` route) already
+   * run inside exactly one `BranchScopeInterceptor`-opened
+   * `runInBranchScope` transaction for the whole request - plain
+   * sequential calls against `this.prisma` here share that same outer
+   * transaction and remain atomic with each other.
    */
-  createWithEvent(input: CreateTransactionRecord): Promise<FinancialTransaction> {
-    return this.prisma.$transaction(async (tx) => {
-      const transaction = await tx.financialTransaction.create({
-        data: {
-          branchId: input.branchId,
-          type: input.type,
-          sourceGroupId: input.sourceGroupId,
-          giverPersonId: input.giverPersonId,
-          channel: input.channel,
-          amountMinor: input.amountMinor,
-          currency: input.currency,
-          currentState: input.initialState,
-        },
-      });
-      await tx.financialTransactionEvent.create({
-        data: {
-          transactionId: transaction.id,
-          fromState: null,
-          toState: input.initialState,
-          actorUserId: input.actorUserId,
-          reason: input.reason,
-        },
-      });
-      return transaction;
+  async createWithEvent(input: CreateTransactionRecord): Promise<FinancialTransaction> {
+    const transaction = await this.prisma.financialTransaction.create({
+      data: {
+        branchId: input.branchId,
+        type: input.type,
+        sourceGroupId: input.sourceGroupId,
+        giverPersonId: input.giverPersonId,
+        channel: input.channel,
+        amountMinor: input.amountMinor,
+        currency: input.currency,
+        currentState: input.initialState,
+      },
     });
+    await this.prisma.financialTransactionEvent.create({
+      data: {
+        transactionId: transaction.id,
+        fromState: null,
+        toState: input.initialState,
+        actorUserId: input.actorUserId,
+        reason: input.reason,
+      },
+    });
+    return transaction;
   }
 
   /**
    * Appends a new event and mirrors its `toState` onto
-   * `FinancialTransaction.currentState`, atomically - every state
-   * transition after the initial one (verify, flag, reconcile, approve,
-   * reject, pay, receipt) goes through this one method.
+   * `FinancialTransaction.currentState` - every state transition after
+   * the initial one (verify, flag, escalate, reconcile, approve, reject,
+   * pay, receipt) goes through this one method.
+   *
+   * `[Bug fix, Stewardship/Role Assignment RLS audit]` Same fix as
+   * `createWithEvent` above - no nested `$transaction`, atomicity comes
+   * from the one outer `runInBranchScope` transaction
+   * `BranchScopeInterceptor` already opens for the whole request.
    */
-  appendEvent(
+  async appendEvent(
     transactionId: string,
     fromState: string,
     toState: string,
     actorUserId: string,
     reason?: string,
   ): Promise<FinancialTransaction> {
-    return this.prisma.$transaction(async (tx) => {
-      await tx.financialTransactionEvent.create({
-        data: { transactionId, fromState, toState, actorUserId, reason },
-      });
-      return tx.financialTransaction.update({
-        where: { id: transactionId },
-        data: { currentState: toState },
-      });
+    await this.prisma.financialTransactionEvent.create({
+      data: { transactionId, fromState, toState, actorUserId, reason },
+    });
+    return this.prisma.financialTransaction.update({
+      where: { id: transactionId },
+      data: { currentState: toState },
     });
   }
 
@@ -195,5 +215,40 @@ export class FinancialTransactionRepository {
         sourceGroupId: row.sourceGroupId as string,
         totalAmountMinor: row._sum.amountMinor ?? 0n,
       }));
+  }
+
+  /**
+   * `[Resident Pastor Dashboard - real Giving data milestone]` The Giving
+   * KPI/trend/growth-series' underlying query - adapted from
+   * `sumVerifiedAmountByGroupForWeek` above for a Branch-wide total
+   * instead of a per-Bacenta breakdown. Two deliberate differences from
+   * that method, not oversights:
+   *
+   * 1. No `groupBy` - a single `aggregate({ _sum })`, the same shape
+   *    `PledgeRepository`'s own `aggregate({ _sum: { pledgedAmountMinor: true } })`
+   *    already uses for a plain branch/scope-wide sum.
+   * 2. No `sourceGroupId: { not: null }` filter - that exclusion exists
+   *    above specifically because a per-Bacenta reconciliation view has no
+   *    Bacenta to attribute an individual gift to. A Branch-wide Giving
+   *    total has no such reason to exclude individual
+   *    Mobile-Money/Cash gifts (`giverPersonId` set, `sourceGroupId` null)
+   *    - every verified inbound Financial Transaction counts, regardless
+   *    of whether it came through a Bacenta or directly from a Person.
+   *
+   * `currentState: VERIFIED`/`RECONCILED` only (never `RECORDED`/`FLAGGED`/
+   * `UNDER_INVESTIGATION`) - "Giving" means money a Treasurer has actually
+   * confirmed, the same "verified" semantics this codebase's only other
+   * branch-wide sum already established, not a new business rule.
+   */
+  async sumVerifiedAmountForBranch(branchId: string, from: Date, to: Date): Promise<bigint> {
+    const result = await this.prisma.financialTransaction.aggregate({
+      where: {
+        branchId,
+        currentState: { in: ['VERIFIED', 'RECONCILED'] },
+        createdAt: { gte: from, lt: to },
+      },
+      _sum: { amountMinor: true },
+    });
+    return result._sum.amountMinor ?? 0n;
   }
 }

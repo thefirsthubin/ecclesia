@@ -19,7 +19,7 @@ import {
   PersonListResourceContextGuard,
   PersonResourceContextGuard,
 } from './guards/person-resource-context.guard';
-import { RoleAssignmentResourceContextGuard } from './guards/role-assignment-resource-context.guard';
+import { RoleAssignmentResourceContextGuard, RoleAssignmentRevokeResourceContextGuard } from './guards/role-assignment-resource-context.guard';
 import { GroupRepository } from './repositories/group.repository';
 import { GroupMembershipRepository } from './repositories/group-membership.repository';
 import { PersonRepository } from './repositories/person.repository';
@@ -82,6 +82,7 @@ import { RoleAssignmentService } from './services/role-assignment.service';
     GroupListResourceContextGuard,
     GroupMembershipResourceContextGuard,
     RoleAssignmentResourceContextGuard,
+    RoleAssignmentRevokeResourceContextGuard,
   ],
   // `PersonScopeService` is People's public service interface (Blueprint
   // §7.2) for other bounded-context modules whose resources reference a
@@ -108,6 +109,23 @@ import { RoleAssignmentService } from './services/role-assignment.service';
   // `GroupMembershipRepository` directly, the same schema-ownership rule
   // every prior export already follows. See
   // `apps/api/src/modules/ministry/MINISTRY_DESIGN_NOTES.md`.
-  exports: [PersonScopeService, PersonService, GroupScopeService, GroupLeadershipService, GroupRosterService],
+  //
+  // `[Resident Pastor Dashboard - Volunteers/Bacenta Leaderboard
+  // milestone]` `GroupService` and `GroupMembershipService` are also now
+  // exported - `BranchDashboardSummaryService` (`apps/api/src/modules/insights`)
+  // needs `listActiveBacentasForBranch` (Bacenta Leaderboard's candidate
+  // Group set) and `countDistinctActiveMinistryMembersByBranch`
+  // (Volunteers), the same "small, purpose-built public method" pattern
+  // every export above already establishes, not a new architectural
+  // exception.
+  exports: [
+    PersonScopeService,
+    PersonService,
+    GroupScopeService,
+    GroupService,
+    GroupLeadershipService,
+    GroupRosterService,
+    GroupMembershipService,
+  ],
 })
 export class PeopleModule {}

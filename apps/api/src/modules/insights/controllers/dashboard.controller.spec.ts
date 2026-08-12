@@ -9,8 +9,14 @@ describe('DashboardController', () => {
     const pulseScoreService = { computeAndStoreBranchScore: jest.fn(), computeAndStoreGroupScore: jest.fn() };
     const alertService = { listForScope: jest.fn() };
     const groupScopeService = { loadResourceContext: jest.fn() };
-    const controller = new DashboardController(pulseScoreService as never, alertService as never, groupScopeService as never);
-    return { controller, pulseScoreService, alertService, groupScopeService };
+    const branchDashboardSummaryService = { getSummary: jest.fn() };
+    const controller = new DashboardController(
+      pulseScoreService as never,
+      alertService as never,
+      groupScopeService as never,
+      branchDashboardSummaryService as never,
+    );
+    return { controller, pulseScoreService, alertService, groupScopeService, branchDashboardSummaryService };
   }
 
   it('getBranchDashboard() computes the Branch score and lists Branch-scoped alerts for the actor\'s own Branch', async () => {
@@ -48,5 +54,16 @@ describe('DashboardController', () => {
     await controller.getClusterDashboard('group-2');
 
     expect(pulseScoreService.computeAndStoreGroupScore).toHaveBeenCalledWith('branch-1', 'group-2');
+  });
+
+  it("getBranchDashboardSummary() delegates to BranchDashboardSummaryService for the actor's own Branch", async () => {
+    const { controller, branchDashboardSummaryService } = buildController();
+    const summary = { branchId: 'branch-1', membersCount: 10 };
+    branchDashboardSummaryService.getSummary.mockResolvedValue(summary);
+
+    const result = await controller.getBranchDashboardSummary(actor);
+
+    expect(branchDashboardSummaryService.getSummary).toHaveBeenCalledWith('branch-1');
+    expect(result).toBe(summary);
   });
 });
