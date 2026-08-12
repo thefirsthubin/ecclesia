@@ -1,12 +1,32 @@
-import { Badge, Card, Divider, EmptyState, ErrorState, Heading, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
+import { Badge, Card, Divider, EmptyState, ErrorState, Heading, Skeleton, Table, Text, useTheme } from '@ecclesia/ui-web';
+import type { TableColumn } from '@ecclesia/ui-web';
+import type { GatheringResponseDto, GatheringStatusDto } from '@ecclesia/contracts';
 
 import { useAuth } from '../../auth/AuthContext';
+import { Link } from '../../router/router';
 import { PersonNameText } from '../PastoralCare/PersonNameText';
+import { useGatheringsList } from '../Gatherings/useGatheringsData';
 import { StaffingTargetsPanel } from './StaffingTargetsPanel';
 import { useOvercommitmentFlags, useRoster } from './useMinistryData';
 
+const GATHERING_STATUS_BADGE: Record<GatheringStatusDto, 'neutral' | 'info' | 'warning' | 'danger' | 'success'> = {
+  SCHEDULED: 'info',
+  CANCELLED: 'danger',
+  COMPLETED: 'success',
+};
+
+const GATHERING_STATUS_LABEL: Record<GatheringStatusDto, string> = {
+  SCHEDULED: 'Scheduled',
+  CANCELLED: 'Cancelled',
+  COMPLETED: 'Completed',
+};
+
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString();
+}
+
+function formatDateTime(iso: string): string {
+  return new Date(iso).toLocaleString();
 }
 
 /**
@@ -19,9 +39,10 @@ function formatDate(iso: string): string {
  *
  * A pure presentational component (no router dependency) so
  * `MinistryPage` can render it directly for a Basonta Leader's own
- * `groupId` without a route round-trip, and `BasontaRosterPage` can render
- * it for whichever `:groupId` the directory linked to - same
- * view-component/route-wrapper split `PersonDetailPage`'s siblings use.
+ * `groupId` without a route round-trip, and `GroupDetailPage` can render
+ * it for whichever `:groupId` the directory linked to (when that Group's
+ * `type` resolves to `MINISTRY`) - same view-component/route-wrapper
+ * split `PersonDetailPage`'s siblings use.
  *
  * `[Remaining Engineering Sprint, Milestone 11]` Now also renders
  * `StaffingTargetsPanel` below the roster - the exact gap this file's own
@@ -30,6 +51,14 @@ function formatDate(iso: string): string {
  * is `true` only for `BASONTA_LEADER` - the only role
  * `ministry.staffing_target.create` actually grants (Resident Pastor/Admin
  * reaching this same view via the directory only ever hold `.read`).
+ *
+ * `[UX Design Implementation]` Final UX Design Specification §19 (Phase 7
+ * Ministry workflow UI) - a "Gatherings" section added between the roster
+ * and Staffing Targets, reusing `useGatheringsList(ownerGroupId)` exactly
+ * as `StaffingTargetsPanel` already does internally for its own Gathering
+ * picker. Read-only, links out to the full Gatherings workflow rather
+ * than recreating it here (task scope: "make the relationship clear...
+ * do not recreate the Gatherings workflow").
  */
 export function BasontaRosterView({ groupId }: { groupId: string }) {
   const theme = useTheme();
@@ -39,13 +68,28 @@ export function BasontaRosterView({ groupId }: { groupId: string }) {
 
   const rosterState = useRoster(accessToken, groupId);
   const overcommitmentState = useOvercommitmentFlags(accessToken, groupId);
+  const gatheringsState = useGatheringsList(accessToken, { ownerGroupId: groupId });
 
   const overcommittedIds = new Set(
     overcommitmentState.status === 'success' ? overcommitmentState.data.map((flag) => flag.personId) : [],
   );
 
+  const gatheringColumns: TableColumn<GatheringResponseDto>[] = [
+    { key: 'type', header: 'Type', render: (gathering) => <Text variant="bodySmall">{gathering.type}</Text> },
+    {
+      key: 'scheduledStart',
+      header: 'Scheduled',
+      render: (gathering) => <Text variant="bodySmall">{formatDateTime(gathering.scheduledStart)}</Text>,
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      render: (gathering) => <Badge status={GATHERING_STATUS_BADGE[gathering.status]}>{GATHERING_STATUS_LABEL[gathering.status]}</Badge>,
+    },
+  ];
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4], maxWidth: 640 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4], maxWidth: 900 }}>
       <Heading level={1}>Basonta roster</Heading>
 
       {rosterState.status === 'loading' && (
@@ -95,6 +139,29 @@ export function BasontaRosterView({ groupId }: { groupId: string }) {
           </div>
         </Card>
       )}
+
+      <Card padding={6} testId="basonta-gatherings-card">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
+            <Heading level={3}>Gatherings</Heading>
+            <Link to="/gatherings">
+              <Text variant="bodySmall">View in Gatherings →</Text>
+            </Link>
+          </div>
+          {gatheringsState.status === 'loading' && <Skeleton height={20} />}
+          {gatheringsState.status === 'error' && <ErrorState title="Couldn't load Gatherings" onRetry={gatheringsState.refetch} />}
+          {gatheringsState.status === 'success' && (
+            <Table
+              testId="basonta-gatherings-table"
+              columns={gatheringColumns}
+              data={gatheringsState.data}
+              getRowId={(gathering) => gathering.id}
+              emptyTitle="No Gatherings yet"
+              emptyDescription="This Basonta doesn't own any Gatherings yet."
+            />
+          )}
+        </div>
+      </Card>
 
       <StaffingTargetsPanel groupId={groupId} canEdit={canEditStaffingTargets} />
     </div>

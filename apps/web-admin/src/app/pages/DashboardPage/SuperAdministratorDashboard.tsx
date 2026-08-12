@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Divider, Heading, Icon, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
+import { Badge, Button, Card, Divider, Heading, Icon, SampleDataBadge, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
 import { getChurchPulseBand } from '@ecclesia/ui-tokens';
 import type { GroupResponseDto, PersonResponseDto } from '@ecclesia/contracts';
 
@@ -17,8 +17,19 @@ import { useDashboardBreakpoint } from './useDashboardBreakpoint';
 const STATUS_LABEL: Record<string, string> = { thriving: 'Thriving', healthy: 'Healthy', attention: 'Needs attention', atRisk: 'At risk' };
 
 /**
- * `[Remaining Engineering Sprint, Milestone 11]` Objective 1, the Council
- * Administrator Web Admin dashboard.
+ * `[Remaining Engineering Sprint, Milestone 11]` Objective 1, `ADMIN`'s
+ * Web Admin dashboard.
+ *
+ * `[UX Design Implementation]` Final UX Design Specification §18 (Phase 2
+ * shell verification) - renamed from `CouncilAdministratorDashboard`.
+ * Decisions 2 & 3 resolve "Council Administrator" to mean
+ * `COUNCIL_OVERSEER`, and only `COUNCIL_OVERSEER`, everywhere the label
+ * appears; this component renders for `ADMIN` ("Super Administrator"),
+ * so its old name was exactly the cross-role ambiguity that decision
+ * exists to eliminate. A labeling fix, not a capability change - see the
+ * paragraph below (kept from the original doc comment) for why this
+ * dashboard is mapped to `ADMIN` rather than `COUNCIL_OVERSEER` in the
+ * first place; that reasoning is unaffected by the rename.
  *
  * `[Design Decision, disclosed]` Mapped to `ADMIN`, not `COUNCIL_OVERSEER`
  * - `nav-items.ts`'s own comment calls `COUNCIL_OVERSEER` "this codebase's
@@ -46,12 +57,13 @@ const STATUS_LABEL: Record<string, string> = { thriving: 'Thriving', healthy: 'H
  * codebase (`dashboardDemoData.ts`'s own doc comment on
  * `DEMO_COUNCIL_BRANCHES`).
  */
-export function CouncilAdministratorDashboard() {
+export function SuperAdministratorDashboard() {
   const theme = useTheme();
   const navigate = useNavigate();
   const { state } = useAuth();
   const accessToken = state.status === 'authenticated' ? state.accessToken : undefined;
   const personId = state.status === 'authenticated' ? state.actor.personId : undefined;
+  const branchName = state.status === 'authenticated' ? state.actor.branchName : '';
   const { isCompact, isNarrow } = useDashboardBreakpoint();
 
   const personState = useAsyncData<PersonResponseDto>(
@@ -90,7 +102,7 @@ export function CouncilAdministratorDashboard() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5], maxWidth: 1280 }}>
-      <DashboardHeader displayName={displayName} openAlertCount={openAlertCount} />
+      <DashboardHeader displayName={displayName} openAlertCount={openAlertCount} branchName={branchName} />
 
       <ChurchPulseCard
         status={dashboardState.status}
@@ -144,8 +156,11 @@ export function CouncilAdministratorDashboard() {
 
       <Card padding={6} testId="council-multi-branch-card">
         <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-          <div>
-            <Heading level={3}>Multi-Branch overview</Heading>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
+              <Heading level={3}>Multi-Branch overview</Heading>
+              <SampleDataBadge testId="multi-branch-sample-badge" />
+            </div>
             <Text variant="bodySmall" color={theme.colors.text.secondary}>
               Preview - Council-wide consolidation is Horizon 3 (PRD §7.3); this deployment has one real Branch today
             </Text>

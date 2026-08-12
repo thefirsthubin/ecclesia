@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Divider, EmptyState, ErrorState, Heading, Icon, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
+import { Badge, Button, Card, Divider, EmptyState, ErrorState, Heading, Icon, SampleDataBadge, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
 import type { PersonResponseDto } from '@ecclesia/contracts';
 
 import { useAuth } from '../../auth/AuthContext';
@@ -54,6 +54,7 @@ export function MinistryLeaderDashboard() {
   const accessToken = state.status === 'authenticated' ? state.accessToken : undefined;
   const personId = state.status === 'authenticated' ? state.actor.personId : undefined;
   const groupId = state.status === 'authenticated' ? state.actor.basontaId : undefined;
+  const branchName = state.status === 'authenticated' ? state.actor.branchName : '';
   const { isCompact, isNarrow } = useDashboardBreakpoint();
 
   const personState = useAsyncData<PersonResponseDto>(
@@ -89,7 +90,7 @@ export function MinistryLeaderDashboard() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5], maxWidth: 1280 }}>
-      <DashboardHeader displayName={displayName} openAlertCount={overcommittedCount ?? 0} />
+      <DashboardHeader displayName={displayName} openAlertCount={overcommittedCount ?? 0} branchName={branchName} />
 
       <div style={{ display: 'grid', gridTemplateColumns: `repeat(${kpiColumns}, 1fr)`, gap: theme.spacing[4] }}>
         <Card interactive onClick={() => navigate('/ministry')} padding={5} testId="ministry-kpi-roster">
@@ -196,7 +197,10 @@ export function MinistryLeaderDashboard() {
 
         <Card padding={6} testId="recent-ministry-activity-card">
           <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            <Heading level={3}>Recent ministry activity</Heading>
+            <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
+              <Heading level={3}>Recent ministry activity</Heading>
+              <SampleDataBadge testId="recent-ministry-activity-sample-badge" />
+            </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
               {DEMO_MINISTRY_ACTIVITY.map((activity, index) => (
                 <div key={activity.id}>

@@ -95,7 +95,11 @@ describe('StewardshipPage', () => {
     renderPage();
 
     await waitFor(() => expect(screen.getByTestId('transaction-queue-card')).toBeInTheDocument());
-    expect(screen.getByText('OFFERING')).toBeInTheDocument();
+    // `[UX Design Implementation]` Final UX Design Specification §19
+    // (Phase 5 Stewardship workflow UI) - the Type column now shows the
+    // same friendly label the Record Transaction form's own dropdown
+    // uses ("Offering"), not the raw wire value ("OFFERING").
+    expect(screen.getByText('Offering')).toBeInTheDocument();
     expect(screen.getByText(/GHS 200\.00/)).toBeInTheDocument();
 
     await waitFor(() => expect(screen.getByTestId('expense-queue-card')).toBeInTheDocument());
@@ -158,6 +162,69 @@ describe('StewardshipPage', () => {
     );
   });
 
+  /** `[UX Design Implementation]` Final UX Design Specification §19
+   * (Phase 5 Stewardship workflow UI) - `runTransactionAction` previously
+   * had no `catch` at all, so a failed Verify (e.g. the backend's real
+   * same-actor-verification-restriction 409) left the button simply no
+   * longer loading, with no success or error signal whatsoever. */
+  it('shows an error toast when Verify fails, instead of failing silently', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('TREASURER'));
+    global.fetch = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
+      if (init?.method === 'POST' && url.includes('/verify')) {
+        return Promise.resolve({
+          ok: false,
+          status: 409,
+          json: async () => ({ message: 'A Financial Transaction cannot be verified by the Person who recorded it.' }),
+        });
+      }
+      if (url.includes('/financial-transactions')) {
+        return Promise.resolve({ ok: true, json: async () => [transaction()] });
+      }
+      return Promise.resolve({ ok: true, json: async () => [] });
+    });
+
+    renderPage();
+
+    fireEvent.click(await screen.findByRole('button', { name: /Verify transaction ft-1/ }));
+
+    expect(await screen.findByText('A Financial Transaction cannot be verified by the Person who recorded it.')).toBeInTheDocument();
+    // The row itself is untouched by a failed request - Verify is still offered.
+    expect(screen.getByRole('button', { name: /Verify transaction ft-1/ })).toBeInTheDocument();
+  });
+
+  /** Same fix, the inline-error path (Flag has its own reveal form, so
+   * the error surfaces there instead of a toast - mirrors
+   * `submitCreate`'s own established inline-error pattern). */
+  it('shows the server-provided error inline and keeps the form open when Flag fails', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('TREASURER'));
+    global.fetch = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
+      if (init?.method === 'POST' && url.includes('/flag')) {
+        return Promise.resolve({
+          ok: false,
+          status: 403,
+          json: async () => ({ message: "No Role Assignment grants 'stewardship.financial_transaction.flag' to role 'TREASURER'" }),
+        });
+      }
+      if (url.includes('/financial-transactions')) {
+        return Promise.resolve({ ok: true, json: async () => [transaction()] });
+      }
+      return Promise.resolve({ ok: true, json: async () => [] });
+    });
+
+    renderPage();
+
+    fireEvent.click(await screen.findByRole('button', { name: /Flag transaction ft-1/ }));
+
+    const reasonInput = await screen.findByLabelText('Reason');
+    fireEvent.change(reasonInput, { target: { value: 'Amount mismatch' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Submit flag' }));
+
+    await waitFor(() =>
+      expect(screen.getByText("No Role Assignment grants 'stewardship.financial_transaction.flag' to role 'TREASURER'")).toBeInTheDocument(),
+    );
+    expect(screen.getByTestId('flag-form')).toBeInTheDocument();
+  });
+
   it('shows Approve and Reject for a REQUESTED expense', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('RESIDENT_PASTOR'));
     global.fetch = jest.fn().mockImplementation((url: string) => {
@@ -171,6 +238,60 @@ describe('StewardshipPage', () => {
 
     await waitFor(() => expect(screen.getByRole('button', { name: /Approve expense exp-1/ })).toBeInTheDocument(), { timeout: 3000 });
     expect(screen.getByRole('button', { name: /Reject expense exp-1/ })).toBeInTheDocument();
+  });
+
+  /** `[UX Design Implementation]` Final UX Design Specification §19
+   * (Phase 5 Stewardship workflow UI) - same fix as Verify/Flag above,
+   * applied to `runExpenseAction`. */
+  it('shows an error toast when Approve fails, instead of failing silently', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('RESIDENT_PASTOR'));
+    global.fetch = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
+      if (init?.method === 'POST' && url.includes('/approve')) {
+        return Promise.resolve({
+          ok: false,
+          status: 403,
+          json: async () => ({ message: "No Role Assignment grants 'stewardship.expense.approve' to role 'RESIDENT_PASTOR'" }),
+        });
+      }
+      if (url.includes('/expenses')) {
+        return Promise.resolve({ ok: true, json: async () => [expense()] });
+      }
+      return Promise.resolve({ ok: true, json: async () => [] });
+    });
+
+    renderPage();
+
+    fireEvent.click(await screen.findByRole('button', { name: /Approve expense exp-1/ }));
+
+    expect(await screen.findByText("No Role Assignment grants 'stewardship.expense.approve' to role 'RESIDENT_PASTOR'")).toBeInTheDocument();
+  });
+
+  it('shows the server-provided error inline and keeps the form open when Reject fails', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('RESIDENT_PASTOR'));
+    global.fetch = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
+      if (init?.method === 'POST' && url.includes('/reject')) {
+        return Promise.resolve({
+          ok: false,
+          status: 409,
+          json: async () => ({ message: 'This Expense has already been approved.' }),
+        });
+      }
+      if (url.includes('/expenses')) {
+        return Promise.resolve({ ok: true, json: async () => [expense()] });
+      }
+      return Promise.resolve({ ok: true, json: async () => [] });
+    });
+
+    renderPage();
+
+    fireEvent.click(await screen.findByRole('button', { name: /Reject expense exp-1/ }));
+
+    const reasonInput = await screen.findByLabelText('Reason');
+    fireEvent.change(reasonInput, { target: { value: 'Not budgeted' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Submit rejection' }));
+
+    await waitFor(() => expect(screen.getByText('This Expense has already been approved.')).toBeInTheDocument());
+    expect(screen.getByTestId('reject-form')).toBeInTheDocument();
   });
 
   it('shows Pay for an APPROVED expense instead of Approve/Reject', async () => {
@@ -362,5 +483,267 @@ describe('StewardshipPage', () => {
     expect(screen.getByTestId('request-expense-submit')).toBeDisabled();
     fireEvent.change(screen.getByTestId('request-expense-description'), { target: { value: 'Sound system repair' } });
     expect(screen.getByTestId('request-expense-submit')).not.toBeDisabled();
+  });
+
+  /**
+   * `[Bank Deposit Confirmation milestone]` No `state.actor` role check is
+   * asserted here - `confirmBankDeposit` has no client-side authorization
+   * gate of its own (same reasoning as every other action this session).
+   * `global.fetch` mocks below always answer `/financial-transactions`/
+   * `/expenses` with `[]` too, since both queues always render regardless
+   * of what this section is doing.
+   */
+  describe('Bank Deposit Reconciliation', () => {
+    function reconciliationRow(overrides: Record<string, unknown> = {}) {
+      return {
+        groupId: 'group-1',
+        verifiedTotalMinor: '50000',
+        depositedAmountMinor: null,
+        bankReference: null,
+        matched: false,
+        ...overrides,
+      };
+    }
+
+    it('does not fetch a reconciliation until a week is chosen', async () => {
+      mockUseAuth.mockReturnValue(actorWithRole('TREASURER'));
+      const fetchMock = jest.fn().mockResolvedValue({ ok: true, json: async () => [] });
+      global.fetch = fetchMock;
+
+      renderPage();
+
+      await waitFor(() => expect(screen.getByText('Choose a week to view its reconciliation.')).toBeInTheDocument());
+      expect(fetchMock.mock.calls.some(([url]) => (url as string).includes('/bank-deposit-confirmations'))).toBe(false);
+    });
+
+    it('fetches the reconciliation for the chosen week and renders each row with its match state', async () => {
+      mockUseAuth.mockReturnValue(actorWithRole('TREASURER'));
+      const fetchMock = jest.fn().mockImplementation((url: string) => {
+        if (url.includes('/bank-deposit-confirmations/reconciliation')) {
+          return Promise.resolve({
+            ok: true,
+            json: async () => ({
+              branchId: 'branch-1',
+              weekStartDate: '2026-01-05',
+              rows: [
+                reconciliationRow({ groupId: 'group-1', matched: false, depositedAmountMinor: null }),
+                reconciliationRow({ groupId: 'group-2', matched: true, depositedAmountMinor: '50000', bankReference: 'SLIP-42' }),
+              ],
+            }),
+          });
+        }
+        if (url.includes('/groups/')) {
+          return Promise.resolve({ ok: true, json: async () => ({ id: 'group-1', name: 'Grace Bacenta', type: 'PASTORAL_CARE' }) });
+        }
+        return Promise.resolve({ ok: true, json: async () => [] });
+      });
+      global.fetch = fetchMock;
+
+      renderPage();
+      fireEvent.change(screen.getByLabelText('Week starting'), { target: { value: '2026-01-05' } });
+
+      await waitFor(() =>
+        expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('/bank-deposit-confirmations/reconciliation?weekStartDate=2026-01-05'), expect.anything()),
+      );
+      await waitFor(() => expect(screen.getByTestId('reconciliation-card')).toBeInTheDocument());
+      expect(screen.getByText('Not yet confirmed')).toBeInTheDocument();
+      expect(screen.getByText('Matched')).toBeInTheDocument();
+      expect(screen.getByText(/SLIP-42/)).toBeInTheDocument();
+    });
+
+    /** `[UX Design Implementation]` Final UX Design Specification §19
+     * (Phase 5 Stewardship workflow UI) - the Difference column, pure
+     * display arithmetic on the two real amounts already shown
+     * (`depositedAmountMinor - verifiedTotalMinor`), not a new
+     * reconciliation calculation - the backend's own `matched` boolean
+     * (asserted above) remains the sole authority on match/mismatch. */
+    it('shows the Difference column for a mismatched row, and "—" while unconfirmed', async () => {
+      mockUseAuth.mockReturnValue(actorWithRole('TREASURER'));
+      global.fetch = jest.fn().mockImplementation((url: string) => {
+        if (url.includes('/bank-deposit-confirmations/reconciliation')) {
+          return Promise.resolve({
+            ok: true,
+            json: async () => ({
+              branchId: 'branch-1',
+              weekStartDate: '2026-01-05',
+              rows: [
+                reconciliationRow({ groupId: 'group-1', matched: false, verifiedTotalMinor: '50000', depositedAmountMinor: '45000' }),
+                reconciliationRow({ groupId: 'group-2', matched: false, depositedAmountMinor: null }),
+              ],
+            }),
+          });
+        }
+        if (url.includes('/groups/')) {
+          return Promise.resolve({ ok: true, json: async () => ({ id: 'group-1', name: 'Grace Bacenta', type: 'PASTORAL_CARE' }) });
+        }
+        return Promise.resolve({ ok: true, json: async () => [] });
+      });
+
+      renderPage();
+      fireEvent.change(screen.getByLabelText('Week starting'), { target: { value: '2026-01-05' } });
+
+      await waitFor(() => expect(screen.getByTestId('reconciliation-card')).toBeInTheDocument());
+      // 450.00 deposited - 500.00 verified = -50.00
+      expect(screen.getByText('GHS -50.00')).toBeInTheDocument();
+    });
+
+    /** `[UX Design Implementation]` Final UX Design Specification §19
+     * (Phase 5 Stewardship workflow UI) - "make [immutability] clear
+     * before confirmation." */
+    it('tells the user a confirmed deposit is permanent, before they confirm it', async () => {
+      mockUseAuth.mockReturnValue(actorWithRole('TREASURER'));
+      global.fetch = jest.fn().mockImplementation((url: string) => {
+        if (url.includes('/bank-deposit-confirmations/reconciliation')) {
+          return Promise.resolve({ ok: true, json: async () => ({ branchId: 'branch-1', weekStartDate: '2026-01-05', rows: [reconciliationRow()] }) });
+        }
+        return Promise.resolve({ ok: true, json: async () => [] });
+      });
+
+      renderPage();
+      fireEvent.change(screen.getByLabelText('Week starting'), { target: { value: '2026-01-05' } });
+
+      fireEvent.click(await screen.findByRole('button', { name: /Confirm deposit for group/ }));
+
+      expect(screen.getByText(/can.t be edited or deleted afterward/)).toBeInTheDocument();
+    });
+
+    it('confirms a deposit for an unmatched row, then refetches and shows the updated matched state', async () => {
+      mockUseAuth.mockReturnValue(actorWithRole('TREASURER'));
+      let reconciliationCallCount = 0;
+      const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
+        if (url.endsWith('/bank-deposit-confirmations') && init?.method === 'POST') {
+          return Promise.resolve({
+            ok: true,
+            json: async () => ({
+              id: 'bdc-1',
+              branchId: 'branch-1',
+              groupId: 'group-1',
+              weekStartDate: '2026-01-05',
+              depositedAmountMinor: '50000',
+              currency: 'GHS',
+              bankReference: null,
+              confirmedByPersonId: 'person-1',
+              createdAt: new Date().toISOString(),
+            }),
+          });
+        }
+        if (url.includes('/bank-deposit-confirmations/reconciliation')) {
+          reconciliationCallCount += 1;
+          return Promise.resolve({
+            ok: true,
+            json: async () => ({
+              branchId: 'branch-1',
+              weekStartDate: '2026-01-05',
+              rows: [reconciliationRow({ matched: reconciliationCallCount > 1, depositedAmountMinor: reconciliationCallCount > 1 ? '50000' : null })],
+            }),
+          });
+        }
+        return Promise.resolve({ ok: true, json: async () => [] });
+      });
+      global.fetch = fetchMock;
+
+      renderPage();
+      fireEvent.change(screen.getByLabelText('Week starting'), { target: { value: '2026-01-05' } });
+
+      await waitFor(() => expect(screen.getByText('Not yet confirmed')).toBeInTheDocument());
+      fireEvent.click(screen.getByRole('button', { name: /Confirm deposit for group/i }));
+
+      const confirmButton = screen.getByTestId('confirm-deposit-submit');
+      expect(confirmButton).toBeDisabled();
+
+      fireEvent.change(screen.getByTestId('confirm-deposit-amount'), { target: { value: '500' } });
+      expect(confirmButton).toBeEnabled();
+      fireEvent.click(confirmButton);
+
+      await waitFor(() =>
+        expect(fetchMock).toHaveBeenCalledWith(
+          expect.stringContaining('/bank-deposit-confirmations'),
+          expect.objectContaining({
+            method: 'POST',
+            body: JSON.stringify({ groupId: 'group-1', weekStartDate: '2026-01-05', depositedAmountMinor: '50000' }),
+          }),
+        ),
+      );
+      await waitFor(() => expect(screen.queryByTestId('confirm-deposit-form')).not.toBeInTheDocument());
+      await waitFor(() => expect(screen.getByText('Matched')).toBeInTheDocument());
+    });
+
+    it('shows the server-provided error inline and keeps the confirm form open on a duplicate-confirmation 409', async () => {
+      mockUseAuth.mockReturnValue(actorWithRole('TREASURER'));
+      const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
+        if (url.endsWith('/bank-deposit-confirmations') && init?.method === 'POST') {
+          return Promise.resolve({
+            ok: false,
+            status: 409,
+            json: async () => ({ message: "A bank deposit confirmation already exists for group 'group-1' for the week starting '2026-01-05'" }),
+          });
+        }
+        if (url.includes('/bank-deposit-confirmations/reconciliation')) {
+          return Promise.resolve({ ok: true, json: async () => ({ branchId: 'branch-1', weekStartDate: '2026-01-05', rows: [reconciliationRow()] }) });
+        }
+        return Promise.resolve({ ok: true, json: async () => [] });
+      });
+      global.fetch = fetchMock;
+
+      renderPage();
+      fireEvent.change(screen.getByLabelText('Week starting'), { target: { value: '2026-01-05' } });
+
+      await waitFor(() => expect(screen.getByText('Not yet confirmed')).toBeInTheDocument());
+      fireEvent.click(screen.getByRole('button', { name: /Confirm deposit for group/i }));
+      fireEvent.change(screen.getByTestId('confirm-deposit-amount'), { target: { value: '500' } });
+      fireEvent.click(screen.getByTestId('confirm-deposit-submit'));
+
+      await waitFor(() => expect(screen.getByText(/already exists for group 'group-1'/)).toBeInTheDocument());
+      expect(screen.getByTestId('confirm-deposit-form')).toBeInTheDocument();
+    });
+
+    it('cancels the confirm form without sending a request', async () => {
+      mockUseAuth.mockReturnValue(actorWithRole('TREASURER'));
+      global.fetch = jest.fn().mockImplementation((url: string) => {
+        if (url.includes('/bank-deposit-confirmations/reconciliation')) {
+          return Promise.resolve({ ok: true, json: async () => ({ branchId: 'branch-1', weekStartDate: '2026-01-05', rows: [reconciliationRow()] }) });
+        }
+        return Promise.resolve({ ok: true, json: async () => [] });
+      });
+
+      renderPage();
+      fireEvent.change(screen.getByLabelText('Week starting'), { target: { value: '2026-01-05' } });
+
+      await waitFor(() => expect(screen.getByText('Not yet confirmed')).toBeInTheDocument());
+      fireEvent.click(screen.getByRole('button', { name: /Confirm deposit for group/i }));
+      fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+
+      expect(screen.queryByTestId('confirm-deposit-form')).not.toBeInTheDocument();
+    });
+
+    it('shows a retryable error state when the reconciliation request fails (e.g. authorization denial)', async () => {
+      mockUseAuth.mockReturnValue(actorWithRole('ADMIN'));
+      global.fetch = jest.fn().mockImplementation((url: string) => {
+        if (url.includes('/bank-deposit-confirmations/reconciliation')) {
+          return Promise.reject(new Error('network unavailable in test'));
+        }
+        return Promise.resolve({ ok: true, json: async () => [] });
+      });
+
+      renderPage();
+      fireEvent.change(screen.getByLabelText('Week starting'), { target: { value: '2026-01-05' } });
+
+      await waitFor(() => expect(screen.getByText("Couldn't load the weekly reconciliation")).toBeInTheDocument());
+    });
+
+    it('shows an empty state when nothing needs reconciling for the chosen week', async () => {
+      mockUseAuth.mockReturnValue(actorWithRole('TREASURER'));
+      global.fetch = jest.fn().mockImplementation((url: string) => {
+        if (url.includes('/bank-deposit-confirmations/reconciliation')) {
+          return Promise.resolve({ ok: true, json: async () => ({ branchId: 'branch-1', weekStartDate: '2026-01-05', rows: [] }) });
+        }
+        return Promise.resolve({ ok: true, json: async () => [] });
+      });
+
+      renderPage();
+      fireEvent.change(screen.getByLabelText('Week starting'), { target: { value: '2026-01-05' } });
+
+      await waitFor(() => expect(screen.getByText('Nothing to reconcile')).toBeInTheDocument());
+    });
   });
 });

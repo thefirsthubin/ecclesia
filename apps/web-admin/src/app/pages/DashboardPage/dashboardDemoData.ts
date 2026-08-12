@@ -26,16 +26,6 @@ import type { IconName } from '@ecclesia/ui-core';
  * codebase - not a placeholder string.
  */
 
-/**
- * `[Design Decision, disclosed]` No Branch/church-name field exists
- * anywhere in `libs/contracts` today (`ActorContextResponseDto` carries
- * only `branchId`, a UUID) - the header's "church name" requirement has
- * no real data source to read from without a backend change, which this
- * sprint doesn't make. A plausible demo name stands in; swapping it for
- * a real `branch.name` once that field exists is a one-line change here.
- */
-export const DEMO_CHURCH_NAME = 'Ecclesia Community Church';
-
 export type TrendDirection = 'up' | 'down' | 'flat';
 
 export interface KpiDatum {
@@ -215,27 +205,29 @@ export function getTodaysPrayerFocus(): PrayerFocusDatum {
  * existing backing endpoint or demo export to reuse - `Attendance`/
  * `Giving`/`Volunteers` trends already exist as `DEMO_KPIS` entries and
  * are read from there directly by `ChurchPulseInsightsPanel`, so they are
- * NOT duplicated here. Only the two genuinely new sub-metrics get new
- * exports: **Follow-up Health** (Pastoral Care's on-time completion rate
- * - `FollowUpTask` has no aggregate "completion rate" endpoint, only a
- * per-task list) and **Engagement Trend** (Insights' own broader signal,
- * distinct from the single Church Pulse score). Same disclosure as every
- * other export in this file: realistic, internally-consistent numbers,
- * not lorem ipsum, swappable for a real fetch later without a component
- * rewrite.
+ * NOT duplicated here. Only one genuinely new sub-metric gets a new
+ * export: **Follow-up Health** (Pastoral Care's on-time completion rate -
+ * `FollowUpTask` has no aggregate "completion rate" endpoint, only a
+ * per-task list). Same disclosure as every other export in this file:
+ * realistic, internally-consistent numbers, not lorem ipsum, swappable
+ * for a real fetch later without a component rewrite.
+ *
+ * `[UX Design Implementation]` Final UX Design Specification §14
+ * (decision 8) moved Engagement Trend to Insights (see
+ * `BranchTrendsSection.tsx`, sourced from the real
+ * `summary.engagementTrend`, not this file) - it no longer belongs on
+ * this Dashboard-only sub-metrics type, so the two `engagementTrend*`
+ * fields this interface used to carry are removed rather than left
+ * unused.
  */
 export interface ChurchPulseSubMetricsDatum {
   followUpHealthPercent: number;
   followUpHealthTrend: TrendDirection;
-  engagementTrendPercent: number;
-  engagementTrendDirection: TrendDirection;
 }
 
 export const DEMO_CHURCH_PULSE_SUBMETRICS: ChurchPulseSubMetricsDatum = {
   followUpHealthPercent: 82,
   followUpHealthTrend: 'up',
-  engagementTrendPercent: 6,
-  engagementTrendDirection: 'up',
 };
 
 /**
@@ -301,7 +293,7 @@ export const DEMO_PRAYER_REQUESTS: PrayerRequestDatum[] = [
  * therefore the one section of this whole file that isn't "realistic
  * data standing in for a buildable-today endpoint" but "a preview of what
  * the zone will show once Horizon 3 multi-branch support exists,"
- * disclosed as such in `CouncilAdministratorDashboard.tsx`'s own doc
+ * disclosed as such in `SuperAdministratorDashboard.tsx`'s own doc
  * comment - do not read this as a nearer-term gap than it is.
  */
 export interface BranchSummaryDatum {

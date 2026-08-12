@@ -1,4 +1,4 @@
-import { Badge, Card, Divider, ErrorState, Heading, Icon, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
+import { Badge, Card, Divider, ErrorState, Heading, Icon, SampleDataBadge, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
 import type { IconName } from '@ecclesia/ui-core';
 import { getChurchPulseBand } from '@ecclesia/ui-tokens';
 import type { PulseScoreResponseDto } from '@ecclesia/contracts';
@@ -21,6 +21,7 @@ interface SubMetricTile {
   value: string;
   trendDirection: TrendDirection;
   trendLabel: string;
+  isSample?: boolean;
 }
 
 export interface ChurchPulseInsightsPanelProps {
@@ -47,7 +48,7 @@ export interface ChurchPulseInsightsPanelProps {
  * into Ecclesia's flagship dashboard feature, replacing the plain
  * `ChurchPulseCard` on `ResidentPastorDashboard` only (`ChurchPulseCard`
  * itself is untouched and still used exactly as before on
- * `InsightsPage`/`ClusterInsightsView`/`CouncilAdministratorDashboard`/
+ * `InsightsPage`/`ClusterInsightsView`/`SuperAdministratorDashboard`/
  * `BranchPastorDashboard` - those are compact, often read-only or
  * cluster-scoped contexts where the full flagship treatment below would
  * be the wrong density, not a "should eventually get this too" gap).
@@ -60,9 +61,12 @@ export interface ChurchPulseInsightsPanelProps {
  *
  * New below the score: a sub-metric row (Attendance/Giving/Volunteer
  * Health trends - read from the already-real `DEMO_KPIS`, not
- * duplicated; Pastoral Care Alerts - real `openAlertCount`; Engagement
- * Trend/Follow-up Health - the two genuinely new, disclosed-demo
- * `DEMO_CHURCH_PULSE_SUBMETRICS` fields, see that export's own comment)
+ * duplicated; Pastoral Care Alerts - real `openAlertCount`; Follow-up
+ * Health - the one genuinely new, disclosed-demo
+ * `DEMO_CHURCH_PULSE_SUBMETRICS` field, see that export's own comment.
+ * Engagement Trend used to render here too but moved to Insights per
+ * Final UX Design Specification §14 decision 8 - see
+ * `BranchTrendsSection.tsx`)
  * and one computed, actionable insight sentence - "surface actionable
  * insights instead of raw numbers" (brief, Objective 3) implemented by
  * reusing each KPI's own already-written `actionLabel` copy rather than
@@ -105,10 +109,7 @@ export function ChurchPulseInsightsPanel({ status, pulseScore, onRetry, openAler
     ...(giving ? [{ id: 'giving', label: 'GIVING TREND', icon: 'coins' as const, value: giving.formattedValue, trendDirection: giving.trendDirection, trendLabel: giving.trendLabel }] : []),
     ...(volunteers ? [{ id: 'volunteers', label: 'VOLUNTEER HEALTH', icon: 'userCheck' as const, value: volunteers.formattedValue, trendDirection: volunteers.trendDirection, trendLabel: volunteers.trendLabel }] : []),
     ...(subMetrics
-      ? [
-          { id: 'followUp', label: 'FOLLOW-UP HEALTH', icon: 'checkCircle' as const, value: `${subMetrics.followUpHealthPercent}%`, trendDirection: subMetrics.followUpHealthTrend, trendLabel: 'On-time completion' },
-          { id: 'engagement', label: 'ENGAGEMENT TREND', icon: 'trendingUp' as const, value: `+${subMetrics.engagementTrendPercent}%`, trendDirection: subMetrics.engagementTrendDirection, trendLabel: 'vs. last month' },
-        ]
+      ? [{ id: 'followUp', label: 'FOLLOW-UP HEALTH', icon: 'checkCircle' as const, value: `${subMetrics.followUpHealthPercent}%`, trendDirection: subMetrics.followUpHealthTrend, trendLabel: 'On-time completion', isSample: true }]
       : []),
   ];
 
@@ -150,6 +151,7 @@ export function ChurchPulseInsightsPanel({ status, pulseScore, onRetry, openAler
                     <Text variant="label" color={theme.colors.text.secondary}>
                       {tile.label}
                     </Text>
+                    {tile.isSample && <SampleDataBadge testId={`pulse-submetric-${tile.id}-sample-badge`} />}
                   </div>
                   <Heading level={3}>{tile.value}</Heading>
                   <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[1] }}>
@@ -183,9 +185,12 @@ export function ChurchPulseInsightsPanel({ status, pulseScore, onRetry, openAler
           <>
             <Divider />
             <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }}>
-              <Text variant="label" color={theme.colors.text.secondary}>
-                BRANCH COMPARISON — HORIZON 3 PREVIEW
-              </Text>
+              <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
+                <Text variant="label" color={theme.colors.text.secondary}>
+                  BRANCH COMPARISON
+                </Text>
+                <SampleDataBadge testId="branch-comparison-sample-badge" />
+              </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }}>
                 {branches.map((branchSummary, index) => {
                   const branchBand = getChurchPulseBand(branchSummary.pulseScore);

@@ -1,8 +1,15 @@
-import type { FollowUpTaskResponseDto, ListFollowUpTasksForActorQuery, PersonResponseDto } from '@ecclesia/contracts';
+import type {
+  CreateFollowUpTaskInput,
+  FollowUpTaskResponseDto,
+  ListFollowUpTasksForActorQuery,
+  ListSilentDriftFlagsForActorQuery,
+  PersonResponseDto,
+  SilentDriftFlagResponseDto,
+} from '@ecclesia/contracts';
 import type { ActorContext } from '@ecclesia/rbac';
 import type { RecordOption } from '@ecclesia/ui-web';
 
-import { apiGet, apiPatch } from '../../lib/api-client';
+import { apiGet, apiPatch, apiPost } from '../../lib/api-client';
 import { useAsyncData } from '../../lib/useAsyncData';
 import type { AsyncDataResult } from '../../lib/useAsyncData';
 
@@ -107,6 +114,29 @@ export async function searchPeopleForEscalation(accessToken: string, query: stri
   }));
 }
 
+/**
+ * `[Follow-up Task Creation milestone]` `POST /people/:personId/follow-up-tasks`
+ * (FR-PC-03's explicit/manual creation path - see `createFollowUpTaskSchema`'s
+ * own doc comment in `@ecclesia/contracts` for why `trigger` defaults to
+ * `MANUAL` and no automatic-assignee resolution exists). `personId` is the
+ * route's own path param - the subject Person the task concerns - not part
+ * of the request body.
+ *
+ * **RBAC, traced against `permission-matrix.ts` directly, not assumed:**
+ * `RESIDENT_PASTOR` holds `pastoral_care.followup_task.read`/`.update` at
+ * BRANCH scope but **no `.create` row at all**; `ADMIN` holds only `.read`
+ * at BRANCH. Only `ASSISTANT_PASTOR` (CLUSTER) and `BACENTA_LEADER`
+ * (OWN_GROUP) can actually create a Follow-up task. Scope resolves from
+ * the *subject Person's* own active Bacenta membership
+ * (`PersonScopeService.loadResourceContext`, `apps/api`), not the acting
+ * user's own group - the selected subject Person must actually belong to
+ * a Bacenta the actor's scope reaches. None of this is enforced
+ * client-side; the backend's real response is what the caller sees.
+ */
+export function createFollowUpTask(accessToken: string, personId: string, input: CreateFollowUpTaskInput): Promise<FollowUpTaskResponseDto> {
+  return apiPost<FollowUpTaskResponseDto>(`/people/${personId}/follow-up-tasks`, input, { authToken: accessToken });
+}
+
 export function usePersonName(accessToken: string | undefined, personId: string): AsyncDataResult<PersonResponseDto> {
   return useAsyncData<PersonResponseDto>(
     (signal) => {
@@ -114,5 +144,60 @@ export function usePersonName(accessToken: string | undefined, personId: string)
       return apiGet<PersonResponseDto>(`/people/${personId}`, { authToken: accessToken, signal });
     },
     [accessToken, personId],
+  );
+}
+
+/**
+ * `[Silent-Drift Detection Branch-wide milestone]` Resolves the `GET
+ * /pastoral-care/silent-drift-flags` query for the current actor's role -
+ * a separate function from `resolveDefaultFollowUpTaskQuery`, not a
+ * reuse of it, even though `pastoral_care.silent_drift_flag.read`'s scope
+ * rows happen to name the identical four roles/scopes (traced against
+ * `permission-matrix.ts`, not assumed): `RESIDENT_PASTOR`/`ADMIN`
+ * (BRANCH), `ASSISTANT_PASTOR` (CLUSTER), `BACENTA_LEADER` (OWN_GROUP).
+ * Kept independent since these are two different domain objects/endpoints
+ * that could diverge later - same "small per-domain duplicate, not a
+ * premature shared abstraction" precedent this codebase already applies
+ * to `searchPeopleForEscalation`/`searchPeopleForGuardian`.
+ */
+export function resolveDefaultSilentDriftQuery(
+  actor: Pick<ActorContext, 'role' | 'bacentaId' | 'clusterBacentaIds'>,
+): ListSilentDriftFlagsForActorQuery {
+  switch (actor.role) {
+    case 'BACENTA_LEADER':
+      return actor.bacentaId ? { groupId: actor.bacentaId } : {};
+    case 'ASSISTANT_PASTOR':
+      return actor.clusterBacentaIds?.[0] ? { groupId: actor.clusterBacentaIds[0] } : {};
+    default:
+      // RESIDENT_PASTOR/ADMIN resolve to whole-Branch (BRANCH-scope rows).
+      // Every other role has no scope row for this action at all - falls
+      // through to the same `{}` query, which the backend will correctly
+      // 403 rather than this hook trying to pre-empt that.
+      return {};
+  }
+}
+
+/** `GET /pastoral-care/silent-drift-flags` - the BRANCH-wide/optional-
+ * `groupId` listing this milestone adds. Read-only: `SilentDriftFlagController`
+ * exposes no mutation route at all (traced, not assumed - no `PATCH`/`POST`
+ * exists anywhere on that controller), so there is no resolve/escalate
+ * action to wire up here, unlike Follow-up Tasks. */
+export function useSilentDriftFlags(
+  accessToken: string | undefined,
+  query: ListSilentDriftFlagsForActorQuery,
+): AsyncDataResult<SilentDriftFlagResponseDto[]> {
+  return useAsyncData<SilentDriftFlagResponseDto[]>(
+    (signal) => {
+      if (!accessToken) return Promise.reject(new Error('not authenticated'));
+      const params = new URLSearchParams();
+      if (query.groupId) params.set('groupId', query.groupId);
+      if (query.status) params.set('status', query.status.join(','));
+      const qs = params.toString();
+      return apiGet<SilentDriftFlagResponseDto[]>(`/pastoral-care/silent-drift-flags${qs ? `?${qs}` : ''}`, {
+        authToken: accessToken,
+        signal,
+      });
+    },
+    [accessToken, query.groupId, query.status?.join(',')],
   );
 }

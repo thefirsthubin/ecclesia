@@ -1,4 +1,4 @@
-import { Badge, Card, Divider, EmptyState, ErrorState, Heading, Icon, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
+import { Badge, Card, Divider, EmptyState, ErrorState, Heading, Icon, SampleDataBadge, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
 import type { PersonResponseDto } from '@ecclesia/contracts';
 
 import { useAuth } from '../../auth/AuthContext';
@@ -39,6 +39,7 @@ export function FinanceOfficerDashboard() {
   const { state } = useAuth();
   const accessToken = state.status === 'authenticated' ? state.accessToken : undefined;
   const personId = state.status === 'authenticated' ? state.actor.personId : undefined;
+  const branchName = state.status === 'authenticated' ? state.actor.branchName : '';
   const { isCompact, isNarrow } = useDashboardBreakpoint();
 
   const personState = useAsyncData<PersonResponseDto>(
@@ -86,7 +87,7 @@ export function FinanceOfficerDashboard() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5], maxWidth: 1280 }}>
-      <DashboardHeader displayName={displayName} openAlertCount={flaggedCount ?? 0} />
+      <DashboardHeader displayName={displayName} openAlertCount={flaggedCount ?? 0} branchName={branchName} />
 
       <div style={{ display: 'grid', gridTemplateColumns: `repeat(${kpiColumns}, 1fr)`, gap: theme.spacing[4] }}>
         {kpis.map((kpi) => (
@@ -128,7 +129,10 @@ export function FinanceOfficerDashboard() {
 
         <Card padding={6} testId="financial-alerts-card">
           <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            <Heading level={3}>Financial alerts</Heading>
+            <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
+              <Heading level={3}>Financial alerts</Heading>
+              <SampleDataBadge testId="financial-alerts-sample-badge" />
+            </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
               {DEMO_FINANCIAL_HIGHLIGHTS.map((item, index) => (
                 <div key={item.id}>

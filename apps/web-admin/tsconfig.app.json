@@ -13,6 +13,8 @@
   ],
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "references": [
+    { "path": "../../libs/domain/people/tsconfig.lib.json" },
+    { "path": "../../libs/domain/gatherings/tsconfig.lib.json" },
     { "path": "../../libs/rbac/tsconfig.lib.json" },
     { "path": "../../libs/contracts/tsconfig.lib.json" },
     { "path": "../../libs/ui/tokens/tsconfig.lib.json" },

@@ -1,5 +1,6 @@
 import {
   approveExpense,
+  confirmBankDeposit,
   escalateTransaction,
   flagTransaction,
   formatAmountMinor,
@@ -101,5 +102,50 @@ describe('Expense action wrappers', () => {
 
     const [url] = fetchMock.mock.calls[0] as [string];
     expect(url).toContain('/expenses/exp-1/pay');
+  });
+});
+
+/** `[Bank Deposit Confirmation milestone]` */
+describe('confirmBankDeposit', () => {
+  it('POSTs to /bank-deposit-confirmations with the given input', async () => {
+    const fetchMock = jest.fn().mockResolvedValue({ ok: true, json: async () => ({ id: 'bdc-1' }) });
+    global.fetch = fetchMock;
+
+    await confirmBankDeposit('token', { groupId: 'group-1', weekStartDate: '2026-01-05', depositedAmountMinor: '50000' });
+
+    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toContain('/bank-deposit-confirmations');
+    expect(init.method).toBe('POST');
+    expect(JSON.parse(init.body as string)).toEqual({ groupId: 'group-1', weekStartDate: '2026-01-05', depositedAmountMinor: '50000' });
+  });
+
+  it('rejects with an ApiError carrying the server-provided duplicate-confirmation reason on a 409', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 409,
+      json: async () => ({ message: "A bank deposit confirmation already exists for group 'group-1' for the week starting '2026-01-05'" }),
+    });
+
+    const error = (await confirmBankDeposit('token', { groupId: 'group-1', weekStartDate: '2026-01-05', depositedAmountMinor: '50000' }).catch(
+      (e) => e,
+    )) as { status: number; body: unknown };
+
+    expect(error.status).toBe(409);
+    expect(error.body).toMatchObject({ message: expect.stringContaining('already exists') });
+  });
+
+  it('rejects with an ApiError carrying the server-provided authorization/denial reason', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 403,
+      json: async () => ({ message: "No Role Assignment grants 'stewardship.bank_deposit.confirm' to role 'RESIDENT_PASTOR'" }),
+    });
+
+    const error = (await confirmBankDeposit('token', { groupId: 'group-1', weekStartDate: '2026-01-05', depositedAmountMinor: '50000' }).catch(
+      (e) => e,
+    )) as { status: number; body: unknown };
+
+    expect(error.status).toBe(403);
+    expect(error.body).toMatchObject({ message: expect.stringContaining('stewardship.bank_deposit.confirm') });
   });
 });

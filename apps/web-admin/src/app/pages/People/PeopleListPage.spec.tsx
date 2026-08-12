@@ -1,4 +1,4 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, within } from '@testing-library/react';
 import { ThemeProvider, ToastProvider } from '@ecclesia/ui-web';
 
 import { RouterProvider } from '../../router/router';
@@ -59,7 +59,31 @@ describe('PeopleListPage', () => {
     renderPage();
 
     await waitFor(() => expect(screen.getByText('Ama Owusu')).toBeInTheDocument());
-    expect(screen.getByText('Member')).toBeInTheDocument();
+    expect(within(screen.getByTestId('people-list-table')).getByText('Member')).toBeInTheDocument();
+  });
+
+  /** `[UX Design Implementation]` Final UX Design Specification §19
+   * (Phase 3 People workflow UI) - a pure client-side filter over the
+   * already-fetched, already-scoped result set (`ListPeopleQuery` has no
+   * `lifecycleStage` field), not a new backend query. */
+  it('filters the list by lifecycle stage via the filter chips, entirely client-side', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('ADMIN'));
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [person({ id: 'p1', firstName: 'Ama', lastName: 'Owusu', lifecycleStage: 'MEMBER' }), person({ id: 'p2', firstName: 'Kofi', lastName: 'Mensah', lifecycleStage: 'VISITOR' })],
+    });
+
+    renderPage();
+    await waitFor(() => expect(screen.getByText('Ama Owusu')).toBeInTheDocument());
+    expect(screen.getByText('Kofi Mensah')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Visitor' }));
+
+    expect(screen.getByText('Kofi Mensah')).toBeInTheDocument();
+    expect(screen.queryByText('Ama Owusu')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'All' }));
+    expect(screen.getByText('Ama Owusu')).toBeInTheDocument();
   });
 
   it('sends the Bacenta Leader own-group scope as a groupId query param', async () => {

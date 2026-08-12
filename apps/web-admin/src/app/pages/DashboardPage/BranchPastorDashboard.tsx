@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Badge, Button, Card, Divider, EmptyState, ErrorState, Heading, Icon, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
+import { Badge, Button, Card, Divider, EmptyState, ErrorState, Heading, Icon, SampleDataBadge, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
 import type { PersonResponseDto } from '@ecclesia/contracts';
 
 import { useAuth } from '../../auth/AuthContext';
@@ -55,6 +55,7 @@ export function BranchPastorDashboard() {
   const accessToken = state.status === 'authenticated' ? state.accessToken : undefined;
   const personId = state.status === 'authenticated' ? state.actor.personId : undefined;
   const clusterBacentaIds = state.status === 'authenticated' ? (state.actor.clusterBacentaIds ?? []) : [];
+  const branchName = state.status === 'authenticated' ? state.actor.branchName : '';
   const { isNarrow } = useDashboardBreakpoint();
 
   const [selectedGroupId, setSelectedGroupId] = useState<string | undefined>(clusterBacentaIds[0]);
@@ -96,7 +97,7 @@ export function BranchPastorDashboard() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5], maxWidth: 1280 }}>
-      <DashboardHeader displayName={displayName} openAlertCount={openAlertCount} />
+      <DashboardHeader displayName={displayName} openAlertCount={openAlertCount} branchName={branchName} />
 
       <div style={{ display: 'flex', gap: theme.spacing[2], flexWrap: 'wrap' }}>
         {clusterBacentaIds.map((groupId) => (
@@ -175,7 +176,10 @@ export function BranchPastorDashboard() {
 
         <Card padding={6} testId="branch-pastor-gatherings-card">
           <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            <Heading level={3}>Upcoming Gatherings</Heading>
+            <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
+              <Heading level={3}>Upcoming Gatherings</Heading>
+              <SampleDataBadge testId="branch-pastor-gatherings-sample-badge" />
+            </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
               {DEMO_UPCOMING_EVENTS.slice(0, 4).map((event, index) => (
                 <div key={event.id}>
@@ -198,7 +202,10 @@ export function BranchPastorDashboard() {
 
       <Card padding={6} testId="branch-pastor-prayer-requests-card">
         <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-          <Heading level={3}>Prayer requests</Heading>
+          <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
+            <Heading level={3}>Prayer requests</Heading>
+            <SampleDataBadge testId="branch-pastor-prayer-requests-sample-badge" />
+          </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
             {DEMO_PRAYER_REQUESTS.map((request, index) => (
               <div key={request.id}>

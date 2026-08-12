@@ -1,4 +1,4 @@
-import { Card, Divider, EmptyState, ErrorState, Heading, Icon, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
+import { Card, Divider, EmptyState, ErrorState, Heading, Icon, SampleDataBadge, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
 import type { AlertResponseDto } from '@ecclesia/contracts';
 import type { IconName } from '@ecclesia/ui-core';
 
@@ -15,6 +15,7 @@ interface TimelineRow {
   description: string;
   hoursAgo: number;
   icon: IconName;
+  isSample: boolean;
 }
 
 function capitalize(text: string): string {
@@ -44,6 +45,14 @@ function hoursAgoLabel(hours: number): string {
  * `DEMO_RECENT_ACTIVITY` and re-sorted by recency, so a Branch with real
  * resolved alerts still sees them alongside the richer demo activity types
  * (visitor intake, giving, staffing) no backend endpoint provides yet.
+ *
+ * `[UX Design Implementation]` Final UX Design Specification §8/§17
+ * (decision 4) - this is the one screen where real and sample rows are
+ * genuinely interleaved row-by-row (every other demo section on this
+ * Dashboard is either fully real or fully sample), so it gets the
+ * per-row `SampleDataBadge` treatment the spec calls out as the most
+ * severe case, rather than one section-level badge that would
+ * mischaracterize the real rows sitting right next to it.
  */
 export function RecentActivityTimeline({ status, alerts, onRetry }: RecentActivityTimelineProps) {
   const theme = useTheme();
@@ -77,6 +86,7 @@ export function RecentActivityTimeline({ status, alerts, onRetry }: RecentActivi
         description: capitalize(`${alert.alertType.replaceAll('_', ' ').toLowerCase()} — ${alert.status === 'ACTED' ? 'acted on' : 'dismissed'}`),
         hoursAgo: (Date.now() - new Date(resolvedAt).getTime()) / 3_600_000,
         icon: alert.status === 'ACTED' ? 'checkCircle' : 'xCircle',
+        isSample: false,
       };
     });
 
@@ -85,6 +95,7 @@ export function RecentActivityTimeline({ status, alerts, onRetry }: RecentActivi
     description: item.description,
     hoursAgo: item.hoursAgo,
     icon: item.icon,
+    isSample: true,
   }));
 
   const rows = [...resolvedAlertRows, ...demoRows].sort((a, b) => a.hoursAgo - b.hoursAgo).slice(0, 6);
@@ -107,9 +118,12 @@ export function RecentActivityTimeline({ status, alerts, onRetry }: RecentActivi
                     color={row.icon === 'checkCircle' ? theme.colors.status.success.strong : theme.colors.text.secondary}
                   />
                   <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1], flex: 1, minWidth: 0 }}>
-                    <Text variant="bodySmall" as="span">
-                      {row.description}
-                    </Text>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
+                      <Text variant="bodySmall" as="span">
+                        {row.description}
+                      </Text>
+                      {row.isSample && <SampleDataBadge testId={`recent-activity-sample-badge-${row.id}`} />}
+                    </div>
                     <Text variant="caption" color={theme.colors.text.secondary}>
                       {hoursAgoLabel(row.hoursAgo)}
                     </Text>

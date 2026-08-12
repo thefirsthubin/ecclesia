@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { ThemeProvider, ToastProvider } from '@ecclesia/ui-web';
 
+import { RouterProvider } from '../../router/router';
 import { BasontaRosterView } from './BasontaRosterView';
 
 const mockUseAuth = jest.fn();
@@ -26,17 +27,22 @@ function personResponse(id: string, firstName: string, lastName: string) {
 }
 
 /**
- * `[Remaining Engineering Sprint, Milestone 11]` Now also wraps
- * `ToastProvider` - the newly-embedded `StaffingTargetsPanel` calls
- * `useToast()` unconditionally, which throws outside a `ToastProvider` by
- * that hook's own design (`app.tsx` always mounts one at the real app
- * root).
+ * `[Remaining Engineering Sprint, Milestone 11]` Also wraps
+ * `ToastProvider` - the embedded `StaffingTargetsPanel` calls `useToast()`
+ * unconditionally, which throws outside a `ToastProvider` by that hook's
+ * own design (`app.tsx` always mounts one at the real app root).
+ *
+ * `[UX Design Implementation]` Final UX Design Specification §19 (Phase 7
+ * Ministry workflow UI) - also wraps `RouterProvider` now, for the new
+ * "View in Gatherings" `Link`.
  */
 function renderView() {
   return render(
     <ThemeProvider>
       <ToastProvider>
-        <BasontaRosterView groupId="basonta-1" />
+        <RouterProvider>
+          <BasontaRosterView groupId="basonta-1" />
+        </RouterProvider>
       </ToastProvider>
     </ThemeProvider>,
   );
@@ -69,6 +75,9 @@ describe('BasontaRosterView', () => {
       if (url.includes('/people/worker-2')) {
         return Promise.resolve({ ok: true, json: async () => personResponse('worker-2', 'Efua', 'Danso') });
       }
+      if (url.includes('/gatherings')) {
+        return Promise.resolve({ ok: true, json: async () => [] });
+      }
       return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
     });
 
@@ -78,6 +87,27 @@ describe('BasontaRosterView', () => {
     await waitFor(() => expect(screen.getByText('Kojo Boateng')).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('Efua Danso')).toBeInTheDocument());
     expect(screen.getByText('Overcommitted')).toBeInTheDocument();
+  });
+
+  it('shows this Basonta\'s own Gatherings, filtered by ownerGroupId', async () => {
+    mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+    global.fetch = jest.fn().mockImplementation((url: string) => {
+      if (url.includes('/gatherings')) {
+        expect(url).toContain('ownerGroupId=basonta-1');
+        return Promise.resolve({
+          ok: true,
+          json: async () => [
+            { id: 'gathering-1', branchId: 'branch-1', ownerGroupId: 'basonta-1', type: 'Rehearsal', scheduledStart: new Date('2024-03-01T10:00:00Z').toISOString(), scheduledEnd: null, venue: null, status: 'SCHEDULED', config: {}, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+          ],
+        });
+      }
+      return Promise.resolve({ ok: true, json: async () => [] });
+    });
+
+    renderView();
+
+    await waitFor(() => expect(screen.getByTestId('basonta-gatherings-card')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('Rehearsal')).toBeInTheDocument());
   });
 
   it('shows an empty state when no one is currently rostered', async () => {

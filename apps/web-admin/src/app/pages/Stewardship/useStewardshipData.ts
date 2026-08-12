@@ -1,4 +1,6 @@
 import type {
+  BankDepositConfirmationResponseDto,
+  ConfirmBankDepositInput,
   ExpenseResponseDto,
   FinancialTransactionChannelDto,
   FinancialTransactionResponseDto,
@@ -7,6 +9,7 @@ import type {
   RecordFinancialTransactionInput,
   RejectExpenseInput,
   RequestExpenseInput,
+  WeeklyReconciliationResponseDto,
 } from '@ecclesia/contracts';
 
 import { API_BASE_URL, apiGet, apiPost, apiUpload } from '../../lib/api-client';
@@ -179,6 +182,52 @@ export async function fetchExpenseReceiptObjectUrl(accessToken: string, expenseI
   }
   const blob = await response.blob();
   return URL.createObjectURL(blob);
+}
+
+/**
+ * `[Bank Deposit Confirmation milestone]` `GET
+ * /bank-deposit-confirmations/reconciliation?weekStartDate=` (FR-STW-07's
+ * bank-deposit comparison half). `weekStartDate` is a date-only string
+ * (the Monday a week begins, `[INFERRED]` per `confirmBankDepositSchema`'s
+ * own doc comment - no PRD section pins a week-boundary convention);
+ * `undefined` while the caller hasn't picked one yet, matching
+ * `useGathering`'s own "no id yet, don't fetch" precedent.
+ *
+ * `BankDepositConfirmationListResourceContextGuard` always resolves the
+ * actor's own Branch (no groupId/CLUSTER story - same shape
+ * `useTransactionQueue`/`useExpenseQueue` already document for their own
+ * list guards), so there's no `resolveDefaultXQuery` here either.
+ */
+export function useWeeklyReconciliation(
+  accessToken: string | undefined,
+  weekStartDate: string | undefined,
+): AsyncDataResult<WeeklyReconciliationResponseDto> {
+  return useAsyncData<WeeklyReconciliationResponseDto>(
+    (signal) => {
+      if (!accessToken || !weekStartDate) return Promise.reject(new Error('not authenticated or no week selected'));
+      return apiGet<WeeklyReconciliationResponseDto>(`/bank-deposit-confirmations/reconciliation?weekStartDate=${encodeURIComponent(weekStartDate)}`, {
+        authToken: accessToken,
+        signal,
+      });
+    },
+    [accessToken, weekStartDate],
+  );
+}
+
+/**
+ * `[Bank Deposit Confirmation milestone]` `POST /bank-deposit-confirmations`.
+ * A write-once record, not a state transition on an existing entity -
+ * traced against `BankDepositConfirmationRepository.create()`: the
+ * `@@unique([groupId, weekStartDate])` constraint means confirming the
+ * same Bacenta/week twice 409s rather than updating, and there is no
+ * `PATCH`/delete route anywhere on this controller - a confirmation is
+ * immutable once recorded. No downstream `EventBridgePublisherService`
+ * call exists in `BankDepositConfirmationService` either (confirmed by
+ * reading the whole service) - unlike Follow-up Task's Complete action,
+ * this call has no AWS side effect at all.
+ */
+export function confirmBankDeposit(accessToken: string, input: ConfirmBankDepositInput): Promise<BankDepositConfirmationResponseDto> {
+  return apiPost<BankDepositConfirmationResponseDto>('/bank-deposit-confirmations', input, { authToken: accessToken });
 }
 
 /**

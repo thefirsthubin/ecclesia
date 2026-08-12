@@ -1,11 +1,14 @@
 import { Badge, Heading, Icon, Text, useTheme } from '@ecclesia/ui-web';
 
-import { DEMO_CHURCH_NAME } from './dashboardDemoData';
-
 export interface DashboardHeaderProps {
   /** Falls back to the role label while the Person lookup is still in flight - same pattern `AppShell`'s `UserMenu` already establishes for this exact "no name on `/auth/me`" gap. */
   displayName: string;
   openAlertCount: number;
+  /** `[Release 1 blocker fix]` The actor's real `Branch.name`, now part of
+   * `GET /auth/me`'s own response (`ActorContextResponseDto.branchName`)
+   * - no separate fetch needed, unlike `displayName` above. Replaces the
+   * previous hardcoded `DEMO_CHURCH_NAME` placeholder. */
+  branchName: string;
 }
 
 function greetingForHour(hour: number): string {
@@ -18,16 +21,17 @@ function greetingForHour(hour: number): string {
  * Header zone (redesign brief) - personalized greeting, current date,
  * church name, and a notification glance.
  *
- * `[Reference-image iteration]` No longer renders its own `Avatar` - the
- * dashboard now runs in `AppShell`'s `navVariant="pill"` mode
- * (`PillNav.tsx`), whose right slot already shows `UserMenu`'s own
- * avatar. A second, larger avatar here would just be the same person
- * rendered twice a few pixels apart. The functional notification control
- * (inbox, resolve, etc.) also stays exactly where it already lives -
- * `PillNav`'s `NotificationBell` - so the badge below is a plain-text
- * glance only, not a second competing bell.
+ * `[UX Design Implementation]` Does not render its own `Avatar` -
+ * `AppShell`'s shared top bar (every route, including Dashboard, since
+ * the pill-nav variant was retired - Final UX Design Specification §12)
+ * already shows `UserMenu`'s own avatar in its identity slot. A second,
+ * larger avatar here would just be the same person rendered twice a few
+ * pixels apart. The functional notification control (inbox, resolve,
+ * etc.) also stays exactly where it already lives - `AppShell`'s
+ * `NotificationBell`, in that same identity slot - so the badge below is
+ * a plain-text glance only, not a second competing bell.
  */
-export function DashboardHeader({ displayName, openAlertCount }: DashboardHeaderProps) {
+export function DashboardHeader({ displayName, openAlertCount, branchName }: DashboardHeaderProps) {
   const theme = useTheme();
   const now = new Date();
   const greeting = greetingForHour(now.getHours());
@@ -51,7 +55,7 @@ export function DashboardHeader({ displayName, openAlertCount }: DashboardHeader
           </Text>
           <Icon name="church" size="sm" color={theme.colors.text.secondary} />
           <Text variant="bodySmall" color={theme.colors.text.secondary}>
-            {DEMO_CHURCH_NAME}
+            {branchName}
           </Text>
         </div>
       </div>

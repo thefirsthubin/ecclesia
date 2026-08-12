@@ -1,11 +1,7 @@
-import { EmptyState, useTheme } from '@ecclesia/ui-web';
+import { EmptyState } from '@ecclesia/ui-web';
 
 import { useAuth } from '../../auth/AuthContext';
-import { AlertPriorityCard } from '../DashboardPage/AlertPriorityCard';
-import { ChurchPulseCard } from '../DashboardPage/ChurchPulseCard';
-import { RecentActivityCard } from '../DashboardPage/RecentActivityCard';
-import { ResidentPastorDashboard } from '../DashboardPage/ResidentPastorDashboard';
-import { useBranchDashboard } from '../DashboardPage/useBranchDashboard';
+import { BranchTrendsSection } from './BranchTrendsSection';
 import { ClusterInsightsView } from './ClusterInsightsView';
 
 /**
@@ -19,6 +15,27 @@ import { ClusterInsightsView } from './ClusterInsightsView';
  * surfaces this sprint builds - see `INSIGHTS_PAGE_DESIGN_NOTES.md` for
  * why a Shepherd's own-Bacenta view and the H2 weight-configuration panel
  * are not part of it.
+ *
+ * `[UX Design Implementation]` Final UX Design Specification §14
+ * (decision 8) - Dashboard and Insights are now genuinely different
+ * screens, not near-duplicates. Dashboard answers "what do I need to
+ * know right now" (Church Pulse hero, KPI totals, Alerts, Quick Actions);
+ * Insights answers "what's happening over time" (the six-month growth
+ * chart, the Bacenta Leaderboard, the Engagement Trend figure -
+ * `BranchTrendsSection`, all real, from the exact same
+ * `branch-dashboard-summary` endpoint Dashboard's own KPI strip already
+ * calls). Neither Church Pulse's current score nor Alerts render here
+ * anymore - both already have a home on Dashboard, and repeating them
+ * here would be exactly the "simply duplicate the same cards on both
+ * screens" the Design Spec explicitly rules out.
+ *
+ * `ADMIN` (Super Administrator) previously saw *less* here than on their
+ * own Dashboard (`AdminInsightsView`, removed) - a real inconsistency
+ * for a screen whose whole purpose is deeper analysis. It now renders
+ * the identical `BranchTrendsSection` `RESIDENT_PASTOR` does: both roles
+ * hold the same `insights.branch_dashboard.read` (BRANCH) grant in
+ * `permission-matrix.ts`, traced not assumed, so this uses a permission
+ * Super Administrator already had, not a new one.
  */
 export function InsightsPage() {
   const { state } = useAuth();
@@ -26,17 +43,10 @@ export function InsightsPage() {
   if (state.status !== 'authenticated') return null;
 
   const role = state.actor.role;
+  const accessToken = state.accessToken;
 
-  if (role === 'RESIDENT_PASTOR' || role === 'ACTING_RESIDENT_PASTOR') {
-    // Same underlying capability, same component as the `/dashboard`
-    // landing screen (`ResidentPastorDashboard`) - reused directly rather
-    // than reimplemented, since both routes serve the identical
-    // Branch-wide read+resolve experience for this role.
-    return <ResidentPastorDashboard />;
-  }
-
-  if (role === 'ADMIN') {
-    return <AdminInsightsView />;
+  if (role === 'RESIDENT_PASTOR' || role === 'ACTING_RESIDENT_PASTOR' || role === 'ADMIN') {
+    return <BranchTrendsSection accessToken={accessToken} />;
   }
 
   if (role === 'ASSISTANT_PASTOR') {
@@ -59,44 +69,5 @@ export function InsightsPage() {
       title="Insights — not available for this role"
       description="Your role does not have an Insights view in this release."
     />
-  );
-}
-
-/**
- * `permission-matrix.ts` grants ADMIN `insights.branch_dashboard.read`
- * and `insights.alert.read`, both BRANCH-scoped, but *not*
- * `insights.alert.resolve` (PRD §17.3's Insights row: Admin gets "R"
- * only) - configuration authority does not imply act/dismiss authority
- * over a pastoral alert, the same separation already established for
- * `pastoral_care.notes.*` and Stewardship's zero ADMIN rows. Reuses
- * `useBranchDashboard` (identical endpoint to the Resident Pastor's own
- * view) but passes `readOnly` to `AlertPriorityCard` rather than
- * reusing `ResidentPastorDashboard` wholesale, which would render a
- * Resolve button Admin cannot actually use.
- */
-function AdminInsightsView() {
-  const theme = useTheme();
-  const { state } = useAuth();
-  const accessToken = state.status === 'authenticated' ? state.accessToken : undefined;
-  const dashboardState = useBranchDashboard(accessToken);
-  const alerts = dashboardState.status === 'success' ? dashboardState.data.alerts : [];
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4], maxWidth: 720 }}>
-      <ChurchPulseCard
-        status={dashboardState.status}
-        pulseScore={dashboardState.status === 'success' ? dashboardState.data.pulseScore : undefined}
-        onRetry={dashboardState.refetch}
-      />
-      <AlertPriorityCard
-        status={dashboardState.status}
-        alerts={alerts}
-        accessToken={accessToken}
-        onResolved={dashboardState.refetch}
-        onRetry={dashboardState.refetch}
-        readOnly
-      />
-      <RecentActivityCard status={dashboardState.status} alerts={alerts} onRetry={dashboardState.refetch} />
-    </div>
   );
 }

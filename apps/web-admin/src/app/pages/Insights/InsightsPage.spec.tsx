@@ -27,6 +27,43 @@ function branchDashboard() {
   };
 }
 
+/** `[UX Design Implementation]` Final UX Design Specification §14
+ * (decision 8) - `BranchTrendsSection` (rendered here for RESIDENT_PASTOR/
+ * ACTING_RESIDENT_PASTOR/ADMIN) calls `GET /insights/branch-dashboard-summary`
+ * - needs its own real shape, the same "URL-branched fetch mock" precedent
+ * this file's own ASSISTANT_PASTOR test already established for
+ * `/groups/`, or `growthSeriesFromSummary` crashes reading `.growthSeries`
+ * off the generic `branchDashboard()` shape every other call here returns. */
+function branchDashboardSummary() {
+  return {
+    branchId: 'branch-1',
+    membersCount: 482,
+    membersTrend: 12,
+    attendanceTotal: 356,
+    attendanceTrend: -8,
+    givingTotalMinor: '2450000',
+    givingTrend: 8,
+    growthSeries: {
+      attendance: [{ label: 'Aug', value: 356 }],
+      membership: [{ label: 'Aug', value: 482 }],
+      giving: [{ label: 'Aug', value: 2450000 }],
+    },
+    volunteersCount: 67,
+    volunteersTrend: -2,
+    bacentaLeaderboard: [{ groupId: 'bacenta-1', name: 'Grace Bacenta', leaderName: 'Grace Owusu', score: 91 }],
+    engagementTrend: { direction: 'up', deltaPoints: 6, windowDays: 21 },
+  };
+}
+
+function residentPastorFetchMock() {
+  return jest.fn().mockImplementation((url: string) => {
+    if (url.includes('/insights/branch-dashboard-summary')) {
+      return Promise.resolve({ ok: true, json: async () => branchDashboardSummary() });
+    }
+    return Promise.resolve({ ok: true, json: async () => branchDashboard() });
+  });
+}
+
 /**
  * `[Remaining Engineering Sprint, Milestone 11 - real jest run fix]` Now
  * wraps `RouterProvider` too. `InsightsPage` renders `ResidentPastorDashboard`
@@ -52,58 +89,45 @@ function renderPage() {
 afterEach(() => jest.clearAllMocks());
 
 describe('InsightsPage', () => {
-  it('renders the same Branch dashboard as /dashboard for RESIDENT_PASTOR', async () => {
+  /** `[UX Design Implementation]` Final UX Design Specification §14
+   * (decision 8) - Insights no longer duplicates Dashboard's Church Pulse
+   * hero/Alerts; it shows `BranchTrendsSection`'s trend content instead
+   * (growth chart, Bacenta Leaderboard, Engagement Trend), sourced from
+   * the same real `GET /insights/branch-dashboard-summary` endpoint. */
+  it('renders the growth chart, Bacenta Leaderboard, and Engagement Trend for RESIDENT_PASTOR', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('RESIDENT_PASTOR'));
-    global.fetch = jest.fn().mockResolvedValue({ ok: true, json: async () => branchDashboard() });
+    global.fetch = residentPastorFetchMock();
 
     renderPage();
 
-    await waitFor(() => expect(screen.getByTestId('church-pulse-card')).toBeInTheDocument());
-    expect(screen.getByText('Church Pulse — whole Branch')).toBeInTheDocument();
-    // ResidentPastorDashboard's full read+resolve experience, not a
-    // stripped-down copy.
-    expect(screen.getByTestId('priority-card')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByTestId('performance-chart-card')).toBeInTheDocument());
+    expect(screen.getByTestId('engagement-trend-card')).toHaveTextContent('+6');
+    expect(screen.getByTestId('bacenta-leaderboard-card')).toHaveTextContent('Grace Bacenta');
+    // No longer duplicates Dashboard's own Church Pulse hero/Alerts here.
+    expect(screen.queryByTestId('church-pulse-card')).not.toBeInTheDocument();
   });
 
-  it('renders the same view for ACTING_RESIDENT_PASTOR', async () => {
+  it('renders the same trend view for ACTING_RESIDENT_PASTOR', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('ACTING_RESIDENT_PASTOR'));
-    global.fetch = jest.fn().mockResolvedValue({ ok: true, json: async () => branchDashboard() });
+    global.fetch = residentPastorFetchMock();
 
     renderPage();
 
-    await waitFor(() => expect(screen.getByTestId('church-pulse-card')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByTestId('performance-chart-card')).toBeInTheDocument());
   });
 
-  it('renders a read-only Branch view for ADMIN, with no Resolve action', async () => {
+  /** `ADMIN` previously saw *less* here than on their own Dashboard - now
+   * renders the identical `BranchTrendsSection` RESIDENT_PASTOR does,
+   * since both roles hold the same `insights.branch_dashboard.read`
+   * grant (traced in `permission-matrix.ts`, not assumed). */
+  it('renders the same trend view for ADMIN, resolving the "Insights showed less than Dashboard" gap', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('ADMIN'));
-    global.fetch = jest.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        branchId: 'branch-1',
-        pulseScore: { id: 'p1', branchId: 'branch-1', scopeType: 'BRANCH', scopeId: 'branch-1', score: 80, computedAt: new Date().toISOString() },
-        alerts: [
-          {
-            id: 'alert-1',
-            branchId: 'branch-1',
-            scopeType: 'BRANCH',
-            scopeId: 'branch-1',
-            alertType: 'PULSE_DECLINE',
-            message: 'Branch Church Pulse declined',
-            status: 'OPEN',
-            resolvedByPersonId: null,
-            resolvedAt: null,
-            triggeredAt: new Date().toISOString(),
-          },
-        ],
-      }),
-    });
+    global.fetch = residentPastorFetchMock();
 
     renderPage();
 
-    await waitFor(() => expect(screen.getByTestId('church-pulse-card')).toBeInTheDocument());
-    await waitFor(() => expect(screen.getByText('Branch Church Pulse declined')).toBeInTheDocument());
-    expect(screen.getByText('Read only')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /Resolve alert/ })).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.getByTestId('performance-chart-card')).toBeInTheDocument());
+    expect(screen.getByTestId('bacenta-leaderboard-card')).toBeInTheDocument();
   });
 
   it('renders the cluster drill-down for ASSISTANT_PASTOR', async () => {

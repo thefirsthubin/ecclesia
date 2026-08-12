@@ -6,7 +6,7 @@ export interface BacentaLeaderboardCardProps {
   entries: BacentaLeaderboardEntry[];
 }
 
-/** `[Reference-image iteration]` Maps to the reference's "Friends Score" card - see `dashboardDemoData.ts`'s own doc comment on why this is a per-Bacenta ranking built from demo data, not a real endpoint. */
+/** `[Reference-image iteration]` Maps to the reference's "Friends Score" card. Real data since the `[Bacenta Leaderboard milestone]` (`mapBranchDashboardSummary.ts`'s `bacentaLeaderboardFromSummary`) - only the `BacentaLeaderboardEntry` type is imported from `dashboardDemoData.ts`, not a demo constant. */
 export function BacentaLeaderboardCard({ entries }: BacentaLeaderboardCardProps) {
   const theme = useTheme();
 

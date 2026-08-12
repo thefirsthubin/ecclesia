@@ -1,4 +1,4 @@
-import { Card, Divider, Heading, Icon, Text, useTheme } from '@ecclesia/ui-web';
+import { Card, Divider, Heading, Icon, SampleDataBadge, Text, useTheme } from '@ecclesia/ui-web';
 
 import type { UpcomingEventDatum } from './dashboardDemoData';
 
@@ -14,14 +14,23 @@ function resolveDateLabel(daysFromNow: number): string {
   return date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
 }
 
-/** Upcoming Events zone (redesign brief) - a timeline layout, demo data (`dashboardDemoData.ts` - no events endpoint exists to read real ones from). */
+/**
+ * Upcoming Events zone (redesign brief) - a timeline layout, demo data
+ * (`dashboardDemoData.ts` - no events endpoint exists to read real ones
+ * from). `[UX Design Implementation]` Final UX Design Specification §8
+ * (decision 4) - fully sample, so one section-level `SampleDataBadge`
+ * next to the heading, not a per-row treatment.
+ */
 export function UpcomingEventsTimeline({ events }: UpcomingEventsTimelineProps) {
   const theme = useTheme();
 
   return (
     <Card padding={6} testId="upcoming-events-card">
       <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
-        <Heading level={3}>Upcoming Events</Heading>
+        <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
+          <Heading level={3}>Upcoming Events</Heading>
+          <SampleDataBadge testId="upcoming-events-sample-badge" />
+        </div>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {events.map((event, index) => (
             <div key={event.id}>

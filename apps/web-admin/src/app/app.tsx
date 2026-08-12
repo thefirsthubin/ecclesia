@@ -8,11 +8,12 @@ import { ProtectedRoute } from './router/ProtectedRoute';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage/DashboardPage';
 import { ConfigurationPage } from './pages/ConfigurationPage';
+import { AuditLogPage } from './pages/AuditLogPage';
 import { PeopleListPage } from './pages/People/PeopleListPage';
 import { PersonDetailPage } from './pages/People/PersonDetailPage';
 import { FollowUpTaskQueuePage } from './pages/PastoralCare/FollowUpTaskQueuePage';
 import { MinistryPage } from './pages/Ministry/MinistryPage';
-import { BasontaRosterPage } from './pages/Ministry/BasontaRosterPage';
+import { GroupDetailPage } from './pages/Ministry/GroupDetailPage';
 import { GatheringsListPage } from './pages/Gatherings/GatheringsListPage';
 import { StewardshipPage } from './pages/Stewardship/StewardshipPage';
 import { InsightsPage } from './pages/Insights/InsightsPage';
@@ -77,7 +78,7 @@ function AppRoutes() {
       <Route
         path="/dashboard"
         element={
-          <ProtectedRoute breadcrumbs={[{ label: 'Dashboard' }]} navVariant="pill">
+          <ProtectedRoute breadcrumbs={[{ label: 'Dashboard' }]}>
             <DashboardPage />
           </ProtectedRoute>
         }
@@ -120,9 +121,9 @@ function AppRoutes() {
         path="/ministry/:groupId"
         element={
           <ProtectedRoute
-            breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Ministry', href: '/ministry' }, { label: 'Basonta' }]}
+            breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Ministry', href: '/ministry' }, { label: 'Group' }]}
           >
-            <BasontaRosterPage />
+            <GroupDetailPage />
           </ProtectedRoute>
         }
       />
@@ -155,6 +156,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Configuration' }]}>
             <ConfigurationPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/audit-log"
+        element={
+          <ProtectedRoute breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Audit Log' }]}>
+            <AuditLogPage />
           </ProtectedRoute>
         }
       />

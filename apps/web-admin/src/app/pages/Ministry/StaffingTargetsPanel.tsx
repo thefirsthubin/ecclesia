@@ -86,7 +86,7 @@ function StaffingTargetRow({
         <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
           <Badge status={target.isAdequate ? 'success' : 'warning'}>{target.isAdequate ? 'Adequate' : 'Understaffed'}</Badge>
           {canEdit && !editing && (
-            <Button variant="tertiary" size="sm" onClick={() => setEditing(true)} accessibilityLabel={`Edit staffing target for ${target.id}`}>
+            <Button variant="secondary" size="sm" onClick={() => setEditing(true)} accessibilityLabel={`Edit staffing target for ${target.id}`}>
               Edit
             </Button>
           )}
@@ -105,7 +105,7 @@ function StaffingTargetRow({
           <Button variant="primary" size="sm" loading={saving} onClick={() => void submitEdit()} testId={`staffing-target-edit-submit-${target.id}`}>
             Save
           </Button>
-          <Button variant="tertiary" size="sm" onClick={() => setEditing(false)} disabled={saving}>
+          <Button variant="secondary" size="sm" onClick={() => setEditing(false)} disabled={saving}>
             Cancel
           </Button>
         </div>
@@ -234,7 +234,7 @@ export function StaffingTargetsPanel({ groupId, canEdit, compact = false }: Staf
           <Heading level={3}>Staffing targets</Heading>
           <div style={{ display: 'flex', gap: theme.spacing[2] }}>
             {canEdit && !assignFormOpen && (
-              <Button variant="tertiary" size="sm" onClick={() => setAssignFormOpen(true)}>
+              <Button variant="secondary" size="sm" onClick={() => setAssignFormOpen(true)}>
                 + Assign volunteer
               </Button>
             )}
@@ -265,7 +265,7 @@ export function StaffingTargetsPanel({ groupId, canEdit, compact = false }: Staf
               <Button variant="primary" size="sm" disabled={!selectedPerson} loading={assignSubmitting} onClick={() => void submitAssignVolunteer()}>
                 Assign
               </Button>
-              <Button variant="tertiary" size="sm" onClick={closeAssignForm}>
+              <Button variant="secondary" size="sm" onClick={closeAssignForm}>
                 Cancel
               </Button>
             </div>
@@ -298,7 +298,7 @@ export function StaffingTargetsPanel({ groupId, canEdit, compact = false }: Staf
               <Button variant="primary" size="sm" loading={formSubmitting} onClick={() => void submitNewTarget()} testId="staffing-target-submit">
                 Set target
               </Button>
-              <Button variant="tertiary" size="sm" onClick={closeForm}>
+              <Button variant="secondary" size="sm" onClick={closeForm}>
                 Cancel
               </Button>
             </div>

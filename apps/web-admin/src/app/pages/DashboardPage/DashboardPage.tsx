@@ -3,10 +3,10 @@ import type { RoleDto } from '@ecclesia/contracts';
 
 import { useAuth } from '../../auth/AuthContext';
 import { BranchPastorDashboard } from './BranchPastorDashboard';
-import { CouncilAdministratorDashboard } from './CouncilAdministratorDashboard';
 import { FinanceOfficerDashboard } from './FinanceOfficerDashboard';
 import { MinistryLeaderDashboard } from './MinistryLeaderDashboard';
 import { ResidentPastorDashboard } from './ResidentPastorDashboard';
+import { SuperAdministratorDashboard } from './SuperAdministratorDashboard';
 
 /**
  * Role-aware dashboard router (STEP 5, extended by the Remaining
@@ -14,8 +14,8 @@ import { ResidentPastorDashboard } from './ResidentPastorDashboard';
  * fully-built dashboard: `RESIDENT_PASTOR`/`ACTING_RESIDENT_PASTOR`
  * (`ResidentPastorDashboard`, built earlier), `BASONTA_LEADER` (Ministry
  * Leader), `TREASURER` (Finance Officer), `ASSISTANT_PASTOR` (Branch
- * Pastor), and `ADMIN` (Council Administrator - see
- * `CouncilAdministratorDashboard.tsx`'s own doc comment for why `ADMIN`,
+ * Pastor), and `ADMIN` (Super Administrator - see
+ * `SuperAdministratorDashboard.tsx`'s own doc comment for why `ADMIN`,
  * not `COUNCIL_OVERSEER`). Every other role still sees an honest,
  * role-specific stub rather than a broken or fabricated screen.
  *
@@ -51,7 +51,7 @@ export function DashboardPage() {
   }
 
   if (role === 'ADMIN') {
-    return <CouncilAdministratorDashboard />;
+    return <SuperAdministratorDashboard />;
   }
 
   if (role === 'BACENTA_LEADER') {

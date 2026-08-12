@@ -190,7 +190,7 @@ export function NewPersonForm({ onCreated, onCancel }: NewPersonFormProps) {
           >
             Create Person
           </Button>
-          <Button variant="tertiary" size="sm" onClick={onCancel}>
+          <Button variant="secondary" size="sm" onClick={onCancel}>
             Cancel
           </Button>
         </div>
@@ -204,7 +204,7 @@ export function NewPersonForm({ onCreated, onCancel }: NewPersonFormProps) {
         testId="duplicate-candidate-modal"
         footer={
           <>
-            <Button variant="tertiary" size="sm" onClick={closeCandidateReview}>
+            <Button variant="secondary" size="sm" onClick={closeCandidateReview}>
               Cancel
             </Button>
             <Button
