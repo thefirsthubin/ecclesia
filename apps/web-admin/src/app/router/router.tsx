@@ -1,4 +1,4 @@
-import type { ReactElement, ReactNode } from 'react';
+import type { CSSProperties, ReactElement, ReactNode } from 'react';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 /**
@@ -128,17 +128,28 @@ export interface LinkProps {
   to: string;
   children: ReactNode;
   className?: string;
+  style?: CSSProperties;
   'aria-current'?: 'page' | undefined;
   onClick?: () => void;
+  /** `[UX Design Implementation]` Final UX Design Specification §12/§19 —
+   * lets shell consumers (`Sidebar`) apply the same on-brand
+   * `border.focus` outline `Button`/`Input`/`Select` already use, instead
+   * of the browser's unstyled default. Optional — every other `Link`
+   * call site is unaffected. */
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
-export function Link({ to, children, className, 'aria-current': ariaCurrent, onClick }: LinkProps) {
+export function Link({ to, children, className, style, 'aria-current': ariaCurrent, onClick, onFocus, onBlur }: LinkProps) {
   const navigate = useNavigate();
   return (
     <a
       href={to}
       className={className}
+      style={style}
       aria-current={ariaCurrent}
+      onFocus={onFocus}
+      onBlur={onBlur}
       onClick={(event) => {
         // Plain left-click, no modifier keys held: intercept for client-side
         // navigation. Modifier-clicks (open in new tab, etc.) fall through

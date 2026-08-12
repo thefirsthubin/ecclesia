@@ -32,4 +32,22 @@ describe('TopBar', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Toggle navigation menu' }));
     expect(onToggleSidebar).toHaveBeenCalledTimes(1);
   });
+
+  /** `[UX Design Implementation]` Final UX Design Specification §19
+   * (Phase 2 shell verification) - on-brand focus outline, matching
+   * `Sidebar`'s nav links and `Button`. */
+  it('shows an on-brand focus outline on the sidebar toggle button', () => {
+    render(
+      <ThemeProvider>
+        <TopBar onToggleSidebar={jest.fn()} />
+      </ThemeProvider>,
+    );
+
+    const toggle = screen.getByRole('button', { name: 'Toggle navigation menu' });
+    fireEvent.focus(toggle);
+    expect(toggle).toHaveStyle({ outline: '2px solid #1F6F5B' });
+
+    fireEvent.blur(toggle);
+    expect(toggle).toHaveStyle({ outline: 'none' });
+  });
 });

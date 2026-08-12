@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useTheme } from '../ThemeProvider';
 import { Icon } from '../Icon';
 
@@ -15,9 +15,15 @@ export interface TopBarProps {
 /**
  * Web Admin's top navigation bar (Design System §3.1's "Top Navigation" +
  * "Page Header" + "Responsive Collapse"). A `<header>` landmark.
+ *
+ * `[UX Design Implementation]` Final UX Design Specification §19 (Phase 2
+ * shell verification) - the sidebar-toggle button now gets the same
+ * on-brand `border.focus` outline `Button` already uses, closing the
+ * same shell inconsistency `Sidebar`'s nav links were fixed for.
  */
 export function TopBar({ left, right, onToggleSidebar, testId }: TopBarProps) {
   const theme = useTheme();
+  const [toggleFocused, setToggleFocused] = useState(false);
 
   return (
     <header
@@ -38,7 +44,17 @@ export function TopBar({ left, right, onToggleSidebar, testId }: TopBarProps) {
             type="button"
             aria-label="Toggle navigation menu"
             onClick={onToggleSidebar}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: theme.spacing[2] }}
+            onFocus={() => setToggleFocused(true)}
+            onBlur={() => setToggleFocused(false)}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: theme.spacing[2],
+              borderRadius: theme.radius.sm,
+              outline: toggleFocused ? `2px solid ${theme.colors.border.focus}` : 'none',
+              outlineOffset: 1,
+            }}
           >
             <Icon name="menu" size="md" />
           </button>

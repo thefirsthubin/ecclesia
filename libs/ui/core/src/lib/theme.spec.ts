@@ -5,13 +5,13 @@ describe('buildTheme', () => {
   it('resolves light mode colors from lightPalette', () => {
     const theme = buildTheme('light');
     expect(theme.mode).toBe('light');
-    expect(theme.colors.surface.default).toBe('#FFFFFF');
+    expect(theme.colors.surface.default).toBe('#F8F9FA');
   });
 
   it('resolves dark mode colors from darkPalette', () => {
     const theme = buildTheme('dark');
     expect(theme.mode).toBe('dark');
-    expect(theme.colors.surface.default).toBe('#0A0A0A');
+    expect(theme.colors.surface.default).toBe('#14171A');
   });
 
   it('shares every non-color token table by identity across modes (Part 5.11 - only color is mode-dependent)', () => {

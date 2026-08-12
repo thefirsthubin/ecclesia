@@ -18,10 +18,19 @@ export interface ElevationStyle {
   opacity: number;
 }
 
+/**
+ * `[UX Design Implementation]` Final UX Design Specification §6 -
+ * levels 1/2 softened (lower opacity, wider blur) so elevation reads as
+ * a quiet lift rather than a heavy drop shadow: level 1 for transient
+ * floating surfaces (dropdown menus, tooltips, the command palette),
+ * level 2 for modals/toasts only. Level 0 (no shadow, border only) is
+ * now `Card`'s own default (`Card.tsx`) - the common case, not this
+ * scale's baseline exception.
+ */
 export const elevation = {
   0: { offsetX: 0, offsetY: 0, blur: 0, opacity: 0 },
-  1: { offsetX: 0, offsetY: 1, blur: 3, opacity: 0.12 },
-  2: { offsetX: 0, offsetY: 4, blur: 12, opacity: 0.16 },
+  1: { offsetX: 0, offsetY: 2, blur: 6, opacity: 0.08 },
+  2: { offsetX: 0, offsetY: 8, blur: 24, opacity: 0.12 },
 } satisfies Record<number, ElevationStyle>;
 
 export type ElevationLevel = keyof typeof elevation;

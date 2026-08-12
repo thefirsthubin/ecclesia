@@ -40,25 +40,33 @@ export const neutral = {
 export type NeutralStep = keyof typeof neutral;
 
 /**
- * Brand primary: a deep, warm teal-green (Part 5.2 - chosen to avoid both
- * "generic SaaS blue" and any single denomination's liturgical color
- * associations while still reading as calm and trustworthy). `default`
- * against white text is contrast-verified at ~5.18:1 (see tokens.spec.ts).
+ * Brand primary: a single restrained, muted deep green (`[UX Design
+ * Implementation]`, Final UX Design Specification §2/§3 - superseding
+ * the prior teal). Chosen to read as calm operational software rather
+ * than "generic SaaS teal" or overt religious theming - identity comes
+ * from restraint and consistency, not from the hue itself. `light.default`
+ * against white text is contrast-verified at 6.0:1 (see tokens.spec.ts);
+ * `dark.default` is deliberately darker than a naive "brighten for dark
+ * mode" default would be, specifically so it still holds white button
+ * text at >=4.5:1 even though nothing in this codebase currently renders
+ * dark mode (Design Spec's own "architecture should allow it later
+ * without a redesign" instruction - this is that architecture, kept
+ * internally consistent even while unused).
  */
 export const brand = {
   light: {
-    default: '#1B7A6E' as HexColor,
-    hover: '#166357' as HexColor,
-    active: '#124F46' as HexColor,
-    subtle: '#E3F3F0' as HexColor,
-    disabled: '#A9C9C4' as HexColor,
+    default: '#1F6F5B' as HexColor,
+    hover: '#185947' as HexColor,
+    active: '#12432F' as HexColor,
+    subtle: '#EAF4F0' as HexColor,
+    disabled: '#A9C4BC' as HexColor,
   },
   dark: {
-    default: '#2FA08F' as HexColor,
-    hover: '#3AB89F' as HexColor,
-    active: '#237A6D' as HexColor,
-    subtle: '#123832' as HexColor,
-    disabled: '#3D5B56' as HexColor,
+    default: '#2E7E68' as HexColor,
+    hover: '#266856' as HexColor,
+    active: '#1E5344' as HexColor,
+    subtle: '#17332B' as HexColor,
+    disabled: '#3A5650' as HexColor,
   },
 } as const;
 
@@ -74,6 +82,15 @@ export type StatusKey = 'success' | 'warning' | 'danger' | 'info' | 'neutral';
  * light tint that works on a white surface does not work on a near-black
  * one.
  */
+/**
+ * `strong` is a single, mode-independent value (Final UX Design
+ * Specification §2 - "colour communicates meaning, not decoration"):
+ * one solid-fill shade per status regardless of light/dark mode, each
+ * contrast-verified to hold white text at >=4.5:1 (tokens.spec.ts).
+ * `light`/`dark` are the soft-badge tint pairs - `foreground` is tested
+ * against its own `background`, never against white, so these can (and
+ * for dark mode, must) sit at a different lightness than `strong`.
+ */
 export const status: Record<
   StatusKey,
   {
@@ -83,27 +100,27 @@ export const status: Record<
   }
 > = {
   success: {
-    strong: '#1E7E4D',
-    light: { background: '#E6F6ED', foreground: '#14532D', border: '#8FD9AE' },
-    dark: { background: '#123822', foreground: '#8FE0B0', border: '#1E5C38' },
+    strong: '#157A52',
+    light: { background: '#E7F5EE', foreground: '#0F5C3E', border: '#A8DDC4' },
+    dark: { background: '#132A1F', foreground: '#7FCBA6', border: '#215239' },
   },
   warning: {
-    // Deliberately a deep amber/ochre, not a bright yellow (Part 5.10) -
-    // darkened specifically so white text on the `strong` fill still
-    // clears 4.5:1 (a bright/light amber cannot do this against white).
+    // Unchanged from the prior palette - already a deep amber/ochre that
+    // clears 4.5:1 for white `strong`-fill text (Design Spec §2: "your
+    // original reference fails; reuse this already-verified value").
     strong: '#8A5A00',
     light: { background: '#FBF0DC', foreground: '#5C3D00', border: '#E8C57A' },
-    dark: { background: '#3A2B05', foreground: '#F0C572', border: '#5C4413' },
+    dark: { background: '#332707', foreground: '#E0B45B', border: '#5C4413' },
   },
   danger: {
-    strong: '#B3261E',
-    light: { background: '#FBEAE9', foreground: '#7A1812', border: '#E8A6A1' },
-    dark: { background: '#3A1512', foreground: '#F5A9A3', border: '#5C231D' },
+    strong: '#C24141',
+    light: { background: '#FBEAEA', foreground: '#8A2F2F', border: '#E8ABAB' },
+    dark: { background: '#301616', foreground: '#E29A9A', border: '#5C2626' },
   },
   info: {
-    strong: '#1554A0',
-    light: { background: '#E8F0FB', foreground: '#123A6B', border: '#A9C8EC' },
-    dark: { background: '#12233A', foreground: '#9CC4F0', border: '#1F3A5C' },
+    strong: '#3B6EA5',
+    light: { background: '#E8F0FA', foreground: '#204A73', border: '#AFC9E5' },
+    dark: { background: '#16263A', foreground: '#8FB4D6', border: '#264260' },
   },
   neutral: {
     strong: neutral[600],
@@ -127,10 +144,10 @@ export const status: Record<
 export type ChurchPulseBandKey = 'thriving' | 'healthy' | 'attention' | 'atRisk';
 
 export const churchPulse: Record<ChurchPulseBandKey, HexColor> = {
-  thriving: '#1B7A6E', // reuses brand.light.default - a thriving score IS the brand-healthy state
+  thriving: '#1F6F5B', // reuses brand.light.default - a thriving score IS the brand-healthy state
   healthy: '#4C9A6A',
   attention: '#C98A1F',
-  atRisk: '#B3261E', // reuses status.danger.strong
+  atRisk: '#C24141', // reuses status.danger.strong
 };
 
 export interface ChurchPulseBand {
@@ -187,19 +204,31 @@ function resolveStatus(mode: 'light' | 'dark'): SemanticColorTokens['status'] {
   return Object.fromEntries(entries) as SemanticColorTokens['status'];
 }
 
+/**
+ * `[UX Design Implementation]` Final UX Design Specification §2/§3/§17 -
+ * these five categories (`surface`/`text`/`border`) are now authored as
+ * literal, individually contrast-verified hex values rather than points
+ * picked off the generic `neutral` ramp - the exact restrained-neutral
+ * palette (off-white background, white cards, charcoal-navy text,
+ * strengthened-but-still-subtle borders) doesn't land evenly on a
+ * general-purpose gray scale, and nothing outside this file reads
+ * `neutral[N]` directly (confirmed by a workspace-wide search before this
+ * change), so the ramp itself is left untouched for whatever future use
+ * still wants a plain gray step.
+ */
 export const lightPalette: SemanticColorTokens = {
-  surface: { default: neutral[0], raised: neutral[0], overlay: 'rgba(10, 10, 10, 0.5)' },
-  text: { primary: neutral[900], secondary: neutral[600], disabled: neutral[400], inverse: neutral[0] },
-  border: { default: neutral[300], subtle: neutral[200], focus: brand.light.default },
+  surface: { default: '#F8F9FA', raised: '#FFFFFF', overlay: 'rgba(10, 10, 10, 0.5)' },
+  text: { primary: '#172026', secondary: '#5B6472', disabled: '#98A2AF', inverse: neutral[0] },
+  border: { default: '#C4CAD1', subtle: '#EDEEF1', focus: brand.light.default },
   brand: brand.light,
   status: resolveStatus('light'),
   churchPulse,
 };
 
 export const darkPalette: SemanticColorTokens = {
-  surface: { default: neutral[950], raised: neutral[900], overlay: 'rgba(0, 0, 0, 0.6)' },
-  text: { primary: neutral[50], secondary: neutral[300], disabled: neutral[600], inverse: neutral[900] },
-  border: { default: neutral[700], subtle: neutral[800], focus: brand.dark.default },
+  surface: { default: '#14171A', raised: '#1B1F23', overlay: 'rgba(0, 0, 0, 0.6)' },
+  text: { primary: '#EDEFF1', secondary: '#A2ABB5', disabled: '#6B7480', inverse: '#14171A' },
+  border: { default: '#333A41', subtle: '#262B30', focus: brand.dark.default },
   brand: brand.dark,
   status: resolveStatus('dark'),
   churchPulse,

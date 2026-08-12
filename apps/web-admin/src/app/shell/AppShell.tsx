@@ -8,22 +8,12 @@ import { useAuth } from '../auth/AuthContext';
 import { apiGet } from '../lib/api-client';
 import { useAsyncData } from '../lib/useAsyncData';
 import { navItemsForRole, roleLabel } from './nav-items';
-import { PillNav } from './PillNav';
 
 export interface AppShellProps {
   children: ReactNode;
   breadcrumbs: BreadcrumbItem[];
   /** Open alerts to show in the notification bell - `undefined` while the current page has none to report (most stub pages). */
   notifications?: AlertResponseDto[];
-  /**
-   * `[Dashboard Redesign sprint, reference-image iteration]` `'sidebar'`
-   * (default) is unchanged, existing behavior - every page but the
-   * dashboard keeps the persistent sidebar. `'pill'` is a deliberate,
-   * page-scoped exception: a top pill nav instead of the sidebar,
-   * requested specifically for the dashboard (see
-   * `DASHBOARD_REDESIGN_NOTES.md`) rather than a sitewide nav redesign.
-   */
-  navVariant?: 'sidebar' | 'pill';
 }
 
 /**
@@ -32,8 +22,19 @@ export interface AppShellProps {
  * router/auth state. STEP 8 (a11y): a skip-link precedes everything so
  * keyboard/screen-reader users can bypass the nav on every page, and the
  * page content is wrapped in a `<main>` landmark.
+ *
+ * `[UX Design Implementation]` Final UX Design Specification §12
+ * (decision 1) - the Dashboard's separate top "pill nav" (`PillNav.tsx`,
+ * removed) is retired. Every route, Dashboard included, now renders the
+ * one persistent-sidebar + breadcrumb-top-bar grammar below - the
+ * `navVariant` prop this component used to branch on is gone entirely,
+ * not merely defaulted, since nothing should ever request the pill
+ * variant again. This directly resolves the prior UX audit's "two
+ * navigation grammars" finding: previously the very first screen most
+ * personas landed on (`/dashboard`) used a different nav pattern, no
+ * breadcrumb, and no page title, than every other route.
  */
-export function AppShell({ children, breadcrumbs, notifications = [], navVariant = 'sidebar' }: AppShellProps) {
+export function AppShell({ children, breadcrumbs, notifications = [] }: AppShellProps) {
   const theme = useTheme();
   const { state, logout } = useAuth();
   const { path } = useLocation();
@@ -109,8 +110,8 @@ export function AppShell({ children, breadcrumbs, notifications = [], navVariant
     active: path === item.href,
   }));
 
-  // Same `navItemsForRole` data `Sidebar`/`PillNav` already render - no
-  // second nav taxonomy to keep in sync. `onSelect` calls the router
+  // Same `navItemsForRole` data `Sidebar` already renders - no second
+  // nav taxonomy to keep in sync. `onSelect` calls the router
   // directly rather than rendering an `<a>` inside the palette, since
   // `CommandItem` is a plain callback, not a link-shaped prop.
   const paletteItems: CommandItem[] = items.map((item) => ({
@@ -166,28 +167,12 @@ export function AppShell({ children, breadcrumbs, notifications = [], navVariant
     </a>
   );
 
-  // `[Product Experience Sprint I]` Rendered once, shared by both nav
-  // variants below - `CommandPalette` portals to `document.body` itself
-  // (`createPortal`, same as `Modal`/`Drawer`), so its position in this
-  // tree doesn't affect layout either way.
+  // `[Product Experience Sprint I]` `CommandPalette` portals to
+  // `document.body` itself (`createPortal`, same as `Modal`/`Drawer`), so
+  // its position in this tree doesn't affect layout.
   const commandPalette = (
     <CommandPalette isOpen={isPaletteOpen} onClose={() => setIsPaletteOpen(false)} items={paletteItems} testId="command-palette" />
   );
-
-  if (navVariant === 'pill') {
-    return (
-      <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
-        {skipLink}
-        {commandPalette}
-        <div style={{ padding: `${theme.spacing[5]}px ${theme.spacing[6]}px ${theme.spacing[3]}px` }}>
-          <PillNav items={items} linkAs={Link} rightSlot={identitySlot} />
-        </div>
-        <main id="main-content" style={{ flex: 1, padding: `0 ${theme.spacing[6]}px ${theme.spacing[6]}px` }}>
-          {children}
-        </main>
-      </div>
-    );
-  }
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>

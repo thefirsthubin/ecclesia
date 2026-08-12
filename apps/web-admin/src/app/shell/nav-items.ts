@@ -9,6 +9,28 @@ import type { IconName } from '@ecclesia/ui-core';
  * brief's own approximate nav list, which put Attendance/Follow-up at the
  * top level; the Design System places those as domain sub-nav instead.)
  *
+ * `[UX Design Implementation]` Final UX Design Specification §12/§22
+ * (decision 9) — an **Administration** group now sits below the flat
+ * operational list, holding `Configuration` (moved, not renamed) and
+ * `Audit Log` (new — previously reachable only by typing `/audit-log`
+ * directly, per the earlier Cross-Persona Dashboards audit's own
+ * finding). `Audit Log`'s `roles` list is traced against
+ * `permission-matrix.ts`'s real `platform.audit_log.read` rows, not
+ * assumed: `RESIDENT_PASTOR`/`ACTING_RESIDENT_PASTOR` (BRANCH — the
+ * latter inherits every `RESIDENT_PASTOR` rule via
+ * `ACTING_RESIDENT_PASTOR_RULES`, confirmed in `permission-matrix.ts`),
+ * `TREASURER` (BRANCH, server-filtered to Stewardship entries),
+ * `ADMIN` (BRANCH, full). `ASSISTANT_PASTOR`/`BACENTA_LEADER` hold a real
+ * matrix row each but are structurally unreachable (no `bacentaId`
+ * column on `platform.audit_log` for CLUSTER/OWN_GROUP to ever match,
+ * traced and live-verified in the Audit Log milestone) — omitted from
+ * this visibility list for the same reason `people.group.read`-CLUSTER
+ * gaps already keep other dead-end items out of other roles' nav
+ * elsewhere in this file, not a new rule invented here. This is
+ * client-side *visibility* only — `RbacGuard` remains the sole
+ * authorization authority; a role missing from `roles` below still gets
+ * the real backend's real 403 if it reaches the route directly.
+ *
  * `[Design Decision]` icon choices — the Design System names the nav
  * items but not their icons.
  */
@@ -18,6 +40,11 @@ export interface NavItemConfig {
   icon: IconName;
   /** Roles allowed to see this item. `undefined` = every authenticated role. */
   roles?: RoleDto[];
+  /** `[UX Design Implementation]` Final UX Design Specification §12 — items
+   * sharing a `group` render together under one heading in the sidebar,
+   * separated from the flat operational list above them. Omit for the
+   * ungrouped main section. */
+  group?: string;
 }
 
 export const NAV_ITEMS: NavItemConfig[] = [
@@ -32,17 +59,44 @@ export const NAV_ITEMS: NavItemConfig[] = [
   // only)". `COUNCIL_OVERSEER` is this codebase's "Council Administrator"
   // role name (`libs/rbac/src/lib/roles.ts`'s own doc comment: "Council
   // Overseer is a Horizon 3 role" — included for completeness).
-  { label: 'Configuration', href: '/configuration', icon: 'settings', roles: ['ADMIN', 'COUNCIL_OVERSEER'] },
+  {
+    label: 'Configuration',
+    href: '/configuration',
+    icon: 'settings',
+    roles: ['ADMIN', 'COUNCIL_OVERSEER'],
+    group: 'Administration',
+  },
+  {
+    label: 'Audit Log',
+    href: '/audit-log',
+    icon: 'history',
+    roles: ['RESIDENT_PASTOR', 'ACTING_RESIDENT_PASTOR', 'TREASURER', 'ADMIN'],
+    group: 'Administration',
+  },
 ];
 
 export function navItemsForRole(role: RoleDto): NavItemConfig[] {
   return NAV_ITEMS.filter((item) => !item.roles || item.roles.includes(role));
 }
 
+/**
+ * `[UX Design Implementation]` Final UX Design Specification §18
+ * (decisions 2 & 3) — the approved, final user-facing terminology.
+ * `ADMIN` → "Super Administrator", `COUNCIL_OVERSEER` → "Council
+ * Administrator" (previously ambiguous — both this role and `ADMIN`'s
+ * own dashboard were informally called "Council Administrator"
+ * somewhere in this codebase's comments; that ambiguity is resolved by
+ * this rule, not by picking a winner: the label now means
+ * `COUNCIL_OVERSEER`, and only `COUNCIL_OVERSEER`, everywhere it
+ * appears). `ASSISTANT_PASTOR` → "Branch Pastor", replacing "Assistant
+ * Pastor" as the primary product-facing label. Technical identifiers are
+ * unchanged in code, RBAC rows, and logs — this is a presentation-layer
+ * rule only, per the decision's own explicit scope.
+ */
 const ROLE_LABELS: Record<RoleDto, string> = {
   RESIDENT_PASTOR: 'Resident Pastor',
   ACTING_RESIDENT_PASTOR: 'Acting Resident Pastor',
-  ASSISTANT_PASTOR: 'Assistant Pastor',
+  ASSISTANT_PASTOR: 'Branch Pastor',
   BACENTA_LEADER: 'Bacenta Leader',
   BASONTA_LEADER: 'Basonta Leader',
   TREASURER: 'Treasurer',
@@ -50,8 +104,8 @@ const ROLE_LABELS: Record<RoleDto, string> = {
   USHER: 'Usher',
   MEMBER: 'Member',
   VISITOR: 'Visitor',
-  ADMIN: 'Admin',
-  COUNCIL_OVERSEER: 'Council Overseer',
+  ADMIN: 'Super Administrator',
+  COUNCIL_OVERSEER: 'Council Administrator',
 };
 
 export function roleLabel(role: RoleDto): string {

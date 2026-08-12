@@ -61,4 +61,43 @@ describe('Table', () => {
     fireEvent.click(screen.getByLabelText('Select all rows'));
     expect(onSelectionChange).toHaveBeenCalledWith(new Set(['p1', 'p2']));
   });
+
+  describe('expandable row detail', () => {
+    it('renders a full-width detail row only beneath the row isRowExpanded matches', () => {
+      render(
+        <Table
+          columns={COLUMNS}
+          data={PEOPLE}
+          getRowId={(row) => row.id}
+          isRowExpanded={(row) => row.id === 'p1'}
+          renderRowDetail={(row) => <span>{`Escalate form for ${row.name}`}</span>}
+        />,
+      );
+      expect(screen.getByText('Escalate form for Ama Owusu')).toBeInTheDocument();
+      expect(screen.queryByText('Escalate form for Kofi Mensah')).not.toBeInTheDocument();
+    });
+
+    it('spans every column via colSpan, including the selection checkbox column', () => {
+      render(
+        <Table
+          columns={COLUMNS}
+          data={PEOPLE}
+          getRowId={(row) => row.id}
+          selectedIds={new Set()}
+          onSelectionChange={jest.fn()}
+          isRowExpanded={(row) => row.id === 'p1'}
+          renderRowDetail={() => <span>Detail</span>}
+        />,
+      );
+      const detailCell = screen.getByText('Detail').closest('td');
+      expect(detailCell).toHaveAttribute('colSpan', '3');
+    });
+
+    it('renders no detail row at all when isRowExpanded is never true', () => {
+      render(
+        <Table columns={COLUMNS} data={PEOPLE} getRowId={(row) => row.id} isRowExpanded={() => false} renderRowDetail={() => <span>Detail</span>} />,
+      );
+      expect(screen.queryByText('Detail')).not.toBeInTheDocument();
+    });
+  });
 });

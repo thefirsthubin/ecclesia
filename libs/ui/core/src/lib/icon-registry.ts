@@ -102,6 +102,25 @@ export const ICON_REGISTRY = {
   church: 'Church',
   heart: 'Heart',
   userCheck: 'UserCheck',
+  /** `[UX Design Implementation]` Added for `apps/web-admin`'s new Audit
+   * Log sidebar entry (Administration group) - no existing entry reads as
+   * "a chronological record of past events" (`clock`/`clipboardList` are
+   * already the Gatherings/Follow-ups icons elsewhere). Same "no existing
+   * entry close enough in meaning" reasoning as every prior addition
+   * above; confirmed present as `History` in both `lucide-react` and
+   * `lucide-react-native` (both pinned to `1.28.0`) before adding. */
+  history: 'History',
+  /** `[UX Design Implementation]` Final UX Design Specification §19
+   * (Phase 3 People workflow UI) - Person Detail's Overview tab labels
+   * its phone/email/address rows with these rather than plain unlabeled
+   * text, so a screen reader / at-a-glance scan doesn't have to guess
+   * which contact field is which. No existing entry reads as any of the
+   * three; confirmed present as `Phone`/`Mail`/`MapPin` in both
+   * `lucide-react` and `lucide-react-native` (both pinned to `1.28.0`)
+   * before adding. */
+  phone: 'Phone',
+  mail: 'Mail',
+  mapPin: 'MapPin',
 } as const;
 
 export type IconName = keyof typeof ICON_REGISTRY;
