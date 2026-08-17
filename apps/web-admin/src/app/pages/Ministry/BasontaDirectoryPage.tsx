@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Badge, Button, Card, ErrorState, Heading, Input, Select, Table, Text, useTheme } from '@ecclesia/ui-web';
+import { Badge, Button, Card, ErrorState, Heading, Input, PageContainer, Select, Table, Text, useTheme } from '@ecclesia/ui-web';
 import type { TableColumn } from '@ecclesia/ui-web';
 import { GROUP_LIFECYCLE_STATUS_VALUES } from '@ecclesia/contracts';
 import type { GroupLifecycleStatusDto, GroupResponseDto, GroupTypeDto } from '@ecclesia/contracts';
@@ -217,123 +217,125 @@ export function BasontaDirectoryPage() {
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4], maxWidth: 900 }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
-        <Heading level={1}>Ministry</Heading>
-        {/* `[Bug fix]` Same "+ Create X" trigger convention every other
-            domain this phase already follows (Pastoral Care/Gatherings) -
-            `secondary`, not `primary`, so it never competes with a form's
-            own primary "Confirm create" action once opened. */}
-        {!createOpen && (
-          <Button variant="secondary" size="sm" onClick={openCreate} accessibilityLabel="Create Group">
-            + Create Group
-          </Button>
+    <PageContainer maxWidth={900}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
+          <Heading level={1}>Ministry</Heading>
+          {/* `[Bug fix]` Same "+ Create X" trigger convention every other
+              domain this phase already follows (Pastoral Care/Gatherings) -
+              `secondary`, not `primary`, so it never competes with a form's
+              own primary "Confirm create" action once opened. */}
+          {!createOpen && (
+            <Button variant="secondary" size="sm" onClick={openCreate} accessibilityLabel="Create Group">
+              + Create Group
+            </Button>
+          )}
+        </div>
+
+        {/* `[Group CRUD milestone]` Always offered, no client-side role
+            check - traced against the real matrix, not assumed: only
+            `RESIDENT_PASTOR`/`ADMIN` hold `people.group.create` at all
+            (BRANCH scope, no CLUSTER/OWN_GROUP create grant exists), so
+            every other role that could even reach this page (none do - see
+            this file's own doc comment) would 403 anyway. The backend's
+            real response is what the caller sees. */}
+        {createOpen && (
+          <Card padding={6} testId="group-create-form">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+              <Select
+                label="Type"
+                value={createType}
+                onChange={(event) => setCreateType(event.target.value as GroupTypeDto)}
+                options={[
+                  { value: 'PASTORAL_CARE', label: 'Bacenta' },
+                  { value: 'MINISTRY', label: 'Basonta' },
+                ]}
+              />
+              <Input label="Name" value={createName} onChange={(event) => setCreateName(event.target.value)} placeholder="e.g. Grace Bacenta" />
+              <Input
+                label="Meeting schedule (optional)"
+                value={createMeetingSchedule}
+                onChange={(event) => setCreateMeetingSchedule(event.target.value)}
+                placeholder="e.g. Sundays 9am"
+              />
+              <Input
+                label="Meeting location (optional)"
+                value={createMeetingLocation}
+                onChange={(event) => setCreateMeetingLocation(event.target.value)}
+                placeholder="e.g. Main Auditorium"
+              />
+              <Input label="Category (optional)" value={createCategory} onChange={(event) => setCreateCategory(event.target.value)} placeholder="e.g. Technical" />
+              {createError && (
+                <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
+                  {createError}
+                </Text>
+              )}
+              <div style={{ display: 'flex', gap: theme.spacing[2] }}>
+                <Button variant="primary" size="sm" disabled={!createName.trim()} loading={createSubmitting} onClick={() => void submitCreate()}>
+                  Confirm create
+                </Button>
+                <Button variant="secondary" size="sm" onClick={cancelCreate}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {directoryState.status === 'loading' && (
+          <Card padding={6}>
+            <Table testId="basonta-directory-table" columns={columns} data={[]} getRowId={(group) => group.id} loading />
+          </Card>
+        )}
+
+        {directoryState.status === 'error' && (
+          <Card padding={6}>
+            <ErrorState title="Couldn't load the Group directory" onRetry={directoryState.refetch} />
+          </Card>
+        )}
+
+        {directoryState.status === 'success' && (
+          <Card padding={6} testId="basonta-directory-card">
+            <Table
+              testId="basonta-directory-table"
+              columns={columns}
+              data={directoryState.data}
+              getRowId={(group) => group.id}
+              isRowExpanded={(group) => editingId === group.id}
+              renderRowDetail={() => (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }} data-testid="group-edit-form">
+                  <Input label="Name" value={editName} onChange={(event) => setEditName(event.target.value)} />
+                  <Input label="Meeting schedule (optional)" value={editMeetingSchedule} onChange={(event) => setEditMeetingSchedule(event.target.value)} />
+                  <Input label="Meeting location (optional)" value={editMeetingLocation} onChange={(event) => setEditMeetingLocation(event.target.value)} />
+                  <Input label="Category (optional)" value={editCategory} onChange={(event) => setEditCategory(event.target.value)} />
+                  <Select
+                    label="Status"
+                    value={editLifecycleStatus}
+                    onChange={(event) => setEditLifecycleStatus(event.target.value as GroupLifecycleStatusDto)}
+                    options={GROUP_LIFECYCLE_STATUS_VALUES.map((status) => ({ value: status, label: LIFECYCLE_STATUS_LABEL[status] }))}
+                  />
+                  {editError && (
+                    <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
+                      {editError}
+                    </Text>
+                  )}
+                  <div style={{ display: 'flex', gap: theme.spacing[2] }}>
+                    <Button variant="primary" size="sm" disabled={!editName.trim()} loading={editSubmitting} onClick={() => void submitEdit()}>
+                      Save
+                    </Button>
+                    <Button variant="secondary" size="sm" onClick={cancelEdit}>
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              )}
+              emptyIcon="church"
+              emptyTitle="No Groups yet"
+              emptyDescription="No Bacentas or Basontas have been created in your Branch."
+            />
+          </Card>
         )}
       </div>
-
-      {/* `[Group CRUD milestone]` Always offered, no client-side role
-          check - traced against the real matrix, not assumed: only
-          `RESIDENT_PASTOR`/`ADMIN` hold `people.group.create` at all
-          (BRANCH scope, no CLUSTER/OWN_GROUP create grant exists), so
-          every other role that could even reach this page (none do - see
-          this file's own doc comment) would 403 anyway. The backend's
-          real response is what the caller sees. */}
-      {createOpen && (
-        <Card padding={6} testId="group-create-form">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            <Select
-              label="Type"
-              value={createType}
-              onChange={(event) => setCreateType(event.target.value as GroupTypeDto)}
-              options={[
-                { value: 'PASTORAL_CARE', label: 'Bacenta' },
-                { value: 'MINISTRY', label: 'Basonta' },
-              ]}
-            />
-            <Input label="Name" value={createName} onChange={(event) => setCreateName(event.target.value)} placeholder="e.g. Grace Bacenta" />
-            <Input
-              label="Meeting schedule (optional)"
-              value={createMeetingSchedule}
-              onChange={(event) => setCreateMeetingSchedule(event.target.value)}
-              placeholder="e.g. Sundays 9am"
-            />
-            <Input
-              label="Meeting location (optional)"
-              value={createMeetingLocation}
-              onChange={(event) => setCreateMeetingLocation(event.target.value)}
-              placeholder="e.g. Main Auditorium"
-            />
-            <Input label="Category (optional)" value={createCategory} onChange={(event) => setCreateCategory(event.target.value)} placeholder="e.g. Technical" />
-            {createError && (
-              <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
-                {createError}
-              </Text>
-            )}
-            <div style={{ display: 'flex', gap: theme.spacing[2] }}>
-              <Button variant="primary" size="sm" disabled={!createName.trim()} loading={createSubmitting} onClick={() => void submitCreate()}>
-                Confirm create
-              </Button>
-              <Button variant="secondary" size="sm" onClick={cancelCreate}>
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </Card>
-      )}
-
-      {directoryState.status === 'loading' && (
-        <Card padding={6}>
-          <Table testId="basonta-directory-table" columns={columns} data={[]} getRowId={(group) => group.id} loading />
-        </Card>
-      )}
-
-      {directoryState.status === 'error' && (
-        <Card padding={6}>
-          <ErrorState title="Couldn't load the Group directory" onRetry={directoryState.refetch} />
-        </Card>
-      )}
-
-      {directoryState.status === 'success' && (
-        <Card padding={6} testId="basonta-directory-card">
-          <Table
-            testId="basonta-directory-table"
-            columns={columns}
-            data={directoryState.data}
-            getRowId={(group) => group.id}
-            isRowExpanded={(group) => editingId === group.id}
-            renderRowDetail={() => (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }} data-testid="group-edit-form">
-                <Input label="Name" value={editName} onChange={(event) => setEditName(event.target.value)} />
-                <Input label="Meeting schedule (optional)" value={editMeetingSchedule} onChange={(event) => setEditMeetingSchedule(event.target.value)} />
-                <Input label="Meeting location (optional)" value={editMeetingLocation} onChange={(event) => setEditMeetingLocation(event.target.value)} />
-                <Input label="Category (optional)" value={editCategory} onChange={(event) => setEditCategory(event.target.value)} />
-                <Select
-                  label="Status"
-                  value={editLifecycleStatus}
-                  onChange={(event) => setEditLifecycleStatus(event.target.value as GroupLifecycleStatusDto)}
-                  options={GROUP_LIFECYCLE_STATUS_VALUES.map((status) => ({ value: status, label: LIFECYCLE_STATUS_LABEL[status] }))}
-                />
-                {editError && (
-                  <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
-                    {editError}
-                  </Text>
-                )}
-                <div style={{ display: 'flex', gap: theme.spacing[2] }}>
-                  <Button variant="primary" size="sm" disabled={!editName.trim()} loading={editSubmitting} onClick={() => void submitEdit()}>
-                    Save
-                  </Button>
-                  <Button variant="secondary" size="sm" onClick={cancelEdit}>
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            )}
-            emptyIcon="church"
-            emptyTitle="No Groups yet"
-            emptyDescription="No Bacentas or Basontas have been created in your Branch."
-          />
-        </Card>
-      )}
-    </div>
+    </PageContainer>
   );
 }

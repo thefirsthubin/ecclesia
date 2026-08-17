@@ -1,4 +1,4 @@
-import { Badge, Card, Divider, EmptyState, ErrorState, Heading, Icon, SampleDataBadge, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
+import { Badge, Card, Divider, EmptyState, ErrorState, Heading, Icon, PageContainer, SampleDataBadge, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
 import type { PersonResponseDto } from '@ecclesia/contracts';
 
 import { useAuth } from '../../auth/AuthContext';
@@ -94,149 +94,151 @@ export function FinanceOfficerDashboard() {
   const attentionLoading = recordedCount === undefined || flaggedCount === undefined || pendingExpenseCount === undefined;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5], maxWidth: 1280 }}>
-      <DashboardHeader displayName={displayName} openAlertCount={flaggedCount ?? 0} branchName={branchName} />
+    <PageContainer maxWidth={1280}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5] }}>
+        <DashboardHeader displayName={displayName} openAlertCount={flaggedCount ?? 0} branchName={branchName} />
 
-      <Card padding={6} testId="finance-needs-attention-card">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-          <Heading level={3}>Needs your attention</Heading>
-          {attentionLoading ? (
-            <Skeleton height={20} />
-          ) : attentionItems.length === 0 ? (
-            <EmptyState icon="checkCircle" title="Nothing pending" description="Every transaction is verified and every expense request is settled." tone="positive" />
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-              {attentionItems.map((item, index) => (
-                <div key={item.id}>
-                  {index > 0 && <Divider />}
-                  <button
-                    type="button"
-                    onClick={() => navigate('/stewardship')}
-                    style={{
-                      width: '100%',
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: `${index > 0 ? theme.spacing[3] : 0}px 0 0`,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: theme.spacing[3],
-                      textAlign: 'left',
-                      font: 'inherit',
-                    }}
-                  >
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
-                      <Text variant="bodySmall">{item.label}</Text>
-                      <Text variant="caption" color={theme.colors.text.secondary}>
-                        {item.caption}
-                      </Text>
-                    </div>
-                    <Badge status={item.status}>{item.count}</Badge>
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </Card>
-
-      <Card padding={6} testId="offering-summary-card">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: theme.spacing[3] }}>
-          <div>
-            <Heading level={3}>Offering summary</Heading>
-            <Text variant="bodySmall" color={theme.colors.text.secondary}>
-              Total of Verified + Reconciled Financial Transactions currently in scope
-            </Text>
-            {reconciliationRate !== undefined && (
-              <Text variant="caption" color={theme.colors.text.secondary}>
-                {`${reconciliationRate}% reconciled (${reconciledCount ?? 0} of ${transactionsState.status === 'success' ? transactionsState.data.length : 0})`}
-              </Text>
-            )}
-          </div>
-          {verifiedTotalMinor === undefined ? (
-            <Skeleton height={40} width={140} />
-          ) : (
-            <Heading level="display" color={theme.colors.brand.default}>
-              {formatAmountMinor(String(verifiedTotalMinor), 'GHS')}
-            </Heading>
-          )}
-        </div>
-      </Card>
-
-      <div style={{ display: 'grid', gridTemplateColumns: isNarrow ? '1fr' : 'minmax(0, 1fr) minmax(0, 1fr)', gap: theme.spacing[4] }}>
-        <TrendCard title="Monthly trends" subtitle="Giving, last 6 months" series={buildGrowthSeries().giving} color={theme.colors.status.warning.strong} kind="bar" formatValue={(v) => `GHS ${v.toLocaleString()}`} testId="finance-monthly-trend" />
-
-        <Card padding={6} testId="financial-alerts-card">
+        <Card padding={6} testId="finance-needs-attention-card">
           <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
-              <Heading level={3}>Financial alerts</Heading>
-              <SampleDataBadge testId="financial-alerts-sample-badge" />
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-              {DEMO_FINANCIAL_HIGHLIGHTS.map((item, index) => (
-                <div key={item.id}>
-                  {index > 0 && <Divider />}
-                  <div style={{ paddingTop: index > 0 ? theme.spacing[3] : 0, display: 'flex', alignItems: 'center', gap: theme.spacing[3] }}>
-                    {/* `[Dashboard Visual Redesign]` Icon-in-tinted-circle -
-                        same row treatment as `UpcomingEventsTimeline`/
-                        `RecentActivityTimeline`, applied in place. */}
-                    <div
-                      aria-hidden
+            <Heading level={3}>Needs your attention</Heading>
+            {attentionLoading ? (
+              <Skeleton height={20} />
+            ) : attentionItems.length === 0 ? (
+              <EmptyState icon="checkCircle" title="Nothing pending" description="Every transaction is verified and every expense request is settled." tone="positive" />
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+                {attentionItems.map((item, index) => (
+                  <div key={item.id}>
+                    {index > 0 && <Divider />}
+                    <button
+                      type="button"
+                      onClick={() => navigate('/stewardship')}
                       style={{
+                        width: '100%',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: `${index > 0 ? theme.spacing[3] : 0}px 0 0`,
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        width: 36,
-                        height: 36,
-                        flexShrink: 0,
-                        borderRadius: theme.radius.full,
-                        backgroundColor: item.tone === 'success' ? theme.colors.status.success.background : theme.colors.status.warning.background,
+                        justifyContent: 'space-between',
+                        gap: theme.spacing[3],
+                        textAlign: 'left',
+                        font: 'inherit',
                       }}
                     >
-                      <Icon name={item.icon} size="sm" color={item.tone === 'success' ? theme.colors.status.success.strong : theme.colors.status.warning.strong} />
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1], flex: 1 }}>
-                      <Text variant="bodySmall">{item.description}</Text>
-                      <Text variant="caption" color={theme.colors.text.secondary}>
-                        {hoursAgoLabel(item.hoursAgo)}
-                      </Text>
-                    </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
+                        <Text variant="bodySmall">{item.label}</Text>
+                        <Text variant="caption" color={theme.colors.text.secondary}>
+                          {item.caption}
+                        </Text>
+                      </div>
+                      <Badge status={item.status}>{item.count}</Badge>
+                    </button>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </Card>
-      </div>
 
-      {expensesState.status === 'success' && expensesState.data.filter((e) => e.currentState === 'REQUESTED').length > 0 && (
-        <Card padding={6} testId="pending-expenses-card">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            <Heading level={3}>Pending expense requests</Heading>
+        <Card padding={6} testId="offering-summary-card">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: theme.spacing[3] }}>
+            <div>
+              <Heading level={3}>Offering summary</Heading>
+              <Text variant="bodySmall" color={theme.colors.text.secondary}>
+                Total of Verified + Reconciled Financial Transactions currently in scope
+              </Text>
+              {reconciliationRate !== undefined && (
+                <Text variant="caption" color={theme.colors.text.secondary}>
+                  {`${reconciliationRate}% reconciled (${reconciledCount ?? 0} of ${transactionsState.status === 'success' ? transactionsState.data.length : 0})`}
+                </Text>
+              )}
+            </div>
+            {verifiedTotalMinor === undefined ? (
+              <Skeleton height={40} width={140} />
+            ) : (
+              <Heading level="display" color={theme.colors.brand.default}>
+                {formatAmountMinor(String(verifiedTotalMinor), 'GHS')}
+              </Heading>
+            )}
+          </div>
+        </Card>
+
+        <div style={{ display: 'grid', gridTemplateColumns: isNarrow ? '1fr' : 'minmax(0, 1fr) minmax(0, 1fr)', gap: theme.spacing[4] }}>
+          <TrendCard title="Monthly trends" subtitle="Giving, last 6 months" series={buildGrowthSeries().giving} color={theme.colors.status.warning.strong} kind="bar" formatValue={(v) => `GHS ${v.toLocaleString()}`} testId="finance-monthly-trend" />
+
+          <Card padding={6} testId="financial-alerts-card">
             <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-              {expensesState.data
-                .filter((e) => e.currentState === 'REQUESTED')
-                .slice(0, 5)
-                .map((expense, index) => (
-                  <div key={expense.id}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
+                <Heading level={3}>Financial alerts</Heading>
+                <SampleDataBadge testId="financial-alerts-sample-badge" />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+                {DEMO_FINANCIAL_HIGHLIGHTS.map((item, index) => (
+                  <div key={item.id}>
                     {index > 0 && <Divider />}
-                    <div style={{ paddingTop: index > 0 ? theme.spacing[3] : 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <Text variant="bodySmall">{expense.description}</Text>
-                      <Badge status="info">{formatAmountMinor(expense.amountMinor, expense.currency)}</Badge>
+                    <div style={{ paddingTop: index > 0 ? theme.spacing[3] : 0, display: 'flex', alignItems: 'center', gap: theme.spacing[3] }}>
+                      {/* `[Dashboard Visual Redesign]` Icon-in-tinted-circle -
+                          same row treatment as `UpcomingEventsTimeline`/
+                          `RecentActivityTimeline`, applied in place. */}
+                      <div
+                        aria-hidden
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: 36,
+                          height: 36,
+                          flexShrink: 0,
+                          borderRadius: theme.radius.full,
+                          backgroundColor: item.tone === 'success' ? theme.colors.status.success.background : theme.colors.status.warning.background,
+                        }}
+                      >
+                        <Icon name={item.icon} size="sm" color={item.tone === 'success' ? theme.colors.status.success.strong : theme.colors.status.warning.strong} />
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1], flex: 1 }}>
+                        <Text variant="bodySmall">{item.description}</Text>
+                        <Text variant="caption" color={theme.colors.text.secondary}>
+                          {hoursAgoLabel(item.hoursAgo)}
+                        </Text>
+                      </div>
                     </div>
                   </div>
                 ))}
+              </div>
             </div>
-          </div>
-        </Card>
-      )}
+          </Card>
+        </div>
 
-      {transactionsState.status === 'error' && <ErrorState title="Couldn't load Financial Transactions" onRetry={transactionsState.refetch} />}
-      {expensesState.status === 'error' && <ErrorState title="Couldn't load Expenses" onRetry={expensesState.refetch} />}
-      {transactionsState.status === 'success' && transactionsState.data.length === 0 && (
-        <EmptyState icon="checkCircle" title="No Financial Transactions yet" description="Nothing recorded in your scope yet." />
-      )}
-    </div>
+        {expensesState.status === 'success' && expensesState.data.filter((e) => e.currentState === 'REQUESTED').length > 0 && (
+          <Card padding={6} testId="pending-expenses-card">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+              <Heading level={3}>Pending expense requests</Heading>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+                {expensesState.data
+                  .filter((e) => e.currentState === 'REQUESTED')
+                  .slice(0, 5)
+                  .map((expense, index) => (
+                    <div key={expense.id}>
+                      {index > 0 && <Divider />}
+                      <div style={{ paddingTop: index > 0 ? theme.spacing[3] : 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Text variant="bodySmall">{expense.description}</Text>
+                        <Badge status="info">{formatAmountMinor(expense.amountMinor, expense.currency)}</Badge>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {transactionsState.status === 'error' && <ErrorState title="Couldn't load Financial Transactions" onRetry={transactionsState.refetch} />}
+        {expensesState.status === 'error' && <ErrorState title="Couldn't load Expenses" onRetry={expensesState.refetch} />}
+        {transactionsState.status === 'success' && transactionsState.data.length === 0 && (
+          <EmptyState icon="checkCircle" title="No Financial Transactions yet" description="Nothing recorded in your scope yet." />
+        )}
+      </div>
+    </PageContainer>
   );
 }

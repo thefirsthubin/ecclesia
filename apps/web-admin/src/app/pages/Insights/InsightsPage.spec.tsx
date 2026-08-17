@@ -130,24 +130,36 @@ describe('InsightsPage', () => {
     expect(screen.getByTestId('bacenta-leaderboard-card')).toBeInTheDocument();
   });
 
-  it('renders the cluster drill-down for ASSISTANT_PASTOR', async () => {
+  /** `[Branch Pastor portal, Insights rebuild]` `ClusterInsightsView`'s
+   * single-Bacenta-at-a-time picker was replaced (not refined) by
+   * `BranchInsightsView` - the real Branch-wide trend charts, a ranked
+   * Bacenta health comparison, and a real overdue-Follow-up count. */
+  it('renders the Branch performance trend, ranked Bacenta health, and overdue Follow-ups for ASSISTANT_PASTOR', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('ASSISTANT_PASTOR', { clusterBacentaIds: ['bacenta-1'] }));
     global.fetch = jest.fn().mockImplementation((url: string) => {
+      if (url.includes('/insights/branch-dashboard-summary')) return Promise.resolve({ ok: true, json: async () => branchDashboardSummary() });
+      if (url.includes('/insights/cluster-dashboard/')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            branchId: 'branch-1',
+            groupId: 'bacenta-1',
+            pulseScore: { id: 'p1', branchId: 'branch-1', scopeType: 'GROUP', scopeId: 'bacenta-1', score: 50, computedAt: new Date().toISOString() },
+            alerts: [],
+          }),
+        });
+      }
       if (url.includes('/groups/')) return Promise.resolve({ ok: true, json: async () => ({ id: 'bacenta-1', name: 'Bacenta One' }) });
-      return Promise.resolve({
-        ok: true,
-        json: async () => ({
-          branchId: 'branch-1',
-          groupId: 'bacenta-1',
-          pulseScore: { id: 'p1', branchId: 'branch-1', scopeType: 'GROUP', scopeId: 'bacenta-1', score: 50, computedAt: new Date().toISOString() },
-          alerts: [],
-        }),
-      });
+      if (url.includes('/pastoral-care/follow-up-tasks')) return Promise.resolve({ ok: true, json: async () => [] });
+      return Promise.resolve({ ok: true, json: async () => ({}) });
     });
 
     renderPage();
 
-    await waitFor(() => expect(screen.getByText('Church Pulse — Bacenta One')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByTestId('insights-attendance-trend-card')).toBeInTheDocument());
+    expect(screen.getByTestId('insights-giving-trend-card')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText('Bacenta One')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('Nothing is overdue across your cluster right now.')).toBeInTheDocument());
   });
 
   it('points a Bacenta Leader to the mobile app instead of a web view', () => {

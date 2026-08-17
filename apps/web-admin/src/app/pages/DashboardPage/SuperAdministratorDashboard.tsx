@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Divider, Heading, SampleDataBadge, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
+import { Badge, Button, Card, Divider, Heading, PageContainer, SampleDataBadge, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
 import { getChurchPulseBand } from '@ecclesia/ui-tokens';
 import type { GroupResponseDto, PersonResponseDto } from '@ecclesia/contracts';
 
@@ -106,84 +106,86 @@ export function SuperAdministratorDashboard() {
    * for attention.
    */
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5], maxWidth: 1280 }}>
-      <DashboardHeader displayName={displayName} openAlertCount={openAlertCount} branchName={branchName} />
+    <PageContainer maxWidth={1280}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5] }}>
+        <DashboardHeader displayName={displayName} openAlertCount={openAlertCount} branchName={branchName} />
 
-      <ChurchPulseCard
-        status={dashboardState.status}
-        pulseScore={dashboardState.status === 'success' ? dashboardState.data.pulseScore : undefined}
-        onRetry={dashboardState.refetch}
-      />
+        <ChurchPulseCard
+          status={dashboardState.status}
+          pulseScore={dashboardState.status === 'success' ? dashboardState.data.pulseScore : undefined}
+          onRetry={dashboardState.refetch}
+        />
 
-      <Card padding={4} testId="council-summary-strip">
-        <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[5], flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: theme.spacing[1] }}>
-            {peopleState.status !== 'success' ? <Skeleton height={24} width={28} /> : <Text as="span" variant="numericTabular">{peopleState.data.length}</Text>}
-            <Text as="span" variant="bodySmall" color={theme.colors.text.secondary}>
-              members in this Branch
-            </Text>
-          </div>
-          <Divider orientation="vertical" />
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: theme.spacing[1] }}>
-            {ministriesState.status !== 'success' ? <Skeleton height={24} width={20} /> : <Text as="span" variant="numericTabular">{ministriesState.data.length}</Text>}
-            <Text as="span" variant="bodySmall" color={theme.colors.text.secondary}>
-              Basontas (Ministry Teams)
-            </Text>
-          </div>
-        </div>
-      </Card>
-
-      <div style={{ display: 'grid', gridTemplateColumns: isNarrow ? '1fr' : 'minmax(0, 1fr) minmax(0, 1fr)', gap: theme.spacing[4] }}>
-        <AlertPriorityCard status={dashboardState.status} alerts={alerts} accessToken={accessToken} onResolved={dashboardState.refetch} onRetry={dashboardState.refetch} readOnly />
-        <RecentActivityCard status={dashboardState.status} alerts={alerts} onRetry={dashboardState.refetch} />
-      </div>
-
-      <Card padding={6} testId="council-multi-branch-card">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
-              <Heading level={3}>Multi-Branch overview</Heading>
-              <SampleDataBadge testId="multi-branch-sample-badge" />
+        <Card padding={4} testId="council-summary-strip">
+          <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[5], flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: theme.spacing[1] }}>
+              {peopleState.status !== 'success' ? <Skeleton height={24} width={28} /> : <Text as="span" variant="numericTabular">{peopleState.data.length}</Text>}
+              <Text as="span" variant="bodySmall" color={theme.colors.text.secondary}>
+                members in this Branch
+              </Text>
             </div>
-            <Text variant="bodySmall" color={theme.colors.text.secondary}>
-              Preview - Council-wide consolidation is Horizon 3 (PRD §7.3); this deployment has one real Branch today
-            </Text>
+            <Divider orientation="vertical" />
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: theme.spacing[1] }}>
+              {ministriesState.status !== 'success' ? <Skeleton height={24} width={20} /> : <Text as="span" variant="numericTabular">{ministriesState.data.length}</Text>}
+              <Text as="span" variant="bodySmall" color={theme.colors.text.secondary}>
+                Basontas (Ministry Teams)
+              </Text>
+            </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            {DEMO_COUNCIL_BRANCHES.map((branch, index) => {
-              const band = getChurchPulseBand(branch.pulseScore);
-              return (
-                <div key={branch.id}>
-                  {index > 0 && <Divider />}
-                  <div style={{ paddingTop: index > 0 ? theme.spacing[3] : 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[3] }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
-                      <Text variant="bodySmall">{branch.name}</Text>
-                      <Text variant="caption" color={theme.colors.text.secondary}>
-                        {`${branch.memberCount} members · Pulse ${Math.round(branch.pulseScore)}`}
-                      </Text>
-                    </div>
-                    <Badge status={branch.status === 'thriving' || branch.status === 'healthy' ? 'success' : branch.status === 'attention' ? 'warning' : 'danger'}>
-                      {STATUS_LABEL[branch.status] ?? band.label}
-                    </Badge>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </Card>
+        </Card>
 
-      <div style={{ display: 'flex', gap: theme.spacing[2], flexWrap: 'wrap' }}>
-        <Button variant="secondary" size="sm" onClick={() => navigate('/people')}>
-          Manage People
-        </Button>
-        <Button variant="secondary" size="sm" onClick={() => navigate('/configuration')}>
-          Configuration
-        </Button>
-        <Button variant="secondary" size="sm" onClick={() => navigate('/insights')}>
-          Open full Insights view
-        </Button>
+        <div style={{ display: 'grid', gridTemplateColumns: isNarrow ? '1fr' : 'minmax(0, 1fr) minmax(0, 1fr)', gap: theme.spacing[4] }}>
+          <AlertPriorityCard status={dashboardState.status} alerts={alerts} accessToken={accessToken} onResolved={dashboardState.refetch} onRetry={dashboardState.refetch} readOnly />
+          <RecentActivityCard status={dashboardState.status} alerts={alerts} onRetry={dashboardState.refetch} />
+        </div>
+
+        <Card padding={6} testId="council-multi-branch-card">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
+                <Heading level={3}>Multi-Branch overview</Heading>
+                <SampleDataBadge testId="multi-branch-sample-badge" />
+              </div>
+              <Text variant="bodySmall" color={theme.colors.text.secondary}>
+                Preview - Council-wide consolidation is Horizon 3 (PRD §7.3); this deployment has one real Branch today
+              </Text>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+              {DEMO_COUNCIL_BRANCHES.map((branch, index) => {
+                const band = getChurchPulseBand(branch.pulseScore);
+                return (
+                  <div key={branch.id}>
+                    {index > 0 && <Divider />}
+                    <div style={{ paddingTop: index > 0 ? theme.spacing[3] : 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[3] }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
+                        <Text variant="bodySmall">{branch.name}</Text>
+                        <Text variant="caption" color={theme.colors.text.secondary}>
+                          {`${branch.memberCount} members · Pulse ${Math.round(branch.pulseScore)}`}
+                        </Text>
+                      </div>
+                      <Badge status={branch.status === 'thriving' || branch.status === 'healthy' ? 'success' : branch.status === 'attention' ? 'warning' : 'danger'}>
+                        {STATUS_LABEL[branch.status] ?? band.label}
+                      </Badge>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </Card>
+
+        <div style={{ display: 'flex', gap: theme.spacing[2], flexWrap: 'wrap' }}>
+          <Button variant="secondary" size="sm" onClick={() => navigate('/people')}>
+            Manage People
+          </Button>
+          <Button variant="secondary" size="sm" onClick={() => navigate('/configuration')}>
+            Configuration
+          </Button>
+          <Button variant="secondary" size="sm" onClick={() => navigate('/insights')}>
+            Open full Insights view
+          </Button>
+        </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }

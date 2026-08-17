@@ -1,4 +1,4 @@
-import { EmptyState } from '@ecclesia/ui-web';
+import { EmptyState, PageContainer } from '@ecclesia/ui-web';
 import type { RoleDto } from '@ecclesia/contracts';
 
 import { useAuth } from '../../auth/AuthContext';
@@ -56,19 +56,23 @@ export function DashboardPage() {
 
   if (role === 'BACENTA_LEADER') {
     return (
-      <EmptyState
-        icon="home"
-        title="Your Bacenta dashboard lives on mobile"
-        description="Design System §3.2 places the Shepherd's dashboard on the mobile app, not Web Admin. Open the Ecclesia mobile app to see it."
-      />
+      <PageContainer>
+        <EmptyState
+          icon="home"
+          title="Your Bacenta dashboard lives on mobile"
+          description="Design System §3.2 places the Shepherd's dashboard on the mobile app, not Web Admin. Open the Ecclesia mobile app to see it."
+        />
+      </PageContainer>
     );
   }
 
   return (
-    <EmptyState
-      icon="clock"
-      title="Dashboard — coming soon for this role"
-      description="Your role's dashboard hasn't been implemented yet."
-    />
+    <PageContainer>
+      <EmptyState
+        icon="clock"
+        title="Dashboard — coming soon for this role"
+        description="Your role's dashboard hasn't been implemented yet."
+      />
+    </PageContainer>
   );
 }

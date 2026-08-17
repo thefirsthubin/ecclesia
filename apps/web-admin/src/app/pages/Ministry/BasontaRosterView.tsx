@@ -1,4 +1,4 @@
-import { Badge, Card, Divider, EmptyState, ErrorState, Heading, Skeleton, Table, Text, useTheme } from '@ecclesia/ui-web';
+import { Badge, Card, Divider, EmptyState, ErrorState, Heading, PageContainer, Skeleton, Table, Text, useTheme } from '@ecclesia/ui-web';
 import type { TableColumn } from '@ecclesia/ui-web';
 import type { GatheringResponseDto, GatheringStatusDto } from '@ecclesia/contracts';
 
@@ -89,81 +89,83 @@ export function BasontaRosterView({ groupId }: { groupId: string }) {
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4], maxWidth: 900 }}>
-      <Heading level={1}>Basonta roster</Heading>
+    <PageContainer maxWidth={900}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
+        <Heading level={1}>Basonta roster</Heading>
 
-      {rosterState.status === 'loading' && (
-        <Card padding={6}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            <Skeleton height={40} />
-            <Skeleton height={40} />
-          </div>
-        </Card>
-      )}
+        {rosterState.status === 'loading' && (
+          <Card padding={6}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+              <Skeleton height={40} />
+              <Skeleton height={40} />
+            </div>
+          </Card>
+        )}
 
-      {rosterState.status === 'error' && (
-        <Card padding={6}>
-          <ErrorState title="Couldn't load the roster" onRetry={rosterState.refetch} />
-        </Card>
-      )}
+        {rosterState.status === 'error' && (
+          <Card padding={6}>
+            <ErrorState title="Couldn't load the roster" onRetry={rosterState.refetch} />
+          </Card>
+        )}
 
-      {rosterState.status === 'success' && (
-        <Card padding={6} testId="basonta-roster-card">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            {rosterState.data.length === 0 ? (
-              <EmptyState title="No active workers yet" description="No one is currently rostered on this Basonta." />
-            ) : (
-              rosterState.data.map((member, index) => (
-                <div key={member.personId}>
-                  {index > 0 && <Divider />}
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: theme.spacing[3],
-                      paddingTop: index > 0 ? theme.spacing[3] : 0,
-                    }}
-                  >
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
-                      <PersonNameText personId={member.personId} />
-                      <Text variant="caption" color={theme.colors.text.secondary}>
-                        {`Serving since ${formatDate(member.startedAt)}`}
-                      </Text>
+        {rosterState.status === 'success' && (
+          <Card padding={6} testId="basonta-roster-card">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+              {rosterState.data.length === 0 ? (
+                <EmptyState title="No active workers yet" description="No one is currently rostered on this Basonta." />
+              ) : (
+                rosterState.data.map((member, index) => (
+                  <div key={member.personId}>
+                    {index > 0 && <Divider />}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: theme.spacing[3],
+                        paddingTop: index > 0 ? theme.spacing[3] : 0,
+                      }}
+                    >
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
+                        <PersonNameText personId={member.personId} />
+                        <Text variant="caption" color={theme.colors.text.secondary}>
+                          {`Serving since ${formatDate(member.startedAt)}`}
+                        </Text>
+                      </div>
+                      {overcommittedIds.has(member.personId) && <Badge status="warning">Overcommitted</Badge>}
                     </div>
-                    {overcommittedIds.has(member.personId) && <Badge status="warning">Overcommitted</Badge>}
                   </div>
-                </div>
-              ))
+                ))
+              )}
+            </div>
+          </Card>
+        )}
+
+        <Card padding={6} testId="basonta-gatherings-card">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
+              <Heading level={3}>Gatherings</Heading>
+              <Link to="/gatherings">
+                <Text variant="bodySmall">View in Gatherings →</Text>
+              </Link>
+            </div>
+            {gatheringsState.status === 'loading' && <Skeleton height={20} />}
+            {gatheringsState.status === 'error' && <ErrorState title="Couldn't load Gatherings" onRetry={gatheringsState.refetch} />}
+            {gatheringsState.status === 'success' && (
+              <Table
+                testId="basonta-gatherings-table"
+                columns={gatheringColumns}
+                data={gatheringsState.data}
+                getRowId={(gathering) => gathering.id}
+                emptyTitle="No Gatherings yet"
+                emptyDescription="This Basonta doesn't own any Gatherings yet."
+              />
             )}
           </div>
         </Card>
-      )}
 
-      <Card padding={6} testId="basonta-gatherings-card">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
-            <Heading level={3}>Gatherings</Heading>
-            <Link to="/gatherings">
-              <Text variant="bodySmall">View in Gatherings →</Text>
-            </Link>
-          </div>
-          {gatheringsState.status === 'loading' && <Skeleton height={20} />}
-          {gatheringsState.status === 'error' && <ErrorState title="Couldn't load Gatherings" onRetry={gatheringsState.refetch} />}
-          {gatheringsState.status === 'success' && (
-            <Table
-              testId="basonta-gatherings-table"
-              columns={gatheringColumns}
-              data={gatheringsState.data}
-              getRowId={(gathering) => gathering.id}
-              emptyTitle="No Gatherings yet"
-              emptyDescription="This Basonta doesn't own any Gatherings yet."
-            />
-          )}
-        </div>
-      </Card>
-
-      <StaffingTargetsPanel groupId={groupId} canEdit={canEditStaffingTargets} />
-    </div>
+        <StaffingTargetsPanel groupId={groupId} canEdit={canEditStaffingTargets} />
+      </div>
+    </PageContainer>
   );
 }

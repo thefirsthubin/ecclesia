@@ -32,6 +32,22 @@ describe('Drawer', () => {
     expect(onClose).toHaveBeenCalled();
   });
 
+  it('defaults to a 400px panel width, overridable for content-heavier panels', () => {
+    const { rerender } = render(
+      <Drawer isOpen onClose={() => undefined} title="Filters" testId="drawer">
+        <p>Content</p>
+      </Drawer>,
+    );
+    expect(screen.getByTestId('drawer')).toHaveStyle({ width: '400px' });
+
+    rerender(
+      <Drawer isOpen onClose={() => undefined} title="Filters" testId="drawer" width={560}>
+        <p>Content</p>
+      </Drawer>,
+    );
+    expect(screen.getByTestId('drawer')).toHaveStyle({ width: '560px' });
+  });
+
   it('does not call onClose on scrim click when dismissible is false', () => {
     const onClose = jest.fn();
     render(

@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { Card, ErrorState, Skeleton, useTheme } from '@ecclesia/ui-web';
+import { Card, ErrorState, PageContainer, Skeleton, useTheme } from '@ecclesia/ui-web';
 import type { PersonResponseDto } from '@ecclesia/contracts';
 
 import { useAuth } from '../../auth/AuthContext';
@@ -109,7 +109,7 @@ export function ResidentPastorDashboard() {
     giving: growthSeries?.giving,
   };
 
-  // Same `GET /people/:id` name lookup `AppShell`'s `UserMenu` already
+  // Same real `GET /people/:id` name lookup `AppShell`'s `UserMenu` already
   // performs (`/auth/me` has no name field) - a second, independent call
   // rather than a shared cache, matching `useAsyncData.ts`'s own
   // documented "no shared caching/fetch layer built yet" precedent.
@@ -155,78 +155,80 @@ export function ResidentPastorDashboard() {
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5], maxWidth: 1600 }}>
-      <div {...fadeIn(0)}>
-        <DashboardHeader displayName={displayName} openAlertCount={openAlertCount} branchName={branchName} />
-      </div>
-
-      {/* KPI strip (Design System v1.0 Part 4.2) - compact, balanced
-          row of the four real Members/Attendance/Giving/Volunteers
-          tiles, not four tall single-column cards. */}
-      <div {...fadeIn(40, { display: 'grid', gridTemplateColumns: `repeat(${kpiColumns}, minmax(0, 1fr))`, gap: theme.spacing[4] })}>
-        {kpis
-          ? kpis.map((kpi) => <KpiCard key={kpi.id} datum={kpi} series={kpiSeriesById[kpi.id]} testId={`kpi-card-${kpi.id}`} />)
-          : Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} style={{ height: 108, borderRadius: theme.radius.md, backgroundColor: theme.colors.border.subtle }} />
-            ))}
-      </div>
-
-      {/* Region A - Church Pulse, the one true hero metric (real live
-          data), beside the operational column and Recent Activity. */}
-      <div style={regionStyle}>
-        <div {...fadeIn(80, wideSpan)}>
-          <ChurchPulseInsightsPanel
-            status={dashboardState.status}
-            pulseScore={dashboardState.status === 'success' ? dashboardState.data.pulseScore : undefined}
-            onRetry={dashboardState.refetch}
-            openAlertCount={openAlertCount}
-            kpis={kpis}
-            subMetrics={pulseSubMetrics}
-          />
+    <PageContainer maxWidth={1440}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5] }}>
+        <div {...fadeIn(0)}>
+          <DashboardHeader displayName={displayName} openAlertCount={openAlertCount} branchName={branchName} />
         </div>
 
-        <div {...fadeIn(120, { display: 'flex', flexDirection: 'column', gap: theme.spacing[4] })}>
-          <AlertPriorityCard status={dashboardState.status} alerts={alerts} accessToken={accessToken} onResolved={dashboardState.refetch} onRetry={dashboardState.refetch} />
-          <QuickActionsRow />
+        {/* KPI strip (Design System v1.0 Part 4.2) - compact, balanced
+            row of the four real Members/Attendance/Giving/Volunteers
+            tiles, not four tall single-column cards. */}
+        <div {...fadeIn(40, { display: 'grid', gridTemplateColumns: `repeat(${kpiColumns}, minmax(0, 1fr))`, gap: theme.spacing[4] })}>
+          {kpis
+            ? kpis.map((kpi) => <KpiCard key={kpi.id} datum={kpi} series={kpiSeriesById[kpi.id]} testId={`kpi-card-${kpi.id}`} />)
+            : Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} style={{ height: 108, borderRadius: theme.radius.md, backgroundColor: theme.colors.border.subtle }} />
+              ))}
         </div>
 
-        <div {...fadeIn(140)}>
-          <RecentActivityTimeline status={dashboardState.status} alerts={alerts} onRetry={dashboardState.refetch} />
-        </div>
-      </div>
-
-      {/* Region B - the real Attendance/Membership/Giving analytics
-          chart, beside Upcoming Gatherings and the smaller supporting
-          cards. */}
-      <div style={regionStyle}>
-        <div {...fadeIn(160, wideSpan)}>
-          {summaryState.status === 'success' && growthSeries ? (
-            <PerformanceChartCard attendance={growthSeries.attendance} membership={growthSeries.membership} giving={growthSeries.giving} />
-          ) : summaryState.status === 'error' ? (
-            <Card padding={6}>
-              <ErrorState title="Couldn't load Branch trends" onRetry={summaryState.refetch} />
-            </Card>
-          ) : (
-            <Card padding={6}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-                <Skeleton height={20} width="30%" />
-                <Skeleton height={220} />
-              </div>
-            </Card>
-          )}
-        </div>
-
-        {demoState.status === 'success' && (
-          <div {...fadeIn(180)}>
-            <UpcomingEventsTimeline events={demoState.data.upcomingEvents} />
+        {/* Region A - Church Pulse, the one true hero metric (real live
+            data), beside the operational column and Recent Activity. */}
+        <div style={regionStyle}>
+          <div {...fadeIn(80, wideSpan)}>
+            <ChurchPulseInsightsPanel
+              status={dashboardState.status}
+              pulseScore={dashboardState.status === 'success' ? dashboardState.data.pulseScore : undefined}
+              onRetry={dashboardState.refetch}
+              openAlertCount={openAlertCount}
+              kpis={kpis}
+              subMetrics={pulseSubMetrics}
+            />
           </div>
-        )}
 
-        <div {...fadeIn(200, { display: 'flex', flexDirection: 'column', gap: theme.spacing[4] })}>
-          <BranchComparisonCard branches={DEMO_COUNCIL_BRANCHES} />
-          <PrayerFocusCard />
+          <div {...fadeIn(120, { display: 'flex', flexDirection: 'column', gap: theme.spacing[4] })}>
+            <AlertPriorityCard status={dashboardState.status} alerts={alerts} accessToken={accessToken} onResolved={dashboardState.refetch} onRetry={dashboardState.refetch} />
+            <QuickActionsRow />
+          </div>
+
+          <div {...fadeIn(140)}>
+            <RecentActivityTimeline status={dashboardState.status} alerts={alerts} onRetry={dashboardState.refetch} />
+          </div>
+        </div>
+
+        {/* Region B - the real Attendance/Membership/Giving analytics
+            chart, beside Upcoming Gatherings and the smaller supporting
+            cards. */}
+        <div style={regionStyle}>
+          <div {...fadeIn(160, wideSpan)}>
+            {summaryState.status === 'success' && growthSeries ? (
+              <PerformanceChartCard attendance={growthSeries.attendance} membership={growthSeries.membership} giving={growthSeries.giving} />
+            ) : summaryState.status === 'error' ? (
+              <Card padding={6}>
+                <ErrorState title="Couldn't load Branch trends" onRetry={summaryState.refetch} />
+              </Card>
+            ) : (
+              <Card padding={6}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+                  <Skeleton height={20} width="30%" />
+                  <Skeleton height={220} />
+                </div>
+              </Card>
+            )}
+          </div>
+
+          {demoState.status === 'success' && (
+            <div {...fadeIn(180)}>
+              <UpcomingEventsTimeline events={demoState.data.upcomingEvents} />
+            </div>
+          )}
+
+          <div {...fadeIn(200, { display: 'flex', flexDirection: 'column', gap: theme.spacing[4] })}>
+            <BranchComparisonCard branches={DEMO_COUNCIL_BRANCHES} />
+            <PrayerFocusCard />
+          </div>
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }

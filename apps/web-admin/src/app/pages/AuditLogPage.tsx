@@ -1,4 +1,4 @@
-import { Badge, Card, ErrorState, Heading, Table, useTheme } from '@ecclesia/ui-web';
+import { Badge, Card, ErrorState, Heading, PageContainer, Table, useTheme } from '@ecclesia/ui-web';
 import type { TableColumn } from '@ecclesia/ui-web';
 import type { AuditLogEntryResponseDto } from '@ecclesia/contracts';
 
@@ -66,29 +66,31 @@ export function AuditLogPage() {
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
-      <Heading level={1}>Audit Log</Heading>
+    <PageContainer>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
+        <Heading level={1}>Audit Log</Heading>
 
-      {auditLogState.status === 'error' && (
-        <Card padding={6}>
-          <ErrorState title="Couldn't load the Audit Log" onRetry={auditLogState.refetch} />
-        </Card>
-      )}
+        {auditLogState.status === 'error' && (
+          <Card padding={6}>
+            <ErrorState title="Couldn't load the Audit Log" onRetry={auditLogState.refetch} />
+          </Card>
+        )}
 
-      {auditLogState.status !== 'error' && (
-        <Card padding={0} testId="audit-log-table-card">
-          <Table<AuditLogEntryResponseDto>
-            columns={columns}
-            data={auditLogState.status === 'success' ? auditLogState.data : []}
-            getRowId={(row) => row.id}
-            loading={auditLogState.status === 'loading'}
-            emptyIcon="search"
-            emptyTitle="No audit log entries yet"
-            emptyDescription="Entries appear here as authorized denials and other tracked events occur."
-            testId="audit-log-table"
-          />
-        </Card>
-      )}
-    </div>
+        {auditLogState.status !== 'error' && (
+          <Card padding={0} testId="audit-log-table-card">
+            <Table<AuditLogEntryResponseDto>
+              columns={columns}
+              data={auditLogState.status === 'success' ? auditLogState.data : []}
+              getRowId={(row) => row.id}
+              loading={auditLogState.status === 'loading'}
+              emptyIcon="search"
+              emptyTitle="No audit log entries yet"
+              emptyDescription="Entries appear here as authorized denials and other tracked events occur."
+              testId="audit-log-table"
+            />
+          </Card>
+        )}
+      </div>
+    </PageContainer>
   );
 }

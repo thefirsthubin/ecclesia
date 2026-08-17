@@ -1,6 +1,24 @@
 import { useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { BarChart, Badge, Button, Card, Divider, EmptyState, ErrorState, Heading, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
+import {
+  AttentionList,
+  BarChart,
+  Badge,
+  Button,
+  Card,
+  Divider,
+  EmptyState,
+  ErrorState,
+  HealthStatement,
+  PageContainer,
+  PageHeader,
+  SectionHeader,
+  Skeleton,
+  Text,
+  TrendPanel,
+  useTheme,
+} from '@ecclesia/ui-web';
+import type { AttentionListItem } from '@ecclesia/ui-web';
 
 import { useAuth } from '../../auth/AuthContext';
 import { apiPatch } from '../../lib/api-client';
@@ -26,7 +44,7 @@ const CHURCH_NAME = 'River of Life';
 
 const BRANCH_PASTOR_QUICK_ACTIONS: QuickAction[] = [
   { label: 'Review attendance', icon: 'calendar', href: '/gatherings' },
-  { label: 'Review offering', icon: 'coins', href: '/stewardship' },
+  { label: 'Review offering', icon: 'coins', href: '/finance' },
   { label: 'View members', icon: 'users', href: '/people' },
   { label: 'Pastoral care follow-ups', icon: 'heart', href: '/pastoral-care' },
 ];
@@ -54,16 +72,27 @@ interface AttentionItem {
 function buildAttentionItems(rows: BacentaPerformanceRow[], hasSundayGathering: boolean, alerts: BacentaAlert[]): AttentionItem[] {
   const items: AttentionItem[] = [];
   if (!hasSundayGathering) {
-    items.push({ id: 'missing-sunday', description: 'Sunday attendance not recorded for this week yet.' });
+    items.push({
+      id: 'missing-sunday',
+      description: 'Sunday attendance not recorded for this week yet.',
+    });
   }
   for (const row of rows) {
     if (row.meetingAttendance === null) {
-      items.push({ id: `missing-meeting-${row.groupId}`, bacentaName: row.name, description: 'Meeting attendance missing.' });
+      items.push({
+        id: `missing-meeting-${row.groupId}`,
+        bacentaName: row.name,
+        description: 'Meeting attendance missing.',
+      });
     }
   }
   for (const row of rows) {
     if (row.meetingOfferingMinor === null) {
-      items.push({ id: `missing-offering-${row.groupId}`, bacentaName: row.name, description: 'Meeting offering not recorded.' });
+      items.push({
+        id: `missing-offering-${row.groupId}`,
+        bacentaName: row.name,
+        description: 'Meeting offering not recorded.',
+      });
     }
   }
   const nameByGroupId = new Map(rows.map((row) => [row.groupId, row.name]));
@@ -85,8 +114,15 @@ function formatWeekRangeLabel(weekStartDateOnly: string): string {
   const [year, month, day] = weekStartDateOnly.split('-').map(Number);
   const start = new Date(year, month - 1, day);
   const end = new Date(year, month - 1, day + 6);
-  const startLabel = start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-  const endLabel = end.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+  const startLabel = start.toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+  });
+  const endLabel = end.toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
   return `Week of ${startLabel} – ${endLabel}`;
 }
 
@@ -94,39 +130,19 @@ function isSameCalendarDay(a: Date, b: Date): boolean {
   return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 }
 
-/** One quiet metric in the KPI strip - value and label share one text
- * baseline ("8 Bacentas"), deliberately not a boxed/iconed card: the
- * approved spec is explicit that these four numbers must read as "one
- * unified summary line", with the Bacenta Performance table remaining
- * the dashboard's dominant visual element. */
-function MetricItem({ value, label, testId }: { value: string | undefined; label: string; testId?: string }) {
-  const theme = useTheme();
-  return (
-    <div style={{ display: 'flex', alignItems: 'baseline', gap: theme.spacing[1], flexShrink: 0 }} data-testid={testId}>
-      {value === undefined ? (
-        <Skeleton height={22} width={48} />
-      ) : (
-        <Text as="span" variant="numericTabular" color={theme.colors.text.primary}>
-          {value}
-        </Text>
-      )}
-      <Text as="span" variant="bodySmall" color={theme.colors.text.secondary}>
-        {label}
-      </Text>
-    </div>
-  );
-}
-
 /**
- * `[Branch Pastor Dashboard sprint, approved spec]` Rebuilt around the
- * single question a Branch Pastor needs answered in seconds: "how are
- * all the Bacentas under my branch performing this week?" -
- * `BacentaPerformanceTable` is the dominant module (roughly 65-70% of the
- * main content width, per the approved composition), paired with a
- * compact Needs Attention / Follow-ups / Quick Actions column rather than
- * a full-height spanning right rail. Church Pulse stays a Resident
- * Pastor-only flagship (see `ChurchPulseInsightsPanel.tsx`'s own doc
- * comment) - this dashboard doesn't render it at all.
+ * `[Wholesale visual redesign]` Rebuilt around the single question a
+ * Branch Pastor needs answered in seconds: "how is my branch doing this
+ * week?" A real editorial thesis (`HealthStatement`, built from the same
+ * `sundayTotal`/`attentionItems` facts the rest of the page already
+ * computes - no new metric invented for this) replaces the four-up KPI
+ * strip as the page's opening statement; `BacentaPerformanceTable` stays
+ * the dominant module (roughly 65-70% of the main content width, per the
+ * approved composition) beside a compact Needs Attention / Follow-ups /
+ * Quick Actions column rather than a full-height spanning right rail.
+ * Church Pulse stays a Resident Pastor-only flagship (see
+ * `ChurchPulseInsightsPanel.tsx`'s own doc comment) - this dashboard
+ * doesn't render it at all.
  *
  * **Real, live data** (see `useBranchPastorDashboardData.ts` for the full
  * per-metric endpoint trace): Bacenta list/names, members per Bacenta,
@@ -134,12 +150,19 @@ function MetricItem({ value, label, testId }: { value: string | undefined; label
  * Bacenta meeting offering by Bacenta, and Needs Attention (missing-
  * record facts + real Insights alerts merged across the cluster) are all
  * real, composed from existing endpoints. No demo data anywhere on this
- * dashboard.
+ * dashboard, and no sparkline/trend is drawn on the hero statement - no
+ * per-Bacenta multi-week aggregate endpoint exists for this dashboard
+ * (still true as of this pass), so `HealthStatement`'s `trend` prop is
+ * deliberately left unset rather than fed a fabricated series.
  *
- * **Historical trend, explicitly not built**: the two ranked comparison
- * charts below compare Bacentas for the *current* week only - no
- * multi-week aggregate endpoint exists for either metric (confirmed
- * again this sprint), so no line/trend chart is rendered for either.
+ * **Historical trend, deliberately not duplicated here**: the two ranked
+ * comparison charts below compare Bacentas for the *current* week only.
+ * A real Branch-wide 6-month attendance/giving trend does now exist
+ * (`BranchInsightsView`, Insights sprint) - deliberately kept on
+ * `/insights`, not copied here too, per this same file's own "Dashboard
+ * and Insights are now genuinely different screens" precedent
+ * (`InsightsPage.tsx`'s own doc comment): Dashboard answers "how is my
+ * Branch doing this week," Insights answers "what's happening over time."
  */
 export function BranchPastorDashboard() {
   const theme = useTheme();
@@ -155,7 +178,10 @@ export function BranchPastorDashboard() {
   const alertsState = useClusterAlerts(accessToken, clusterBacentaIds);
   const alerts = alertsState.status === 'success' ? alertsState.data : [];
 
-  const followUpQuery = resolveDefaultFollowUpTaskQuery({ role: 'ASSISTANT_PASTOR', clusterBacentaIds });
+  const followUpQuery = resolveDefaultFollowUpTaskQuery({
+    role: 'ASSISTANT_PASTOR',
+    clusterBacentaIds,
+  });
   const followUpState = useFollowUpTaskQueue(accessToken, followUpQuery);
   const openFollowUps = followUpState.status === 'success' ? followUpState.data.filter((task) => task.status === 'OPEN') : undefined;
   const today = new Date();
@@ -179,13 +205,9 @@ export function BranchPastorDashboard() {
 
   if (clusterBacentaIds.length === 0) {
     return (
-      <div style={{ maxWidth: 720 }}>
-        <EmptyState
-          icon="home"
-          title="No Bacentas assigned"
-          description="This branch currently has no Bacentas assigned to your pastoral oversight."
-        />
-      </div>
+      <PageContainer maxWidth={720}>
+        <EmptyState icon="home" title="No Bacentas assigned" description="This branch currently has no Bacentas assigned to your pastoral oversight." />
+      </PageContainer>
     );
   }
 
@@ -229,7 +251,10 @@ export function BranchPastorDashboard() {
     .sort((a, b) => b.value - a.value);
   const offeringChartData = rows
     .filter((row) => row.meetingOfferingMinor !== null)
-    .map((row) => ({ label: row.name, value: Number(row.meetingOfferingMinor) / 100 }))
+    .map((row) => ({
+      label: row.name,
+      value: Number(row.meetingOfferingMinor) / 100,
+    }))
     .sort((a, b) => b.value - a.value);
 
   const fadeIn = (delayMs: number, extraStyle: CSSProperties = {}): { className: string; style: CSSProperties } => ({
@@ -237,57 +262,94 @@ export function BranchPastorDashboard() {
     style: { animationDelay: `${delayMs}ms`, ...extraStyle },
   });
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5], maxWidth: 1600 }}>
-      {/* Quiet page header (approved spec: title / church · branch / current
-          reporting period - no personalized greeting, no hero, no giant
-          alert banner). Local to this persona - the shared `DashboardHeader`
-          every other dashboard uses is untouched. */}
-      <div {...fadeIn(0, { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: theme.spacing[4], flexWrap: 'wrap' })}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
-          <Heading level={1}>Branch Pastor Dashboard</Heading>
-          <Text variant="bodySmall" color={theme.colors.text.secondary}>
-            {`${CHURCH_NAME} · ${branchName}`}
-            {weekStartDateOnly ? ` · ${formatWeekRangeLabel(weekStartDateOnly)}` : ''}
-          </Text>
-        </div>
-        {attentionItems.length > 0 && (
-          <Badge status="warning" testId="dashboard-header-alert-glance">
-            {`${attentionItems.length} need${attentionItems.length === 1 ? 's' : ''} attention`}
-          </Badge>
-        )}
-      </div>
-
-      {/* Quiet KPI strip - one unified summary line, not four decorative
-          cards. Numbers are readable, but stay visually subordinate to the
-          Bacenta Performance table below. */}
-      <Card padding={3} testId="branch-kpi-strip">
-        <div
-          style={
-            isNarrow
-              ? { display: 'grid', gridTemplateColumns: '1fr 1fr', alignItems: 'center', rowGap: theme.spacing[3], columnGap: theme.spacing[5] }
-              : { display: 'flex', alignItems: 'center', gap: theme.spacing[5], flexWrap: 'wrap' }
+  // The editorial hero statement - a real derived sentence from the same
+  // `sundayTotal`/`attentionItems` facts computed above, never a second,
+  // independently-fabricated summary. `'—'` (not a giant "Not yet
+  // recorded" headline) matches this codebase's own established glyph for
+  // a genuinely missing record (`AttendanceCountCell` in
+  // `BacentaPerformanceTable.tsx`).
+  const healthBlock = (() => {
+    if (performanceState.status === 'loading') {
+      return (
+        <Card padding={6} elevation={1} testId="branch-health-card">
+          <Skeleton height={64} />
+        </Card>
+      );
+    }
+    if (performanceState.status === 'error') {
+      return (
+        <Card padding={6} elevation={1} testId="branch-health-card">
+          <ErrorState title="Couldn't load this week's numbers" onRetry={performanceState.refetch} />
+        </Card>
+      );
+    }
+    const notRecorded = sundayTotal === null;
+    const tone: 'positive' | 'attention' = notRecorded || attentionItems.length > 0 ? 'attention' : 'positive';
+    const headline = notRecorded ? '—' : String(sundayTotal);
+    const statement = notRecorded
+      ? "Sunday attendance hasn't been logged for this week."
+      : attentionItems.length === 0
+        ? `attended Sunday service across ${totalBacentas} Bacenta${totalBacentas === 1 ? '' : 's'} — every record is in, and there are no open alerts.`
+        : `attended Sunday service across ${totalBacentas} Bacenta${totalBacentas === 1 ? '' : 's'}. ${attentionItems.length} item${attentionItems.length === 1 ? '' : 's'} need${attentionItems.length === 1 ? 's' : ''} your attention.`;
+    return (
+      <Card padding={6} elevation={1} testId="branch-health-card">
+        <HealthStatement
+          headline={headline}
+          statement={statement}
+          tone={tone}
+          trailing={
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: theme.spacing[1],
+                alignItems: 'flex-end',
+              }}
+            >
+              <Text as="span" variant="bodySmall" color={theme.colors.text.secondary}>
+                {`${totalMembers} Member${totalMembers === 1 ? '' : 's'}`}
+              </Text>
+              <Text as="span" variant="bodySmall" color={theme.colors.text.secondary}>
+                {offeringTotal === null ? 'Offering not recorded' : `${formatAmountMinor(offeringTotal as string, 'GHS')} Offering`}
+              </Text>
+            </div>
           }
-        >
-          <MetricItem testId="branch-kpi-bacentas" value={String(totalBacentas)} label="Bacentas" />
-          {!isNarrow && <Divider orientation="vertical" />}
-          <MetricItem testId="branch-kpi-members" value={totalMembers === undefined ? undefined : String(totalMembers)} label="Members" />
-          {!isNarrow && <Divider orientation="vertical" />}
-          <MetricItem
-            testId="branch-kpi-sunday-attendance"
-            value={sundayTotal === undefined ? undefined : sundayTotal === null ? 'Not yet recorded' : String(sundayTotal)}
-            label={sundayTotal === null ? '' : 'Attendance'}
-          />
-          {!isNarrow && <Divider orientation="vertical" />}
-          <MetricItem
-            testId="branch-kpi-offering"
-            value={offeringTotal === undefined ? undefined : offeringTotal === null ? 'Not yet recorded' : formatAmountMinor(offeringTotal, 'GHS')}
-            label={offeringTotal === null ? '' : 'Meeting Offering'}
+          testId="branch-health-statement"
+        />
+      </Card>
+    );
+  })();
+
+  return (
+    <PageContainer maxWidth={1440}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: theme.spacing[5],
+        }}
+      >
+        {/* Quiet page header - title / church · branch / current reporting
+          period, no personalized greeting, no giant alert banner. Local to
+          this persona - the shared `DashboardHeader` every other dashboard
+          uses is untouched. */}
+        <div {...fadeIn(0)}>
+          <PageHeader
+            title="Dashboard"
+            context={`${CHURCH_NAME} · ${branchName}${weekStartDateOnly ? ` · ${formatWeekRangeLabel(weekStartDateOnly)}` : ''}`}
+            action={
+              attentionItems.length > 0 ? (
+                <Badge status="warning" testId="dashboard-header-alert-glance">
+                  {`${attentionItems.length} need${attentionItems.length === 1 ? 's' : ''} attention`}
+                </Badge>
+              ) : undefined
+            }
           />
         </div>
-      </Card>
 
-      {/* Each block is composed once, then arranged differently below by
+        <div {...fadeIn(60)}>{healthBlock}</div>
+
+        {/* Each block is composed once, then arranged differently below by
           breakpoint - the approved spec gives tablet only a general
           "collapse beneath the table" instruction (the desktop grouping -
           Needs Attention/Follow-ups/Quick Actions together - carries over
@@ -295,182 +357,205 @@ export function BranchPastorDashboard() {
           order (Needs Attention, then both charts, then Quick Actions,
           then Follow-ups) that the desktop grouping does not satisfy on
           its own. */}
-      {(() => {
-        const tableBlock = (
-          <BacentaPerformanceTable
-            status={performanceState.status}
-            rows={rows}
-            weekStartDateOnly={weekStartDateOnly}
-            onRetry={performanceState.refetch}
-            onRowClick={(row) => navigate(`/ministry/${row.groupId}`)}
-          />
-        );
+        {(() => {
+          const tableBlock = (
+            <BacentaPerformanceTable
+              status={performanceState.status}
+              rows={rows}
+              weekStartDateOnly={weekStartDateOnly}
+              onRetry={performanceState.refetch}
+              onRowClick={(row) => navigate(`/ministry/${row.groupId}`)}
+            />
+          );
 
-        const needsAttentionBlock = (
-          <Card padding={4} testId="needs-attention-card">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-              <Heading level={3}>Needs your attention</Heading>
-              {performanceState.status === 'loading' || alertsState.status === 'loading' ? (
-                <Skeleton height={20} />
-              ) : attentionItems.length === 0 ? (
-                <EmptyState icon="checkCircle" title="Nothing needs attention" description="Every Bacenta has this week's records in, and there are no open alerts." tone="positive" />
-              ) : (
-                <>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-                    {attentionItems.slice(0, 5).map((item, index) => {
-                      const alert = item.alert;
-                      return (
-                        <div key={item.id}>
-                          {index > 0 && <Divider />}
-                          <div style={{ paddingTop: index > 0 ? theme.spacing[3] : 0, display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
-                              {item.bacentaName ? (
-                                <Text as="span" variant="label" color={theme.colors.text.secondary}>
-                                  {item.bacentaName.toUpperCase()}
-                                </Text>
-                              ) : (
-                                <Text as="span" variant="label" color={theme.colors.text.secondary}>
-                                  BRANCH-WIDE
-                                </Text>
-                              )}
-                              {alert && (
-                                <Button
-                                  variant="tertiary"
-                                  size="sm"
-                                  loading={resolvingAlertId === alert.id}
-                                  onClick={() => void resolveAlert(alert.id)}
-                                  accessibilityLabel={`Resolve alert: ${alert.alertType}`}
-                                >
-                                  Resolve
-                                </Button>
-                              )}
-                            </div>
-                            <Text variant="bodySmall">{item.description}</Text>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <Button variant="tertiary" size="sm" onClick={() => navigate('/insights')}>
-                    View all →
-                  </Button>
-                </>
-              )}
-            </div>
-          </Card>
-        );
+          const attentionListItems: AttentionListItem[] = attentionItems.slice(0, 5).map((item) => ({
+            id: item.id,
+            label: item.bacentaName ?? 'Branch-wide',
+            description: item.description,
+            action: item.alert ? (
+              <Button
+                variant="tertiary"
+                size="sm"
+                loading={resolvingAlertId === item.alert.id}
+                onClick={() => void resolveAlert(item.alert!.id)}
+                accessibilityLabel={`Resolve alert: ${item.alert.alertType}`}
+              >
+                Resolve
+              </Button>
+            ) : undefined,
+          }));
 
-        const followUpsBlock = (
-          <Card padding={4} testId="branch-pastor-followups-card">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-              <Heading level={3}>Follow-ups</Heading>
-              {followUpState.status === 'loading' && <Skeleton height={20} />}
-              {followUpState.status === 'error' && <ErrorState title="Couldn't load Follow-up tasks" onRetry={followUpState.refetch} />}
-              {followUpState.status === 'success' &&
-                (openFollowUps && openFollowUps.length === 0 ? (
-                  <EmptyState icon="checkCircle" title="No open follow-ups" description="Every follow-up in your cluster has been handled." tone="positive" />
+          const needsAttentionBlock = (
+            <Card padding={4} testId="needs-attention-card">
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: theme.spacing[3],
+                }}
+              >
+                <SectionHeader title="Needs Your Attention" />
+                {performanceState.status === 'loading' || alertsState.status === 'loading' ? (
+                  <Skeleton height={20} />
                 ) : (
                   <>
-                    <Text variant="bodySmall" color={theme.colors.text.secondary}>
-                      {`${dueTodayCount} task${dueTodayCount === 1 ? '' : 's'} due today`}
-                    </Text>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }}>
-                      {(openFollowUps ?? []).slice(0, 3).map((task, index) => (
-                        <div key={task.id}>
-                          {index > 0 && <Divider />}
-                          <div style={{ paddingTop: index > 0 ? theme.spacing[2] : 0 }}>
-                            <PersonNameText personId={task.personId} />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    <Button variant="tertiary" size="sm" onClick={() => navigate('/pastoral-care')}>
-                      View follow-ups →
-                    </Button>
+                    <AttentionList
+                      items={attentionListItems}
+                      emptyState={{
+                        icon: 'checkCircle',
+                        title: 'Nothing needs attention',
+                        description: "Every Bacenta has this week's records in, and there are no open alerts.",
+                      }}
+                    />
+                    {attentionItems.length > 0 && (
+                      <Button variant="tertiary" size="sm" onClick={() => navigate('/insights')}>
+                        View all →
+                      </Button>
+                    )}
                   </>
-                ))}
-            </div>
-          </Card>
-        );
-
-        const quickActionsBlock = <QuickActionsRow title="Quick actions" actions={BRANCH_PASTOR_QUICK_ACTIONS} />;
-
-        const sundayChartBlock = (
-          <Card padding={6} testId="attendance-analytics-card">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
-              <div>
-                <Heading level={3}>Sunday Attendance</Heading>
-                <Text variant="bodySmall" color={theme.colors.text.secondary}>
-                  Which Bacentas had the strongest turnout this week
-                </Text>
+                )}
               </div>
-              {performanceState.status === 'loading' ? (
-                <Skeleton height={180} />
-              ) : sundayChartData.length === 0 ? (
-                <EmptyState title="Attendance not recorded" description="Sunday attendance hasn't been recorded for this week yet." />
-              ) : (
-                <BarChart data={sundayChartData} orientation="horizontal" testId="sunday-attendance-chart" />
-              )}
-            </div>
-          </Card>
-        );
-
-        const offeringChartBlock = (
-          <Card padding={6} testId="offering-analytics-card">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
-              <div>
-                <Heading level={3}>Bacenta Meeting Offering</Heading>
-                <Text variant="bodySmall" color={theme.colors.text.secondary}>
-                  Which Bacentas generated the most meeting offering this week
-                </Text>
-              </div>
-              {performanceState.status === 'loading' ? (
-                <Skeleton height={180} />
-              ) : offeringChartData.length === 0 ? (
-                <EmptyState title="Not recorded" description="No Bacenta meeting offering has been verified for this week yet." />
-              ) : (
-                <BarChart data={offeringChartData} orientation="horizontal" formatValue={(v) => `GHS ${v.toLocaleString()}`} testId="offering-chart" />
-              )}
-            </div>
-          </Card>
-        );
-
-        if (isNarrow) {
-          return (
-            <div {...fadeIn(80, { display: 'flex', flexDirection: 'column', gap: theme.spacing[4] })}>
-              {tableBlock}
-              {needsAttentionBlock}
-              {sundayChartBlock}
-              {offeringChartBlock}
-              {quickActionsBlock}
-              {followUpsBlock}
-            </div>
+            </Card>
           );
-        }
 
-        return (
-          <>
-            {/* Hero row - Bacenta Performance (~65-70%) beside a compact
+          const followUpsBlock = (
+            <Card padding={4} testId="branch-pastor-followups-card">
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: theme.spacing[3],
+                }}
+              >
+                <SectionHeader title="Follow-ups" />
+                {followUpState.status === 'loading' && <Skeleton height={20} />}
+                {followUpState.status === 'error' && <ErrorState title="Couldn't load Follow-up tasks" onRetry={followUpState.refetch} />}
+                {followUpState.status === 'success' &&
+                  (openFollowUps && openFollowUps.length === 0 ? (
+                    <EmptyState icon="checkCircle" title="No open follow-ups" description="Every follow-up in your cluster has been handled." tone="positive" />
+                  ) : (
+                    <>
+                      <Text variant="bodySmall" color={theme.colors.text.secondary}>
+                        {`${dueTodayCount} task${dueTodayCount === 1 ? '' : 's'} due today`}
+                      </Text>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: theme.spacing[2],
+                        }}
+                      >
+                        {(openFollowUps ?? []).slice(0, 3).map((task, index) => (
+                          <div key={task.id}>
+                            {index > 0 && <Divider />}
+                            <div
+                              style={{
+                                paddingTop: index > 0 ? theme.spacing[2] : 0,
+                              }}
+                            >
+                              <PersonNameText personId={task.personId} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <Button variant="tertiary" size="sm" onClick={() => navigate('/pastoral-care')}>
+                        View follow-ups →
+                      </Button>
+                    </>
+                  ))}
+              </div>
+            </Card>
+          );
+
+          const quickActionsBlock = <QuickActionsRow title="Quick Actions" actions={BRANCH_PASTOR_QUICK_ACTIONS} />;
+
+          const sundayChartBlock = (
+            <Card padding={6} elevation={1} testId="attendance-analytics-card">
+              <TrendPanel
+                title="Sunday Attendance"
+                description="Which Bacentas had the strongest turnout this week"
+                status={performanceState.status}
+                onRetry={performanceState.refetch}
+                errorTitle="Couldn't load Sunday attendance"
+                skeletonHeight={180}
+              >
+                {sundayChartData.length === 0 ? (
+                  <EmptyState title="Attendance not recorded" description="Sunday attendance hasn't been recorded for this week yet." />
+                ) : (
+                  <BarChart data={sundayChartData} orientation="horizontal" testId="sunday-attendance-chart" />
+                )}
+              </TrendPanel>
+            </Card>
+          );
+
+          const offeringChartBlock = (
+            <Card padding={6} elevation={1} testId="offering-analytics-card">
+              <TrendPanel
+                title="Bacenta Meeting Offering"
+                description="Which Bacentas generated the most meeting offering this week"
+                status={performanceState.status}
+                onRetry={performanceState.refetch}
+                errorTitle="Couldn't load Bacenta meeting offering"
+                skeletonHeight={180}
+              >
+                {offeringChartData.length === 0 ? (
+                  <EmptyState title="Not recorded" description="No Bacenta meeting offering has been verified for this week yet." />
+                ) : (
+                  <BarChart data={offeringChartData} orientation="horizontal" formatValue={(v) => `GHS ${v.toLocaleString()}`} testId="offering-chart" />
+                )}
+              </TrendPanel>
+            </Card>
+          );
+
+          if (isNarrow) {
+            return (
+              <div
+                {...fadeIn(140, {
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: theme.spacing[4],
+                })}
+              >
+                {tableBlock}
+                {needsAttentionBlock}
+                {sundayChartBlock}
+                {offeringChartBlock}
+                {quickActionsBlock}
+                {followUpsBlock}
+              </div>
+            );
+          }
+
+          return (
+            <>
+              {/* Hero row - Bacenta Performance (~65-70%) beside a compact
                 operational column (~30-35%): Needs Attention, Follow-ups,
                 Quick Actions, stacked to their own natural height - never
                 stretched into a full-height spanning rail. */}
-            <div {...fadeIn(80, heroRowStyle)}>
-              {tableBlock}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
-                {needsAttentionBlock}
-                {followUpsBlock}
-                {quickActionsBlock}
+              <div {...fadeIn(140, heroRowStyle)}>
+                {tableBlock}
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: theme.spacing[4],
+                  }}
+                >
+                  {needsAttentionBlock}
+                  {followUpsBlock}
+                  {quickActionsBlock}
+                </div>
               </div>
-            </div>
 
-            {/* Ranked comparison charts - equal width, current week only. */}
-            <div {...fadeIn(160, chartsRowStyle)}>
-              {sundayChartBlock}
-              {offeringChartBlock}
-            </div>
-          </>
-        );
-      })()}
-    </div>
+              {/* Ranked comparison charts - equal width, current week only. */}
+              <div {...fadeIn(220, chartsRowStyle)}>
+                {sundayChartBlock}
+                {offeringChartBlock}
+              </div>
+            </>
+          );
+        })()}
+      </div>
+    </PageContainer>
   );
 }

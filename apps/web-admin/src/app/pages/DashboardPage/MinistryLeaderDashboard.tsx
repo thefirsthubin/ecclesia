@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Divider, EmptyState, ErrorState, Heading, Icon, SampleDataBadge, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
+import { Badge, Button, Card, Divider, EmptyState, ErrorState, Heading, Icon, PageContainer, SampleDataBadge, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
 import type { PersonResponseDto } from '@ecclesia/contracts';
 
 import { useAuth } from '../../auth/AuthContext';
@@ -75,9 +75,9 @@ export function MinistryLeaderDashboard() {
 
   if (!groupId) {
     return (
-      <div style={{ maxWidth: 720 }}>
+      <PageContainer maxWidth={720}>
         <ErrorState title="No Basonta assigned" description="Your account has no Basonta (Ministry Team) assigned yet - contact your Admin." onRetry={() => undefined} />
-      </div>
+      </PageContainer>
     );
   }
 
@@ -99,144 +99,146 @@ export function MinistryLeaderDashboard() {
    * information architecture.
    */
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5], maxWidth: 1280 }}>
-      <DashboardHeader displayName={displayName} openAlertCount={overcommittedCount ?? 0} branchName={branchName} />
+    <PageContainer maxWidth={1280}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5] }}>
+        <DashboardHeader displayName={displayName} openAlertCount={overcommittedCount ?? 0} branchName={branchName} />
 
-      <Card padding={4} testId="ministry-summary-strip">
-        <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[5], flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: theme.spacing[2] }}>
-            {rosterSize === undefined ? <Skeleton height={28} width={32} /> : <Heading level={3}>{rosterSize}</Heading>}
-            <Text variant="bodySmall" color={theme.colors.text.secondary}>
-              on your roster
-            </Text>
-          </div>
-          <Divider orientation="vertical" />
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: theme.spacing[1] }}>
-            <Text as="span" variant="numericTabular" color={overcommittedCount ? theme.colors.status.warning.strong : theme.colors.text.primary}>
-              {overcommittedCount === undefined ? '—' : overcommittedCount}
-            </Text>
-            <Text as="span" variant="bodySmall" color={theme.colors.text.secondary}>
-              overcommitted
-            </Text>
-          </div>
-          <Divider orientation="vertical" />
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: theme.spacing[1] }}>
-            <Text as="span" variant="numericTabular">
-              {gatheringsState.status === 'success' ? gatheringsState.data.length : '—'}
-            </Text>
-            <Text as="span" variant="bodySmall" color={theme.colors.text.secondary}>
-              upcoming Gatherings
-            </Text>
-          </div>
-        </div>
-      </Card>
-
-      <StaffingTargetsPanel groupId={groupId} canEdit />
-
-      <div style={{ display: 'grid', gridTemplateColumns: isNarrow ? '1fr' : 'minmax(0, 1fr) minmax(0, 1fr)', gap: theme.spacing[4] }}>
-        <Card padding={6} testId="volunteer-availability-card">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            <Heading level={3}>Volunteer availability</Heading>
-            {rosterState.status === 'loading' && <Skeleton height={20} />}
-            {rosterState.status === 'error' && <ErrorState title="Couldn't load the roster" onRetry={rosterState.refetch} />}
-            {rosterState.status === 'success' &&
-              (rosterState.data.length === 0 ? (
-                <EmptyState title="No active workers yet" description="No one is currently rostered on this Basonta." />
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-                  {rosterState.data.slice(0, 5).map((member, index) => (
-                    <div key={member.personId}>
-                      {index > 0 && <Divider />}
-                      <div style={{ paddingTop: index > 0 ? theme.spacing[3] : 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <PersonNameText personId={member.personId} />
-                        {overcommitmentState.status === 'success' && overcommitmentState.data.some((flag) => flag.personId === member.personId) && (
-                          <Badge status="warning">Overcommitted</Badge>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                  {rosterState.data.length > 5 && (
-                    <Button variant="tertiary" size="sm" onClick={() => navigate('/ministry')}>
-                      View all {rosterState.data.length}
-                    </Button>
-                  )}
-                </div>
-              ))}
+        <Card padding={4} testId="ministry-summary-strip">
+          <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[5], flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: theme.spacing[2] }}>
+              {rosterSize === undefined ? <Skeleton height={28} width={32} /> : <Heading level={3}>{rosterSize}</Heading>}
+              <Text variant="bodySmall" color={theme.colors.text.secondary}>
+                on your roster
+              </Text>
+            </div>
+            <Divider orientation="vertical" />
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: theme.spacing[1] }}>
+              <Text as="span" variant="numericTabular" color={overcommittedCount ? theme.colors.status.warning.strong : theme.colors.text.primary}>
+                {overcommittedCount === undefined ? '—' : overcommittedCount}
+              </Text>
+              <Text as="span" variant="bodySmall" color={theme.colors.text.secondary}>
+                overcommitted
+              </Text>
+            </div>
+            <Divider orientation="vertical" />
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: theme.spacing[1] }}>
+              <Text as="span" variant="numericTabular">
+                {gatheringsState.status === 'success' ? gatheringsState.data.length : '—'}
+              </Text>
+              <Text as="span" variant="bodySmall" color={theme.colors.text.secondary}>
+                upcoming Gatherings
+              </Text>
+            </div>
           </div>
         </Card>
 
-        <Card padding={6} testId="upcoming-gatherings-card">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            <Heading level={3}>Upcoming Gatherings</Heading>
-            {gatheringsState.status === 'loading' && <Skeleton height={20} />}
-            {gatheringsState.status === 'error' && <ErrorState title="Couldn't load Gatherings" onRetry={gatheringsState.refetch} />}
-            {gatheringsState.status === 'success' &&
-              (gatheringsState.data.length === 0 ? (
-                <EmptyState icon="calendar" title="Nothing scheduled" description="No upcoming Gatherings for this Basonta yet." />
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-                  {gatheringsState.data.slice(0, 5).map((gathering, index) => (
-                    <div key={gathering.id}>
-                      {index > 0 && <Divider />}
-                      <div style={{ paddingTop: index > 0 ? theme.spacing[3] : 0, display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
-                        <Text variant="bodySmall">{gathering.type}</Text>
+        <StaffingTargetsPanel groupId={groupId} canEdit />
+
+        <div style={{ display: 'grid', gridTemplateColumns: isNarrow ? '1fr' : 'minmax(0, 1fr) minmax(0, 1fr)', gap: theme.spacing[4] }}>
+          <Card padding={6} testId="volunteer-availability-card">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+              <Heading level={3}>Volunteer availability</Heading>
+              {rosterState.status === 'loading' && <Skeleton height={20} />}
+              {rosterState.status === 'error' && <ErrorState title="Couldn't load the roster" onRetry={rosterState.refetch} />}
+              {rosterState.status === 'success' &&
+                (rosterState.data.length === 0 ? (
+                  <EmptyState title="No active workers yet" description="No one is currently rostered on this Basonta." />
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+                    {rosterState.data.slice(0, 5).map((member, index) => (
+                      <div key={member.personId}>
+                        {index > 0 && <Divider />}
+                        <div style={{ paddingTop: index > 0 ? theme.spacing[3] : 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <PersonNameText personId={member.personId} />
+                          {overcommitmentState.status === 'success' && overcommitmentState.data.some((flag) => flag.personId === member.personId) && (
+                            <Badge status="warning">Overcommitted</Badge>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    {rosterState.data.length > 5 && (
+                      <Button variant="tertiary" size="sm" onClick={() => navigate('/ministry')}>
+                        View all {rosterState.data.length}
+                      </Button>
+                    )}
+                  </div>
+                ))}
+            </div>
+          </Card>
+
+          <Card padding={6} testId="upcoming-gatherings-card">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+              <Heading level={3}>Upcoming Gatherings</Heading>
+              {gatheringsState.status === 'loading' && <Skeleton height={20} />}
+              {gatheringsState.status === 'error' && <ErrorState title="Couldn't load Gatherings" onRetry={gatheringsState.refetch} />}
+              {gatheringsState.status === 'success' &&
+                (gatheringsState.data.length === 0 ? (
+                  <EmptyState icon="calendar" title="Nothing scheduled" description="No upcoming Gatherings for this Basonta yet." />
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+                    {gatheringsState.data.slice(0, 5).map((gathering, index) => (
+                      <div key={gathering.id}>
+                        {index > 0 && <Divider />}
+                        <div style={{ paddingTop: index > 0 ? theme.spacing[3] : 0, display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
+                          <Text variant="bodySmall">{gathering.type}</Text>
+                          <Text variant="caption" color={theme.colors.text.secondary}>
+                            {formatDateTime(gathering.scheduledStart)}
+                          </Text>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+            </div>
+          </Card>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: isNarrow ? '1fr' : 'minmax(0, 1fr) minmax(0, 1fr)', gap: theme.spacing[4] }}>
+          <TrendCard title="Ministry attendance" subtitle="Attendance at this Basonta's Gatherings" series={buildMinistryAttendanceSeries()} color={theme.colors.brand.default} testId="ministry-attendance-chart" />
+
+          <Card padding={6} testId="recent-ministry-activity-card">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
+                <Heading level={3}>Recent ministry activity</Heading>
+                <SampleDataBadge testId="recent-ministry-activity-sample-badge" />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+                {DEMO_MINISTRY_ACTIVITY.map((activity, index) => (
+                  <div key={activity.id}>
+                    {index > 0 && <Divider />}
+                    <div style={{ paddingTop: index > 0 ? theme.spacing[3] : 0, display: 'flex', alignItems: 'center', gap: theme.spacing[3] }}>
+                      {/* `[Dashboard Visual Redesign]` Icon-in-tinted-circle -
+                          same row treatment as `UpcomingEventsTimeline`/
+                          `RecentActivityTimeline`, applied in place. */}
+                      <div
+                        aria-hidden
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: 36,
+                          height: 36,
+                          flexShrink: 0,
+                          borderRadius: theme.radius.full,
+                          backgroundColor: activity.tone === 'success' ? theme.colors.status.success.background : theme.colors.border.subtle,
+                        }}
+                      >
+                        <Icon name={activity.icon} size="sm" color={activity.tone === 'success' ? theme.colors.status.success.strong : theme.colors.text.secondary} />
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1], flex: 1 }}>
+                        <Text variant="bodySmall">{activity.description}</Text>
                         <Text variant="caption" color={theme.colors.text.secondary}>
-                          {formatDateTime(gathering.scheduledStart)}
+                          {hoursAgoLabel(activity.hoursAgo)}
                         </Text>
                       </div>
                     </div>
-                  ))}
-                </div>
-              ))}
-          </div>
-        </Card>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: isNarrow ? '1fr' : 'minmax(0, 1fr) minmax(0, 1fr)', gap: theme.spacing[4] }}>
-        <TrendCard title="Ministry attendance" subtitle="Attendance at this Basonta's Gatherings" series={buildMinistryAttendanceSeries()} color={theme.colors.brand.default} testId="ministry-attendance-chart" />
-
-        <Card padding={6} testId="recent-ministry-activity-card">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
-              <Heading level={3}>Recent ministry activity</Heading>
-              <SampleDataBadge testId="recent-ministry-activity-sample-badge" />
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-              {DEMO_MINISTRY_ACTIVITY.map((activity, index) => (
-                <div key={activity.id}>
-                  {index > 0 && <Divider />}
-                  <div style={{ paddingTop: index > 0 ? theme.spacing[3] : 0, display: 'flex', alignItems: 'center', gap: theme.spacing[3] }}>
-                    {/* `[Dashboard Visual Redesign]` Icon-in-tinted-circle -
-                        same row treatment as `UpcomingEventsTimeline`/
-                        `RecentActivityTimeline`, applied in place. */}
-                    <div
-                      aria-hidden
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: 36,
-                        height: 36,
-                        flexShrink: 0,
-                        borderRadius: theme.radius.full,
-                        backgroundColor: activity.tone === 'success' ? theme.colors.status.success.background : theme.colors.border.subtle,
-                      }}
-                    >
-                      <Icon name={activity.icon} size="sm" color={activity.tone === 'success' ? theme.colors.status.success.strong : theme.colors.text.secondary} />
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1], flex: 1 }}>
-                      <Text variant="bodySmall">{activity.description}</Text>
-                      <Text variant="caption" color={theme.colors.text.secondary}>
-                        {hoursAgoLabel(activity.hoursAgo)}
-                      </Text>
-                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        </Card>
+          </Card>
+        </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Avatar, Badge, Button, Card, ErrorState, Heading, Search, Table, Text, useTheme } from '@ecclesia/ui-web';
+import { Avatar, Badge, Button, Card, ErrorState, PageHeader, Search, Table, Text, useTheme } from '@ecclesia/ui-web';
 import type { TableColumn } from '@ecclesia/ui-web';
 import type { LifecycleStageDto, PersonResponseDto } from '@ecclesia/contracts';
 
@@ -212,15 +212,17 @@ export function PeopleListPage() {
   const activeSearch = debouncedSearch.trim();
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4], maxWidth: 900 }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[3] }}>
-        <Heading level={1}>People</Heading>
-        {canCreatePerson && !newPersonFormOpen && (
-          <Button variant="secondary" size="sm" onClick={() => setNewPersonFormOpen(true)} accessibilityLabel="Add a new Person" testId="new-person-open">
-            + New Person
-          </Button>
-        )}
-      </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
+      <PageHeader
+        title="People"
+        action={
+          canCreatePerson && !newPersonFormOpen ? (
+            <Button variant="secondary" size="sm" onClick={() => setNewPersonFormOpen(true)} accessibilityLabel="Add a new Person" testId="new-person-open">
+              + New Person
+            </Button>
+          ) : undefined
+        }
+      />
 
       {canCreatePerson && newPersonFormOpen && (
         <NewPersonForm
@@ -232,28 +234,35 @@ export function PeopleListPage() {
         />
       )}
 
-      <Search
-        label="Search by name"
-        value={searchInput}
-        onChange={setSearchInput}
-        onSearch={setDebouncedSearch}
-        placeholder="e.g. Ama Owusu"
-        testId="people-search"
-      />
+      {/* `[Whole Ecclesia layout rebalance]` Search and the lifecycle
+          filter are grouped under a tighter internal gap than the space
+          separating this toolbar from the table below - they're one
+          decision unit ("who am I looking at"), not two independent
+          sections; the table is a different unit ("here they are"). */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+        <Search
+          label="Search by name"
+          value={searchInput}
+          onChange={setSearchInput}
+          onSearch={setDebouncedSearch}
+          placeholder="e.g. Ama Owusu"
+          testId="people-search"
+        />
 
-      {/* `[UX Design Implementation]` Final UX Design Specification §19
-          (Phase 3 People workflow UI, accessibility pass) - `aria-pressed`
-          so the selected stage is announced, not only shown via the
-          primary/secondary color swap. */}
-      <div role="group" aria-label="Filter by lifecycle stage" style={{ display: 'flex', gap: theme.spacing[2], flexWrap: 'wrap' }}>
-        <Button variant={stageFilter === undefined ? 'primary' : 'secondary'} size="sm" onClick={() => setStageFilter(undefined)} aria-pressed={stageFilter === undefined}>
-          All
-        </Button>
-        {ORDERED_LIFECYCLE_STAGES.map((stage) => (
-          <Button key={stage} variant={stageFilter === stage ? 'primary' : 'secondary'} size="sm" onClick={() => setStageFilter(stage)} aria-pressed={stageFilter === stage}>
-            {LIFECYCLE_LABEL[stage]}
+        {/* `[UX Design Implementation]` Final UX Design Specification §19
+            (Phase 3 People workflow UI, accessibility pass) - `aria-pressed`
+            so the selected stage is announced, not only shown via the
+            primary/secondary color swap. */}
+        <div role="group" aria-label="Filter by lifecycle stage" style={{ display: 'flex', gap: theme.spacing[2], flexWrap: 'wrap' }}>
+          <Button variant={stageFilter === undefined ? 'primary' : 'secondary'} size="sm" onClick={() => setStageFilter(undefined)} aria-pressed={stageFilter === undefined}>
+            All
           </Button>
-        ))}
+          {ORDERED_LIFECYCLE_STAGES.map((stage) => (
+            <Button key={stage} variant={stageFilter === stage ? 'primary' : 'secondary'} size="sm" onClick={() => setStageFilter(stage)} aria-pressed={stageFilter === stage}>
+              {LIFECYCLE_LABEL[stage]}
+            </Button>
+          ))}
+        </div>
       </div>
 
       {peopleState.status === 'error' && (

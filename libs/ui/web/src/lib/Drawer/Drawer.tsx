@@ -12,6 +12,8 @@ export interface DrawerProps {
   side?: 'left' | 'right';
   /** Same "explicit button press, never dismiss-by-accident" rule `Modal` documents - defaults to `true`. */
   dismissible?: boolean;
+  /** Panel width in px, capped at 100% of the viewport regardless (the existing `maxWidth: '100%'` below) - defaults to 400, the original supplementary-filter-panel width. A content-heavier panel (e.g. a full tabbed record detail) can pass a wider value. */
+  width?: number;
   footer?: ReactNode;
   testId?: string;
 }
@@ -28,7 +30,7 @@ export interface DrawerProps {
  * real difference is layout: full-height, edge-anchored, slides in rather
  * than fading in centered.
  */
-export function Drawer({ isOpen, onClose, title, children, side = 'right', dismissible = true, footer, testId }: DrawerProps) {
+export function Drawer({ isOpen, onClose, title, children, side = 'right', dismissible = true, width = 400, footer, testId }: DrawerProps) {
   const theme = useTheme();
   const panelRef = useRef<HTMLDivElement>(null);
   const previouslyFocusedElement = useRef<HTMLElement | null>(null);
@@ -111,7 +113,7 @@ export function Drawer({ isOpen, onClose, title, children, side = 'right', dismi
           display: 'flex',
           flexDirection: 'column',
           gap: theme.spacing[4],
-          width: 400,
+          width,
           maxWidth: '100%',
           height: '100%',
           overflowY: 'auto',

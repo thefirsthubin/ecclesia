@@ -9,12 +9,12 @@ import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage/DashboardPage';
 import { ConfigurationPage } from './pages/ConfigurationPage';
 import { AuditLogPage } from './pages/AuditLogPage';
-import { PeopleListPage } from './pages/People/PeopleListPage';
-import { PersonDetailPage } from './pages/People/PersonDetailPage';
+import { PeoplePage } from './pages/People/PeoplePage';
+import { PersonPage } from './pages/People/PersonPage';
 import { FollowUpTaskQueuePage } from './pages/PastoralCare/FollowUpTaskQueuePage';
 import { MinistryPage } from './pages/Ministry/MinistryPage';
 import { GroupDetailPage } from './pages/Ministry/GroupDetailPage';
-import { GatheringsListPage } from './pages/Gatherings/GatheringsListPage';
+import { GatheringsPage } from './pages/Gatherings/GatheringsPage';
 import { StewardshipPage } from './pages/Stewardship/StewardshipPage';
 import { BranchFinanceOverviewPage } from './pages/Finance/BranchFinanceOverviewPage';
 import { InsightsPage } from './pages/Insights/InsightsPage';
@@ -88,7 +88,7 @@ function AppRoutes() {
         path="/people"
         element={
           <ProtectedRoute breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'People' }]}>
-            <PeopleListPage />
+            <PeoplePage />
           </ProtectedRoute>
         }
       />
@@ -98,7 +98,7 @@ function AppRoutes() {
           <ProtectedRoute
             breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'People', href: '/people' }, { label: 'Person' }]}
           >
-            <PersonDetailPage />
+            <PersonPage />
           </ProtectedRoute>
         }
       />
@@ -132,7 +132,7 @@ function AppRoutes() {
         path="/gatherings"
         element={
           <ProtectedRoute breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Gatherings' }]}>
-            <GatheringsListPage />
+            <GatheringsPage />
           </ProtectedRoute>
         }
       />

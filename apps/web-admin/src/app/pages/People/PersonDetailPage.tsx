@@ -286,19 +286,37 @@ export function PersonDetailPage() {
     }
   };
 
+  // `[Wholesale visual redesign]` The member profile as the central
+  // pastoral object: the identity block now surfaces their real *current*
+  // Bacenta/Basonta inline (the most recent membership with no
+  // `endedAt`, from `membershipState` - already fetched unconditionally
+  // above for the Groups tab, not a new request) rather than requiring a
+  // click into the Groups tab to see who this person belongs to today.
+  // Universal for every role this page serves, not Branch-Pastor-only -
+  // "who is this person's current Group" is core profile information for
+  // any role that can open a Person record at all.
+  const activeMembership = membershipState.status === 'success' ? membershipState.data.find((membership) => !membership.endedAt) : undefined;
+
   const overviewContent = (
     <div data-testid="person-profile-card">
       <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[4] }}>
-        <Avatar name={`${person.firstName} ${person.lastName}`} size="md" />
+        <Avatar name={`${person.firstName} ${person.lastName}`} size="lg" />
         <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
-          <Heading level={1}>{`${person.firstName} ${person.lastName}`}</Heading>
-          {/* `[UX Design Implementation]` Final UX Design Specification §19
-              (Phase 3 People workflow UI) - this previously hardcoded
-              `status="success"` regardless of the Person's real stage, so
-              e.g. a Lapsed Person's own profile showed a green "on track"
-              badge. Now the same `LIFECYCLE_BADGE_STATUS` mapping
-              `PeopleListPage.tsx` already uses. */}
-          <Badge status={LIFECYCLE_BADGE_STATUS[person.lifecycleStage]}>{LIFECYCLE_LABEL[person.lifecycleStage] ?? person.lifecycleStage}</Badge>
+          <Heading level="display">{`${person.firstName} ${person.lastName}`}</Heading>
+          <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2], flexWrap: 'wrap' }}>
+            {/* `[UX Design Implementation]` Final UX Design Specification §19
+                (Phase 3 People workflow UI) - this previously hardcoded
+                `status="success"` regardless of the Person's real stage, so
+                e.g. a Lapsed Person's own profile showed a green "on track"
+                badge. Now the same `LIFECYCLE_BADGE_STATUS` mapping
+                `PeopleListPage.tsx` already uses. */}
+            <Badge status={LIFECYCLE_BADGE_STATUS[person.lifecycleStage]}>{LIFECYCLE_LABEL[person.lifecycleStage] ?? person.lifecycleStage}</Badge>
+            {activeMembership && (
+              <Text as="span" variant="bodySmall" color={theme.colors.text.secondary}>
+                <GroupNameText groupId={activeMembership.groupId} />
+              </Text>
+            )}
+          </div>
         </div>
       </div>
       {/* `[UX Design Implementation]` Final UX Design Specification §19
@@ -756,13 +774,13 @@ export function PersonDetailPage() {
   ];
 
   return (
-    // `[UX Design Implementation]` Final UX Design Specification §19
-    // (Phase 3 People workflow UI) - widened from 640 to 800. The Groups/
-    // Roles tabs' new Table layout (§9 adoption) needs more horizontal
-    // room to read as a real table rather than a cramped one; the
-    // Overview tab's profile content still reads fine at this width, it
-    // simply doesn't use all of it.
-    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4], maxWidth: 800 }}>
+    // `[Whole Ecclesia layout rebalance]` Width/centering now lives with
+    // the caller (`PersonPage.tsx` wraps this in `PageContainer` for the
+    // standalone route; `BranchPeopleWorkspace` renders this raw inside
+    // its own `Drawer`, which owns a narrower width itself) - this
+    // component no longer sets its own `maxWidth`, so it's correct in
+    // both contexts rather than fighting whichever container it's in.
+    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
       <Card padding={6} testId="person-detail-card">
         <Tabs testId="person-detail-tabs" tabs={tabs} activeTabId={activeTab} onChange={setActiveTab} />
       </Card>

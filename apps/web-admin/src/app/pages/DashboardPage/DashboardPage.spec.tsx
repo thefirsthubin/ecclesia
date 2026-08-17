@@ -269,8 +269,10 @@ describe('DashboardPage', () => {
     // 2 real members, 1 real Sunday PRESENT record, 1 real Meeting PRESENT record, real GHS 250.00 offering - none fabricated.
     expect(table.getByText('2')).toBeInTheDocument();
     expect(table.getByText('GHS 250.00')).toBeInTheDocument();
-    await waitFor(() => expect(screen.getByTestId('branch-kpi-bacentas')).toHaveTextContent('1'));
-    expect(screen.getByTestId('branch-kpi-members')).toHaveTextContent('2');
+    await waitFor(() => expect(screen.getByTestId('branch-health-statement')).toBeInTheDocument());
+    const health = within(screen.getByTestId('branch-health-statement'));
+    expect(health.getByText('1')).toBeInTheDocument();
+    expect(health.getByText('2 Members')).toBeInTheDocument();
   });
 
   it('renders the Super Administrator dashboard for ADMIN', async () => {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Card, Divider, EmptyState, ErrorState, Heading, Input, Skeleton, Switch, Text, useTheme } from '@ecclesia/ui-web';
+import { Button, Card, Divider, EmptyState, ErrorState, Heading, Input, PageContainer, Skeleton, Switch, Text, useTheme } from '@ecclesia/ui-web';
 import { CHURCH_PULSE_SIGNAL_TYPE_VALUES } from '@ecclesia/contracts';
 import type { ChurchPulseSignalTypeDto } from '@ecclesia/contracts';
 
@@ -80,11 +80,13 @@ export function ConfigurationPage() {
 
   if (!ALLOWED_ROLES.includes(state.actor.role as (typeof ALLOWED_ROLES)[number])) {
     return (
-      <EmptyState
-        icon="alertCircle"
-        title="You don't have access to Configuration"
-        description="This section is limited to Super Administrator and Council Administrator roles."
-      />
+      <PageContainer maxWidth={640}>
+        <EmptyState
+          icon="alertCircle"
+          title="You don't have access to Configuration"
+          description="This section is limited to Super Administrator and Council Administrator roles."
+        />
+      </PageContainer>
     );
   }
 
@@ -154,118 +156,120 @@ export function ConfigurationPage() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4], maxWidth: 640 }}>
-      <Heading level={1}>Configuration</Heading>
+    <PageContainer maxWidth={640}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
+        <Heading level={1}>Configuration</Heading>
 
-      {configState.status === 'loading' && (
-        <Card padding={6}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            <Skeleton height={40} />
-            <Skeleton height={40} />
+        {configState.status === 'loading' && (
+          <Card padding={6}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+              <Skeleton height={40} />
+              <Skeleton height={40} />
+            </div>
+          </Card>
+        )}
+
+        {configState.status === 'error' && (
+          <Card padding={6}>
+            <ErrorState title="Couldn't load Configuration" onRetry={configState.refetch} />
+          </Card>
+        )}
+
+        {configState.status === 'success' && (
+          <Card padding={6} testId="poimen-gate-card">
+            <Switch
+              label="Poimen gate"
+              checked={configState.data.poimenGateEnabled}
+              onChange={(checked) => void togglePoimenGate(checked)}
+              disabled={poimenBusy}
+              helperText="When enabled, a Bacenta Leader role assignment requires the candidate's Poimen enrollment to be Complete."
+              testId="poimen-gate-switch"
+            />
+            {poimenError && (
+              <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
+                {poimenError}
+              </Text>
+            )}
+          </Card>
+        )}
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
+            <Heading level={2}>Church Pulse weights &amp; Silent-Drift thresholds</Heading>
+            {!editOpen && (
+              <Button variant="primary" size="sm" onClick={openEdit} accessibilityLabel="Edit Configuration">
+                Edit
+              </Button>
+            )}
           </div>
-        </Card>
-      )}
 
-      {configState.status === 'error' && (
-        <Card padding={6}>
-          <ErrorState title="Couldn't load Configuration" onRetry={configState.refetch} />
-        </Card>
-      )}
-
-      {configState.status === 'success' && (
-        <Card padding={6} testId="poimen-gate-card">
-          <Switch
-            label="Poimen gate"
-            checked={configState.data.poimenGateEnabled}
-            onChange={(checked) => void togglePoimenGate(checked)}
-            disabled={poimenBusy}
-            helperText="When enabled, a Bacenta Leader role assignment requires the candidate's Poimen enrollment to be Complete."
-            testId="poimen-gate-switch"
-          />
-          {poimenError && (
-            <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
-              {poimenError}
-            </Text>
+          {!editOpen && configState.status === 'success' && (
+            <Card padding={6} testId="configuration-summary-card">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }}>
+                {CHURCH_PULSE_SIGNAL_TYPE_VALUES.map((type) => (
+                  <Text key={type} variant="bodySmall">
+                    {CHURCH_PULSE_SIGNAL_LABEL[type]}: {configState.data.churchPulseWeights[type] ?? '(default)'}
+                  </Text>
+                ))}
+                <Divider />
+                <Text variant="bodySmall">Silent-Drift N (Gatherings): {configState.data.silentDriftConfig.n ?? '(default)'}</Text>
+                <Text variant="bodySmall">Silent-Drift M (Bacenta Meetings): {configState.data.silentDriftConfig.m ?? '(default)'}</Text>
+              </div>
+            </Card>
           )}
-        </Card>
-      )}
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
-          <Heading level={2}>Church Pulse weights &amp; Silent-Drift thresholds</Heading>
-          {!editOpen && (
-            <Button variant="primary" size="sm" onClick={openEdit} accessibilityLabel="Edit Configuration">
-              Edit
-            </Button>
+          {editOpen && (
+            <Card padding={6} testId="configuration-edit-form">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+                <Text variant="bodySmall" color={theme.colors.text.secondary}>
+                  Leave a field blank to use its default.
+                </Text>
+                {CHURCH_PULSE_SIGNAL_TYPE_VALUES.map((type) => (
+                  <Input
+                    key={type}
+                    label={CHURCH_PULSE_SIGNAL_LABEL[type]}
+                    type="number"
+                    value={editWeights[type]}
+                    onChange={(event) => setEditWeights((prev) => ({ ...prev, [type]: event.target.value }))}
+                    placeholder="e.g. 0.1667"
+                    testId={`configuration-weight-${type}`}
+                  />
+                ))}
+                <Divider />
+                <Input
+                  label="Silent-Drift N (last N Sunday/Wed/Fri Gatherings)"
+                  type="number"
+                  value={editN}
+                  onChange={(event) => setEditN(event.target.value)}
+                  placeholder="e.g. 3"
+                  testId="configuration-silent-drift-n"
+                />
+                <Input
+                  label="Silent-Drift M (last M Bacenta Meetings)"
+                  type="number"
+                  value={editM}
+                  onChange={(event) => setEditM(event.target.value)}
+                  placeholder="e.g. 3"
+                  testId="configuration-silent-drift-m"
+                />
+                {editError && (
+                  <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
+                    {editError}
+                  </Text>
+                )}
+                <div style={{ display: 'flex', gap: theme.spacing[2] }}>
+                  <Button variant="primary" size="sm" loading={editSubmitting} onClick={() => void submitEdit()} testId="configuration-edit-submit">
+                    Save
+                  </Button>
+                  <Button variant="secondary" size="sm" onClick={cancelEdit}>
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </Card>
           )}
         </div>
-
-        {!editOpen && configState.status === 'success' && (
-          <Card padding={6} testId="configuration-summary-card">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }}>
-              {CHURCH_PULSE_SIGNAL_TYPE_VALUES.map((type) => (
-                <Text key={type} variant="bodySmall">
-                  {CHURCH_PULSE_SIGNAL_LABEL[type]}: {configState.data.churchPulseWeights[type] ?? '(default)'}
-                </Text>
-              ))}
-              <Divider />
-              <Text variant="bodySmall">Silent-Drift N (Gatherings): {configState.data.silentDriftConfig.n ?? '(default)'}</Text>
-              <Text variant="bodySmall">Silent-Drift M (Bacenta Meetings): {configState.data.silentDriftConfig.m ?? '(default)'}</Text>
-            </div>
-          </Card>
-        )}
-
-        {editOpen && (
-          <Card padding={6} testId="configuration-edit-form">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-              <Text variant="bodySmall" color={theme.colors.text.secondary}>
-                Leave a field blank to use its default.
-              </Text>
-              {CHURCH_PULSE_SIGNAL_TYPE_VALUES.map((type) => (
-                <Input
-                  key={type}
-                  label={CHURCH_PULSE_SIGNAL_LABEL[type]}
-                  type="number"
-                  value={editWeights[type]}
-                  onChange={(event) => setEditWeights((prev) => ({ ...prev, [type]: event.target.value }))}
-                  placeholder="e.g. 0.1667"
-                  testId={`configuration-weight-${type}`}
-                />
-              ))}
-              <Divider />
-              <Input
-                label="Silent-Drift N (last N Sunday/Wed/Fri Gatherings)"
-                type="number"
-                value={editN}
-                onChange={(event) => setEditN(event.target.value)}
-                placeholder="e.g. 3"
-                testId="configuration-silent-drift-n"
-              />
-              <Input
-                label="Silent-Drift M (last M Bacenta Meetings)"
-                type="number"
-                value={editM}
-                onChange={(event) => setEditM(event.target.value)}
-                placeholder="e.g. 3"
-                testId="configuration-silent-drift-m"
-              />
-              {editError && (
-                <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
-                  {editError}
-                </Text>
-              )}
-              <div style={{ display: 'flex', gap: theme.spacing[2] }}>
-                <Button variant="primary" size="sm" loading={editSubmitting} onClick={() => void submitEdit()} testId="configuration-edit-submit">
-                  Save
-                </Button>
-                <Button variant="secondary" size="sm" onClick={cancelEdit}>
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          </Card>
-        )}
       </div>
-    </div>
+    </PageContainer>
   );
 }

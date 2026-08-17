@@ -73,12 +73,14 @@ export function LoginPage() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center', padding: theme.spacing[4] }}>
-      <Card padding={8}>
-        <div style={{ width: 360, display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
-          <Heading level={1}>Ecclesia</Heading>
-          <Text variant="bodySmall" color={theme.colors.text.secondary}>
-            {mode === 'development' ? 'Development sign-in — select a seeded user.' : 'Sign in to the Admin Console.'}
-          </Text>
+      <Card padding={10} elevation={1}>
+        <div style={{ width: 380, display: 'flex', flexDirection: 'column', gap: theme.spacing[5] }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
+            <Heading level="display">Ecclesia</Heading>
+            <Text variant="bodySmall" color={theme.colors.text.secondary}>
+              {mode === 'development' ? 'Development sign-in — select a seeded user.' : 'Sign in to the Admin Console.'}
+            </Text>
+          </div>
 
           {errorMessage && (
             <Text variant="bodySmall" color={theme.colors.status.danger.strong}>

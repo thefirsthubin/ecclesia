@@ -1,8 +1,8 @@
-import { EmptyState } from '@ecclesia/ui-web';
+import { EmptyState, PageContainer } from '@ecclesia/ui-web';
 
 import { useAuth } from '../../auth/AuthContext';
+import { BranchInsightsView } from './BranchInsightsView';
 import { BranchTrendsSection } from './BranchTrendsSection';
-import { ClusterInsightsView } from './ClusterInsightsView';
 
 /**
  * The `/insights` nav entry (Design System §3.1's persistent sidebar,
@@ -36,6 +36,15 @@ import { ClusterInsightsView } from './ClusterInsightsView';
  * hold the same `insights.branch_dashboard.read` (BRANCH) grant in
  * `permission-matrix.ts`, traced not assumed, so this uses a permission
  * Super Administrator already had, not a new one.
+ *
+ * `[Branch Pastor portal, Insights rebuild]` `ASSISTANT_PASTOR` now
+ * renders `BranchInsightsView`, not `ClusterInsightsView` (removed - see
+ * that component's own former doc comment, preserved in git history, for
+ * why its single-Bacenta-at-a-time picker was replaced rather than
+ * refined: it could not answer any of the approved brief's own example
+ * questions - "which Bacentas are healthy," "is attendance increasing or
+ * declining," "what follow-ups are overdue"). Every other role's branch
+ * here is unchanged.
  */
 export function InsightsPage() {
   const { state } = useAuth();
@@ -50,24 +59,28 @@ export function InsightsPage() {
   }
 
   if (role === 'ASSISTANT_PASTOR') {
-    return <ClusterInsightsView />;
+    return <BranchInsightsView />;
   }
 
   if (role === 'BACENTA_LEADER' || role === 'BASONTA_LEADER') {
     return (
-      <EmptyState
-        icon="home"
-        title="Your Bacenta pulse view lives on mobile"
-        description="Design System §3.3 places the Shepherd's Bacenta pulse view on the mobile app, not Web Admin. Open the Ecclesia mobile app to see it."
-      />
+      <PageContainer>
+        <EmptyState
+          icon="home"
+          title="Your Bacenta pulse view lives on mobile"
+          description="Design System §3.3 places the Shepherd's Bacenta pulse view on the mobile app, not Web Admin. Open the Ecclesia mobile app to see it."
+        />
+      </PageContainer>
     );
   }
 
   return (
-    <EmptyState
-      icon="clock"
-      title="Insights — not available for this role"
-      description="Your role does not have an Insights view in this release."
-    />
+    <PageContainer>
+      <EmptyState
+        icon="clock"
+        title="Insights — not available for this role"
+        description="Your role does not have an Insights view in this release."
+      />
+    </PageContainer>
   );
 }

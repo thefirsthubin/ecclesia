@@ -1,4 +1,4 @@
-import { Card, ErrorState, Heading, Icon, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
+import { Card, ErrorState, Heading, Icon, PageContainer, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
 import type { IconName } from '@ecclesia/ui-core';
 
 import { BacentaLeaderboardCard } from '../DashboardPage/BacentaLeaderboardCard';
@@ -29,20 +29,24 @@ export function BranchTrendsSection({ accessToken }: { accessToken: string | und
 
   if (summaryState.status === 'loading') {
     return (
-      <Card padding={6}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-          <Skeleton height={20} width="30%" />
-          <Skeleton height={220} />
-        </div>
-      </Card>
+      <PageContainer maxWidth={1280}>
+        <Card padding={6}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+            <Skeleton height={20} width="30%" />
+            <Skeleton height={220} />
+          </div>
+        </Card>
+      </PageContainer>
     );
   }
 
   if (summaryState.status === 'error') {
     return (
-      <Card padding={6}>
-        <ErrorState title="Couldn't load trend data" onRetry={summaryState.refetch} />
-      </Card>
+      <PageContainer maxWidth={1280}>
+        <Card padding={6}>
+          <ErrorState title="Couldn't load trend data" onRetry={summaryState.refetch} />
+        </Card>
+      </PageContainer>
     );
   }
 
@@ -52,29 +56,31 @@ export function BranchTrendsSection({ accessToken }: { accessToken: string | und
   const { deltaPoints, direction, windowDays } = summary.engagementTrend;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
-      <PerformanceChartCard attendance={growthSeries.attendance} membership={growthSeries.membership} giving={growthSeries.giving} />
+    <PageContainer maxWidth={1280}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
+        <PerformanceChartCard attendance={growthSeries.attendance} membership={growthSeries.membership} giving={growthSeries.giving} />
 
-      <Card padding={6} testId="engagement-trend-card">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }}>
-          <Text variant="label" color={theme.colors.text.secondary}>
-            ENGAGEMENT TREND
-          </Text>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: theme.spacing[2] }}>
-            <Heading level="display">{`${deltaPoints >= 0 ? '+' : ''}${deltaPoints}`}</Heading>
-            <Icon name={TREND_ICON[direction]} size="md" color={theme.colors.text.secondary} />
+        <Card padding={6} testId="engagement-trend-card">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }}>
+            <Text variant="label" color={theme.colors.text.secondary}>
+              ENGAGEMENT TREND
+            </Text>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: theme.spacing[2] }}>
+              <Heading level="display">{`${deltaPoints >= 0 ? '+' : ''}${deltaPoints}`}</Heading>
+              <Icon name={TREND_ICON[direction]} size="md" color={theme.colors.text.secondary} />
+            </div>
+            <Text variant="bodySmall" color={theme.colors.text.secondary}>
+              {`Church Pulse point movement over the last ${windowDays} days`}
+            </Text>
           </div>
-          <Text variant="bodySmall" color={theme.colors.text.secondary}>
-            {`Church Pulse point movement over the last ${windowDays} days`}
-          </Text>
-        </div>
-      </Card>
+        </Card>
 
-      {/* Omitted, not a fabricated empty-looking card, when the Branch
-          genuinely has no active Bacenta with a computed score yet - same
-          "no card without an implied next action" rule
-          `ResidentPastorDashboard` already followed for this exact card. */}
-      {bacentaLeaderboard.length > 0 && <BacentaLeaderboardCard entries={bacentaLeaderboard} />}
-    </div>
+        {/* Omitted, not a fabricated empty-looking card, when the Branch
+            genuinely has no active Bacenta with a computed score yet - same
+            "no card without an implied next action" rule
+            `ResidentPastorDashboard` already followed for this exact card. */}
+        {bacentaLeaderboard.length > 0 && <BacentaLeaderboardCard entries={bacentaLeaderboard} />}
+      </div>
+    </PageContainer>
   );
 }

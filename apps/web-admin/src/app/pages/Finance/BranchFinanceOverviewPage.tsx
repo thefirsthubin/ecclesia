@@ -1,4 +1,4 @@
-import { BarChart, Badge, Card, EmptyState, ErrorState, Heading, Skeleton, Table, Text, useTheme } from '@ecclesia/ui-web';
+import { BarChart, Badge, Card, EmptyState, ErrorState, HealthStatement, PageContainer, PageHeader, SectionHeader, Skeleton, Table, Text, TrendPanel, useTheme } from '@ecclesia/ui-web';
 import type { TableColumn } from '@ecclesia/ui-web';
 import type { ReconciliationRowDto } from '@ecclesia/contracts';
 
@@ -115,61 +115,42 @@ export function BranchFinanceOverviewPage() {
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5], maxWidth: 900 }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
-        <Heading level={1}>Branch Finance Overview</Heading>
-        <Text variant="bodySmall" color={theme.colors.text.secondary}>
-          {`${state.actor.branchName} · Read-only giving visibility`}
-        </Text>
-      </div>
+    <PageContainer maxWidth={1040}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5] }}>
+      <PageHeader title="Finance" context={`${state.actor.branchName} · Read-only giving visibility`} />
 
       {summaryState.status === 'loading' && (
-        <Card padding={6}>
-          <Skeleton height={60} />
+        <Card padding={6} elevation={1} testId="branch-finance-total-card">
+          <Skeleton height={64} />
         </Card>
       )}
 
       {summaryState.status === 'error' && (
-        <Card padding={6}>
+        <Card padding={6} elevation={1} testId="branch-finance-total-card">
           <ErrorState title="Couldn't load Total Giving" onRetry={summaryState.refetch} />
         </Card>
       )}
 
       {summaryState.status === 'success' && (
-        <>
-          <Card padding={6} testId="branch-finance-total-card">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
-              <Text variant="label" color={theme.colors.text.secondary}>
-                TOTAL GIVING THIS MONTH
-              </Text>
-              <Heading level="display">{formatAmountMinor(summaryState.data.givingTotalMinor, 'GHS')}</Heading>
-              <Text variant="bodySmall" color={theme.colors.text.secondary}>
-                {`${summaryState.data.givingTrend >= 0 ? '+' : ''}${summaryState.data.givingTrend}% vs. last month · every verified gift to your Branch`}
-              </Text>
-            </div>
-          </Card>
-
-          <Card padding={6} testId="branch-finance-trend-card">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
-              <div>
-                <Heading level={3}>Giving Trend</Heading>
-                <Text variant="bodySmall" color={theme.colors.text.secondary}>
-                  Last 6 months, Branch-wide
-                </Text>
-              </div>
-              <BarChart data={growthSeriesFromSummary(summaryState.data).giving} formatValue={formatGhs} testId="branch-finance-trend-chart" />
-            </div>
-          </Card>
-        </>
+        <Card padding={6} elevation={1} testId="branch-finance-total-card">
+          <HealthStatement
+            headline={formatAmountMinor(summaryState.data.givingTotalMinor, 'GHS')}
+            statement={`${summaryState.data.givingTrend >= 0 ? '+' : ''}${summaryState.data.givingTrend}% vs. last month · every verified gift to your Branch this month.`}
+            tone={summaryState.data.givingTrend >= 0 ? 'positive' : 'attention'}
+            trend={growthSeriesFromSummary(summaryState.data).giving}
+            testId="branch-finance-total-statement"
+          />
+        </Card>
       )}
 
+      <Card padding={6} testId="branch-finance-trend-card">
+        <TrendPanel title="Giving Trend" description="Last 6 months, Branch-wide" status={summaryState.status} onRetry={summaryState.refetch} errorTitle="Couldn't load Giving Trend">
+          {summaryState.status === 'success' && <BarChart data={growthSeriesFromSummary(summaryState.data).giving} formatValue={formatGhs} testId="branch-finance-trend-chart" />}
+        </TrendPanel>
+      </Card>
+
       <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-        <div>
-          <Heading level={2}>Giving by Bacenta</Heading>
-          <Text variant="bodySmall" color={theme.colors.text.secondary}>
-            {`This week only · bank-deposit-verified Bacenta offerings, not the whole-Branch total above`}
-          </Text>
-        </div>
+        <SectionHeader title="Giving by Bacenta" description="This week only · bank-deposit-verified Bacenta offerings, not the whole-Branch total above" />
 
         {reconciliationState.status === 'loading' && (
           <Card padding={6}>
@@ -228,5 +209,6 @@ export function BranchFinanceOverviewPage() {
         </Text>
       </Card>
     </div>
+    </PageContainer>
   );
 }

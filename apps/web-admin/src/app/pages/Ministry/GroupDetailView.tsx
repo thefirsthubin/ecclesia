@@ -1,4 +1,4 @@
-import { Card, ErrorState, Skeleton } from '@ecclesia/ui-web';
+import { Card, ErrorState, PageContainer, Skeleton } from '@ecclesia/ui-web';
 
 import { useAuth } from '../../auth/AuthContext';
 import { useGroupName } from '../People/usePeopleData';
@@ -23,17 +23,21 @@ export function GroupDetailView({ groupId }: { groupId: string }) {
 
   if (groupState.status === 'loading') {
     return (
-      <Card padding={6}>
-        <Skeleton height={40} />
-      </Card>
+      <PageContainer>
+        <Card padding={6}>
+          <Skeleton height={40} />
+        </Card>
+      </PageContainer>
     );
   }
 
   if (groupState.status === 'error') {
     return (
-      <Card padding={6}>
-        <ErrorState title="Couldn't load this Group" onRetry={groupState.refetch} />
-      </Card>
+      <PageContainer>
+        <Card padding={6}>
+          <ErrorState title="Couldn't load this Group" onRetry={groupState.refetch} />
+        </Card>
+      </PageContainer>
     );
   }
 

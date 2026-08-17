@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Badge, Button, Card, ErrorState, Heading, Input, RecordPicker, Select, Skeleton, Table, Text, useTheme } from '@ecclesia/ui-web';
+import { Badge, Button, Card, ErrorState, Heading, Input, PageContainer, RecordPicker, Select, Skeleton, Table, Text, useTheme } from '@ecclesia/ui-web';
 import type { RecordOption, TableColumn } from '@ecclesia/ui-web';
 import type { GatheringResponseDto, GatheringStatusDto } from '@ecclesia/contracts';
 
@@ -368,117 +368,119 @@ export function GatheringsListPage() {
   const past = gatheringsState.status === 'success' ? gatheringsState.data.filter((gathering) => isPast(gathering, now)) : [];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5], maxWidth: 900 }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
-        <Heading level={1}>Gatherings</Heading>
-        {!createOpen && (
-          <Button variant="secondary" size="sm" onClick={openCreate} accessibilityLabel="Create Gathering">
-            + Create Gathering
-          </Button>
+    <PageContainer maxWidth={900}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5] }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
+          <Heading level={1}>Gatherings</Heading>
+          {!createOpen && (
+            <Button variant="secondary" size="sm" onClick={openCreate} accessibilityLabel="Create Gathering">
+              + Create Gathering
+            </Button>
+          )}
+        </div>
+        <Input label="Filter by type" value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)} placeholder="e.g. SUNDAY_SERVICE" />
+
+        {/* `[Gathering Create/Update milestone]` PRD §17.3's "Gathering:
+            create/configure" row - always offered, no client-side role
+            check. Traced against the real matrix, not assumed:
+            `RESIDENT_PASTOR` holds only `gatherings.gathering.read` (no
+            `.create` row at all), so this always 403s for that persona -
+            the backend's real response is what they see, same as every
+            other gated action in this app. `ownerGroupId` is optional (a
+            Branch-wide Gathering) but only a BRANCH-scoped role (`ADMIN`)
+            can actually create one that way - `ASSISTANT_PASTOR`/
+            `BACENTA_LEADER`/`BASONTA_LEADER` need a real Group here to
+            satisfy their own CLUSTER/OWN_GROUP scope. Neither constraint
+            is enforced client-side. */}
+        {createOpen && (
+          <Card padding={6} testId="gathering-create-form">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+              <Input label="Type" value={createType} onChange={(event) => setCreateType(event.target.value)} placeholder="e.g. SUNDAY_SERVICE" />
+              <RecordPicker
+                label="Owner Group (optional - leave blank for a Branch-wide Gathering)"
+                placeholder="Search for a Bacenta or Basonta…"
+                value={createGroupTarget}
+                onChange={setCreateGroupTarget}
+                onSearch={(query_) => searchGroupsForAssignment(state.accessToken, query_)}
+              />
+              <Input label="Scheduled start" type="datetime-local" value={createStart} onChange={(event) => setCreateStart(event.target.value)} />
+              <Input label="Scheduled end (optional)" type="datetime-local" value={createEnd} onChange={(event) => setCreateEnd(event.target.value)} />
+              <Input label="Venue (optional)" value={createVenue} onChange={(event) => setCreateVenue(event.target.value)} placeholder="e.g. Main Auditorium" />
+              {createError && (
+                <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
+                  {createError}
+                </Text>
+              )}
+              <div style={{ display: 'flex', gap: theme.spacing[2] }}>
+                <Button variant="primary" size="sm" disabled={!createType.trim() || !createStart} loading={createSubmitting} onClick={() => void submitCreate()}>
+                  Confirm create
+                </Button>
+                <Button variant="secondary" size="sm" onClick={cancelCreate}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {gatheringsState.status === 'loading' && (
+          <Card padding={6}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+              <Skeleton height={40} />
+              <Skeleton height={40} />
+              <Skeleton height={40} />
+            </div>
+          </Card>
+        )}
+
+        {gatheringsState.status === 'error' && (
+          <Card padding={6}>
+            <ErrorState title="Couldn't load Gatherings" onRetry={gatheringsState.refetch} />
+          </Card>
+        )}
+
+        {gatheringsState.status === 'success' && (
+          <>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+              <Heading level={2}>Upcoming Gatherings</Heading>
+              <Card padding={6} testId="gatherings-list-card">
+                <Table
+                  testId="upcoming-gatherings-table"
+                  columns={upcomingColumns}
+                  data={upcoming}
+                  getRowId={(gathering) => gathering.id}
+                  isRowExpanded={(gathering) => expandedRow?.id === gathering.id && expandedRow.mode === 'edit'}
+                  renderRowDetail={renderEditForm}
+                  emptyIcon="calendar"
+                  emptyTitle={typeFilter ? 'No matches' : 'No upcoming Gatherings'}
+                  emptyDescription={
+                    typeFilter ? `No upcoming Gatherings of type "${typeFilter}" in this scope.` : 'No upcoming Gatherings are visible in your current scope yet.'
+                  }
+                />
+              </Card>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+              <Heading level={2}>Past Gatherings</Heading>
+              <Card padding={6} testId="past-gatherings-card">
+                <Table
+                  testId="past-gatherings-table"
+                  columns={historicalColumns}
+                  data={past}
+                  getRowId={(gathering) => gathering.id}
+                  isRowExpanded={(gathering) => expandedRow?.id === gathering.id}
+                  renderRowDetail={(gathering) =>
+                    expandedRow?.mode === 'attendance' ? <AttendanceReviewPanel gatheringId={gathering.id} /> : renderEditForm(gathering)
+                  }
+                  emptyIcon="calendar"
+                  emptyTitle={typeFilter ? 'No matches' : 'No past Gatherings'}
+                  emptyDescription={typeFilter ? `No past Gatherings of type "${typeFilter}" in this scope.` : 'No past Gatherings are visible in your current scope yet.'}
+                />
+              </Card>
+            </div>
+          </>
         )}
       </div>
-      <Input label="Filter by type" value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)} placeholder="e.g. SUNDAY_SERVICE" />
-
-      {/* `[Gathering Create/Update milestone]` PRD §17.3's "Gathering:
-          create/configure" row - always offered, no client-side role
-          check. Traced against the real matrix, not assumed:
-          `RESIDENT_PASTOR` holds only `gatherings.gathering.read` (no
-          `.create` row at all), so this always 403s for that persona -
-          the backend's real response is what they see, same as every
-          other gated action in this app. `ownerGroupId` is optional (a
-          Branch-wide Gathering) but only a BRANCH-scoped role (`ADMIN`)
-          can actually create one that way - `ASSISTANT_PASTOR`/
-          `BACENTA_LEADER`/`BASONTA_LEADER` need a real Group here to
-          satisfy their own CLUSTER/OWN_GROUP scope. Neither constraint
-          is enforced client-side. */}
-      {createOpen && (
-        <Card padding={6} testId="gathering-create-form">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            <Input label="Type" value={createType} onChange={(event) => setCreateType(event.target.value)} placeholder="e.g. SUNDAY_SERVICE" />
-            <RecordPicker
-              label="Owner Group (optional - leave blank for a Branch-wide Gathering)"
-              placeholder="Search for a Bacenta or Basonta…"
-              value={createGroupTarget}
-              onChange={setCreateGroupTarget}
-              onSearch={(query_) => searchGroupsForAssignment(state.accessToken, query_)}
-            />
-            <Input label="Scheduled start" type="datetime-local" value={createStart} onChange={(event) => setCreateStart(event.target.value)} />
-            <Input label="Scheduled end (optional)" type="datetime-local" value={createEnd} onChange={(event) => setCreateEnd(event.target.value)} />
-            <Input label="Venue (optional)" value={createVenue} onChange={(event) => setCreateVenue(event.target.value)} placeholder="e.g. Main Auditorium" />
-            {createError && (
-              <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
-                {createError}
-              </Text>
-            )}
-            <div style={{ display: 'flex', gap: theme.spacing[2] }}>
-              <Button variant="primary" size="sm" disabled={!createType.trim() || !createStart} loading={createSubmitting} onClick={() => void submitCreate()}>
-                Confirm create
-              </Button>
-              <Button variant="secondary" size="sm" onClick={cancelCreate}>
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </Card>
-      )}
-
-      {gatheringsState.status === 'loading' && (
-        <Card padding={6}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            <Skeleton height={40} />
-            <Skeleton height={40} />
-            <Skeleton height={40} />
-          </div>
-        </Card>
-      )}
-
-      {gatheringsState.status === 'error' && (
-        <Card padding={6}>
-          <ErrorState title="Couldn't load Gatherings" onRetry={gatheringsState.refetch} />
-        </Card>
-      )}
-
-      {gatheringsState.status === 'success' && (
-        <>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            <Heading level={2}>Upcoming Gatherings</Heading>
-            <Card padding={6} testId="gatherings-list-card">
-              <Table
-                testId="upcoming-gatherings-table"
-                columns={upcomingColumns}
-                data={upcoming}
-                getRowId={(gathering) => gathering.id}
-                isRowExpanded={(gathering) => expandedRow?.id === gathering.id && expandedRow.mode === 'edit'}
-                renderRowDetail={renderEditForm}
-                emptyIcon="calendar"
-                emptyTitle={typeFilter ? 'No matches' : 'No upcoming Gatherings'}
-                emptyDescription={
-                  typeFilter ? `No upcoming Gatherings of type "${typeFilter}" in this scope.` : 'No upcoming Gatherings are visible in your current scope yet.'
-                }
-              />
-            </Card>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            <Heading level={2}>Past Gatherings</Heading>
-            <Card padding={6} testId="past-gatherings-card">
-              <Table
-                testId="past-gatherings-table"
-                columns={historicalColumns}
-                data={past}
-                getRowId={(gathering) => gathering.id}
-                isRowExpanded={(gathering) => expandedRow?.id === gathering.id}
-                renderRowDetail={(gathering) =>
-                  expandedRow?.mode === 'attendance' ? <AttendanceReviewPanel gatheringId={gathering.id} /> : renderEditForm(gathering)
-                }
-                emptyIcon="calendar"
-                emptyTitle={typeFilter ? 'No matches' : 'No past Gatherings'}
-                emptyDescription={typeFilter ? `No past Gatherings of type "${typeFilter}" in this scope.` : 'No past Gatherings are visible in your current scope yet.'}
-              />
-            </Card>
-          </div>
-        </>
-      )}
-    </div>
+    </PageContainer>
   );
 }

@@ -86,10 +86,20 @@ export function useGatheringsList(accessToken: string | undefined, query: ListGa
       const params = new URLSearchParams();
       if (query.ownerGroupId) params.set('ownerGroupId', query.ownerGroupId);
       if (query.type) params.set('type', query.type);
+      // `[Branch Pastor portal, Gatherings sprint]` `from`/`to` are real,
+      // already-validated fields on `ListGatheringsQuery`
+      // (`listGatheringsQuerySchema`) that no caller ever populated before
+      // this - `GatheringService.list()` otherwise silently defaults to
+      // `[now, now + DEFAULT_LIST_WINDOW_DAYS)`, which can never surface a
+      // genuinely historical Gathering (anything that started before
+      // today). Purely additive: every existing caller leaves both
+      // `undefined` and gets the exact same request as before.
+      if (query.from) params.set('from', query.from);
+      if (query.to) params.set('to', query.to);
       const qs = params.toString();
       return apiGet<GatheringResponseDto[]>(`/gatherings${qs ? `?${qs}` : ''}`, { authToken: accessToken, signal });
     },
-    [accessToken, query.ownerGroupId, query.type],
+    [accessToken, query.ownerGroupId, query.type, query.from, query.to],
   );
 }
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Badge, Button, Card, ErrorState, Heading, Input, RadioGroup, Skeleton, Table, Text, useTheme, useToast } from '@ecclesia/ui-web';
+import { Badge, Button, Card, ErrorState, Heading, Input, PageContainer, RadioGroup, Skeleton, Table, Text, useTheme, useToast } from '@ecclesia/ui-web';
 import type { TableColumn } from '@ecclesia/ui-web';
 import {
   INBOUND_TRANSACTION_STATE_VALUES,
@@ -627,387 +627,389 @@ export function StewardshipPage() {
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5], maxWidth: 900 }}>
-      <Heading level={1}>Stewardship</Heading>
+    <PageContainer maxWidth={900}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5] }}>
+        <Heading level={1}>Stewardship</Heading>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[3] }}>
-          <Heading level={2}>Financial Transaction verification queue</Heading>
-          {!recordFormOpen && (
-            <Button variant="secondary" size="sm" onClick={() => setRecordFormOpen(true)} accessibilityLabel="Record a new Financial Transaction">
-              + Record Transaction
-            </Button>
-          )}
-        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[3] }}>
+            <Heading level={2}>Financial Transaction verification queue</Heading>
+            {!recordFormOpen && (
+              <Button variant="secondary" size="sm" onClick={() => setRecordFormOpen(true)} accessibilityLabel="Record a new Financial Transaction">
+                + Record Transaction
+              </Button>
+            )}
+          </div>
 
-        {recordFormOpen && (
-          <Card padding={6} testId="record-transaction-form">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
-              <RadioGroup
-                label="Type"
-                name="record-transaction-type"
-                options={RECORD_TRANSACTION_TYPE_OPTIONS}
-                value={recordType}
-                onChange={(value) => setRecordType(value as RecordFinancialTransactionInput['type'])}
-              />
-              <RadioGroup
-                label="Channel"
-                name="record-transaction-channel"
-                options={RECORD_TRANSACTION_CHANNEL_OPTIONS}
-                value={recordChannel}
-                onChange={(value) => setRecordChannel(value as FinancialTransactionChannelDto)}
-                direction="row"
-              />
-              <Input
-                label="Amount (GHS)"
-                value={recordAmountText}
-                onChange={(event) => setRecordAmountText(event.target.value)}
-                placeholder="0.00"
-                error={recordAmountError}
-                testId="record-transaction-amount"
-              />
-              {recordSubmitError && (
-                <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
-                  {recordSubmitError}
-                </Text>
-              )}
-              <div style={{ display: 'flex', gap: theme.spacing[2] }}>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  disabled={recordAmountText.length === 0 || Boolean(recordAmountError)}
-                  loading={recordSubmitting}
-                  onClick={() => void submitRecordTransaction()}
-                  testId="record-transaction-submit"
-                >
-                  Record
-                </Button>
-                <Button variant="secondary" size="sm" onClick={closeRecordForm}>
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          </Card>
-        )}
-
-        <div style={{ display: 'flex', gap: theme.spacing[2], flexWrap: 'wrap' }}>
-          <Button
-            variant={transactionStateFilter === undefined ? 'primary' : 'secondary'}
-            size="sm"
-            onClick={() => setTransactionStateFilter(undefined)}
-          >
-            All
-          </Button>
-          {INBOUND_TRANSACTION_STATE_VALUES.map((value) => (
-            <Button
-              key={value}
-              variant={transactionStateFilter === value ? 'primary' : 'secondary'}
-              size="sm"
-              onClick={() => setTransactionStateFilter(value)}
-            >
-              {value}
-            </Button>
-          ))}
-        </div>
-
-        {transactionsState.status === 'loading' && (
-          <Card padding={6}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-              <Skeleton height={40} />
-              <Skeleton height={40} />
-            </div>
-          </Card>
-        )}
-
-        {transactionsState.status === 'error' && (
-          <Card padding={6}>
-            <ErrorState title="Couldn't load Financial Transactions" onRetry={transactionsState.refetch} />
-          </Card>
-        )}
-
-        {transactionsState.status === 'success' && (
-          <Card padding={6} testId="transaction-queue-card">
-            <Table
-              testId="transaction-queue-table"
-              columns={transactionColumns}
-              data={transactionsState.data}
-              getRowId={(transaction) => transaction.id}
-              isRowExpanded={(transaction) => reasonDraftKey === `${transaction.id}:flag`}
-              renderRowDetail={(transaction) => (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }} data-testid="flag-form">
-                  <div style={{ display: 'flex', gap: theme.spacing[2], alignItems: 'flex-end' }}>
-                    <Input label="Reason" value={reasonText} onChange={(event) => setReasonText(event.target.value)} placeholder="Why is this being flagged?" />
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      disabled={reasonText.trim().length === 0}
-                      loading={busyKey === `${transaction.id}:flag`}
-                      onClick={() =>
-                        void runTransactionAction(transaction.id, 'flag', () => flagTransaction(state.accessToken, transaction.id, { reason: reasonText.trim() }))
-                      }
-                    >
-                      Submit flag
-                    </Button>
-                    <Button variant="secondary" size="sm" onClick={cancelReasonDraft}>
-                      Cancel
-                    </Button>
-                  </div>
-                  {reasonError && (
-                    <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
-                      {reasonError}
-                    </Text>
-                  )}
-                </div>
-              )}
-              emptyIcon="checkCircle"
-              emptyTitle="No Financial Transactions"
-              emptyDescription="No Financial Transactions are visible in your current scope yet."
-            />
-          </Card>
-        )}
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[3] }}>
-          <Heading level={2}>Expense approval queue</Heading>
-          {!expenseFormOpen && (
-            <Button variant="secondary" size="sm" onClick={() => setExpenseFormOpen(true)} accessibilityLabel="Request a new Expense">
-              + Request Expense
-            </Button>
-          )}
-        </div>
-
-        {expenseFormOpen && (
-          <Card padding={6} testId="request-expense-form">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
-              <Input
-                label="Amount (GHS)"
-                value={expenseAmountText}
-                onChange={(event) => setExpenseAmountText(event.target.value)}
-                placeholder="0.00"
-                error={expenseAmountError}
-                testId="request-expense-amount"
-              />
-              <Input
-                label="Description"
-                value={expenseDescription}
-                onChange={(event) => setExpenseDescription(event.target.value)}
-                placeholder="What is this expense for?"
-                testId="request-expense-description"
-              />
-              <Input
-                label="Category (optional)"
-                value={expenseCategory}
-                onChange={(event) => setExpenseCategory(event.target.value)}
-                placeholder="e.g. Facilities, Ministry supplies"
-                testId="request-expense-category"
-              />
-              {expenseSubmitError && (
-                <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
-                  {expenseSubmitError}
-                </Text>
-              )}
-              <div style={{ display: 'flex', gap: theme.spacing[2] }}>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  disabled={expenseAmountText.length === 0 || Boolean(expenseAmountError) || expenseDescription.trim().length === 0}
-                  loading={expenseSubmitting}
-                  onClick={() => void submitRequestExpense()}
-                  testId="request-expense-submit"
-                >
-                  Request
-                </Button>
-                <Button variant="secondary" size="sm" onClick={closeExpenseForm}>
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          </Card>
-        )}
-
-        <div style={{ display: 'flex', gap: theme.spacing[2], flexWrap: 'wrap' }}>
-          <Button variant={expenseStateFilter === undefined ? 'primary' : 'secondary'} size="sm" onClick={() => setExpenseStateFilter(undefined)}>
-            All
-          </Button>
-          {OUTBOUND_TRANSACTION_STATE_VALUES.map((value) => (
-            <Button key={value} variant={expenseStateFilter === value ? 'primary' : 'secondary'} size="sm" onClick={() => setExpenseStateFilter(value)}>
-              {value}
-            </Button>
-          ))}
-        </div>
-
-        {expensesState.status === 'loading' && (
-          <Card padding={6}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-              <Skeleton height={40} />
-              <Skeleton height={40} />
-            </div>
-          </Card>
-        )}
-
-        {expensesState.status === 'error' && (
-          <Card padding={6}>
-            <ErrorState title="Couldn't load Expenses" onRetry={expensesState.refetch} />
-          </Card>
-        )}
-
-        {expensesState.status === 'success' && (
-          <Card padding={6} testId="expense-queue-card">
-            <Table
-              testId="expense-queue-table"
-              columns={expenseColumns}
-              data={expensesState.data}
-              getRowId={(expense) => expense.id}
-              // `[Stewardship gaps sprint]` `ReceiptUploadPanel` is always
-              // rendered per Expense row, not just while a reject-reason
-              // draft is open (unlike the Transaction/Reconciliation
-              // tables' conditional reveal below) - `isRowExpanded` is
-              // therefore unconditional here, and `renderRowDetail`
-              // itself decides whether the reject form also shows.
-              isRowExpanded={() => true}
-              renderRowDetail={(expense) => (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-                  {reasonDraftKey === `${expense.id}:reject` && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }} data-testid="reject-form">
-                      <div style={{ display: 'flex', gap: theme.spacing[2], alignItems: 'flex-end' }}>
-                        <Input label="Reason" value={reasonText} onChange={(event) => setReasonText(event.target.value)} placeholder="Why is this being rejected?" />
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          disabled={reasonText.trim().length === 0}
-                          loading={busyKey === `${expense.id}:reject`}
-                          onClick={() => void runExpenseAction(expense.id, 'reject', () => rejectExpense(state.accessToken, expense.id, { reason: reasonText.trim() }))}
-                        >
-                          Submit rejection
-                        </Button>
-                        <Button variant="secondary" size="sm" onClick={cancelReasonDraft}>
-                          Cancel
-                        </Button>
-                      </div>
-                      {reasonError && (
-                        <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
-                          {reasonError}
-                        </Text>
-                      )}
-                    </div>
-                  )}
-                  <ReceiptUploadPanel expense={expense} accessToken={state.accessToken} onUploaded={expensesState.refetch} />
-                </div>
-              )}
-              emptyIcon="checkCircle"
-              emptyTitle="No Expenses"
-              emptyDescription="No Expenses are visible in your current scope yet."
-            />
-          </Card>
-        )}
-      </div>
-
-      {/* `[Bank Deposit Confirmation milestone]` FR-STW-07's bank-deposit
-          comparison half. Unlike Transaction/Expense above, this is not a
-          queue of existing records with a state to transition - a
-          `BankDepositConfirmation` is created fresh per Bacenta/week
-          (`@@unique([groupId, weekStartDate])`, confirmed via
-          `BankDepositConfirmationRepository`), so "Confirm Deposit" is a
-          create action per unmatched row, not a status button. No client
-          role check - only `TREASURER` (BRANCH) actually holds
-          `stewardship.bank_deposit.confirm` (traced against
-          `permission-matrix.ts`), the backend's real response is what
-          every other caller sees. */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-        <Heading level={2}>Bank Deposit Reconciliation</Heading>
-        <Input
-          label="Week starting"
-          type="date"
-          value={reconciliationWeekStartDate}
-          onChange={(event) => setReconciliationWeekStartDate(event.target.value)}
-          testId="reconciliation-week-start"
-        />
-
-        {reconciliationWeekStartDate === '' && (
-          <Text variant="bodySmall" color={theme.colors.text.secondary}>
-            Choose a week to view its reconciliation.
-          </Text>
-        )}
-
-        {reconciliationState.status === 'loading' && (
-          <Card padding={6}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-              <Skeleton height={40} />
-              <Skeleton height={40} />
-            </div>
-          </Card>
-        )}
-
-        {reconciliationState.status === 'error' && (
-          <Card padding={6}>
-            <ErrorState title="Couldn't load the weekly reconciliation" onRetry={reconciliationState.refetch} />
-          </Card>
-        )}
-
-        {reconciliationState.status === 'success' && (
-          <Card padding={6} testId="reconciliation-card">
-            <Table
-              testId="reconciliation-table"
-              columns={reconciliationColumns}
-              data={reconciliationState.data.rows}
-              getRowId={(row) => row.groupId}
-              isRowExpanded={(row) => confirmingGroupId === row.groupId}
-              renderRowDetail={(row) => (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }} data-testid="confirm-deposit-form">
-                  {/* `[UX Design Implementation]` Final UX Design
-                      Specification §19 (Phase 5 Stewardship workflow UI)
-                      - "make [immutability] clear before confirmation."
-                      Purely informational copy describing real, existing
-                      backend behavior (`confirmBankDeposit`'s own doc
-                      comment: no `PATCH`/delete route exists anywhere on
-                      this controller) - not a new rule or workflow. */}
-                  <Text variant="bodySmall" color={theme.colors.text.secondary}>
-                    This creates a permanent record for this Bacenta and week - it can&apos;t be edited or deleted afterward.
+          {recordFormOpen && (
+            <Card padding={6} testId="record-transaction-form">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
+                <RadioGroup
+                  label="Type"
+                  name="record-transaction-type"
+                  options={RECORD_TRANSACTION_TYPE_OPTIONS}
+                  value={recordType}
+                  onChange={(value) => setRecordType(value as RecordFinancialTransactionInput['type'])}
+                />
+                <RadioGroup
+                  label="Channel"
+                  name="record-transaction-channel"
+                  options={RECORD_TRANSACTION_CHANNEL_OPTIONS}
+                  value={recordChannel}
+                  onChange={(value) => setRecordChannel(value as FinancialTransactionChannelDto)}
+                  direction="row"
+                />
+                <Input
+                  label="Amount (GHS)"
+                  value={recordAmountText}
+                  onChange={(event) => setRecordAmountText(event.target.value)}
+                  placeholder="0.00"
+                  error={recordAmountError}
+                  testId="record-transaction-amount"
+                />
+                {recordSubmitError && (
+                  <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
+                    {recordSubmitError}
                   </Text>
-                  <Input
-                    label="Deposited amount (GHS)"
-                    value={confirmAmountText}
-                    onChange={(event) => setConfirmAmountText(event.target.value)}
-                    placeholder="0.00"
-                    error={confirmAmountError}
-                    testId="confirm-deposit-amount"
-                  />
-                  <Input
-                    label="Bank reference (optional)"
-                    value={confirmBankReference}
-                    onChange={(event) => setConfirmBankReference(event.target.value)}
-                    placeholder="e.g. slip number"
-                  />
-                  {confirmError && (
-                    <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
-                      {confirmError}
-                    </Text>
-                  )}
-                  <div style={{ display: 'flex', gap: theme.spacing[2] }}>
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      disabled={confirmAmountText.length === 0 || Boolean(confirmAmountError)}
-                      loading={confirmSubmitting}
-                      onClick={() => void submitConfirmDeposit(row.groupId)}
-                      testId="confirm-deposit-submit"
-                    >
-                      Confirm
-                    </Button>
-                    <Button variant="secondary" size="sm" onClick={cancelConfirmDeposit}>
-                      Cancel
-                    </Button>
-                  </div>
+                )}
+                <div style={{ display: 'flex', gap: theme.spacing[2] }}>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    disabled={recordAmountText.length === 0 || Boolean(recordAmountError)}
+                    loading={recordSubmitting}
+                    onClick={() => void submitRecordTransaction()}
+                    testId="record-transaction-submit"
+                  >
+                    Record
+                  </Button>
+                  <Button variant="secondary" size="sm" onClick={closeRecordForm}>
+                    Cancel
+                  </Button>
                 </div>
-              )}
-              emptyIcon="checkCircle"
-              emptyTitle="Nothing to reconcile"
-              emptyDescription="No Verified transactions or bank deposit confirmations exist for this week yet."
-            />
-          </Card>
-        )}
+              </div>
+            </Card>
+          )}
+
+          <div style={{ display: 'flex', gap: theme.spacing[2], flexWrap: 'wrap' }}>
+            <Button
+              variant={transactionStateFilter === undefined ? 'primary' : 'secondary'}
+              size="sm"
+              onClick={() => setTransactionStateFilter(undefined)}
+            >
+              All
+            </Button>
+            {INBOUND_TRANSACTION_STATE_VALUES.map((value) => (
+              <Button
+                key={value}
+                variant={transactionStateFilter === value ? 'primary' : 'secondary'}
+                size="sm"
+                onClick={() => setTransactionStateFilter(value)}
+              >
+                {value}
+              </Button>
+            ))}
+          </div>
+
+          {transactionsState.status === 'loading' && (
+            <Card padding={6}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+                <Skeleton height={40} />
+                <Skeleton height={40} />
+              </div>
+            </Card>
+          )}
+
+          {transactionsState.status === 'error' && (
+            <Card padding={6}>
+              <ErrorState title="Couldn't load Financial Transactions" onRetry={transactionsState.refetch} />
+            </Card>
+          )}
+
+          {transactionsState.status === 'success' && (
+            <Card padding={6} testId="transaction-queue-card">
+              <Table
+                testId="transaction-queue-table"
+                columns={transactionColumns}
+                data={transactionsState.data}
+                getRowId={(transaction) => transaction.id}
+                isRowExpanded={(transaction) => reasonDraftKey === `${transaction.id}:flag`}
+                renderRowDetail={(transaction) => (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }} data-testid="flag-form">
+                    <div style={{ display: 'flex', gap: theme.spacing[2], alignItems: 'flex-end' }}>
+                      <Input label="Reason" value={reasonText} onChange={(event) => setReasonText(event.target.value)} placeholder="Why is this being flagged?" />
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        disabled={reasonText.trim().length === 0}
+                        loading={busyKey === `${transaction.id}:flag`}
+                        onClick={() =>
+                          void runTransactionAction(transaction.id, 'flag', () => flagTransaction(state.accessToken, transaction.id, { reason: reasonText.trim() }))
+                        }
+                      >
+                        Submit flag
+                      </Button>
+                      <Button variant="secondary" size="sm" onClick={cancelReasonDraft}>
+                        Cancel
+                      </Button>
+                    </div>
+                    {reasonError && (
+                      <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
+                        {reasonError}
+                      </Text>
+                    )}
+                  </div>
+                )}
+                emptyIcon="checkCircle"
+                emptyTitle="No Financial Transactions"
+                emptyDescription="No Financial Transactions are visible in your current scope yet."
+              />
+            </Card>
+          )}
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[3] }}>
+            <Heading level={2}>Expense approval queue</Heading>
+            {!expenseFormOpen && (
+              <Button variant="secondary" size="sm" onClick={() => setExpenseFormOpen(true)} accessibilityLabel="Request a new Expense">
+                + Request Expense
+              </Button>
+            )}
+          </div>
+
+          {expenseFormOpen && (
+            <Card padding={6} testId="request-expense-form">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
+                <Input
+                  label="Amount (GHS)"
+                  value={expenseAmountText}
+                  onChange={(event) => setExpenseAmountText(event.target.value)}
+                  placeholder="0.00"
+                  error={expenseAmountError}
+                  testId="request-expense-amount"
+                />
+                <Input
+                  label="Description"
+                  value={expenseDescription}
+                  onChange={(event) => setExpenseDescription(event.target.value)}
+                  placeholder="What is this expense for?"
+                  testId="request-expense-description"
+                />
+                <Input
+                  label="Category (optional)"
+                  value={expenseCategory}
+                  onChange={(event) => setExpenseCategory(event.target.value)}
+                  placeholder="e.g. Facilities, Ministry supplies"
+                  testId="request-expense-category"
+                />
+                {expenseSubmitError && (
+                  <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
+                    {expenseSubmitError}
+                  </Text>
+                )}
+                <div style={{ display: 'flex', gap: theme.spacing[2] }}>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    disabled={expenseAmountText.length === 0 || Boolean(expenseAmountError) || expenseDescription.trim().length === 0}
+                    loading={expenseSubmitting}
+                    onClick={() => void submitRequestExpense()}
+                    testId="request-expense-submit"
+                  >
+                    Request
+                  </Button>
+                  <Button variant="secondary" size="sm" onClick={closeExpenseForm}>
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          )}
+
+          <div style={{ display: 'flex', gap: theme.spacing[2], flexWrap: 'wrap' }}>
+            <Button variant={expenseStateFilter === undefined ? 'primary' : 'secondary'} size="sm" onClick={() => setExpenseStateFilter(undefined)}>
+              All
+            </Button>
+            {OUTBOUND_TRANSACTION_STATE_VALUES.map((value) => (
+              <Button key={value} variant={expenseStateFilter === value ? 'primary' : 'secondary'} size="sm" onClick={() => setExpenseStateFilter(value)}>
+                {value}
+              </Button>
+            ))}
+          </div>
+
+          {expensesState.status === 'loading' && (
+            <Card padding={6}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+                <Skeleton height={40} />
+                <Skeleton height={40} />
+              </div>
+            </Card>
+          )}
+
+          {expensesState.status === 'error' && (
+            <Card padding={6}>
+              <ErrorState title="Couldn't load Expenses" onRetry={expensesState.refetch} />
+            </Card>
+          )}
+
+          {expensesState.status === 'success' && (
+            <Card padding={6} testId="expense-queue-card">
+              <Table
+                testId="expense-queue-table"
+                columns={expenseColumns}
+                data={expensesState.data}
+                getRowId={(expense) => expense.id}
+                // `[Stewardship gaps sprint]` `ReceiptUploadPanel` is always
+                // rendered per Expense row, not just while a reject-reason
+                // draft is open (unlike the Transaction/Reconciliation
+                // tables' conditional reveal below) - `isRowExpanded` is
+                // therefore unconditional here, and `renderRowDetail`
+                // itself decides whether the reject form also shows.
+                isRowExpanded={() => true}
+                renderRowDetail={(expense) => (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+                    {reasonDraftKey === `${expense.id}:reject` && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }} data-testid="reject-form">
+                        <div style={{ display: 'flex', gap: theme.spacing[2], alignItems: 'flex-end' }}>
+                          <Input label="Reason" value={reasonText} onChange={(event) => setReasonText(event.target.value)} placeholder="Why is this being rejected?" />
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            disabled={reasonText.trim().length === 0}
+                            loading={busyKey === `${expense.id}:reject`}
+                            onClick={() => void runExpenseAction(expense.id, 'reject', () => rejectExpense(state.accessToken, expense.id, { reason: reasonText.trim() }))}
+                          >
+                            Submit rejection
+                          </Button>
+                          <Button variant="secondary" size="sm" onClick={cancelReasonDraft}>
+                            Cancel
+                          </Button>
+                        </div>
+                        {reasonError && (
+                          <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
+                            {reasonError}
+                          </Text>
+                        )}
+                      </div>
+                    )}
+                    <ReceiptUploadPanel expense={expense} accessToken={state.accessToken} onUploaded={expensesState.refetch} />
+                  </div>
+                )}
+                emptyIcon="checkCircle"
+                emptyTitle="No Expenses"
+                emptyDescription="No Expenses are visible in your current scope yet."
+              />
+            </Card>
+          )}
+        </div>
+
+        {/* `[Bank Deposit Confirmation milestone]` FR-STW-07's bank-deposit
+            comparison half. Unlike Transaction/Expense above, this is not a
+            queue of existing records with a state to transition - a
+            `BankDepositConfirmation` is created fresh per Bacenta/week
+            (`@@unique([groupId, weekStartDate])`, confirmed via
+            `BankDepositConfirmationRepository`), so "Confirm Deposit" is a
+            create action per unmatched row, not a status button. No client
+            role check - only `TREASURER` (BRANCH) actually holds
+            `stewardship.bank_deposit.confirm` (traced against
+            `permission-matrix.ts`), the backend's real response is what
+            every other caller sees. */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+          <Heading level={2}>Bank Deposit Reconciliation</Heading>
+          <Input
+            label="Week starting"
+            type="date"
+            value={reconciliationWeekStartDate}
+            onChange={(event) => setReconciliationWeekStartDate(event.target.value)}
+            testId="reconciliation-week-start"
+          />
+
+          {reconciliationWeekStartDate === '' && (
+            <Text variant="bodySmall" color={theme.colors.text.secondary}>
+              Choose a week to view its reconciliation.
+            </Text>
+          )}
+
+          {reconciliationState.status === 'loading' && (
+            <Card padding={6}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+                <Skeleton height={40} />
+                <Skeleton height={40} />
+              </div>
+            </Card>
+          )}
+
+          {reconciliationState.status === 'error' && (
+            <Card padding={6}>
+              <ErrorState title="Couldn't load the weekly reconciliation" onRetry={reconciliationState.refetch} />
+            </Card>
+          )}
+
+          {reconciliationState.status === 'success' && (
+            <Card padding={6} testId="reconciliation-card">
+              <Table
+                testId="reconciliation-table"
+                columns={reconciliationColumns}
+                data={reconciliationState.data.rows}
+                getRowId={(row) => row.groupId}
+                isRowExpanded={(row) => confirmingGroupId === row.groupId}
+                renderRowDetail={(row) => (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }} data-testid="confirm-deposit-form">
+                    {/* `[UX Design Implementation]` Final UX Design
+                        Specification §19 (Phase 5 Stewardship workflow UI)
+                        - "make [immutability] clear before confirmation."
+                        Purely informational copy describing real, existing
+                        backend behavior (`confirmBankDeposit`'s own doc
+                        comment: no `PATCH`/delete route exists anywhere on
+                        this controller) - not a new rule or workflow. */}
+                    <Text variant="bodySmall" color={theme.colors.text.secondary}>
+                      This creates a permanent record for this Bacenta and week - it can&apos;t be edited or deleted afterward.
+                    </Text>
+                    <Input
+                      label="Deposited amount (GHS)"
+                      value={confirmAmountText}
+                      onChange={(event) => setConfirmAmountText(event.target.value)}
+                      placeholder="0.00"
+                      error={confirmAmountError}
+                      testId="confirm-deposit-amount"
+                    />
+                    <Input
+                      label="Bank reference (optional)"
+                      value={confirmBankReference}
+                      onChange={(event) => setConfirmBankReference(event.target.value)}
+                      placeholder="e.g. slip number"
+                    />
+                    {confirmError && (
+                      <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
+                        {confirmError}
+                      </Text>
+                    )}
+                    <div style={{ display: 'flex', gap: theme.spacing[2] }}>
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        disabled={confirmAmountText.length === 0 || Boolean(confirmAmountError)}
+                        loading={confirmSubmitting}
+                        onClick={() => void submitConfirmDeposit(row.groupId)}
+                        testId="confirm-deposit-submit"
+                      >
+                        Confirm
+                      </Button>
+                      <Button variant="secondary" size="sm" onClick={cancelConfirmDeposit}>
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                )}
+                emptyIcon="checkCircle"
+                emptyTitle="Nothing to reconcile"
+                emptyDescription="No Verified transactions or bank deposit confirmations exist for this week yet."
+              />
+            </Card>
+          )}
+        </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }

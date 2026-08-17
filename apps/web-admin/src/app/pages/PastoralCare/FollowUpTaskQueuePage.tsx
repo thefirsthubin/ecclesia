@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Badge, Button, Card, ErrorState, Heading, Input, RecordPicker, Skeleton, Table, Text, useTheme, useToast } from '@ecclesia/ui-web';
+import { Badge, Button, Card, ErrorState, Input, PageContainer, PageHeader, RecordPicker, SectionHeader, Skeleton, Table, Text, useTheme, useToast } from '@ecclesia/ui-web';
 import type { RecordOption, TableColumn } from '@ecclesia/ui-web';
 import type { FollowUpTaskResponseDto, SilentDriftFlagResponseDto, SilentDriftStatusDto } from '@ecclesia/contracts';
 
@@ -309,9 +309,8 @@ export function FollowUpTaskQueuePage() {
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4], maxWidth: 900 }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
-        <Heading level={1}>Pastoral Care</Heading>
+    <PageContainer maxWidth={900}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
         {/* `[UX Design Implementation]` Final UX Design Specification §19
             (Phase 4 Pastoral Care workflow UI) - `secondary`, not
             `primary`. This was the one "+ open a form" trigger button in
@@ -326,177 +325,182 @@ export function FollowUpTaskQueuePage() {
             principle 1) rules out. "Prominent but restrained" (the
             phase brief's own words) is exactly what `secondary` already
             means everywhere else this pattern appears. */}
-        {!createOpen && (
-          <Button variant="secondary" size="sm" onClick={openCreate} accessibilityLabel="Create Follow-up task">
-            + Create Follow-up task
-          </Button>
-        )}
-      </div>
-
-      {/* `[Follow-up Task Creation milestone]` FR-PC-03's manual/explicit
-          creation path - always offered, no client-side role check. Traced
-          against the real matrix, not assumed: `RESIDENT_PASTOR`/`ADMIN`
-          hold no `.create` grant at all for this action, so this always
-          403s for those personas - the backend's real response is what
-          they see, same as every other gated action in this app. The
-          subject Person's own Bacenta membership (not the acting user's)
-          decides CLUSTER/OWN_GROUP scope server-side - neither constraint
-          is enforced client-side. */}
-      {createOpen && (
-        <Card padding={6} testId="follow-up-task-create-form">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            <RecordPicker
-              label="Person"
-              placeholder="Search for the Person this task concerns…"
-              value={createSubject}
-              onChange={setCreateSubject}
-              onSearch={(searchQuery) => searchPeopleForEscalation(state.accessToken, searchQuery)}
-            />
-            <RecordPicker
-              label="Assign to"
-              placeholder="Search for who this task is assigned to…"
-              value={createAssignee}
-              onChange={setCreateAssignee}
-              onSearch={(searchQuery) => searchPeopleForEscalation(state.accessToken, searchQuery)}
-            />
-            <RecordPicker
-              label="Group (optional)"
-              placeholder="Search for a Bacenta or Basonta…"
-              value={createGroupTarget}
-              onChange={setCreateGroupTarget}
-              onSearch={(searchQuery) => searchGroupsForAssignment(state.accessToken, searchQuery)}
-            />
-            <Input
-              label="Due date override (optional)"
-              type="datetime-local"
-              value={createDueAtOverride}
-              onChange={(event) => setCreateDueAtOverride(event.target.value)}
-            />
-            {createError && (
-              <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
-                {createError}
-              </Text>
-            )}
-            <div style={{ display: 'flex', gap: theme.spacing[2] }}>
-              <Button
-                variant="primary"
-                size="sm"
-                disabled={!createSubject || !createAssignee}
-                loading={createSubmitting}
-                onClick={() => void submitCreate()}
-              >
-                Confirm create
+        <PageHeader
+          title="Pastoral Care"
+          action={
+            !createOpen ? (
+              <Button variant="secondary" size="sm" onClick={openCreate} accessibilityLabel="Create Follow-up task">
+                + Create Follow-up task
               </Button>
-              <Button variant="secondary" size="sm" onClick={cancelCreate}>
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </Card>
-      )}
+            ) : undefined
+          }
+        />
 
-      {queueState.status === 'loading' && (
-        <Card padding={6}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            <Skeleton height={40} />
-            <Skeleton height={40} />
-            <Skeleton height={40} />
-          </div>
-        </Card>
-      )}
-
-      {queueState.status === 'error' && (
-        <Card padding={6}>
-          <ErrorState title="Couldn't load the Follow-up task queue" onRetry={queueState.refetch} />
-        </Card>
-      )}
-
-      {queueState.status === 'success' && (
-        <Card padding={6} testId="follow-up-task-queue-card">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            <Heading level={3}>Follow-up tasks</Heading>
-            <Table
-              testId="follow-up-task-queue-table"
-              columns={taskColumns}
-              data={queueState.data}
-              getRowId={(task) => task.id}
-              isRowExpanded={(task) => escalatingId === task.id}
-              renderRowDetail={(task) => (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }} data-testid="escalate-form">
-                  <div style={{ display: 'flex', gap: theme.spacing[2], alignItems: 'flex-end' }}>
-                    <div style={{ flex: 1 }}>
-                      <RecordPicker
-                        label="Escalate to"
-                        placeholder="Search for a Person…"
-                        value={escalationTarget}
-                        onChange={setEscalationTarget}
-                        onSearch={(searchQuery) => searchPeopleForEscalation(state.accessToken, searchQuery)}
-                      />
-                    </div>
-                    <Button variant="primary" size="sm" disabled={!escalationTarget} loading={escalateBusy} onClick={() => void submitEscalate(task.id)}>
-                      Submit escalation
-                    </Button>
-                    <Button variant="secondary" size="sm" onClick={cancelEscalate}>
-                      Cancel
-                    </Button>
-                  </div>
-                  {escalateError && (
-                    <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
-                      {escalateError}
-                    </Text>
-                  )}
-                </div>
+        {/* `[Follow-up Task Creation milestone]` FR-PC-03's manual/explicit
+            creation path - always offered, no client-side role check. Traced
+            against the real matrix, not assumed: `RESIDENT_PASTOR`/`ADMIN`
+            hold no `.create` grant at all for this action, so this always
+            403s for those personas - the backend's real response is what
+            they see, same as every other gated action in this app. The
+            subject Person's own Bacenta membership (not the acting user's)
+            decides CLUSTER/OWN_GROUP scope server-side - neither constraint
+            is enforced client-side. */}
+        {createOpen && (
+          <Card padding={6} testId="follow-up-task-create-form">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+              <RecordPicker
+                label="Person"
+                placeholder="Search for the Person this task concerns…"
+                value={createSubject}
+                onChange={setCreateSubject}
+                onSearch={(searchQuery) => searchPeopleForEscalation(state.accessToken, searchQuery)}
+              />
+              <RecordPicker
+                label="Assign to"
+                placeholder="Search for who this task is assigned to…"
+                value={createAssignee}
+                onChange={setCreateAssignee}
+                onSearch={(searchQuery) => searchPeopleForEscalation(state.accessToken, searchQuery)}
+              />
+              <RecordPicker
+                label="Group (optional)"
+                placeholder="Search for a Bacenta or Basonta…"
+                value={createGroupTarget}
+                onChange={setCreateGroupTarget}
+                onSearch={(searchQuery) => searchGroupsForAssignment(state.accessToken, searchQuery)}
+              />
+              <Input
+                label="Due date override (optional)"
+                type="datetime-local"
+                value={createDueAtOverride}
+                onChange={(event) => setCreateDueAtOverride(event.target.value)}
+              />
+              {createError && (
+                <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
+                  {createError}
+                </Text>
               )}
-              emptyIcon="checkCircle"
-              emptyTitle="No open Follow-up tasks"
-              emptyDescription="Every Follow-up task in your scope has been completed."
-              emptyTone="positive"
-            />
-          </div>
-        </Card>
-      )}
+              <div style={{ display: 'flex', gap: theme.spacing[2] }}>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  disabled={!createSubject || !createAssignee}
+                  loading={createSubmitting}
+                  onClick={() => void submitCreate()}
+                >
+                  Confirm create
+                </Button>
+                <Button variant="secondary" size="sm" onClick={cancelCreate}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </Card>
+        )}
 
-      {/* `[Silent-Drift Detection Branch-wide milestone]` FR-PC-05/§15.8.
-          Read-only - `SilentDriftFlagController` exposes no mutation
-          route at all (traced, not assumed), so there is no
-          resolve/escalate action to offer here, unlike the Follow-up
-          queue above. `resolveDefaultSilentDriftQuery` mirrors the same
-          role-scoping `resolveDefaultFollowUpTaskQuery` already
-          establishes, since the two actions' RBAC rows name the
-          identical roles/scopes. */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-        <Heading level={3}>Silent-Drift flags</Heading>
-
-        {silentDriftState.status === 'loading' && (
+        {queueState.status === 'loading' && (
           <Card padding={6}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
               <Skeleton height={40} />
               <Skeleton height={40} />
+              <Skeleton height={40} />
             </div>
           </Card>
         )}
 
-        {silentDriftState.status === 'error' && (
+        {queueState.status === 'error' && (
           <Card padding={6}>
-            <ErrorState title="Couldn't load Silent-Drift flags" onRetry={silentDriftState.refetch} />
+            <ErrorState title="Couldn't load the Follow-up task queue" onRetry={queueState.refetch} />
           </Card>
         )}
 
-        {silentDriftState.status === 'success' && (
-          <Card padding={6} testId="silent-drift-flags-card">
-            <Table
-              testId="silent-drift-flags-table"
-              columns={silentDriftColumns}
-              data={silentDriftState.data}
-              getRowId={(flag) => flag.id}
-              emptyIcon="checkCircle"
-              emptyTitle="No Silent-Drift flags"
-              emptyDescription="No Persons are currently flagged for silent drift in your scope."
-              emptyTone="positive"
-            />
+        {queueState.status === 'success' && (
+          <Card padding={6} testId="follow-up-task-queue-card">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+              <SectionHeader title="Follow-up tasks" />
+              <Table
+                testId="follow-up-task-queue-table"
+                columns={taskColumns}
+                data={queueState.data}
+                getRowId={(task) => task.id}
+                isRowExpanded={(task) => escalatingId === task.id}
+                renderRowDetail={(task) => (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }} data-testid="escalate-form">
+                    <div style={{ display: 'flex', gap: theme.spacing[2], alignItems: 'flex-end' }}>
+                      <div style={{ flex: 1 }}>
+                        <RecordPicker
+                          label="Escalate to"
+                          placeholder="Search for a Person…"
+                          value={escalationTarget}
+                          onChange={setEscalationTarget}
+                          onSearch={(searchQuery) => searchPeopleForEscalation(state.accessToken, searchQuery)}
+                        />
+                      </div>
+                      <Button variant="primary" size="sm" disabled={!escalationTarget} loading={escalateBusy} onClick={() => void submitEscalate(task.id)}>
+                        Submit escalation
+                      </Button>
+                      <Button variant="secondary" size="sm" onClick={cancelEscalate}>
+                        Cancel
+                      </Button>
+                    </div>
+                    {escalateError && (
+                      <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
+                        {escalateError}
+                      </Text>
+                    )}
+                  </div>
+                )}
+                emptyIcon="checkCircle"
+                emptyTitle="No open Follow-up tasks"
+                emptyDescription="Every Follow-up task in your scope has been completed."
+                emptyTone="positive"
+              />
+            </div>
           </Card>
         )}
+
+        {/* `[Silent-Drift Detection Branch-wide milestone]` FR-PC-05/§15.8.
+            Read-only - `SilentDriftFlagController` exposes no mutation
+            route at all (traced, not assumed), so there is no
+            resolve/escalate action to offer here, unlike the Follow-up
+            queue above. `resolveDefaultSilentDriftQuery` mirrors the same
+            role-scoping `resolveDefaultFollowUpTaskQuery` already
+            establishes, since the two actions' RBAC rows name the
+            identical roles/scopes. */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+          <SectionHeader title="Silent-Drift flags" />
+
+          {silentDriftState.status === 'loading' && (
+            <Card padding={6}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+                <Skeleton height={40} />
+                <Skeleton height={40} />
+              </div>
+            </Card>
+          )}
+
+          {silentDriftState.status === 'error' && (
+            <Card padding={6}>
+              <ErrorState title="Couldn't load Silent-Drift flags" onRetry={silentDriftState.refetch} />
+            </Card>
+          )}
+
+          {silentDriftState.status === 'success' && (
+            <Card padding={6} testId="silent-drift-flags-card">
+              <Table
+                testId="silent-drift-flags-table"
+                columns={silentDriftColumns}
+                data={silentDriftState.data}
+                getRowId={(flag) => flag.id}
+                emptyIcon="checkCircle"
+                emptyTitle="No Silent-Drift flags"
+                emptyDescription="No Persons are currently flagged for silent drift in your scope."
+                emptyTone="positive"
+              />
+            </Card>
+          )}
+        </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }
