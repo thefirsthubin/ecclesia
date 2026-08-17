@@ -25,4 +25,19 @@ describe('Heading', () => {
     );
     expect(screen.getByRole('heading', { level: 2 })).toBeInTheDocument();
   });
+
+  /** `[Product Experience Sprint II, Phase 2]` The serif display face
+   * applies to display/heading1/heading2 only - heading3 (18px, "card
+   * title") stays Inter, per `fontFamily.display`'s own doc comment. */
+  it('uses the serif display font for display, heading1, and heading2', () => {
+    render(<Heading level="display">72</Heading>);
+    expect(screen.getByRole('heading', { level: 1 })).toHaveStyle({ fontFamily: '"Fraunces", Georgia, "Iowan Old Style", serif' });
+  });
+
+  it('uses the base (Inter) font for heading3', () => {
+    render(<Heading level={3}>Subtitle</Heading>);
+    expect(screen.getByRole('heading', { level: 3 })).toHaveStyle({
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    });
+  });
 });

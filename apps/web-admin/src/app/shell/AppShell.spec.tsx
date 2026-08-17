@@ -111,3 +111,47 @@ describe('AppShell sidebar grouping', () => {
     expect(screen.queryByText('ADMINISTRATION')).not.toBeInTheDocument();
   });
 });
+
+/**
+ * `[Product Experience Sprint II, Phase 5]` A real bug this sprint's own
+ * end-to-end People workflow test found live in the browser: opening the
+ * mobile sidebar overlay, tapping a nav link, and landing on a new page
+ * left the 240px overlay rendered *alongside* the destination page's
+ * content, squeezing it into a sliver - what first looked like a table
+ * overflow bug on `PersonDetailPage` was actually this. Fixed by closing
+ * `sidebarOpen` on every path change.
+ */
+describe('AppShell mobile sidebar overlay', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('closes the mobile sidebar overlay after navigating to a new page', async () => {
+    const originalMatchMedia = window.matchMedia;
+    // Simulates `isCompact` (below the `md` breakpoint) the same way
+    // `useDashboardBreakpoint.spec`-style tests elsewhere in this app do -
+    // `AppShell`'s own query is `(max-width: 1023px)`.
+    window.matchMedia = ((query: string) => ({
+      matches: query.includes('1023'),
+      media: query,
+      onchange: null,
+      addListener: () => undefined,
+      removeListener: () => undefined,
+      addEventListener: () => undefined,
+      removeEventListener: () => undefined,
+      dispatchEvent: () => false,
+    })) as typeof window.matchMedia;
+
+    renderShell();
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Toggle navigation menu' })).toBeInTheDocument());
+
+    fireEvent.click(screen.getByRole('button', { name: 'Toggle navigation menu' }));
+    await waitFor(() => expect(screen.getByRole('navigation', { name: 'Primary' })).toBeInTheDocument());
+
+    fireEvent.click(screen.getByRole('link', { name: /People/ }));
+
+    await waitFor(() => expect(screen.queryByRole('navigation', { name: 'Primary' })).not.toBeInTheDocument());
+
+    window.matchMedia = originalMatchMedia;
+  });
+});

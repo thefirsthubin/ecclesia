@@ -53,6 +53,25 @@ describe('Table', () => {
     expect(onRowClick).toHaveBeenCalledWith(PEOPLE[0]);
   });
 
+  it('makes clickable rows keyboard-activatable (focusable, Enter/Space triggers onRowClick)', () => {
+    const onRowClick = jest.fn();
+    render(<Table columns={COLUMNS} data={PEOPLE} getRowId={(row) => row.id} onRowClick={onRowClick} />);
+    const row = screen.getByText('Ama Owusu').closest('tr') as HTMLElement;
+    expect(row).toHaveAttribute('tabIndex', '0');
+    expect(row).toHaveAttribute('role', 'button');
+    fireEvent.keyDown(row, { key: 'Enter' });
+    expect(onRowClick).toHaveBeenCalledWith(PEOPLE[0]);
+    fireEvent.keyDown(row, { key: ' ' });
+    expect(onRowClick).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not add row-level tabIndex/role when onRowClick is absent', () => {
+    render(<Table columns={COLUMNS} data={PEOPLE} getRowId={(row) => row.id} />);
+    const row = screen.getByText('Ama Owusu').closest('tr') as HTMLElement;
+    expect(row).not.toHaveAttribute('tabIndex');
+    expect(row).not.toHaveAttribute('role');
+  });
+
   it('supports row selection with a "select all" checkbox', () => {
     const onSelectionChange = jest.fn();
     render(

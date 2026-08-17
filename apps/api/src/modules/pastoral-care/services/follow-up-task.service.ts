@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { computeFollowUpTaskDueAt } from '@ecclesia/domain-pastoral-care';
 import type { FollowUpTaskTrigger } from '@ecclesia/domain-pastoral-care';
 import type {
@@ -67,6 +67,21 @@ export class FollowUpTaskService {
   async create(actor: ActorContext, personId: string, input: CreateFollowUpTaskInput): Promise<FollowUpTaskResponseDto> {
     const resource = await this.personScopeService.loadResourceContext(personId, actor);
 
+    // `[Branch Pastor portal, Pastoral Care sprint]` The assignee was
+    // previously accepted as opaque client input with no scope check at
+    // all - `assignedToPersonId` never fed `PersonScopeService`, so a
+    // task could be assigned to a Person in any Branch, not only the
+    // actor's own. Resolves the assignee's own real `branchId` the same
+    // way the subject Person's is resolved above, and rejects a
+    // cross-Branch assignment - a real, existing-data-only check (no
+    // schema/RBAC change), not a widened or invented permission.
+    const assigneeResource = await this.personScopeService.loadResourceContext(input.assignedToPersonId, actor);
+    if (assigneeResource.branchId !== actor.branchId) {
+      throw new ForbiddenException(
+        `Follow-up tasks may only be assigned to a Person within your own Branch - '${input.assignedToPersonId}' belongs to a different Branch`,
+      );
+    }
+
     // [INFERRED] `libs/domain/pastoral-care`'s SLA defaults only cover the
     // two PRD-named triggers (OQ-06). A `MANUAL` (ad-hoc, not
     // lifecycle-triggered) task has no PRD-specified default SLA at all -
@@ -109,6 +124,15 @@ export class FollowUpTaskService {
     const tasks = query.groupId
       ? await this.followUpTaskRepository.listByGroup(query.groupId, query.status as FollowUpTaskStatus[] | undefined)
       : await this.followUpTaskRepository.listByBranch(actor.branchId, query.status as FollowUpTaskStatus[] | undefined);
+    return tasks.map(toResponseDto);
+  }
+
+  /** `GET /people/:personId/follow-up-tasks` (Branch Pastor Portal,
+   * Pastoral Care sprint) - see `FollowUpTaskRepository.listByPerson`'s
+   * own doc comment for why this is every status, newest-first, not the
+   * queue's own open-only/SLA-urgency shape. */
+  async listByPerson(personId: string): Promise<FollowUpTaskResponseDto[]> {
+    const tasks = await this.followUpTaskRepository.listByPerson(personId);
     return tasks.map(toResponseDto);
   }
 

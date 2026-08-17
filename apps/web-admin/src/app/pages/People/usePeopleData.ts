@@ -66,6 +66,50 @@ export function usePeopleList(accessToken: string | undefined, query: ListPeople
   );
 }
 
+/**
+ * `[Branch Pastor portal]` `ASSISTANT_PASTOR`'s real `people.person.read`
+ * grant is CLUSTER (unchanged - deliberately NOT widened to BRANCH, unlike
+ * `gatherings.gathering.read` in the Branch Pastor Dashboard sprint; see
+ * `resolveDefaultPeopleQuery`'s own doc comment on this), and CLUSTER
+ * covers every Bacenta in `actor.clusterBacentaIds` - but `GET /people`
+ * only accepts one `groupId` per request (`resolveDefaultPeopleQuery`'s
+ * own disclosed "defaults to the first Bacenta" limitation). Fetches once
+ * per Bacenta in the cluster and merges the results, deduplicated by
+ * person id - the exact same `Promise.all` + dedupe shape
+ * `useBacentaPerformance` (`DashboardPage/useBranchPastorDashboardData.ts`)
+ * already established for "distinct People across every Bacenta in the
+ * cluster, not a sum of each Bacenta's own roster." Not a new backend
+ * capability and not a widened grant - every individual request is the
+ * exact same `GET /people?groupId=X` call `usePeopleList` above already
+ * makes, run once per Bacenta the actor's real CLUSTER grant already
+ * covers, not once for a resource beyond it.
+ */
+export function usePeopleListForGroups(
+  accessToken: string | undefined,
+  groupIds: string[],
+  search: string | undefined,
+): AsyncDataResult<PersonResponseDto[]> {
+  return useAsyncData<PersonResponseDto[]>(
+    async (signal) => {
+      if (!accessToken) return Promise.reject(new Error('not authenticated'));
+      if (groupIds.length === 0) return [];
+      const perGroup = await Promise.all(
+        groupIds.map((groupId) => {
+          const params = new URLSearchParams({ groupId });
+          if (search) params.set('search', search);
+          return apiGet<PersonResponseDto[]>(`/people?${params.toString()}`, { authToken: accessToken, signal });
+        }),
+      );
+      const byId = new Map<string, PersonResponseDto>();
+      for (const person of perGroup.flat()) {
+        byId.set(person.id, person);
+      }
+      return [...byId.values()];
+    },
+    [accessToken, groupIds.join(','), search],
+  );
+}
+
 export function usePersonDetail(accessToken: string | undefined, personId: string): AsyncDataResult<PersonResponseDto> {
   return useAsyncData<PersonResponseDto>(
     (signal) => {

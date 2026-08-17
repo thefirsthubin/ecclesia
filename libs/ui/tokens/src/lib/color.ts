@@ -130,6 +130,29 @@ export const status: Record<
 };
 
 /**
+ * `[Product Experience Sprint II, Phase 2]` A second, small accent family -
+ * "warm stone" (`subtle`) and a restrained ochre (`default`) - distinct
+ * from `brand` (the recognizable Ecclesia hue, deliberately untouched
+ * this sprint - it was already shifted away from an earlier teal toward
+ * "muted deep green" specifically to avoid "generic SaaS teal" and
+ * denominational overtones, see `brand`'s own comment below; that
+ * decision already stands, it doesn't need a second correction) and from
+ * `status` (`accent` carries no meaning - never "success," "pending,"
+ * etc. - so it is safe to use decoratively, which is exactly `status`'s
+ * one rule it must never break). Deliberately not "gold/ochre
+ * everywhere" - this sprint's own design-direction report uses it in
+ * exactly one place (the Church Pulse gauge's resting track, replacing a
+ * cold gray) as the demonstration of "warmth without a church-branding
+ * cliché." `default` is dark enough to double as text if a future screen
+ * needs an accent-colored label (contrast-verified in `tokens.spec.ts`,
+ * same bar as every other text-bearing color in this file).
+ */
+export const accent = {
+  light: { default: '#8A6318', subtle: '#EDE6DA' },
+  dark: { default: '#D3A968', subtle: '#2A2419' },
+} as const;
+
+/**
  * Church Pulse band colors (extends Design System v1.0 Part 10.1 -
  * **[Design decision, not literally specified in the PRD/Blueprint]**).
  * FR-INS-01 (PRD §13) defines the score as 0-100; the band boundaries
@@ -193,6 +216,8 @@ export interface SemanticColorTokens {
   brand: { default: HexColor; hover: HexColor; active: HexColor; subtle: HexColor; disabled: HexColor };
   status: Record<StatusKey, { strong: HexColor; background: HexColor; foreground: HexColor; border: HexColor }>;
   churchPulse: typeof churchPulse;
+  /** `[Product Experience Sprint II, Phase 2]` See `accent`'s own comment above. */
+  accent: { default: HexColor; subtle: HexColor };
 }
 
 function resolveStatus(mode: 'light' | 'dark'): SemanticColorTokens['status'] {
@@ -217,19 +242,37 @@ function resolveStatus(mode: 'light' | 'dark'): SemanticColorTokens['status'] {
  * still wants a plain gray step.
  */
 export const lightPalette: SemanticColorTokens = {
-  surface: { default: '#F8F9FA', raised: '#FFFFFF', overlay: 'rgba(10, 10, 10, 0.5)' },
+  // `[Product Experience Sprint II, Phase 2]` `default` warmed from
+  // `#F8F9FA` (R248/G249/B250 - a hair *cool*, B is the highest channel)
+  // to a whisper-warm off-white (R>G>B) - "surface warmth" per this
+  // sprint's own brief, deliberately subtle: a 4-5 point channel shift,
+  // not a cream/beige tint. `raised` stays pure white, unchanged - cards
+  // sitting crisp against a barely-warmer canvas is the actual effect
+  // being reached for, not uniform tinting everywhere. Contrast against
+  // `text.primary`/`text.secondary` is re-verified in `tokens.spec.ts`;
+  // at this near-white lightness the shift moves relative luminance by a
+  // trivial amount, nowhere near either text color's large existing
+  // margin above the 4.5:1 floor.
+  surface: { default: '#F9F8F5', raised: '#FFFFFF', overlay: 'rgba(10, 10, 10, 0.5)' },
   text: { primary: '#172026', secondary: '#5B6472', disabled: '#98A2AF', inverse: neutral[0] },
   border: { default: '#C4CAD1', subtle: '#EDEEF1', focus: brand.light.default },
   brand: brand.light,
   status: resolveStatus('light'),
   churchPulse,
+  accent: accent.light,
 };
 
 export const darkPalette: SemanticColorTokens = {
-  surface: { default: '#14171A', raised: '#1B1F23', overlay: 'rgba(0, 0, 0, 0.6)' },
+  // Same direction as `lightPalette.surface.default`, small enough to be
+  // barely perceptible - dark mode has no UI toggle yet (§1.6's own
+  // disclosed gap), but the token stays internally consistent with light
+  // mode rather than leaving a cool dark surface for whichever future
+  // screen exposes the toggle to discover as a mismatch.
+  surface: { default: '#17161A', raised: '#1B1F23', overlay: 'rgba(0, 0, 0, 0.6)' },
   text: { primary: '#EDEFF1', secondary: '#A2ABB5', disabled: '#6B7480', inverse: '#14171A' },
   border: { default: '#333A41', subtle: '#262B30', focus: brand.dark.default },
   brand: brand.dark,
   status: resolveStatus('dark'),
   churchPulse,
+  accent: accent.dark,
 };

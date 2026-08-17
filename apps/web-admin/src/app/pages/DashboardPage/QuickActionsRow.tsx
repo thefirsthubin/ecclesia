@@ -1,11 +1,10 @@
-import { Button, Heading, Icon, Text, useTheme } from '@ecclesia/ui-web';
+import { Card, Heading, Icon, Text, useTheme } from '@ecclesia/ui-web';
 import type { IconName } from '@ecclesia/ui-core';
 
 import { useNavigate } from '../../router/router';
 
-interface QuickAction {
+export interface QuickAction {
   label: string;
-  description: string;
   icon: IconName;
   href: string;
 }
@@ -17,76 +16,72 @@ interface QuickAction {
  * this is only a set of fast, prominent entry points into pages that
  * already exist.
  *
- * `[Reference-image iteration]` Restyled from a horizontal tile grid into
- * a vertical stack of colorful cards, mirroring the reference dashboard's
- * "Select a course" right column. Each card's tint rotates through
- * existing semantic tokens (`brand.subtle`/`status.info.background`/
- * `status.success.background`) rather than the reference's literal
- * pink/lavender hues - keeps the "borrow the layout, keep the brand
- * palette" decision consistent card-by-card, not just at the top level.
+ * `[Dashboard Visual Redesign, second pass]` Compacted from a vertical
+ * stack of three full tinted cards (icon well + title + description +
+ * full `Button`) into a tight row-per-action list, each row its own
+ * small `Card interactive` (reused, not reimplemented - same
+ * role="button"/keyboard/hover-elevation/focus-ring behavior every other
+ * interactive card in the product already has) rather than a hand-rolled
+ * clickable `<div>`. This card now shares a narrow column with
+ * `PrayerFocusCard` rather than owning a full column on its own, so it
+ * needed to shrink to a fraction of its previous height. The previous
+ * version's tint rotation and description copy are dropped as the thing
+ * that no longer fits this density, not the navigation behavior itself
+ * (same three real hrefs).
+ *
+ * `[Branch Pastor Dashboard sprint]` `actions` is now a prop, defaulting
+ * to the same three Resident Pastor actions this component always had -
+ * every existing call site keeps its exact prior behavior unchanged.
+ * `BranchPastorDashboard` is the first caller to pass its own list
+ * (Bacenta-oversight actions, not Resident Pastor's) - a real, named
+ * repeated pattern (a titled list of navigation rows) justified
+ * generalizing this component instead of hand-rolling a near-duplicate.
  */
-const QUICK_ACTIONS: QuickAction[] = [
-  { label: 'Add a New Member', description: 'Record a new Person in the Branch directory', icon: 'userPlus', href: '/people' },
-  { label: "Record This Week's Giving", description: 'Log a Financial Transaction', icon: 'coins', href: '/stewardship' },
-  { label: 'Plan an Upcoming Gathering', description: 'Record a Gathering and its attendance', icon: 'calendar', href: '/gatherings' },
+const DEFAULT_QUICK_ACTIONS: QuickAction[] = [
+  { label: 'Add a New Member', icon: 'userPlus', href: '/people' },
+  { label: "Record This Week's Giving", icon: 'coins', href: '/stewardship' },
+  { label: 'Plan an Upcoming Gathering', icon: 'calendar', href: '/gatherings' },
 ];
 
-export function QuickActionsRow() {
+export interface QuickActionsRowProps {
+  title?: string;
+  actions?: QuickAction[];
+}
+
+export function QuickActionsRow({ title = 'Quick actions', actions = DEFAULT_QUICK_ACTIONS }: QuickActionsRowProps) {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const tints = [
-    { background: theme.colors.brand.subtle, foreground: theme.colors.brand.default },
-    { background: theme.colors.status.info.background, foreground: theme.colors.status.info.strong },
-    { background: theme.colors.status.success.background, foreground: theme.colors.status.success.strong },
-  ];
-
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }} data-testid="quick-actions-card">
-      <Heading level={3}>Quick actions</Heading>
-      {QUICK_ACTIONS.map((action, index) => {
-        const tint = tints[index % tints.length];
-        return (
-          <div
-            key={action.href}
-            data-testid={`quick-action-${action.href.slice(1)}`}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: theme.spacing[3],
-              padding: theme.spacing[5],
-              borderRadius: theme.radius.md,
-              backgroundColor: tint.background,
-            }}
-          >
+    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }} data-testid="quick-actions-card">
+      <Heading level={3}>{title}</Heading>
+      {actions.map((action) => (
+        <Card key={action.href} interactive onClick={() => navigate(action.href)} padding={2} testId={`quick-action-${action.href.slice(1)}`}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[3] }}>
             <div
               aria-hidden
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: 40,
-                height: 40,
+                width: 30,
+                height: 30,
+                flexShrink: 0,
                 borderRadius: theme.radius.full,
-                backgroundColor: theme.colors.surface.raised,
+                backgroundColor: theme.colors.brand.subtle,
               }}
             >
-              <Icon name={action.icon} size="md" color={tint.foreground} />
+              <Icon name={action.icon} size="sm" color={theme.colors.brand.default} />
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
-              <Text variant="body" as="span" color={theme.colors.text.primary}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <Text variant="bodySmall" as="span" color={theme.colors.text.primary}>
                 {action.label}
               </Text>
-              <Text variant="caption" color={theme.colors.text.secondary}>
-                {action.description}
-              </Text>
             </div>
-            <Button variant="primary" size="sm" iconRight="arrowRight" onClick={() => navigate(action.href)}>
-              Go
-            </Button>
+            <Icon name="arrowRight" size="sm" color={theme.colors.text.secondary} />
           </div>
-        );
-      })}
+        </Card>
+      ))}
     </div>
   );
 }

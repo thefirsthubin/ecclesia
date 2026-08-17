@@ -14,7 +14,10 @@ import {
   avatarSize,
   fontFamily,
   type SemanticColorTokens,
+  type CubicBezier,
 } from '@ecclesia/ui-tokens';
+
+export type { CubicBezier };
 
 export type ThemeMode = 'light' | 'dark';
 

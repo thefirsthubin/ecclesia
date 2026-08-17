@@ -53,10 +53,20 @@ export type AuthModeResponseDto = z.infer<typeof authModeResponseSchema>;
  * mirrors exactly what the route returns rather than assuming the two
  * stay identical forever.
  */
+/**
+ * `[Multi-Tenant Foundation, Phase 2]` `context` added - the seeded
+ * persona's optional secondary label (e.g. "River of Life Headquarters",
+ * "Grace Bacenta") the login picker shows under the role label to make a
+ * Branch- or group-scoped persona's Branch/Bacenta/Basonta obvious.
+ * Mirrors `DevUserSeed.context` (`apps/api/src/platform/auth/dev-users.ts`)
+ * exactly - optional there for the same reason (Council-scoped/platform
+ * personas have no single Branch/group to name this way).
+ */
 export const devUserSchema = z.object({
   id: z.string().min(1),
   label: z.string().min(1),
   role: z.string().min(1),
+  context: z.string().min(1).optional(),
 });
 export type DevUserDto = z.infer<typeof devUserSchema>;
 export const devUserListSchema = z.array(devUserSchema);

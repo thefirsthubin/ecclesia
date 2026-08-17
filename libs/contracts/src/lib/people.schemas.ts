@@ -29,6 +29,16 @@ export const LIFECYCLE_STAGE_VALUES = [
 export const lifecycleStageSchema = z.enum(LIFECYCLE_STAGE_VALUES);
 export type LifecycleStageDto = z.infer<typeof lifecycleStageSchema>;
 
+/**
+ * [Multi-Tenant Foundation, Phase 1] Mirrors `libs/rbac/src/lib/roles.ts`'s
+ * `ROLES` array exactly, including this phase's two additions
+ * (`COUNCIL_TREASURER`, `SYSTEM_ADMINISTRATOR`) - see that file's own doc
+ * comment for why both exist. Hand-duplicated, not imported, matching this
+ * pair's existing relationship (`libs/rbac` cannot depend on `libs/contracts`
+ * or vice versa without an import cycle risk neither file's prior history
+ * introduced) - keep these two lists synchronized by hand on every Role
+ * addition.
+ */
 export const ROLE_VALUES = [
   'RESIDENT_PASTOR',
   'ACTING_RESIDENT_PASTOR',
@@ -36,12 +46,14 @@ export const ROLE_VALUES = [
   'BACENTA_LEADER',
   'BASONTA_LEADER',
   'TREASURER',
+  'COUNCIL_TREASURER',
   'WORKER',
   'USHER',
   'MEMBER',
   'VISITOR',
   'ADMIN',
   'COUNCIL_OVERSEER',
+  'SYSTEM_ADMINISTRATOR',
 ] as const;
 export const roleSchema = z.enum(ROLE_VALUES);
 export type RoleDto = z.infer<typeof roleSchema>;
@@ -178,11 +190,24 @@ export const createRoleAssignmentRequestSchema = z.object({
 });
 export type CreateRoleAssignmentRequestInput = z.infer<typeof createRoleAssignmentRequestSchema>;
 
+/**
+ * `[Multi-Tenant Foundation, Phase 1]` `branchId` is now `.nullable()`,
+ * and `councilId` added alongside it - mirroring `RoleAssignment`'s own
+ * `db/schema.prisma` shape exactly (a Role Assignment is now
+ * Branch-scoped XOR Council-scoped, never neither). `POST
+ * /people/:personId/role-assignments` cannot itself create a
+ * Council-scoped row this phase (`RoleAssignmentService.grant()`
+ * explicitly rejects `COUNCIL_TREASURER`/`SYSTEM_ADMINISTRATOR` - see
+ * that method's own comment) - this schema change is about honestly
+ * describing what `GET .../role-assignments` can read back, not about
+ * this phase adding a way to create one via this endpoint.
+ */
 export const roleAssignmentResponseSchema = z.object({
   id: z.string().uuid(),
   personId: z.string().uuid(),
   role: roleSchema,
-  branchId: z.string().uuid(),
+  branchId: z.string().uuid().nullable(),
+  councilId: z.string().uuid().nullable(),
   groupId: z.string().uuid().nullable(),
   scopeGroupIds: z.array(z.string().uuid()),
   effectiveFrom: z.string(),

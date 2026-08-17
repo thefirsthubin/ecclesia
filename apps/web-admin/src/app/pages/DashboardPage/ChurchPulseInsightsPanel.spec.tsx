@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { ThemeProvider } from '@ecclesia/ui-web';
 import type { PulseScoreResponseDto } from '@ecclesia/contracts';
 
-import { ChurchPulseInsightsPanel } from './ChurchPulseInsightsPanel';
+import { BranchComparisonCard, ChurchPulseInsightsPanel } from './ChurchPulseInsightsPanel';
 import type { KpiDatum } from './dashboardDemoData';
 
 const pulseScore: PulseScoreResponseDto = {
@@ -28,11 +28,6 @@ function kpi(overrides: Partial<KpiDatum> = {}): KpiDatum {
   };
 }
 
-/**
- * `[Product Experience Sprint I]` Manually traced against
- * `ChurchPulseInsightsPanel.tsx` - `jest` cannot execute in this sandbox,
- * same disclosed limitation as every other spec in this codebase.
- */
 describe('ChurchPulseInsightsPanel', () => {
   it('preserves the same testId and heading text ChurchPulseCard used, for DashboardPage.spec.tsx compatibility', () => {
     render(
@@ -83,27 +78,63 @@ describe('ChurchPulseInsightsPanel', () => {
     expect(screen.getByTestId('pulse-insight')).toHaveTextContent('Healthy and holding steady — no urgent follow-up needed today.');
   });
 
-  it('omits the Branch Comparison section entirely when no branches prop is passed', () => {
-    render(
+  /**
+   * `[Dashboard Visual Redesign]` The score ring is decorative - the real
+   * score/band are already real text (`Heading`/`Badge`) right beside it -
+   * so this pins that the gauge itself stays out of the accessibility
+   * tree rather than duplicating that information into a second
+   * `aria-label`.
+   */
+  it('renders the score gauge as a decorative, aria-hidden svg', () => {
+    const { container } = render(
       <ThemeProvider>
         <ChurchPulseInsightsPanel status="success" pulseScore={pulseScore} onRetry={jest.fn()} openAlertCount={0} />
       </ThemeProvider>,
     );
-    expect(screen.queryByText(/BRANCH COMPARISON/)).not.toBeInTheDocument();
+    const svg = container.querySelector('svg[aria-hidden]');
+    expect(svg).not.toBeNull();
+    expect(svg?.querySelectorAll('circle')).toHaveLength(2);
   });
 
-  it('renders the Branch Comparison section when branches are passed', () => {
+  /**
+   * `[Dashboard Visual Redesign, second pass]` Branch Comparison moved
+   * out of this component into its own `BranchComparisonCard` (see the
+   * describe block below) - this component no longer has a `branches`
+   * prop at all, so there is nothing to omit/render conditionally here
+   * anymore. This pins that the "what's contributing" chip row (the
+   * panel's own real sub-metric data, restyled) still renders in its
+   * place.
+   */
+  it('renders a contributing-factors chip for each available real/demo sub-metric', () => {
     render(
       <ThemeProvider>
-        <ChurchPulseInsightsPanel
-          status="success"
-          pulseScore={pulseScore}
-          onRetry={jest.fn()}
-          openAlertCount={0}
-          branches={[{ id: 'branch-2', name: 'River of Life — Kumasi (preview)', pulseScore: 81, memberCount: 310, status: 'thriving' }]}
-        />
+        <ChurchPulseInsightsPanel status="success" pulseScore={pulseScore} onRetry={jest.fn()} openAlertCount={1} kpis={[kpi({ id: 'attendance', trendDirection: 'down' })]} />
       </ThemeProvider>,
     );
+    expect(screen.getByText("WHAT'S CONTRIBUTING")).toBeInTheDocument();
+    expect(screen.getByTestId('pulse-submetric-alerts')).toHaveTextContent('1');
+    expect(screen.getByTestId('pulse-submetric-attendance')).toHaveTextContent('356');
+  });
+});
+
+/**
+ * `[Dashboard Visual Redesign, second pass]` Extracted from
+ * `ChurchPulseInsightsPanel` into its own sibling card - same
+ * `DEMO_COUNCIL_BRANCHES`-shaped data and disclosure, only the placement
+ * changed (now a standalone card next to the Church Pulse hero, not a
+ * subsection nested inside it).
+ */
+describe('BranchComparisonCard', () => {
+  it('renders a labeled, sample-badged row for every branch passed', () => {
+    render(
+      <ThemeProvider>
+        <BranchComparisonCard branches={[{ id: 'branch-2', name: 'River of Life — Kumasi (preview)', pulseScore: 81, memberCount: 310, status: 'thriving' }]} />
+      </ThemeProvider>,
+    );
+    expect(screen.getByText('BRANCH COMPARISON')).toBeInTheDocument();
+    expect(screen.getByTestId('branch-comparison-sample-badge')).toBeInTheDocument();
     expect(screen.getByText('River of Life — Kumasi (preview)')).toBeInTheDocument();
+    expect(screen.getByText('81')).toBeInTheDocument();
+    expect(screen.getByText('310 members')).toBeInTheDocument();
   });
 });

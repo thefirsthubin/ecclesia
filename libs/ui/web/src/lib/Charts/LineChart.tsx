@@ -17,6 +17,20 @@ export interface LineChartProps {
  * this library doesn't pull in a charting package). Plain `<svg>` +
  * `<polyline>`/`<circle>` - no animation library, no new dependency.
  *
+ * `[Product Experience Sprint II, Phase 4]` `width` (`data.length * 60`)
+ * sizes the internal coordinate space via `viewBox` only now - the `<svg>`
+ * itself no longer carries that as a hard pixel `width` attribute. It
+ * previously did, which was a real, found-in-production overflow bug:
+ * a fixed-pixel SVG is an intrinsic-size element that forces any
+ * ancestor `grid`/`flex` container without its own `minWidth: 0` to grow
+ * to fit it rather than let the chart shrink - on `ResidentPastorDashboard`
+ * specifically, a 6-month series (`width = 360`) was silently forcing its
+ * entire dashboard region (every sibling card in that row, not just this
+ * chart) wider than the viewport on narrow screens. `width: '100%'`
+ * lets the rendered box follow its container; `maxWidth` pins it to the
+ * chart's own natural size so it doesn't stretch beyond that on a wide
+ * screen; `viewBox` keeps the point math and aspect ratio unchanged.
+ *
  * **Accessibility**: unlike `BarChart` (where each value is real visible
  * text), a trend line's actual information - the *shape* of change over
  * time - genuinely doesn't reduce to a short text alternative without
@@ -53,7 +67,13 @@ export function LineChart({ data, height = 160, color, testId }: LineChartProps)
   const summary = first && last ? `Line chart from ${first.label}: ${first.value} to ${last.label}: ${last.value}, ${direction}` : 'Line chart, no data';
 
   return (
-    <svg data-testid={testId} role="img" aria-label={summary} width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+    <svg
+      data-testid={testId}
+      role="img"
+      aria-label={summary}
+      viewBox={`0 0 ${width} ${height}`}
+      style={{ width: '100%', maxWidth: width, height: 'auto', display: 'block' }}
+    >
       <polyline points={polylinePoints} fill="none" stroke={strokeColor} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
       {points.map((p) => (
         <circle key={p.datum.label} cx={p.x} cy={p.y} r={3} fill={strokeColor} />

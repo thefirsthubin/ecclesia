@@ -40,7 +40,7 @@ export function FinanceOfficerDashboard() {
   const accessToken = state.status === 'authenticated' ? state.accessToken : undefined;
   const personId = state.status === 'authenticated' ? state.actor.personId : undefined;
   const branchName = state.status === 'authenticated' ? state.actor.branchName : '';
-  const { isCompact, isNarrow } = useDashboardBreakpoint();
+  const { isNarrow } = useDashboardBreakpoint();
 
   const personState = useAsyncData<PersonResponseDto>(
     (signal) => {
@@ -73,38 +73,73 @@ export function FinanceOfficerDashboard() {
       ? transactionsState.data.filter((t) => t.currentState === 'VERIFIED' || t.currentState === 'RECONCILED').reduce((sum, t) => sum + Number(t.amountMinor), 0)
       : undefined;
 
-  // `[Product Experience Sprint I]` Objective 6 - same `isCompact`
-  // (tablet, 2-column) tier added consistently across every persona
-  // dashboard's KPI grid this pass - see `MinistryLeaderDashboard.tsx`'s
-  // matching comment.
-  const kpiColumns = isNarrow ? 1 : isCompact ? 2 : 4;
-  const kpis: { id: string; label: string; icon: 'clock' | 'alertTriangle' | 'coins' | 'checkCircle'; value: number | undefined; caption: string; href: string }[] = [
-    { id: 'pending', label: 'PENDING VERIFICATION', icon: 'clock', value: recordedCount, caption: 'Awaiting Verify/Flag', href: '/stewardship' },
-    { id: 'flagged', label: 'FLAGGED', icon: 'alertTriangle', value: flaggedCount, caption: 'Needs investigation', href: '/stewardship' },
-    { id: 'expenses', label: 'PENDING EXPENSES', icon: 'coins', value: pendingExpenseCount, caption: 'Awaiting Approve/Pay', href: '/stewardship' },
-    { id: 'reconciled', label: 'RECONCILIATION RATE', icon: 'checkCircle', value: reconciliationRate, caption: `${reconciledCount ?? 0} reconciled`, href: '/stewardship' },
+  /**
+   * `[Product Experience Sprint II, Phase 4]` The four former KPI cards
+   * split cleanly into two different questions this dashboard's own data
+   * already answers, once actually looked at rather than mapped into
+   * identical tiles: three are real *action queues* (Pending
+   * Verification/Flagged/Pending Expenses - work waiting to be done),
+   * one is a *state* metric (Reconciliation Rate - how healthy things
+   * are overall). Queues become a real "Needs your attention" card,
+   * same shape `AlertPriorityCard` already establishes elsewhere in this
+   * product; the state metric moves beside the Offering Summary's own
+   * hero number below, where the other health-of-the-books number
+   * already lives.
+   */
+  const attentionItems: { id: string; label: string; count: number; caption: string; status: 'danger' | 'warning' }[] = [
+    ...(flaggedCount ? [{ id: 'flagged', label: 'Flagged', count: flaggedCount, caption: 'Needs investigation', status: 'danger' as const }] : []),
+    ...(recordedCount ? [{ id: 'pending', label: 'Pending verification', count: recordedCount, caption: 'Awaiting Verify/Flag', status: 'warning' as const }] : []),
+    ...(pendingExpenseCount ? [{ id: 'expenses', label: 'Pending expenses', count: pendingExpenseCount, caption: 'Awaiting Approve/Pay', status: 'warning' as const }] : []),
   ];
+  const attentionLoading = recordedCount === undefined || flaggedCount === undefined || pendingExpenseCount === undefined;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5], maxWidth: 1280 }}>
       <DashboardHeader displayName={displayName} openAlertCount={flaggedCount ?? 0} branchName={branchName} />
 
-      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${kpiColumns}, 1fr)`, gap: theme.spacing[4] }}>
-        {kpis.map((kpi) => (
-          <Card interactive onClick={() => navigate(kpi.href)} padding={5} key={kpi.id} testId={`finance-kpi-${kpi.id}`}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }}>
-              <Icon name={kpi.icon} size="md" color={theme.colors.brand.default} />
-              <Text variant="label" color={theme.colors.text.secondary}>
-                {kpi.label}
-              </Text>
-              {kpi.value === undefined ? <Skeleton height={32} width="40%" /> : <Heading level={3}>{kpi.id === 'reconciled' ? `${kpi.value}%` : kpi.value}</Heading>}
-              <Text variant="bodySmall" color={theme.colors.text.secondary}>
-                {kpi.caption}
-              </Text>
+      <Card padding={6} testId="finance-needs-attention-card">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+          <Heading level={3}>Needs your attention</Heading>
+          {attentionLoading ? (
+            <Skeleton height={20} />
+          ) : attentionItems.length === 0 ? (
+            <EmptyState icon="checkCircle" title="Nothing pending" description="Every transaction is verified and every expense request is settled." tone="positive" />
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+              {attentionItems.map((item, index) => (
+                <div key={item.id}>
+                  {index > 0 && <Divider />}
+                  <button
+                    type="button"
+                    onClick={() => navigate('/stewardship')}
+                    style={{
+                      width: '100%',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: `${index > 0 ? theme.spacing[3] : 0}px 0 0`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: theme.spacing[3],
+                      textAlign: 'left',
+                      font: 'inherit',
+                    }}
+                  >
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
+                      <Text variant="bodySmall">{item.label}</Text>
+                      <Text variant="caption" color={theme.colors.text.secondary}>
+                        {item.caption}
+                      </Text>
+                    </div>
+                    <Badge status={item.status}>{item.count}</Badge>
+                  </button>
+                </div>
+              ))}
             </div>
-          </Card>
-        ))}
-      </div>
+          )}
+        </div>
+      </Card>
 
       <Card padding={6} testId="offering-summary-card">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: theme.spacing[3] }}>
@@ -113,6 +148,11 @@ export function FinanceOfficerDashboard() {
             <Text variant="bodySmall" color={theme.colors.text.secondary}>
               Total of Verified + Reconciled Financial Transactions currently in scope
             </Text>
+            {reconciliationRate !== undefined && (
+              <Text variant="caption" color={theme.colors.text.secondary}>
+                {`${reconciliationRate}% reconciled (${reconciledCount ?? 0} of ${transactionsState.status === 'success' ? transactionsState.data.length : 0})`}
+              </Text>
+            )}
           </div>
           {verifiedTotalMinor === undefined ? (
             <Skeleton height={40} width={140} />
@@ -124,7 +164,7 @@ export function FinanceOfficerDashboard() {
         </div>
       </Card>
 
-      <div style={{ display: 'grid', gridTemplateColumns: isNarrow ? '1fr' : '1fr 1fr', gap: theme.spacing[4] }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isNarrow ? '1fr' : 'minmax(0, 1fr) minmax(0, 1fr)', gap: theme.spacing[4] }}>
         <TrendCard title="Monthly trends" subtitle="Giving, last 6 months" series={buildGrowthSeries().giving} color={theme.colors.status.warning.strong} kind="bar" formatValue={(v) => `GHS ${v.toLocaleString()}`} testId="finance-monthly-trend" />
 
         <Card padding={6} testId="financial-alerts-card">
@@ -138,7 +178,24 @@ export function FinanceOfficerDashboard() {
                 <div key={item.id}>
                   {index > 0 && <Divider />}
                   <div style={{ paddingTop: index > 0 ? theme.spacing[3] : 0, display: 'flex', alignItems: 'center', gap: theme.spacing[3] }}>
-                    <Icon name={item.icon} size="sm" color={item.tone === 'success' ? theme.colors.status.success.strong : theme.colors.status.warning.strong} />
+                    {/* `[Dashboard Visual Redesign]` Icon-in-tinted-circle -
+                        same row treatment as `UpcomingEventsTimeline`/
+                        `RecentActivityTimeline`, applied in place. */}
+                    <div
+                      aria-hidden
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 36,
+                        height: 36,
+                        flexShrink: 0,
+                        borderRadius: theme.radius.full,
+                        backgroundColor: item.tone === 'success' ? theme.colors.status.success.background : theme.colors.status.warning.background,
+                      }}
+                    >
+                      <Icon name={item.icon} size="sm" color={item.tone === 'success' ? theme.colors.status.success.strong : theme.colors.status.warning.strong} />
+                    </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1], flex: 1 }}>
                       <Text variant="bodySmall">{item.description}</Text>
                       <Text variant="caption" color={theme.colors.text.secondary}>

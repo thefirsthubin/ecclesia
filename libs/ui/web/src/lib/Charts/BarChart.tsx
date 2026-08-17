@@ -12,6 +12,18 @@ export interface BarChartProps {
   height?: number;
   /** Formats the value shown above each bar - defaults to the raw number. Pass e.g. `(v) => \`GHS ${v}\`` for currency. */
   formatValue?: (value: number) => string;
+  /** `[Branch Pastor Dashboard sprint, spec revision]` `'vertical'` (default,
+   * original behavior, unchanged) or `'horizontal'` - a ranked list of
+   * label/track/value rows, one per datum. Prefer `'horizontal'` for
+   * ranked category comparisons with real (often longer) names - a
+   * Bacenta's name reads in full on its own row instead of being
+   * truncated under a narrow vertical bar, and the ranking itself (top
+   * row = highest, per this component's `data`-order-is-render-order
+   * contract - callers sort descending before passing data in) is easier
+   * to scan top-to-bottom than left-to-right. `height` is ignored in this
+   * mode - row height follows content (one row per datum), not a fixed
+   * pixel box, the same way an ordinary list would. */
+  orientation?: 'vertical' | 'horizontal';
   testId?: string;
 }
 
@@ -24,15 +36,61 @@ export interface BarChartProps {
  * warrant one.
  *
  * **Accessibility**: each bar's numeric value is rendered as real,
- * visible DOM text above the bar (not embedded only in the bar's height
- * or a tooltip) - a screen reader reads the label and value in normal
- * document flow, no `role="img"`/summary-string workaround needed. The
- * bar shape itself is `aria-hidden` (decorative; the text already
- * carries the information).
+ * visible DOM text (not embedded only in the bar's size or a tooltip) -
+ * a screen reader reads the label and value in normal document flow, no
+ * `role="img"`/summary-string workaround needed. The bar/track shape
+ * itself is `aria-hidden` (decorative; the text already carries the
+ * information) in both orientations.
  */
-export function BarChart({ data, height = 160, formatValue = (v) => String(v), testId }: BarChartProps) {
+export function BarChart({ data, height = 160, formatValue = (v) => String(v), orientation = 'vertical', testId }: BarChartProps) {
   const theme = useTheme();
   const maxValue = Math.max(1, ...data.map((d) => d.value));
+
+  if (orientation === 'horizontal') {
+    return (
+      <div data-testid={testId} style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+        {data.map((datum) => {
+          const fillPercent = Math.max(2, (datum.value / maxValue) * 100);
+          return (
+            <div key={datum.label} style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[3] }}>
+              <span
+                style={{
+                  width: 96,
+                  flexShrink: 0,
+                  fontFamily: theme.fontFamily.base,
+                  fontSize: theme.typography.bodySmall.fontSize,
+                  color: theme.colors.text.primary,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+                title={datum.label}
+              >
+                {datum.label}
+              </span>
+              <div aria-hidden style={{ flex: 1, height: 8, borderRadius: theme.radius.full, backgroundColor: theme.colors.border.subtle, overflow: 'hidden' }}>
+                <div style={{ width: `${fillPercent}%`, height: '100%', borderRadius: theme.radius.full, backgroundColor: datum.color ?? theme.colors.brand.default }} />
+              </div>
+              <span
+                style={{
+                  width: 64,
+                  flexShrink: 0,
+                  textAlign: 'right',
+                  fontFamily: theme.fontFamily.base,
+                  fontSize: theme.typography.numericTabular.fontSize,
+                  fontVariantNumeric: 'tabular-nums',
+                  fontWeight: 600,
+                  color: theme.colors.text.primary,
+                }}
+              >
+                {formatValue(datum.value)}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 
   return (
     <div

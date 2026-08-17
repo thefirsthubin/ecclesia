@@ -23,4 +23,19 @@ describe('BarChart', () => {
     render(<BarChart data={DATA} formatValue={(v) => `GHS ${v}`} />);
     expect(screen.getByText('GHS 62')).toBeInTheDocument();
   });
+
+  describe('horizontal orientation', () => {
+    it('renders each label and value as visible text, in the given (caller-sorted) order', () => {
+      render(<BarChart data={DATA} orientation="horizontal" testId="ranked-chart" />);
+      expect(screen.getByText('Jan')).toBeInTheDocument();
+      expect(screen.getByText('Feb')).toBeInTheDocument();
+      expect(screen.getByText('62')).toBeInTheDocument();
+      expect(screen.getByText('78')).toBeInTheDocument();
+    });
+
+    it('formats values with a custom formatter', () => {
+      render(<BarChart data={DATA} orientation="horizontal" formatValue={(v) => `GHS ${v}`} />);
+      expect(screen.getByText('GHS 62')).toBeInTheDocument();
+    });
+  });
 });

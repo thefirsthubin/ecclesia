@@ -40,6 +40,18 @@ export interface NavItemConfig {
   icon: IconName;
   /** Roles allowed to see this item. `undefined` = every authenticated role. */
   roles?: RoleDto[];
+  /**
+   * `[Branch Pastor portal]` The inverse of `roles` above — roles that
+   * must NOT see this item, even though it's otherwise unrestricted
+   * (`roles` left `undefined`). Added specifically so a single role can
+   * be carved out of an item every *other* role still sees exactly as
+   * before, without having to enumerate every other role explicitly (a
+   * long, fragile inclusion list that silently goes stale the next time
+   * a role is added) and without touching that item's `roles` field at
+   * all — Ministry/Stewardship stay visible, unchanged, to every role
+   * that already sees them today.
+   */
+  excludeRoles?: RoleDto[];
   /** `[UX Design Implementation]` Final UX Design Specification §12 — items
    * sharing a `group` render together under one heading in the sidebar,
    * separated from the flat operational list above them. Omit for the
@@ -51,9 +63,25 @@ export const NAV_ITEMS: NavItemConfig[] = [
   { label: 'Dashboard', href: '/dashboard', icon: 'home' },
   { label: 'People', href: '/people', icon: 'users' },
   { label: 'Pastoral Care', href: '/pastoral-care', icon: 'user' },
-  { label: 'Ministry', href: '/ministry', icon: 'calendar' },
+  // `[Branch Pastor portal]` Hidden from Branch Pastor specifically - the
+  // approved Branch Pastor sidebar has no standalone Bacentas/Basontas nav
+  // item. Unchanged for every other role (still no `roles` restriction at
+  // all) - a Bacenta/Basonta detail page is still reachable for Branch
+  // Pastor by drill-down (`BranchPastorDashboard`'s own row-click already
+  // navigates to `/ministry/:groupId`), just not as a top-level directory.
+  { label: 'Ministry', href: '/ministry', icon: 'calendar', excludeRoles: ['ASSISTANT_PASTOR'] },
   { label: 'Gatherings', href: '/gatherings', icon: 'clock' },
-  { label: 'Stewardship', href: '/stewardship', icon: 'trendingUp' },
+  // `[Branch Pastor portal]` Hidden from Branch Pastor - replaced by the
+  // dedicated read-only `Finance` item below, per the approved product
+  // decision that Branch Pastor Finance is explicitly NOT the Treasurer
+  // portal `StewardshipPage` (verify/flag/approve/pay/confirm-deposit
+  // actions) is built around. Unchanged for every other role.
+  { label: 'Stewardship', href: '/stewardship', icon: 'trendingUp', excludeRoles: ['ASSISTANT_PASTOR'] },
+  // `[Branch Pastor portal]` Read-only Branch-wide giving visibility -
+  // "Finance", never "Stewardship", in this role's UI (approved product
+  // decision). Visible ONLY to Branch Pastor - every other role keeps
+  // using `Stewardship` above, unaffected.
+  { label: 'Finance', href: '/finance', icon: 'trendingUp', roles: ['ASSISTANT_PASTOR'] },
   { label: 'Insights', href: '/insights', icon: 'search' },
   // Design System §3.1: "Configuration (Admin/Council Administrator roles
   // only)". `COUNCIL_OVERSEER` is this codebase's "Council Administrator"
@@ -75,8 +103,27 @@ export const NAV_ITEMS: NavItemConfig[] = [
   },
 ];
 
+/**
+ * `[Branch Pastor portal]` The approved Branch Pastor sidebar order -
+ * Dashboard / People / Gatherings / Finance / Insights / Pastoral Care -
+ * genuinely differs from `NAV_ITEMS`' own array order (which every other
+ * role still renders in unchanged: Dashboard / People / Pastoral Care /
+ * Gatherings / Insights for this role once Ministry/Stewardship are
+ * excluded, Pastoral Care third rather than last). A per-role override
+ * keyed by `href`, applied only when one exists for the current role,
+ * rather than reordering `NAV_ITEMS` itself - reordering the shared array
+ * would change every other role's sidebar order too, which "do not
+ * redesign the navigation... of [other roles]" rules out.
+ */
+const ROLE_SPECIFIC_ORDER: Partial<Record<RoleDto, string[]>> = {
+  ASSISTANT_PASTOR: ['/dashboard', '/people', '/gatherings', '/finance', '/insights', '/pastoral-care'],
+};
+
 export function navItemsForRole(role: RoleDto): NavItemConfig[] {
-  return NAV_ITEMS.filter((item) => !item.roles || item.roles.includes(role));
+  const visible = NAV_ITEMS.filter((item) => (!item.roles || item.roles.includes(role)) && !item.excludeRoles?.includes(role));
+  const order = ROLE_SPECIFIC_ORDER[role];
+  if (!order) return visible;
+  return [...visible].sort((a, b) => order.indexOf(a.href) - order.indexOf(b.href));
 }
 
 /**
@@ -93,19 +140,38 @@ export function navItemsForRole(role: RoleDto): NavItemConfig[] {
  * unchanged in code, RBAC rows, and logs — this is a presentation-layer
  * rule only, per the decision's own explicit scope.
  */
+/**
+ * `[Multi-Tenant Foundation, Phase 1]` `COUNCIL_TREASURER`/
+ * `SYSTEM_ADMINISTRATOR` labels added because `Record<RoleDto, string>`
+ * is exhaustive. `ADMIN`/`TREASURER` were deliberately left unchanged in
+ * Phase 1 ("do not relabel ADMIN/TREASURER yet... first establish
+ * SYSTEM_ADMINISTRATOR so ADMIN is no longer carrying the platform-admin
+ * meaning").
+ *
+ * `[Multi-Tenant Foundation, Phase 2]` That precondition is now met -
+ * `SYSTEM_ADMINISTRATOR` exists and is intentionally restricted (one
+ * `platform.tenant.read` row, no customer-data access) - so `ADMIN` ->
+ * "Branch Administrator" and `TREASURER` -> "Branch Treasurer" now land,
+ * per the approved nine-persona terminology. Technical identifiers are
+ * unchanged in code, RBAC rows, and logs - this is a presentation-layer
+ * rule only, same scope as the `ASSISTANT_PASTOR`/`COUNCIL_OVERSEER`
+ * relabels above it.
+ */
 const ROLE_LABELS: Record<RoleDto, string> = {
   RESIDENT_PASTOR: 'Resident Pastor',
   ACTING_RESIDENT_PASTOR: 'Acting Resident Pastor',
   ASSISTANT_PASTOR: 'Branch Pastor',
   BACENTA_LEADER: 'Bacenta Leader',
   BASONTA_LEADER: 'Basonta Leader',
-  TREASURER: 'Treasurer',
+  TREASURER: 'Branch Treasurer',
+  COUNCIL_TREASURER: 'Council Treasurer',
   WORKER: 'Worker',
   USHER: 'Usher',
   MEMBER: 'Member',
   VISITOR: 'Visitor',
-  ADMIN: 'Super Administrator',
+  ADMIN: 'Branch Administrator',
   COUNCIL_OVERSEER: 'Council Administrator',
+  SYSTEM_ADMINISTRATOR: 'System Administrator',
 };
 
 export function roleLabel(role: RoleDto): string {

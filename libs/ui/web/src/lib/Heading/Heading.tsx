@@ -23,9 +23,15 @@ export function Heading({ children, level, as, color, testId }: HeadingProps) {
   const style = theme.typography[styleKey];
   const Component = as ?? (level === 'display' ? 'h1' : (`h${level}` as const));
 
+  // `[Product Experience Sprint II, Phase 2]` The serif display face is
+  // reserved for the three roles at 22px+ (Part 6.5's size table) -
+  // `heading3` (18px, "card title") and below stay Inter, the same
+  // threshold `fontFamily.display`'s own doc comment documents.
+  const usesDisplayFont = styleKey === 'display' || styleKey === 'heading1' || styleKey === 'heading2';
+
   const cssStyle: CSSProperties = {
     margin: 0,
-    fontFamily: theme.fontFamily.base,
+    fontFamily: usesDisplayFont ? theme.fontFamily.display : theme.fontFamily.base,
     fontSize: style.fontSize,
     lineHeight: `${style.lineHeight}px`,
     fontWeight: style.fontWeight,

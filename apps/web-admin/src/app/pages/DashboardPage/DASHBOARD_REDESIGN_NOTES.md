@@ -363,3 +363,271 @@ open/close/typing-suppression.
 disclosed limitation as every prior sprint) — every new spec assertion
 was manually traced against the real component/hook code instead of
 left unverified.
+
+## Dashboard Visual Redesign (Release 1 product review)
+
+Proposal-then-approval pass toward a "premium modern SaaS" visual
+direction, scoped by explicit product decisions before any code changed
+(full proposal + decisions are in the review conversation, not
+reproduced here — this section only records what shipped and why).
+
+**Elevation as hierarchy signal**: `Card`'s existing `elevation` prop
+(0 default, border only) now carries a real hero-vs-standard convention,
+documented in `ECCLESIA_DESIGN_SYSTEM.md` §4.2: exactly one zone per
+screen may rest at `elevation={1}` — today, only
+`ChurchPulseInsightsPanel` on the Resident Pastor dashboard. No other
+card on any dashboard changed its resting elevation; the point is
+contrast against a flat baseline, not a general lift.
+
+**Church Pulse gauge**: `ChurchPulseInsightsPanel` gained a hand-drawn
+SVG progress ring (`ChurchPulseGauge`, local to that file — two `<circle>`
+elements, `stroke-dasharray`/`stroke-dashoffset`, no charting library),
+rendered around the existing real `pulseScore.score`, colored by the
+existing `churchPulse` band palette. Decorative (`aria-hidden`) — the
+score and band are already real text right next to it. Static on mount,
+matching `LineChart`/`BarChart`'s own no-entrance-animation precedent, so
+there was no reduced-motion branch to add. **Deliberately not extended**
+to `ChurchPulseCard` (Branch Pastor / Super Administrator / Insights) —
+Release 1 decision: the flagship treatment stays Resident-Pastor-only for
+now; those dashboards get the same visual *system* (elevation, tinted
+icon rows) without copying this specific zone's depth.
+
+**KPI sparklines**: new `Sparkline` primitive (`@ecclesia/ui-web`,
+`libs/ui/web/src/lib/Charts/Sparkline.tsx`) — same dependency-free plain-
+`<svg>` philosophy as `LineChart`/`BarChart`, sized for sitting inline
+next to a number rather than as its own chart card, `aria-hidden` (the
+KPI's own `trendLabel` text already carries the trend). `KpiCard` takes
+an optional `series` prop; `ResidentPastorDashboard` threads through the
+exact same real `growthSeriesFromSummary(summaryState.data)` series
+`BranchTrendsSection.tsx` already renders on Insights — no new fetch,
+no new endpoint. `members`→`membership`, `attendance`→`attendance`,
+`giving`→`giving`; `volunteers` has no real series behind it yet and
+renders without a sparkline rather than fabricating one.
+
+**Activity/list row restyle (in place, no new component)**: every
+icon-bearing list row across the five dashboards
+(`RecentActivityTimeline`, `BranchPastorDashboard`'s Upcoming Gatherings,
+`FinanceOfficerDashboard`'s Financial alerts,
+`MinistryLeaderDashboard`'s Recent ministry activity) now wraps its icon
+in the same 36px tinted-circle container `UpcomingEventsTimeline`
+already used, instead of a bare `Icon`. Tint follows each icon's existing
+semantic color (status `success`/`warning` background pairs, or
+`border.subtle` for a neutral/secondary icon, or `brand.subtle` for a
+plain brand-colored icon) — no icon changed color, only gained a
+consistent container. **Explicitly not extracted into a shared
+component** — a Release 1 decision: restyle the existing instances
+in place now; revisit extraction later only if real shared
+behavior/props (not just matching styles) turns out to be needed.
+`AlertPriorityCard` (badge-driven, no per-row icon) and plain
+name/text rows (Follow-ups, Ministries, Volunteer availability,
+Multi-Branch Overview) were left as-is — this pass only touches rows
+that already had an icon.
+
+**Cleanup**: `ChurchGrowthCharts.tsx` removed — confirmed via grep to
+have no importers anywhere in `apps/web-admin` (the real growth chart
+this dashboard used to render moved to `BranchTrendsSection.tsx`/
+Insights per this file's own Milestone 8/decision-8 entry above; this
+file was the leftover, never deleted at the time).
+
+**Verification**: unlike every prior entry in this file, `jest` *does*
+run in this session's sandbox — every spec above (new and modified) was
+executed via `nx test`, not manually traced, and all pass. Flagging the
+discrepancy with earlier entries' "jest cannot execute" disclosure
+rather than silently continuing to claim a limitation that no longer
+applies.
+
+## Second visual redesign pass (Resident Pastor only, composed grid)
+
+Follow-up to the pass above, against a second visual reference (a
+project-management-style dashboard) with an explicit instruction: match
+its *layout rhythm* only (compact KPI strip, a paired hero, a full-width
+analytics chart, a varied multi-column operational row) - not its
+terminology, icons, colors, or project-management concepts. Scoped to
+`ResidentPastorDashboard` only; the other four persona dashboards are
+untouched.
+
+**KPI strip**: `KpiCard` compacted from a tall 3-section vertical stack
+into a 3-row card (icon+label / value+sparkline / clipped action
+sentence), `padding` 5→4. Four of these now read as a genuine compact
+strip instead of four tall single-column cards. Real data unchanged.
+
+**Primary area**: `ChurchPulseInsightsPanel` (hero, `elevation={1}`,
+2fr) paired with the new sibling `BranchComparisonCard` (1fr) - Branch
+Comparison was previously a subsection *inside* the panel; it's now a
+real adjacent card, same `DEMO_COUNCIL_BRANCHES` data and Horizon 3
+disclosure. Collapses to one stacked column below `isCompact`.
+
+Inside `ChurchPulseInsightsPanel` itself: the gauge grew (104px→136px)
+and the score moved *inside* the ring (a real gauge reading, not a
+circle sitting beside the number); the sub-metric grid became a
+"WHAT'S CONTRIBUTING" row of compact tinted chips beside the gauge
+instead of a tile grid beneath it. Still Resident-Pastor-only -
+`ChurchPulseCard`'s other four call sites are untouched, per the
+explicit Release 1 decision to keep the flagship treatment on one
+persona for now.
+
+**Secondary area**: `PerformanceChartCard` (real Attendance/Membership/
+Giving 6-month series, from the same `summaryState` this page already
+fetches) is back on the Dashboard, full width, as the "secondary
+visualization." This *revises* the Milestone 8 / decision-8 call above
+("Dashboard answers what-now, not what-over-time") for this one screen
+only, per this pass's explicit brief - `BranchTrendsSection.tsx`'s own
+Insights usage of the same component is untouched; it's a second call
+site, not a moved one. Follow-up Health has no real time series (only a
+single demo percentage), so it is deliberately not charted - "only
+visualize series that actually exist."
+
+**Operational area**: Needs your attention / Quick actions+Prayer Focus
+/ Upcoming gatherings / Recent activity, composed into one
+varied-width row (`1.4fr 1fr 1fr 1.3fr`) instead of two stacked
+full-width pairs. `QuickActionsRow` compacted from three full tinted
+cards into a tight list of small `Card interactive` rows (reused, not
+reimplemented) to fit its narrower column. Collapses to 2×2 below
+`isCompact`, one stacked column below `isNarrow`.
+
+**New code**: no new shared/reusable component. `BranchComparisonCard`
+is a new *named export*, but it's Church-Pulse-specific extracted JSX,
+not a general-purpose primitive - it stays in
+`ChurchPulseInsightsPanel.tsx` to reuse that file's own band-color
+helpers rather than duplicating them. `PerformanceChartCard`,
+`KpiCard`, `Sparkline`, `Card`, `Badge` were all reused as-is or with
+prop-compatible internal restyles; none were replaced.
+
+**Verification**: `pnpm nx test ui-web` (152/152), `pnpm nx test
+web-admin` (373/373, incl. two new spec files -
+`QuickActionsRow.spec.tsx` and `PerformanceChartCard.spec.tsx`, neither
+of which had coverage before this pass), `tsc --build
+apps/web-admin/tsconfig.json` (clean - see this folder's own note above
+on why plain `tsc --noEmit -p` misfires in this repo's composite
+project-reference setup), `nx lint web-admin` (clean) - all run for
+real via `nx`, not manually traced.
+
+## Third visual redesign pass (a true CSS grid, not stacked bands)
+
+Direct correction to the pass above: standing feedback was that the
+second pass, despite having internal columns per section, still read as
+a vertical column of independently-stacked full-width bands ("a webpage
+containing a collection of cards"), because every section was its own
+flex row rather than part of one continuous grid, and nothing spanned
+across sections. This pass replaces that with **one real `display: grid`
+container** for the whole main content area (below the KPI strip),
+using explicit `gridColumn`/`gridRow` line placement per module - the
+structural mechanism a reference dashboard's own composition depends on
+(a tall list/chart module spanning multiple row-tracks next to a column
+of stacked shorter modules), not merely "more columns."
+
+**The grid** (desktop, 4 columns x 3 row-bands):
+
+```
+┌────────────────────────────┬──────────────┬──────────────┐
+│                            │ Needs your   │              │
+│                            │ attention    │              │
+│  Church Pulse              ├──────────────┤ Recent       │
+│  (col 1-2, row 1-2)        │ Quick actions│ Activity     │
+│                            │ + Prayer     │ (col 4,      │
+│                            │ Focus        │ row 1-2)     │
+│                            │ (col 3,row2) │              │
+├────────────────────────────┼──────────────┼──────────────┤
+│  Analytics (Attendance/    │  Upcoming    │  Branch      │
+│  Membership/Giving chart)  │  Gatherings  │  Comparison  │
+│  (col 1-2, row 3)          │ (col 3,row3) │ (col4, row3) │
+└────────────────────────────┴──────────────┴──────────────┘
+```
+
+Church Pulse and Recent Activity each span both of the first two
+row-bands - the two "tall modules" that give the page real spatial
+rhythm and let column 3's two single-row modules (Needs your attention,
+then Quick actions+Prayer Focus, stacked) read as a genuine third
+column rather than a leftover. Row-band 3 is a plain left-to-right row
+(Analytics spans 2 columns, then two single cells) - this is the
+"secondary visualization + narrow list + narrow list" rhythm, distinct
+in composition from row-band 1-2's "two tall modules flanking a stacked
+pair."
+
+**KPI cards**: value typography bumped `heading3`→`heading2` and the
+sparkline fixed to a small 64x24 - "the number should dominate,
+supporting trend information should be secondary." Same real data, same
+component, no new props beyond the existing `series`.
+
+**Responsive collapse**: `place()` (`ResidentPastorDashboard.tsx`) is
+the one function that computes every module's grid placement, driven
+entirely by `useDashboardBreakpoint()`. Below `isCompact` (tablet), the
+grid drops to 2 columns and every explicit row-span/column-span is
+dropped *except* Church Pulse and the Analytics chart, which keep
+spanning both columns (they stay the two "big modules"); everything
+else auto-flows into the 2-column grid in DOM order. Below `isNarrow`
+(mobile), the grid drops to 1 column and every module is a plain full-
+width cell - DOM order is the deliberate reading order (health status →
+what needs attention → action items → activity → trends → schedule →
+comparison), not desktop cards merely wrapping.
+
+**No new components.** `KpiCard`, `ChurchPulseInsightsPanel`,
+`BranchComparisonCard`, `AlertPriorityCard`, `QuickActionsRow`,
+`PrayerFocusCard`, `RecentActivityTimeline`, `PerformanceChartCard`,
+`UpcomingEventsTimeline` are all reused exactly as the prior pass left
+them (or, for `KpiCard`, with a typography-only tweak) - this pass is
+entirely a placement/composition change in
+`ResidentPastorDashboard.tsx`, not a component rewrite.
+
+**Verification**: `pnpm nx test ui-web` (152/152), `pnpm nx test
+web-admin` (373/373), `tsc --build apps/web-admin/tsconfig.json`
+(clean), `nx lint web-admin` (clean) - all run for real via `nx`.
+
+## Fourth visual redesign pass (real screenshot, dead-space fix)
+
+Direct correction to the third pass, and the first pass in this whole
+history actually verified against a rendered screenshot rather than
+DOM/test/CSS-declaration inspection alone. Set up a real local
+verification loop for this: `pnpm nx serve api` + `pnpm nx serve
+web-admin` against the existing local Postgres + seeded dev users
+(`AUTH_MODE=development`, already configured in `.env` - no new
+infrastructure), driven by a scratch Playwright + Chromium install
+(outside the repo, in the session scratchpad - `chromium-cli` wasn't
+available in this sandbox) logging in as the seeded `Resident Pastor`
+dev user and screenshotting `/dashboard`.
+
+**What the screenshot found, that no prior pass caught**: the third
+pass's 2-row-band spanning grid produced large, real dead-space gaps -
+confirmed visually, not guessed. Root cause: a CSS Grid row-band's
+height is set by the *tallest single-track item* placed in it, not by
+the spanning items crossing it. `Needs your attention` (short) and
+`Quick actions + Prayer Focus` (tall, ~380px) ended up in row-bands 1
+and 2 respectively; row-band 2's height was therefore driven by the
+380px stack, inflating the *combined* height both row-bands offered to
+the actually-shorter `ChurchPulseInsightsPanel`/`RecentActivityTimeline`
+spanning modules, which left ~150-250px of blank card interior below
+each of them - exactly the "huge empty areas" feedback, invisible to
+`git diff`/tests/grid-declaration review, obvious in one screenshot.
+
+**The fix**: dropped row-spanning entirely. Two independent, single-row
+regions (each a 4-column grid, `alignItems: 'start'` so a shorter card
+keeps its own natural height instead of stretching into false empty
+space) replace the row-band-span structure:
+
+- Region A: `ChurchPulseInsightsPanel` (2 cols) | Needs your attention +
+  Quick actions, stacked (1 col) | Recent Activity (1 col)
+- Region B: `PerformanceChartCard` (2 cols) | Upcoming Gatherings
+  (1 col) | Branch Comparison + Prayer Focus, stacked (1 col)
+
+Each region's height is now driven only by what's actually in that
+region - no cross-region row-track coupling to produce surprise
+inflation. Verified clean (no dead space, sensible collapse) at
+1600px (desktop), 900px (tablet), and 390px (mobile) via real
+screenshots.
+
+**Data note, disclosed**: the local dev database this was verified
+against is minimally seeded (8 People, ~GHS 50 total giving, 0
+Attendance/Volunteers records) - Church Pulse reads 0/"At risk" and the
+Performance Chart is visually flat as a direct, honest consequence of
+that seed data, not a rendering bug. A Branch with realistic record
+volumes would show real movement in both. Not fabricated to look
+better for this screenshot.
+
+**No new components.** Same reuse list as the third pass - this is a
+placement-only correction in `ResidentPastorDashboard.tsx`.
+
+**Verification**: `pnpm nx test ui-web` (152/152), `pnpm nx test
+web-admin` (373/373), `pnpm nx run web-admin:typecheck` (clean),
+`pnpm nx lint web-admin` (clean), plus real rendered screenshots at
+three viewport widths - the acceptance test this whole redesign has
+been missing until this pass.

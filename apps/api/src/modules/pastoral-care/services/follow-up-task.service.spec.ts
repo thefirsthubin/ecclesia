@@ -1,4 +1,4 @@
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import type { ActorContext } from '@ecclesia/rbac';
 
 import { FollowUpTaskService } from './follow-up-task.service';
@@ -33,6 +33,7 @@ describe('FollowUpTaskService', () => {
       update: jest.fn(),
       listByGroup: jest.fn(),
       listByBranch: jest.fn(),
+      listByPerson: jest.fn(),
     };
     const personScopeService = {
       loadResourceContext: jest.fn().mockResolvedValue({ branchId: 'branch-1', ownerId: 'person-1' }),
@@ -56,6 +57,31 @@ describe('FollowUpTaskService', () => {
       expect(followUpTaskRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({ branchId: 'branch-1', personId: 'person-1', assignedToPersonId: 'shepherd-1' }),
       );
+    });
+
+    /** `[Branch Pastor portal, Pastoral Care sprint]` The real, previously
+     * unenforced gap: nothing checked that `assignedToPersonId` actually
+     * belonged to the actor's own Branch before this - see the service's
+     * own doc comment on `create()`. */
+    it('resolves the assignee\'s own scope too, and rejects a cross-Branch assignment', async () => {
+      const { service, personScopeService } = buildService();
+      personScopeService.loadResourceContext.mockImplementation((personId: string) =>
+        Promise.resolve(personId === 'shepherd-elsewhere' ? { branchId: 'branch-2', ownerId: personId } : { branchId: 'branch-1', ownerId: personId }),
+      );
+
+      await expect(
+        service.create(actor, 'person-1', { assignedToPersonId: 'shepherd-elsewhere', trigger: 'MANUAL' } as never),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('allows an in-Branch assignment (the assignee resolves to the same Branch as the actor)', async () => {
+      const { service, followUpTaskRepository, personScopeService } = buildService();
+      followUpTaskRepository.create.mockResolvedValue(buildTask());
+
+      await service.create(actor, 'person-1', { assignedToPersonId: 'shepherd-1', trigger: 'MANUAL' } as never);
+
+      expect(personScopeService.loadResourceContext).toHaveBeenCalledWith('shepherd-1', actor);
+      expect(followUpTaskRepository.create).toHaveBeenCalled();
     });
 
     it('uses an explicit dueAtOverride when supplied instead of computing one', async () => {
@@ -118,6 +144,18 @@ describe('FollowUpTaskService', () => {
       expect(followUpTaskRepository.listByBranch).toHaveBeenCalledWith('branch-1', undefined);
       expect(followUpTaskRepository.listByGroup).not.toHaveBeenCalled();
       expect(result).toHaveLength(1);
+    });
+  });
+
+  describe('listByPerson (Branch Pastor portal, "People -> Pastoral Care" direction)', () => {
+    it('maps every one of the Person\'s tasks to response DTOs, regardless of status', async () => {
+      const { service, followUpTaskRepository } = buildService();
+      followUpTaskRepository.listByPerson.mockResolvedValue([buildTask({ id: 'ft-1' }), buildTask({ id: 'ft-2', status: 'COMPLETED' })]);
+
+      const result = await service.listByPerson('person-1');
+
+      expect(followUpTaskRepository.listByPerson).toHaveBeenCalledWith('person-1');
+      expect(result).toHaveLength(2);
     });
   });
 

@@ -42,6 +42,18 @@ function resourceInScope(scope: Scope, actor: ActorContext, resource: ResourceCo
       );
     case 'BRANCH':
       return resource.branchId === actor.branchId;
+    case 'COUNCIL':
+      // (Multi-Tenant Foundation, Phase 1) Set membership against
+      // councilBranchIds - the exact same shape as CLUSTER above, just one
+      // level up the hierarchy (every Branch in the actor's Council, not
+      // every Bacenta in the actor's cluster). Every resource this library
+      // evaluates already carries a branchId (ResourceContext.branchId is
+      // required, unlike the optional bacentaId CLUSTER tests), so - unlike
+      // CLUSTER - there is no "resource has no owning Branch" case that can
+      // never match; the only way COUNCIL fails to match is the actor
+      // holding no councilBranchIds at all (a Branch-scoped actor, or a
+      // Council-scoped actor this scope check was never intended to cover).
+      return actor.councilBranchIds !== undefined && actor.councilBranchIds.includes(resource.branchId);
   }
 }
 

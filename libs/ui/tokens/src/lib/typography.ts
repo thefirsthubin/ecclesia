@@ -18,6 +18,35 @@
 
 export const fontFamily = {
   base: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+  /**
+   * `[Product Experience Sprint II, Phase 2]` A second, deliberately
+   * narrow-scope typeface - Fraunces, a warm humanist serif - used only
+   * for `display`/`heading1`/`heading2` (`Heading.tsx`'s own selection
+   * logic), the three roles at 22px and above (Part 6.5's own size
+   * table). Every smaller role (`heading3` down through `caption`) stays
+   * `base` (Inter) - a serif card title or table header would read as
+   * decorative noise at that size, not identity.
+   *
+   * Evaluated against Fraunces, Domine, and Source Serif 4 (this sprint's
+   * own design-direction report has the full comparison) - Fraunces won
+   * on "warm/human" without tipping into "editorial/magazine" the way
+   * Domine's extremely common blog-template pairing with Inter risks, or
+   * Source Serif 4's more clinical, closer-to-Times character undershoots
+   * "warm." Rendered at the existing 700/700/600 weights already defined
+   * per role (unchanged) - Fraunces reads sturdy, not delicate, at those
+   * weights, which is what keeps it "serious software" rather than
+   * "wedding invitation."
+   *
+   * `[ui-native gap, disclosed]` This value is a web CSS font-stack
+   * string; `ui-native` (`apps/mobile`) reads the same `typography.ts`
+   * file but has no Fraunces asset linked into its native bundle yet -
+   * RN will silently fall back to its platform default serif (or ignore
+   * an unrecognized family name) until that's done as its own,
+   * separately-scoped piece of work. Web only for this phase, same
+   * "contained blast radius" precedent `useDashboardBreakpoint`'s own
+   * doc comment already established.
+   */
+  display: '"Fraunces", Georgia, "Iowan Old Style", serif',
   /** React Native has no "system-ui" stack; platforms resolve their own default when this is unset. */
   nativeFallback: undefined as string | undefined,
 } as const;

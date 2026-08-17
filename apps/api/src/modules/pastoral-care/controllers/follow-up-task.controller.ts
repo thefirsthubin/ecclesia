@@ -40,6 +40,20 @@ export class FollowUpTaskController {
     return this.followUpTaskService.create(actor, personId, body);
   }
 
+  /** `GET /people/:personId/follow-up-tasks` - `[Branch Pastor portal,
+   * Pastoral Care sprint]` the "People -> Member -> Pastoral Care"
+   * direction, the counterpart to `PastoralNoteController`'s own
+   * `GET /people/:personId/pastoral-notes`. Reuses the create route's own
+   * guard - both resolve the identical "subject Person defines the
+   * scope" resource context - and the existing `pastoral_care.followup_task.read`
+   * action; no new permission-matrix row. */
+  @Get('people/:personId/follow-up-tasks')
+  @RequirePermission('pastoral_care.followup_task.read')
+  @UseGuards(FollowUpTaskCreateResourceContextGuard, RbacGuard)
+  listByPerson(@Param('personId') personId: string) {
+    return this.followUpTaskService.listByPerson(personId);
+  }
+
   /** §16.2's "Follow-up task queue... sorted by SLA urgency" - Shepherd
    * Dashboard sprint's Priority card. See
    * `SHEPHERD_DASHBOARD_DESIGN_NOTES.md` STEP 6 for why this endpoint did

@@ -21,10 +21,65 @@ import type { PermissionRule } from './types';
  * request"), the role's own defined scope of authority from PRD §17.2's
  * role catalog is used instead, and that inference is called out in the
  * rule's `reason`.
+ *
+ * `[Multi-Tenant Foundation, Phase 1 - Resident Pastor Council visibility]`
+ * User-approved policy, applied mechanically and consistently rather than
+ * per-row guesswork: **every existing RESIDENT_PASTOR row whose action is
+ * a `.read` (read-only visibility) widens from BRANCH to COUNCIL scope**
+ * (Council-wide leadership oversight - "the Resident Pastor is the
+ * leadership head of the Council"), **except**:
+ *
+ * - `pastoral_care.notes.read` - explicitly excluded by name. Pastoral
+ *   notes are the one data class NFR-PRIV-01 already treats as sensitive
+ *   regardless of a role's general seniority (see `ADMIN`'s own DENY rows
+ *   on this same action below) - Council leadership authority does not
+ *   automatically imply unrestricted access to every Branch's private
+ *   pastoral records. Stays BRANCH.
+ * - `platform.configuration.read` - a Branch's technical/operational
+ *   configuration (gathering types, Poimen gate flag, SLA defaults), not
+ *   leadership oversight data - the same domain `ADMIN`/"Branch
+ *   Administrator" already owns exclusively for `.create`/`.update`.
+ *   Judged closer to administrative detail than "leadership visibility";
+ *   flagged as a real judgment call, not a mechanical read/write split,
+ *   in the Phase 1 Resident Pastor policy report. Stays BRANCH.
+ * - `gatherings.visitor_intake.read` - left unchanged not on a
+ *   sensitivity judgment but because this specific grant is already dead:
+ *   no `GET` endpoint anywhere in this codebase reads it back (see the
+ *   Usher role milestone's own comment on this same action, below), so
+ *   widening it would have no observable effect. Reported as such rather
+ *   than silently touched.
+ *
+ * Every **non**-`.read` RESIDENT_PASTOR row (create/update/grant/approve/
+ * resolve/request/receipt - administrative or operational management
+ * authority, as opposed to passive oversight) is left at BRANCH,
+ * unwidened - most concretely `people.role_assignment.grant`/
+ * `.grant_shepherd`/`.update` (Council-wide role administration belongs to
+ * Council Administrator, per the approved policy's own explicit framing:
+ * "Resident Pastor should have leadership visibility without becoming the
+ * technical administrator of every account and role assignment") and
+ * every `stewardship.*` action other than the domain's own `.read` rows
+ * (Council Treasurer's administrative/verification authority is not
+ * inherited just because Resident Pastor now sees Council-wide financial
+ * *information* - "oversight, not Treasurer authority"). `people.person.
+ * update`/`people.group_membership.update`/`people.group.update` are
+ * unwidened by direct extension of this same read/write split, even
+ * though only role-granting was named explicitly - editing another
+ * Branch's own records is the same class of "technical administrator"
+ * authority the policy reserves for Council Administrator, not merely
+ * visibility.
+ *
+ * Every widened row below carries its own short `reason` note pointing
+ * back to this policy rather than re-deriving the justification per row.
  */
 const BASE_MATRIX: PermissionRule[] = [
   // --- Person: create/edit profile ---------------------------------
-  { role: 'RESIDENT_PASTOR', action: 'people.person.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'people.person.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council-level people/member visibility - see this file\'s own Resident Pastor Council-visibility policy comment above.',
+  },
   { role: 'RESIDENT_PASTOR', action: 'people.person.update', effect: 'ALLOW', scope: 'BRANCH' },
   { role: 'ASSISTANT_PASTOR', action: 'people.person.read', effect: 'ALLOW', scope: 'CLUSTER' },
   { role: 'ASSISTANT_PASTOR', action: 'people.person.update', effect: 'ALLOW', scope: 'CLUSTER' },
@@ -54,7 +109,13 @@ const BASE_MATRIX: PermissionRule[] = [
   { role: 'ADMIN', action: 'people.person.update', effect: 'ALLOW', scope: 'BRANCH' },
 
   // --- Person: assign lifecycle stage -------------------------------
-  { role: 'RESIDENT_PASTOR', action: 'people.person.lifecycle_stage.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'people.person.lifecycle_stage.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council-level people/member visibility - see this file\'s own Resident Pastor Council-visibility policy comment above.',
+  },
   {
     role: 'ASSISTANT_PASTOR',
     action: 'people.person.lifecycle_stage.update',
@@ -110,7 +171,13 @@ const BASE_MATRIX: PermissionRule[] = [
   // above), and blocks PRD §16.1's "Person profile view... role history"
   // surface for the very personas §16.1 names it for ("All operator
   // roles"). Scopes mirror the existing `.grant`/`.update` rows exactly.
-  { role: 'RESIDENT_PASTOR', action: 'people.role_assignment.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'people.role_assignment.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Read-only role-history visibility widened per this file\'s own Resident Pastor Council-visibility policy comment above - the paired .grant/.grant_shepherd/.update rows stay BRANCH (Council-wide role administration belongs to Council Administrator).',
+  },
   { role: 'ASSISTANT_PASTOR', action: 'people.role_assignment.read', effect: 'ALLOW', scope: 'CLUSTER' },
   // FR-PPL-07 covers Role Assignment history symmetrically with Group
   // Membership history (same requirement, same sentence) - a Worker/
@@ -150,7 +217,13 @@ const BASE_MATRIX: PermissionRule[] = [
   // Scopes mirror the `.update` rows immediately above exactly (the same
   // actor set that can change a Person's group membership can view its
   // history for Persons in their own scope).
-  { role: 'RESIDENT_PASTOR', action: 'people.group_membership.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'people.group_membership.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council-level people/member visibility - see this file\'s own Resident Pastor Council-visibility policy comment above. The paired .update row stays BRANCH.',
+  },
   { role: 'ASSISTANT_PASTOR', action: 'people.group_membership.read', effect: 'ALLOW', scope: 'CLUSTER' },
   { role: 'BACENTA_LEADER', action: 'people.group_membership.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
   { role: 'BASONTA_LEADER', action: 'people.group_membership.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
@@ -173,7 +246,13 @@ const BASE_MATRIX: PermissionRule[] = [
     scope: 'BRANCH',
     reason: '[INFERRED] FR-PC-01/FR-MIN-01 - no PRD §17.3 citation',
   },
-  { role: 'RESIDENT_PASTOR', action: 'people.group.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'people.group.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council-level people/member visibility (which Bacentas/Basontas exist across the Council) - see this file\'s own Resident Pastor Council-visibility policy comment above. The paired .create/.update rows stay BRANCH (organizational restructuring is Council Administrator\'s domain).',
+  },
   { role: 'RESIDENT_PASTOR', action: 'people.group.update', effect: 'ALLOW', scope: 'BRANCH' },
   { role: 'ASSISTANT_PASTOR', action: 'people.group.read', effect: 'ALLOW', scope: 'CLUSTER' },
   { role: 'ASSISTANT_PASTOR', action: 'people.group.update', effect: 'ALLOW', scope: 'CLUSTER' },
@@ -200,15 +279,22 @@ const BASE_MATRIX: PermissionRule[] = [
   },
 
   // --- Gathering: create/configure -----------------------------------
-  { role: 'RESIDENT_PASTOR', action: 'gatherings.gathering.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'gatherings.gathering.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council attendance/insights visibility - see this file\'s own Resident Pastor Council-visibility policy comment above; widened alongside gatherings.attendance.read below so a Council-wide attendance view has the Gathering itself to attribute records to.',
+  },
   { role: 'ASSISTANT_PASTOR', action: 'gatherings.gathering.create', effect: 'ALLOW', scope: 'CLUSTER' },
   { role: 'ASSISTANT_PASTOR', action: 'gatherings.gathering.update', effect: 'ALLOW', scope: 'CLUSTER' },
   {
     role: 'ASSISTANT_PASTOR',
     action: 'gatherings.gathering.read',
     effect: 'ALLOW',
-    scope: 'CLUSTER',
-    reason: '[Bug fix, Branch Pastor Gatherings Access] same class of gap the Shepherd Dashboard sprint already fixed for BACENTA_LEADER below - ASSISTANT_PASTOR held create/update here but no read at all, so the Web Admin Gatherings page 403\'d despite the nav item being visible to this role.',
+    scope: 'BRANCH',
+    reason: '[Bug fix, Branch Pastor Gatherings Access] same class of gap the Shepherd Dashboard sprint already fixed for BACENTA_LEADER below - ASSISTANT_PASTOR held create/update here but no read at all, so the Web Admin Gatherings page 403\'d despite the nav item being visible to this role. ' +
+      '[Widened CLUSTER -> BRANCH, Branch Pastor Dashboard sprint] A Branch-wide Gathering (e.g. Sunday Service, `ownerGroupId: null`) has no `bacentaId` - `evaluate.ts`\'s CLUSTER scope check is structurally unable to match a resource with no `bacentaId` (by design, see that file\'s own doc comment), so a CLUSTER-scoped Branch Pastor could read every Bacenta Meeting in their cluster but never the Branch-wide Sunday Service Gathering itself, blocking any Sunday-attendance-by-Bacenta view. Widened to BRANCH, the same scope RESIDENT_PASTOR/ADMIN/USHER already hold for this exact action - USHER\'s own grant is annotated for this identical "find the Branch-wide Sunday Service" reason. A real scope expansion (Branch Pastor can now read any Gathering in the Branch, not only their own cluster\'s) - user-approved, not inferred unilaterally.',
   },
   { role: 'BACENTA_LEADER', action: 'gatherings.gathering.create', effect: 'ALLOW', scope: 'OWN_GROUP' },
   { role: 'BACENTA_LEADER', action: 'gatherings.gathering.update', effect: 'ALLOW', scope: 'OWN_GROUP' },
@@ -248,13 +334,27 @@ const BASE_MATRIX: PermissionRule[] = [
   },
 
   // --- Attendance: record ---------------------------------------------
-  { role: 'RESIDENT_PASTOR', action: 'gatherings.attendance.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'gatherings.attendance.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council attendance/insights visibility, explicitly named in the approved policy - see this file\'s own Resident Pastor Council-visibility policy comment above. Carries individual-level PII (who was PRESENT/ABSENT/EXCUSED) the same way the existing ASSISTANT_PASTOR CLUSTER->BRANCH widening above already disclosed for this action - a materially larger widening than a metadata-only read, approved explicitly, not inferred.',
+  },
   {
     role: 'ASSISTANT_PASTOR',
     action: 'gatherings.attendance.create',
     effect: 'ALLOW',
     scope: 'CLUSTER',
     reason: 'PRD §17.3 - any Gathering within their cluster',
+  },
+  {
+    role: 'ASSISTANT_PASTOR',
+    action: 'gatherings.attendance.read',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason: '[Bug fix, Branch Pastor Dashboard sprint] a Branch Pastor could record attendance (`.create` above) at CLUSTER scope but had no matching `.read` grant at any scope, so attendance could never be read back for the Branch Pastor Dashboard\'s Bacenta-by-Bacenta attendance view. ASSISTANT_PASTOR was the one role of the four attendance-recording roles missing this pairing (BACENTA_LEADER/BASONTA_LEADER/ADMIN/USHER all already had it). ' +
+      '[Widened CLUSTER -> BRANCH, same sprint] Discovered live, against real seed data: the Branch-wide Sunday Service Gathering (`ownerGroupId: null`) has no `bacentaId`, and CLUSTER scope\'s evaluator is structurally unable to match a resource with no `bacentaId` (`evaluate.ts`, same reasoning as the `gatherings.gathering.read` widening above) - so a CLUSTER grant could record Sunday attendance but never read it back either, only Bacenta Meeting attendance. Widened to BRANCH, matching RESIDENT_PASTOR\'s existing grant for this identical action. This is a materially larger widening than the metadata-only `gatherings.gathering.read` change - attendance records carry individual-level PII (which named Person was PRESENT/ABSENT/EXCUSED) - so a Branch Pastor can now read attendance for every Gathering in the Branch, including other clusters\' Bacenta meetings, not just their own. User-approved with that tradeoff explicitly stated, not inferred unilaterally.',
   },
   { role: 'BACENTA_LEADER', action: 'gatherings.attendance.create', effect: 'ALLOW', scope: 'OWN_GROUP' },
   {
@@ -365,7 +465,13 @@ const BASE_MATRIX: PermissionRule[] = [
   },
 
   // --- Financial Transaction: verify ("Verified") ---------------------
-  { role: 'RESIDENT_PASTOR', action: 'stewardship.transaction.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'stewardship.transaction.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council-wide financial READ/visibility - oversight, not Treasurer authority, per the approved Resident Pastor policy (see this file\'s own comment above). stewardship.transaction.record stays an explicit hard DENY (BR-STW-01, unaffected by this change) and every other stewardship.* action stays BRANCH - this widening covers .read rows only.',
+  },
   { role: 'ASSISTANT_PASTOR', action: 'stewardship.transaction.read', effect: 'ALLOW', scope: 'CLUSTER' },
   // [INFERRED - no PRD §17.3 row explicitly grants these] Treasurer and
   // Bacenta Leader read access to Financial Transactions. FR-STW-03's own
@@ -378,6 +484,24 @@ const BASE_MATRIX: PermissionRule[] = [
   // table only lists these two roles against `.record`/`.verify`, not
   // `.read` explicitly. See STEWARDSHIP_DESIGN_NOTES.md.
   { role: 'TREASURER', action: 'stewardship.transaction.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    // [Multi-Tenant Foundation, Phase 1] COUNCIL_TREASURER's one and only
+    // permission-matrix row this phase - deliberately minimal, the same
+    // restraint this phase's own instructions apply to COUNCIL_OVERSEER
+    // ("prepare it to receive real Council-scoped permissions later... do
+    // not invent its complete permission matrix in this phase"). record/
+    // verify/reconcile/expense/pledge authority for this role are all
+    // undecided, not built here. This single row exists specifically to
+    // make the mandatory Phase 1 security regression test meaningful (a
+    // real ALLOW rule to exercise, not just a scope-mechanism unit test) -
+    // see council-scope-isolation.spec.ts.
+    role: 'COUNCIL_TREASURER',
+    action: 'stewardship.transaction.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason:
+      "[Multi-Tenant Foundation, Phase 1] Council Treasurer's locked scope: \"Financial oversight across all branches belonging to the user's Council.\" Minimal single-row grant - see this rule's own inline comment.",
+  },
   { role: 'BACENTA_LEADER', action: 'stewardship.transaction.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
   {
     role: 'BACENTA_LEADER',
@@ -451,7 +575,13 @@ const BASE_MATRIX: PermissionRule[] = [
   // `.request`'s own role/scope shape - whoever may request an expense
   // has an obvious need to see their own submission's status, and the
   // approver roles need to see the request queue before approving.
-  { role: 'RESIDENT_PASTOR', action: 'stewardship.expense.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'stewardship.expense.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council-wide financial visibility (read only) - see this file\'s own Resident Pastor Council-visibility policy comment above. .approve stays BRANCH (management authority, requires DIFFERENT_ACTOR_THAN_RECORDER against the requester).',
+  },
   { role: 'ASSISTANT_PASTOR', action: 'stewardship.expense.read', effect: 'ALLOW', scope: 'CLUSTER' },
   { role: 'BACENTA_LEADER', action: 'stewardship.expense.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
   { role: 'BASONTA_LEADER', action: 'stewardship.expense.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
@@ -459,13 +589,25 @@ const BASE_MATRIX: PermissionRule[] = [
 
   // --- Project / Pledge (both [INFERRED], H2, see actions.ts) -------------
   { role: 'RESIDENT_PASTOR', action: 'stewardship.project.create', effect: 'ALLOW', scope: 'BRANCH' },
-  { role: 'RESIDENT_PASTOR', action: 'stewardship.project.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'stewardship.project.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council-wide financial visibility (read only) - see this file\'s own Resident Pastor Council-visibility policy comment above. .create stays BRANCH (initiating a new fundraising Project is administrative/operational authority, not passive oversight).',
+  },
   { role: 'ASSISTANT_PASTOR', action: 'stewardship.project.read', effect: 'ALLOW', scope: 'CLUSTER' },
   { role: 'TREASURER', action: 'stewardship.project.read', effect: 'ALLOW', scope: 'BRANCH' },
   { role: 'MEMBER', action: 'stewardship.project.read', effect: 'ALLOW', scope: 'BRANCH', reason: 'A Project is a Branch-visible fundraising goal, not a private record' },
   { role: 'MEMBER', action: 'stewardship.pledge.create', effect: 'ALLOW', scope: 'SELF' },
   { role: 'MEMBER', action: 'stewardship.pledge.read', effect: 'ALLOW', scope: 'SELF' },
-  { role: 'RESIDENT_PASTOR', action: 'stewardship.pledge.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'stewardship.pledge.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council-wide financial visibility (read only) - see this file\'s own Resident Pastor Council-visibility policy comment above. Note: Pledge rows carry named-individual giving-commitment amounts, a real (if PRD-consistent) widening of what data crosses Branch lines - flagged, not hidden.',
+  },
   { role: 'TREASURER', action: 'stewardship.pledge.read', effect: 'ALLOW', scope: 'BRANCH' },
   {
     role: 'TREASURER',
@@ -484,8 +626,20 @@ const BASE_MATRIX: PermissionRule[] = [
     reason: 'Recording a bank deposit confirmation is a Finance Team record-keeping action, mirroring stewardship.transaction.reconcile',
   },
   { role: 'TREASURER', action: 'stewardship.bank_deposit.read', effect: 'ALLOW', scope: 'BRANCH' },
-  { role: 'RESIDENT_PASTOR', action: 'stewardship.bank_deposit.read', effect: 'ALLOW', scope: 'BRANCH' },
-  { role: 'ASSISTANT_PASTOR', action: 'stewardship.bank_deposit.read', effect: 'ALLOW', scope: 'CLUSTER' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'stewardship.bank_deposit.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council-wide financial visibility (read only) - see this file\'s own Resident Pastor Council-visibility policy comment above.',
+  },
+  {
+    role: 'ASSISTANT_PASTOR',
+    action: 'stewardship.bank_deposit.read',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason: "[Bug fix, Branch Pastor Dashboard sprint] was CLUSTER, which could never succeed - GET /bank-deposit-confirmations/reconciliation (BankDepositConfirmationListResourceContextGuard) always resolves a bare { branchId } resource, no bacentaId, and CLUSTER scope's own evaluator (evaluate.ts) is structurally unable to match a resource with no bacentaId (same reasoning as the gatherings.gathering.read widening two sections up). Discovered live: real dev-seed data + a real API call 403'd where a mocked test had passed. Widened to BRANCH, matching TREASURER/RESIDENT_PASTOR's existing grant for this identical action - user-approved, not inferred unilaterally.",
+  },
   // No BACENTA_LEADER row: the weekly reconciliation view is a
   // Branch-wide aggregate (BankDepositConfirmationListResourceContextGuard
   // always resolves { branchId: actor.branchId }), the same disclosed
@@ -494,7 +648,13 @@ const BASE_MATRIX: PermissionRule[] = [
   // resource. See STEWARDSHIP_DESIGN_NOTES.md.
 
   // --- Follow-up task: create/assign --------------------------------------
-  { role: 'RESIDENT_PASTOR', action: 'pastoral_care.followup_task.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'pastoral_care.followup_task.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council-level pastoral oversight - structured follow-up workflow status, not raw pastoral-note content - see this file\'s own Resident Pastor Council-visibility policy comment above. .update stays BRANCH (managing/reassigning a specific task is operational authority, not oversight).',
+  },
   { role: 'RESIDENT_PASTOR', action: 'pastoral_care.followup_task.update', effect: 'ALLOW', scope: 'BRANCH' },
   {
     role: 'ASSISTANT_PASTOR',
@@ -538,7 +698,13 @@ const BASE_MATRIX: PermissionRule[] = [
   { role: 'ADMIN', action: 'pastoral_care.followup_task.read', effect: 'ALLOW', scope: 'BRANCH' },
 
   // --- Silent-drift flag: read (FR-PC-05, §15.8) - [INFERRED], see actions.ts ---
-  { role: 'RESIDENT_PASTOR', action: 'pastoral_care.silent_drift_flag.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'pastoral_care.silent_drift_flag.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council-level pastoral oversight - an aggregate early-warning signal, not raw pastoral-note content - see this file\'s own Resident Pastor Council-visibility policy comment above.',
+  },
   { role: 'ASSISTANT_PASTOR', action: 'pastoral_care.silent_drift_flag.read', effect: 'ALLOW', scope: 'CLUSTER' },
   { role: 'BACENTA_LEADER', action: 'pastoral_care.silent_drift_flag.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
   { role: 'ADMIN', action: 'pastoral_care.silent_drift_flag.read', effect: 'ALLOW', scope: 'BRANCH' },
@@ -588,7 +754,13 @@ const BASE_MATRIX: PermissionRule[] = [
   // for ADMIN in this matrix. See PASTORAL_CARE_DESIGN_NOTES.md.
   { role: 'RESIDENT_PASTOR', action: 'pastoral_care.poimen_enrollment.create', effect: 'ALLOW', scope: 'BRANCH' },
   { role: 'RESIDENT_PASTOR', action: 'pastoral_care.poimen_enrollment.update', effect: 'ALLOW', scope: 'BRANCH' },
-  { role: 'RESIDENT_PASTOR', action: 'pastoral_care.poimen_enrollment.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'pastoral_care.poimen_enrollment.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council-level pastoral oversight (read only) - see this file\'s own Resident Pastor Council-visibility policy comment above. .create/.update stay BRANCH - Poimen completion gates a Shepherd role grant (BR-PPL-06), and role-granting authority itself stays BRANCH per the same policy\'s explicit role-assignment decision.',
+  },
   { role: 'ASSISTANT_PASTOR', action: 'pastoral_care.poimen_enrollment.create', effect: 'ALLOW', scope: 'CLUSTER' },
   { role: 'ASSISTANT_PASTOR', action: 'pastoral_care.poimen_enrollment.update', effect: 'ALLOW', scope: 'CLUSTER' },
   { role: 'ASSISTANT_PASTOR', action: 'pastoral_care.poimen_enrollment.read', effect: 'ALLOW', scope: 'CLUSTER' },
@@ -602,7 +774,13 @@ const BASE_MATRIX: PermissionRule[] = [
   { role: 'ADMIN', action: 'pastoral_care.poimen_enrollment.update', effect: 'ALLOW', scope: 'BRANCH' },
 
   // --- Insights: Branch-level dashboard ---------------------------------------
-  { role: 'RESIDENT_PASTOR', action: 'insights.branch_dashboard.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'insights.branch_dashboard.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council attendance/insights visibility - see this file\'s own Resident Pastor Council-visibility policy comment above.',
+  },
   {
     role: 'ASSISTANT_PASTOR',
     action: 'insights.branch_dashboard.read',
@@ -613,7 +791,13 @@ const BASE_MATRIX: PermissionRule[] = [
   { role: 'ADMIN', action: 'insights.branch_dashboard.read', effect: 'ALLOW', scope: 'BRANCH' },
 
   // --- Insights: cluster-level dashboard ---------------------------------------
-  { role: 'RESIDENT_PASTOR', action: 'insights.cluster_dashboard.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'insights.cluster_dashboard.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council attendance/insights visibility - see this file\'s own Resident Pastor Council-visibility policy comment above.',
+  },
   {
     role: 'ASSISTANT_PASTOR',
     action: 'insights.cluster_dashboard.read',
@@ -627,8 +811,8 @@ const BASE_MATRIX: PermissionRule[] = [
     role: 'RESIDENT_PASTOR',
     action: 'insights.bacenta_dashboard.read',
     effect: 'ALLOW',
-    scope: 'BRANCH',
-    reason: 'PRD §17.3 - drill-down',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] PRD §17.3 drill-down, widened per this file\'s own Resident Pastor Council-visibility policy comment above - drill-down now reaches any Bacenta in the Council, not only the actor\'s own Branch.',
   },
   {
     role: 'ASSISTANT_PASTOR',
@@ -642,7 +826,13 @@ const BASE_MATRIX: PermissionRule[] = [
   // --- Insights: Alert inbox (FR-INS-03/05) - same scoped-leadership shape
   // as the three dashboard-read rows above; see actions.ts's doc comment
   // on `insights.alert.read`/`insights.alert.resolve`. ---------------------
-  { role: 'RESIDENT_PASTOR', action: 'insights.alert.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'insights.alert.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council attendance/insights visibility - see this file\'s own Resident Pastor Council-visibility policy comment above. .resolve stays BRANCH (resolving is a management action, not passive oversight).',
+  },
   { role: 'ASSISTANT_PASTOR', action: 'insights.alert.read', effect: 'ALLOW', scope: 'CLUSTER' },
   { role: 'BACENTA_LEADER', action: 'insights.alert.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
   { role: 'ADMIN', action: 'insights.alert.read', effect: 'ALLOW', scope: 'BRANCH' },
@@ -671,7 +861,13 @@ const BASE_MATRIX: PermissionRule[] = [
     reason: 'FR-MIN-02 - also covers re-setting an existing target (upsert)',
   },
   { role: 'BASONTA_LEADER', action: 'ministry.staffing_target.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
-  { role: 'RESIDENT_PASTOR', action: 'ministry.staffing_target.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'ministry.staffing_target.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council-level leadership visibility into ministry staffing - see this file\'s own Resident Pastor Council-visibility policy comment above.',
+  },
   {
     role: 'ADMIN',
     action: 'ministry.staffing_target.read',
@@ -694,7 +890,13 @@ const BASE_MATRIX: PermissionRule[] = [
 
   // --- Ministry: roster view + overcommitment flag (FR-MIN-01/04, [INFERRED]) --
   { role: 'BASONTA_LEADER', action: 'ministry.roster.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
-  { role: 'RESIDENT_PASTOR', action: 'ministry.roster.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'ministry.roster.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council-level leadership visibility into ministry rosters - see this file\'s own Resident Pastor Council-visibility policy comment above.',
+  },
   {
     role: 'ADMIN',
     action: 'ministry.roster.read',
@@ -703,7 +905,13 @@ const BASE_MATRIX: PermissionRule[] = [
     reason: '[Bug fix, Ministry Web Admin sprint] see ministry.staffing_target.read\'s ADMIN row just above for the full reasoning - same class of gap, same fix.',
   },
   { role: 'BASONTA_LEADER', action: 'ministry.roster.overcommitment.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
-  { role: 'RESIDENT_PASTOR', action: 'ministry.roster.overcommitment.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'ministry.roster.overcommitment.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council-level leadership visibility into ministry overcommitment flags - see this file\'s own Resident Pastor Council-visibility policy comment above.',
+  },
   {
     role: 'ADMIN',
     action: 'ministry.roster.overcommitment.read',
@@ -719,7 +927,13 @@ const BASE_MATRIX: PermissionRule[] = [
   { role: 'ADMIN', action: 'platform.configuration.update', effect: 'ALLOW', scope: 'BRANCH' },
 
   // --- Audit log: view -------------------------------------------------------------
-  { role: 'RESIDENT_PASTOR', action: 'platform.audit_log.read', effect: 'ALLOW', scope: 'BRANCH' },
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'platform.audit_log.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Multi-Tenant Foundation, Phase 1] Council-level accountability/oversight visibility - see this file\'s own Resident Pastor Council-visibility policy comment above.',
+  },
   {
     role: 'ASSISTANT_PASTOR',
     action: 'platform.audit_log.read',
@@ -747,6 +961,30 @@ const BASE_MATRIX: PermissionRule[] = [
     effect: 'ALLOW',
     scope: 'BRANCH',
     reason: 'PRD §17.3 - full',
+  },
+
+  // --- [Multi-Tenant Foundation, Phase 1] Tenant administration -----------
+  // SYSTEM_ADMINISTRATOR's one and only row this phase - "give it ONLY the
+  // minimum platform-level authority necessary to establish the role."
+  // Explicitly does NOT hold any people.*/stewardship.*/pastoral_care.*
+  // row - not as an explicit DENY (this role isn't senior enough in the
+  // church hierarchy for a reader to plausibly assume it has access the
+  // way ADMIN's pastoral_care.notes DENY rows guard against - it's simply
+  // a different axis entirely, an unassigned action, matching how e.g.
+  // WORKER holds no stewardship.* row without needing one), but by never
+  // appearing as the `role` in any rule for those domains anywhere in this
+  // file. platform.configuration.*/platform.audit_log.read (the other two
+  // existing platform.* actions) are also deliberately NOT granted here -
+  // both are Branch-scoped church-operational concerns (gathering types,
+  // Poimen gate, Branch audit trail), not the "tenants/platform
+  // configuration/system settings" this role's own locked scope names.
+  {
+    role: 'SYSTEM_ADMINISTRATOR',
+    action: 'platform.tenant.read',
+    effect: 'ALLOW',
+    scope: 'GLOBAL',
+    reason:
+      "[Multi-Tenant Foundation, Phase 1] GLOBAL is used here deliberately, not as a shortcut - Tenant is the platform's own administrative resource, not customer (church) data, so there is no Tenant/Council boundary for this specific action to violate the way there would be for e.g. stewardship.transaction.read. This is the one legitimate use of GLOBAL this phase's own instructions anticipate (\"do not use GLOBAL as tenant access\" refers to granting access to customer data across tenants, which this is not) - every other action in this matrix keeps GLOBAL unused.",
   },
 ];
 

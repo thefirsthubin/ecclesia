@@ -17,7 +17,9 @@ import {
   resolveDefaultSilentDriftQuery,
   searchPeopleForEscalation,
   useFollowUpTaskQueue,
+  useFollowUpTaskQueueForGroups,
   useSilentDriftFlags,
+  useSilentDriftFlagsForGroups,
 } from './usePastoralCareData';
 
 const SILENT_DRIFT_STATUS_BADGE: Record<SilentDriftStatusDto, 'neutral' | 'info' | 'warning' | 'danger' | 'success'> = {
@@ -81,10 +83,25 @@ export function FollowUpTaskQueuePage() {
 
   if (state.status !== 'authenticated') return null;
 
+  // `[Branch Pastor portal]` Same "compute both, activate one" fix as
+  // `PeopleListPage.tsx` - `ASSISTANT_PASTOR`'s real CLUSTER grant spans
+  // every Bacenta in `clusterBacentaIds`, not just the first one the
+  // single-groupId `resolveDefault*Query` functions default to. Both
+  // hooks per queue are called unconditionally (Rules of Hooks); passing
+  // `undefined` as the access token is this codebase's existing "don't
+  // fetch" idiom, so the unused branch never makes a network call.
+  const isClusterRole = state.actor.role === 'ASSISTANT_PASTOR';
+  const clusterBacentaIds = state.actor.clusterBacentaIds ?? [];
+
   const query = resolveDefaultFollowUpTaskQuery(state.actor);
-  const queueState = useFollowUpTaskQueue(state.accessToken, query);
+  const singleGroupQueueState = useFollowUpTaskQueue(isClusterRole ? undefined : state.accessToken, query);
+  const clusterQueueState = useFollowUpTaskQueueForGroups(isClusterRole ? state.accessToken : undefined, clusterBacentaIds);
+  const queueState = isClusterRole ? clusterQueueState : singleGroupQueueState;
+
   const silentDriftQuery = resolveDefaultSilentDriftQuery(state.actor);
-  const silentDriftState = useSilentDriftFlags(state.accessToken, silentDriftQuery);
+  const singleGroupSilentDriftState = useSilentDriftFlags(isClusterRole ? undefined : state.accessToken, silentDriftQuery);
+  const clusterSilentDriftState = useSilentDriftFlagsForGroups(isClusterRole ? state.accessToken : undefined, clusterBacentaIds);
+  const silentDriftState = isClusterRole ? clusterSilentDriftState : singleGroupSilentDriftState;
 
   const openCreate = () => {
     setCreateSubject(null);

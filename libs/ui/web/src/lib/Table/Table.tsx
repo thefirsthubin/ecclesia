@@ -189,6 +189,18 @@ export function Table<T>({
                   <Fragment key={id}>
                     <tr
                       onClick={onRowClick ? () => onRowClick(row) : undefined}
+                      onKeyDown={
+                        onRowClick
+                          ? (event) => {
+                              if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault();
+                                onRowClick(row);
+                              }
+                            }
+                          : undefined
+                      }
+                      tabIndex={onRowClick ? 0 : undefined}
+                      role={onRowClick ? 'button' : undefined}
                       style={{ cursor: onRowClick ? 'pointer' : undefined, backgroundColor: selectedIds?.has(id) ? theme.colors.brand.subtle : undefined }}
                     >
                       {selectable && (

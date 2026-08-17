@@ -20,6 +20,8 @@ function toResponseDto(assignment: RoleAssignment): RoleAssignmentResponseDto {
     personId: assignment.personId,
     role: assignment.role,
     branchId: assignment.branchId,
+    // [Multi-Tenant Foundation, Phase 1]
+    councilId: assignment.councilId,
     groupId: assignment.groupId,
     scopeGroupIds: assignment.scopeGroupIds,
     effectiveFrom: assignment.effectiveFrom.toISOString(),
@@ -69,6 +71,27 @@ export class RoleAssignmentService {
   ) {}
 
   async grant(actor: ActorContext, personId: string, input: CreateRoleAssignmentRequestInput): Promise<RoleAssignmentResponseDto> {
+    // `[Multi-Tenant Foundation, Phase 1]` This endpoint has no way to
+    // express a Council-scoped grant - `CreateRoleAssignmentRequestInput`
+    // carries `groupId`/`scopeGroupIds` (Branch-internal scoping) only, no
+    // `councilId`. Every code path below this point builds a Branch-scoped
+    // `RoleAssignment` (`branchId: person.branchId`) unconditionally, which
+    // would be semantically wrong for a role that is supposed to be
+    // Council-scoped by construction - not merely unsupported, actively
+    // incorrect (it would satisfy the migration's branch_id/council_id
+    // CHECK constraint's XOR shape while still violating the *intent* that
+    // these two roles are never Branch-pinned). Rejected explicitly rather
+    // than silently creating a wrong record; building the real
+    // Council-scoped grant flow (a councilId input, a different resource-
+    // scope resolution) is deliberately deferred, not this phase's scope.
+    if (input.role === 'COUNCIL_TREASURER' || input.role === 'SYSTEM_ADMINISTRATOR') {
+      throw new ConflictException(
+        `Granting '${input.role}' isn't supported via this endpoint yet - it requires a Council-scoped Role ` +
+          'Assignment, which this endpoint has no way to express (no councilId input). This is a deliberately ' +
+          'deferred capability, not a transient error.',
+      );
+    }
+
     const person = await this.personRepository.findById(personId);
     if (!person) {
       throw new NotFoundException(`No Person found with id '${personId}'`);
@@ -147,6 +170,22 @@ export class RoleAssignmentService {
    * optional on the contract), so the two signals are not redundant.
    */
   private async publishRoleAssignmentActive(assignment: RoleAssignment): Promise<void> {
+    // `[Multi-Tenant Foundation, Phase 1]` `assignment.branchId` can now be
+    // null (a Council-scoped assignment) - unreachable via `grant()` above
+    // today (it rejects COUNCIL_TREASURER/SYSTEM_ADMINISTRATOR before ever
+    // reaching this method), but this method's own type no longer
+    // guarantees that on its own, so it guards for real rather than
+    // asserting past it. The Engagement Signal Pipeline (Blueprint §10.4)
+    // is Branch-rooted throughout - `EngagementSignal`/`PulseScore` and
+    // every table downstream of them key on `branch_id` - so a
+    // Council-scoped grant has no Branch to attribute this signal to, and
+    // was never a fit for this Branch-level engagement/pulse-score system
+    // to begin with. Skipping is the correct domain judgment, not a
+    // workaround for a type error.
+    if (!assignment.branchId) {
+      return;
+    }
+
     const envelope: PublishableEngagementSignal = {
       eventId: randomUUID(),
       eventType: 'role_assignment.active',

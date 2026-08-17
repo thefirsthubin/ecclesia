@@ -21,6 +21,27 @@
  * `GATHERINGS_DESIGN_NOTES.md` both flagged this exact gap before it was
  * closed. See `USHER_ROLE_PROPOSAL.md` (repo root) for the full
  * decision record.
+ *
+ * `COUNCIL_TREASURER` and `SYSTEM_ADMINISTRATOR` (Multi-Tenant
+ * Foundation, Phase 1) - neither is a §17.2 row; both are additions this
+ * phase's own locked product decisions require:
+ *
+ * - `COUNCIL_TREASURER`: financial oversight across every Branch in a
+ *   Council. No existing role covers this - `TREASURER` (below) is
+ *   Branch-only (PRD §17.2), and `COUNCIL_OVERSEER` is explicitly
+ *   administrative, not financial. A genuinely new role, not a rename.
+ * - `SYSTEM_ADMINISTRATOR`: a platform role, not a church-hierarchy
+ *   role - administers the Ecclesia platform itself (tenants, platform
+ *   configuration, platform-level audit), deliberately separate from
+ *   `ADMIN` (church-hierarchy Branch administration - "Branch
+ *   Administrator" in this phase's product terminology, not yet
+ *   relabeled - see `permission-matrix.ts`'s doc comment on `ADMIN`'s
+ *   rows). Reusing `ADMIN` for both meanings was explicitly ruled out:
+ *   `ADMIN`'s existing rows are all Branch-scoped, and Phase 1's locked
+ *   instructions are explicit that platform administration and
+ *   customer-data access must be deliberately separated, not collapsed
+ *   into one role that happens to also carry unrestricted access to
+ *   every Branch's People/Stewardship/Pastoral Care data.
  */
 export const ROLES = [
   'RESIDENT_PASTOR',
@@ -29,12 +50,14 @@ export const ROLES = [
   'BACENTA_LEADER',
   'BASONTA_LEADER',
   'TREASURER',
+  'COUNCIL_TREASURER',
   'WORKER',
   'USHER',
   'MEMBER',
   'VISITOR',
   'ADMIN',
   'COUNCIL_OVERSEER',
+  'SYSTEM_ADMINISTRATOR',
 ] as const;
 
 export type Role = (typeof ROLES)[number];

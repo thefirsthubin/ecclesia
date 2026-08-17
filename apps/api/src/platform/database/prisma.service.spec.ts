@@ -86,4 +86,45 @@ describe('PrismaService', () => {
     );
     expect(fn).not.toHaveBeenCalled();
   });
+
+  /**
+   * `[Multi-Tenant Foundation, Phase 1]` `runInCouncilScope` deliberately
+   * reuses `runInBranchScope` verbatim, once per Branch - these tests spy
+   * on that existing method rather than exercising real RLS/`$transaction`
+   * machinery (same "no live database" limitation the tests above already
+   * work around), which is exactly the point: the real RLS-backed
+   * behavior is provably unchanged, because it's the same method, called
+   * the same way, just N times instead of once.
+   */
+  describe('runInCouncilScope', () => {
+    it('calls runInBranchScope once per branchId, in order, and collects the results', async () => {
+      const service = new PrismaService(buildConfigService(), buildLogger());
+      const runInBranchScopeSpy = jest
+        .spyOn(service, 'runInBranchScope')
+        .mockImplementation(async (branchId: string) => `result-for-${branchId}`);
+      const fn = jest.fn();
+
+      const results = await service.runInCouncilScope(['branch-a', 'branch-b', 'branch-c'], fn);
+
+      expect(runInBranchScopeSpy).toHaveBeenCalledTimes(3);
+      expect(runInBranchScopeSpy).toHaveBeenNthCalledWith(1, 'branch-a', fn);
+      expect(runInBranchScopeSpy).toHaveBeenNthCalledWith(2, 'branch-b', fn);
+      expect(runInBranchScopeSpy).toHaveBeenNthCalledWith(3, 'branch-c', fn);
+      expect(results).toEqual(['result-for-branch-a', 'result-for-branch-b', 'result-for-branch-c']);
+
+      runInBranchScopeSpy.mockRestore();
+    });
+
+    it('returns an empty array for an empty branchIds list, without calling runInBranchScope at all', async () => {
+      const service = new PrismaService(buildConfigService(), buildLogger());
+      const runInBranchScopeSpy = jest.spyOn(service, 'runInBranchScope');
+
+      const results = await service.runInCouncilScope([], jest.fn());
+
+      expect(results).toEqual([]);
+      expect(runInBranchScopeSpy).not.toHaveBeenCalled();
+
+      runInBranchScopeSpy.mockRestore();
+    });
+  });
 });

@@ -71,6 +71,21 @@ export class FollowUpTaskRepository {
     });
   }
 
+  /** `GET /people/:personId/follow-up-tasks` (Branch Pastor Portal,
+   * Pastoral Care sprint) - the "People -> Member -> Pastoral Care"
+   * direction PRD §16.2's Person profile has never had a route for.
+   * Every status, not just `DEFAULT_STATUSES` - a Person's own history
+   * view is meant to show completed/escalated tasks too, not only the
+   * still-open ones a queue view defaults to. Newest first (`createdAt`
+   * desc) - a history view reads top-to-bottom as "most recent first",
+   * unlike the queue's own SLA-urgency ordering. */
+  listByPerson(personId: string): Promise<FollowUpTask[]> {
+    return this.prisma.followUpTask.findMany({
+      where: { personId },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
   update(id: string, input: UpdateFollowUpTaskRecord): Promise<FollowUpTask> {
     return this.prisma.followUpTask.update({ where: { id }, data: input });
   }

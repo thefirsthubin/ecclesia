@@ -13,6 +13,7 @@ describe('FollowUpTaskController', () => {
       escalate: jest.fn(),
       listForGroup: jest.fn(),
       list: jest.fn(),
+      listByPerson: jest.fn(),
     };
     const controller = new FollowUpTaskController(followUpTaskService as never);
     return { controller, followUpTaskService };
@@ -67,5 +68,13 @@ describe('FollowUpTaskController', () => {
     await controller.list(actor, query);
 
     expect(followUpTaskService.list).toHaveBeenCalledWith(actor, query);
+  });
+
+  it('listByPerson() delegates to FollowUpTaskService.listByPerson (Branch Pastor portal, "People -> Pastoral Care" direction)', async () => {
+    const { controller, followUpTaskService } = buildController();
+
+    await controller.listByPerson('person-1');
+
+    expect(followUpTaskService.listByPerson).toHaveBeenCalledWith('person-1');
   });
 });

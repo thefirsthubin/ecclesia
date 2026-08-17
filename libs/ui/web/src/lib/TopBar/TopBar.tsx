@@ -20,6 +20,19 @@ export interface TopBarProps {
  * shell verification) - the sidebar-toggle button now gets the same
  * on-brand `border.focus` outline `Button` already uses, closing the
  * same shell inconsistency `Sidebar`'s nav links were fixed for.
+ *
+ * `[Product Experience Sprint II, Phase 5]` A real overflow bug, found on
+ * `PersonDetailPage` specifically (its `Dashboard > People > Person`
+ * breadcrumb trail is the longest in the app) - the same missing-
+ * `minWidth: 0` class of bug this sprint already fixed five other places
+ * (`KpiCard`, `LineChart`, `RecentActivityTimeline`, `main`'s own flex
+ * item, `PersonDetailPage`'s own contact rows). The left slot (toggle +
+ * breadcrumbs, genuinely variable-length content) now gets `minWidth: 0`
+ * so it can shrink; the right slot (search/notifications/user menu -
+ * fixed controls, never the thing that should compress) gets
+ * `flexShrink: 0` instead, so it keeps its full size and the left slot
+ * absorbs the pressure - the same "one flexible sibling, one protected
+ * one" split every other fix this sprint used.
  */
 export function TopBar({ left, right, onToggleSidebar, testId }: TopBarProps) {
   const theme = useTheme();
@@ -38,7 +51,7 @@ export function TopBar({ left, right, onToggleSidebar, testId }: TopBarProps) {
         backgroundColor: theme.colors.surface.raised,
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[3] }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[3], minWidth: 0 }}>
         {onToggleSidebar && (
           <button
             type="button"
@@ -54,6 +67,7 @@ export function TopBar({ left, right, onToggleSidebar, testId }: TopBarProps) {
               borderRadius: theme.radius.sm,
               outline: toggleFocused ? `2px solid ${theme.colors.border.focus}` : 'none',
               outlineOffset: 1,
+              flexShrink: 0,
             }}
           >
             <Icon name="menu" size="md" />
@@ -61,7 +75,7 @@ export function TopBar({ left, right, onToggleSidebar, testId }: TopBarProps) {
         )}
         {left}
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[3] }}>{right}</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[3], flexShrink: 0 }}>{right}</div>
     </header>
   );
 }

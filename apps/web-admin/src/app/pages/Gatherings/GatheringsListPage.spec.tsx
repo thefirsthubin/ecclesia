@@ -141,18 +141,24 @@ describe('GatheringsListPage', () => {
     expect(url).toContain('ownerGroupId=basonta-1');
   });
 
-  /** `[Bug fix, Branch Pastor Gatherings Access]` `ASSISTANT_PASTOR`
-   * ("Branch Pastor" in Web Admin's `BranchPastorDashboard`) previously
-   * always sent `{}` (no `ownerGroupId`), which the backend correctly
-   * 403'd - this role now sends its first cluster Bacenta, the same
-   * shape `resolveDefaultPeopleQuery` already established, and renders
-   * the real Gathering the backend returns for it. */
-  it('sends the Assistant Pastor cluster scope as an ownerGroupId query param and renders the real data returned', async () => {
+  /** `[Branch Pastor portal]` `ASSISTANT_PASTOR` ("Branch Pastor" in Web
+   * Admin's `BranchPastorDashboard`) previously sent its first cluster
+   * Bacenta as `ownerGroupId`, narrowing the whole page to one Bacenta's
+   * meetings - stale even at the time, since `gatherings.gathering.read`
+   * had already been widened to BRANCH scope in the Branch Pastor
+   * Dashboard sprint. Now sends an unfiltered query, exactly like
+   * RESIDENT_PASTOR/ADMIN, and correctly renders every Gathering the
+   * (real, Branch-scoped) backend grant returns - including one owned by
+   * a Bacenta this actor's `clusterBacentaIds` doesn't even list, proving
+   * this is genuinely Branch-wide, not merely "every cluster Bacenta". */
+  it('[Branch Pastor portal] sends an unfiltered (Branch-wide) query for Assistant Pastor and renders whatever the backend returns', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('ASSISTANT_PASTOR', { clusterBacentaIds: ['bacenta-9', 'bacenta-10'] }));
     const future = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString();
     const fetchMock = jest.fn().mockResolvedValue({
       ok: true,
-      json: async () => [gathering({ id: 'g-cluster-1', ownerGroupId: 'bacenta-9', type: 'BACENTA_MEETING', scheduledStart: future, scheduledEnd: null, status: 'SCHEDULED' })],
+      json: async () => [
+        gathering({ id: 'g-branch-wide-1', ownerGroupId: null, type: 'SUNDAY_SERVICE', scheduledStart: future, scheduledEnd: null, status: 'SCHEDULED' }),
+      ],
     });
     global.fetch = fetchMock;
 
@@ -160,12 +166,12 @@ describe('GatheringsListPage', () => {
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalled());
     const [url] = fetchMock.mock.calls[0] as [string];
-    expect(url).toContain('ownerGroupId=bacenta-9');
+    expect(url).not.toContain('ownerGroupId');
     await waitFor(() => expect(screen.getByTestId('gatherings-list-card')).toBeInTheDocument());
-    expect(screen.getByText('BACENTA_MEETING')).toBeInTheDocument();
+    expect(screen.getByText('SUNDAY_SERVICE')).toBeInTheDocument();
   });
 
-  it('leaves an Assistant Pastor with no clusterBacentaIds sending an unfiltered query (correctly denied server-side, not hidden client-side)', async () => {
+  it('leaves an Assistant Pastor with no clusterBacentaIds sending the same unfiltered query - clusterBacentaIds is irrelevant to this action now', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('ASSISTANT_PASTOR', { clusterBacentaIds: undefined }));
     const fetchMock = jest.fn().mockResolvedValue({ ok: true, json: async () => [] });
     global.fetch = fetchMock;

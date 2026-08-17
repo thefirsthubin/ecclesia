@@ -100,4 +100,19 @@ describe('FollowUpTaskRepository', () => {
       );
     });
   });
+
+  describe('listByPerson (Branch Pastor portal, Pastoral Care sprint)', () => {
+    it('queries every status for the Person, newest first - a history view, not the open-only queue', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.followUpTask.findMany.mockResolvedValue([{ id: 'ft-1' }]);
+
+      const result = await repository.listByPerson('person-1');
+
+      expect(prisma.followUpTask.findMany).toHaveBeenCalledWith({
+        where: { personId: 'person-1' },
+        orderBy: { createdAt: 'desc' },
+      });
+      expect(result).toEqual([{ id: 'ft-1' }]);
+    });
+  });
 });

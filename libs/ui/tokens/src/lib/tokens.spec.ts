@@ -1,5 +1,5 @@
 import { getContrastRatio, getRelativeLuminance, WCAG_AA_NORMAL_TEXT_MIN_RATIO } from './contrast';
-import { neutral, brand, status, lightPalette, darkPalette, getChurchPulseBand, CHURCH_PULSE_BANDS, type StatusKey } from './color';
+import { neutral, brand, status, accent, lightPalette, darkPalette, getChurchPulseBand, CHURCH_PULSE_BANDS, type StatusKey } from './color';
 
 describe('contrast.ts', () => {
   it('computes relative luminance of pure white as 1 and pure black as 0', () => {
@@ -59,6 +59,20 @@ describe('color tokens - WCAG AA contrast (Design System §1.5, NFR-USA-02)', ()
   it.each(statusKeys)('status.%s dark-mode foreground on its own background clears 4.5:1', (key) => {
     const { foreground, background } = status[key].dark;
     expect(getContrastRatio(foreground, background)).toBeGreaterThanOrEqual(WCAG_AA_NORMAL_TEXT_MIN_RATIO);
+  });
+
+  /** `[Product Experience Sprint II, Phase 2]` `accent.default` is dark
+   * enough to double as text (its own doc comment in `color.ts`) - held
+   * to the same bar as every other text-bearing color in this file,
+   * against both surfaces it could realistically sit on. */
+  it('accent.default clears 4.5:1 against surface.raised and surface.default (light mode)', () => {
+    expect(getContrastRatio(accent.light.default, lightPalette.surface.raised)).toBeGreaterThanOrEqual(WCAG_AA_NORMAL_TEXT_MIN_RATIO);
+    expect(getContrastRatio(accent.light.default, lightPalette.surface.default)).toBeGreaterThanOrEqual(WCAG_AA_NORMAL_TEXT_MIN_RATIO);
+  });
+
+  it('accent.default clears 4.5:1 against surface.raised and surface.default (dark mode)', () => {
+    expect(getContrastRatio(accent.dark.default, darkPalette.surface.raised)).toBeGreaterThanOrEqual(WCAG_AA_NORMAL_TEXT_MIN_RATIO);
+    expect(getContrastRatio(accent.dark.default, darkPalette.surface.default)).toBeGreaterThanOrEqual(WCAG_AA_NORMAL_TEXT_MIN_RATIO);
   });
 });
 

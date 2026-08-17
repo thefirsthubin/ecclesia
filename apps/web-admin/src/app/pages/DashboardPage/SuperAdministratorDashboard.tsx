@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Divider, Heading, Icon, SampleDataBadge, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
+import { Badge, Button, Card, Divider, Heading, SampleDataBadge, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
 import { getChurchPulseBand } from '@ecclesia/ui-tokens';
 import type { GroupResponseDto, PersonResponseDto } from '@ecclesia/contracts';
 
@@ -64,7 +64,7 @@ export function SuperAdministratorDashboard() {
   const accessToken = state.status === 'authenticated' ? state.accessToken : undefined;
   const personId = state.status === 'authenticated' ? state.actor.personId : undefined;
   const branchName = state.status === 'authenticated' ? state.actor.branchName : '';
-  const { isCompact, isNarrow } = useDashboardBreakpoint();
+  const { isNarrow } = useDashboardBreakpoint();
 
   const personState = useAsyncData<PersonResponseDto>(
     (signal) => {
@@ -94,12 +94,17 @@ export function SuperAdministratorDashboard() {
     [accessToken],
   );
 
-  // `[Product Experience Sprint I]` Objective 6 - same `isCompact`
-  // (tablet, 2-column) tier added consistently across every persona
-  // dashboard's KPI grid this pass - see `MinistryLeaderDashboard.tsx`'s
-  // matching comment.
-  const kpiColumns = isNarrow ? 1 : isCompact ? 2 : 3;
-
+  /**
+   * `[Product Experience Sprint II, Phase 4]` Three identical cards
+   * become one quiet strip, and Open Alerts is dropped entirely - not
+   * hidden, removed - because it was real information shown three times
+   * on one screen (`DashboardHeader`'s own alert badge, this KPI, and
+   * every alert again in full in `AlertPriorityCard` directly below).
+   * Church Pulse above already answers "how are things going"; Members
+   * and Staffing are quiet supporting context, not action items, so they
+   * stay small and out of the way rather than competing with the gauge
+   * for attention.
+   */
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5], maxWidth: 1280 }}>
       <DashboardHeader displayName={displayName} openAlertCount={openAlertCount} branchName={branchName} />
@@ -110,46 +115,25 @@ export function SuperAdministratorDashboard() {
         onRetry={dashboardState.refetch}
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${kpiColumns}, 1fr)`, gap: theme.spacing[4] }}>
-        <Card interactive onClick={() => navigate('/people')} padding={5} testId="council-kpi-members">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }}>
-            <Icon name="users" size="md" color={theme.colors.brand.default} />
-            <Text variant="label" color={theme.colors.text.secondary}>
-              TOTAL MEMBERS
-            </Text>
-            {peopleState.status !== 'success' ? <Skeleton height={32} width="40%" /> : <Heading level={3}>{peopleState.data.length}</Heading>}
-            <Text variant="bodySmall" color={theme.colors.text.secondary}>
-              This Branch
+      <Card padding={4} testId="council-summary-strip">
+        <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[5], flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: theme.spacing[1] }}>
+            {peopleState.status !== 'success' ? <Skeleton height={24} width={28} /> : <Text as="span" variant="numericTabular">{peopleState.data.length}</Text>}
+            <Text as="span" variant="bodySmall" color={theme.colors.text.secondary}>
+              members in this Branch
             </Text>
           </div>
-        </Card>
-        <Card interactive onClick={() => navigate('/ministry')} padding={5} testId="council-kpi-staffing">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }}>
-            <Icon name="clipboardList" size="md" color={theme.colors.brand.default} />
-            <Text variant="label" color={theme.colors.text.secondary}>
-              STAFFING
-            </Text>
-            {ministriesState.status !== 'success' ? <Skeleton height={32} width="40%" /> : <Heading level={3}>{ministriesState.data.length}</Heading>}
-            <Text variant="bodySmall" color={theme.colors.text.secondary}>
+          <Divider orientation="vertical" />
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: theme.spacing[1] }}>
+            {ministriesState.status !== 'success' ? <Skeleton height={24} width={20} /> : <Text as="span" variant="numericTabular">{ministriesState.data.length}</Text>}
+            <Text as="span" variant="bodySmall" color={theme.colors.text.secondary}>
               Basontas (Ministry Teams)
             </Text>
           </div>
-        </Card>
-        <Card interactive onClick={() => navigate('/insights')} padding={5} testId="council-kpi-alerts">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }}>
-            <Icon name="alertTriangle" size="md" color={theme.colors.status.warning.strong} />
-            <Text variant="label" color={theme.colors.text.secondary}>
-              OPEN ALERTS
-            </Text>
-            <Heading level={3}>{openAlertCount}</Heading>
-            <Text variant="bodySmall" color={theme.colors.text.secondary}>
-              Across the whole Branch
-            </Text>
-          </div>
-        </Card>
-      </div>
+        </div>
+      </Card>
 
-      <div style={{ display: 'grid', gridTemplateColumns: isNarrow ? '1fr' : '1fr 1fr', gap: theme.spacing[4] }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isNarrow ? '1fr' : 'minmax(0, 1fr) minmax(0, 1fr)', gap: theme.spacing[4] }}>
         <AlertPriorityCard status={dashboardState.status} alerts={alerts} accessToken={accessToken} onResolved={dashboardState.refetch} onRetry={dashboardState.refetch} readOnly />
         <RecentActivityCard status={dashboardState.status} alerts={alerts} onRetry={dashboardState.refetch} />
       </div>

@@ -55,7 +55,7 @@ export function MinistryLeaderDashboard() {
   const personId = state.status === 'authenticated' ? state.actor.personId : undefined;
   const groupId = state.status === 'authenticated' ? state.actor.basontaId : undefined;
   const branchName = state.status === 'authenticated' ? state.actor.branchName : '';
-  const { isCompact, isNarrow } = useDashboardBreakpoint();
+  const { isNarrow } = useDashboardBreakpoint();
 
   const personState = useAsyncData<PersonResponseDto>(
     (signal) => {
@@ -81,59 +81,59 @@ export function MinistryLeaderDashboard() {
     );
   }
 
-  // `[Product Experience Sprint I]` Objective 6 - adds the `isCompact`
-  // (tablet, 2-column) tier `ResidentPastorDashboard`'s own KPI grid
-  // already has, so a Basonta Leader on a tablet doesn't see the same
-  // abrupt 3-columns-to-1 jump every other persona dashboard had before
-  // this pass.
-  const kpiColumns = isNarrow ? 1 : isCompact ? 2 : 3;
-
+  /**
+   * `[Product Experience Sprint II, Phase 4]` Replaces three identical
+   * `Icon + LABEL + Heading + caption` cards - the exact "generic admin
+   * dashboard" pattern this sprint's own brief calls out by name - with
+   * one quiet summary strip, same recipe `BranchPastorDashboard`'s KPI
+   * strip already proved. Roster Size gets real visual weight (it's the
+   * number a Ministry Leader's whole job centers on - can I staff this
+   * team); Overcommitted and Upcoming Gatherings sit smaller beside it,
+   * and Overcommitted only takes a warning color when it's actually
+   * nonzero - never a fabricated threshold, the same "objective data
+   * state, not invented severity" rule the Branch Pastor table already
+   * follows. Not individually clickable: `Volunteer availability` and
+   * `Upcoming Gatherings` (immediately below) already are the real
+   * detail view for these two numbers, so a second click target here
+   * would just be a duplicate path to the same place, not new
+   * information architecture.
+   */
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5], maxWidth: 1280 }}>
       <DashboardHeader displayName={displayName} openAlertCount={overcommittedCount ?? 0} branchName={branchName} />
 
-      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${kpiColumns}, 1fr)`, gap: theme.spacing[4] }}>
-        <Card interactive onClick={() => navigate('/ministry')} padding={5} testId="ministry-kpi-roster">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }}>
-            <Icon name="users" size="md" color={theme.colors.brand.default} />
-            <Text variant="label" color={theme.colors.text.secondary}>
-              ROSTER SIZE
-            </Text>
-            {rosterSize === undefined ? <Skeleton height={32} width="40%" /> : <Heading level={3}>{rosterSize}</Heading>}
+      <Card padding={4} testId="ministry-summary-strip">
+        <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[5], flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: theme.spacing[2] }}>
+            {rosterSize === undefined ? <Skeleton height={28} width={32} /> : <Heading level={3}>{rosterSize}</Heading>}
             <Text variant="bodySmall" color={theme.colors.text.secondary}>
-              View the full roster
+              on your roster
             </Text>
           </div>
-        </Card>
-        <Card padding={5} testId="ministry-kpi-overcommitted">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }}>
-            <Icon name="alertTriangle" size="md" color={theme.colors.status.warning.strong} />
-            <Text variant="label" color={theme.colors.text.secondary}>
-              OVERCOMMITTED
+          <Divider orientation="vertical" />
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: theme.spacing[1] }}>
+            <Text as="span" variant="numericTabular" color={overcommittedCount ? theme.colors.status.warning.strong : theme.colors.text.primary}>
+              {overcommittedCount === undefined ? '—' : overcommittedCount}
             </Text>
-            {overcommittedCount === undefined ? <Skeleton height={32} width="40%" /> : <Heading level={3}>{overcommittedCount}</Heading>}
-            <Text variant="bodySmall" color={theme.colors.text.secondary}>
-              Workers serving on 4+ teams
+            <Text as="span" variant="bodySmall" color={theme.colors.text.secondary}>
+              overcommitted
             </Text>
           </div>
-        </Card>
-        <Card interactive onClick={() => navigate('/gatherings')} padding={5} testId="ministry-kpi-gatherings">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }}>
-            <Icon name="calendar" size="md" color={theme.colors.brand.default} />
-            <Text variant="label" color={theme.colors.text.secondary}>
-              UPCOMING GATHERINGS
+          <Divider orientation="vertical" />
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: theme.spacing[1] }}>
+            <Text as="span" variant="numericTabular">
+              {gatheringsState.status === 'success' ? gatheringsState.data.length : '—'}
             </Text>
-            {gatheringsState.status !== 'success' ? <Skeleton height={32} width="40%" /> : <Heading level={3}>{gatheringsState.data.length}</Heading>}
-            <Text variant="bodySmall" color={theme.colors.text.secondary}>
-              Review the calendar
+            <Text as="span" variant="bodySmall" color={theme.colors.text.secondary}>
+              upcoming Gatherings
             </Text>
           </div>
-        </Card>
-      </div>
+        </div>
+      </Card>
 
       <StaffingTargetsPanel groupId={groupId} canEdit />
 
-      <div style={{ display: 'grid', gridTemplateColumns: isNarrow ? '1fr' : '1fr 1fr', gap: theme.spacing[4] }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isNarrow ? '1fr' : 'minmax(0, 1fr) minmax(0, 1fr)', gap: theme.spacing[4] }}>
         <Card padding={6} testId="volunteer-availability-card">
           <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
             <Heading level={3}>Volunteer availability</Heading>
@@ -192,7 +192,7 @@ export function MinistryLeaderDashboard() {
         </Card>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: isNarrow ? '1fr' : '1fr 1fr', gap: theme.spacing[4] }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isNarrow ? '1fr' : 'minmax(0, 1fr) minmax(0, 1fr)', gap: theme.spacing[4] }}>
         <TrendCard title="Ministry attendance" subtitle="Attendance at this Basonta's Gatherings" series={buildMinistryAttendanceSeries()} color={theme.colors.brand.default} testId="ministry-attendance-chart" />
 
         <Card padding={6} testId="recent-ministry-activity-card">
@@ -206,7 +206,24 @@ export function MinistryLeaderDashboard() {
                 <div key={activity.id}>
                   {index > 0 && <Divider />}
                   <div style={{ paddingTop: index > 0 ? theme.spacing[3] : 0, display: 'flex', alignItems: 'center', gap: theme.spacing[3] }}>
-                    <Icon name={activity.icon} size="sm" color={activity.tone === 'success' ? theme.colors.status.success.strong : theme.colors.text.secondary} />
+                    {/* `[Dashboard Visual Redesign]` Icon-in-tinted-circle -
+                        same row treatment as `UpcomingEventsTimeline`/
+                        `RecentActivityTimeline`, applied in place. */}
+                    <div
+                      aria-hidden
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 36,
+                        height: 36,
+                        flexShrink: 0,
+                        borderRadius: theme.radius.full,
+                        backgroundColor: activity.tone === 'success' ? theme.colors.status.success.background : theme.colors.border.subtle,
+                      }}
+                    >
+                      <Icon name={activity.icon} size="sm" color={activity.tone === 'success' ? theme.colors.status.success.strong : theme.colors.text.secondary} />
+                    </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1], flex: 1 }}>
                       <Text variant="bodySmall">{activity.description}</Text>
                       <Text variant="caption" color={theme.colors.text.secondary}>

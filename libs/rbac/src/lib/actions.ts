@@ -202,6 +202,16 @@ export const ACTIONS = [
 
   // Audit log (row: "Audit log: view")
   'platform.audit_log.read',
+
+  // [Multi-Tenant Foundation, Phase 1] Tenant administration - no PRD
+  // §17.3 row exists (Tenant itself is new this phase). The minimum
+  // platform-level action needed to establish SYSTEM_ADMINISTRATOR as a
+  // real, non-empty role this phase, per that role's own locked scope
+  // ("minimum platform-level authority necessary to establish the role" -
+  // not a full tenant-management action set). See
+  // `permission-matrix.ts`'s SYSTEM_ADMINISTRATOR row for the GLOBAL-scope
+  // reasoning specific to this one action.
+  'platform.tenant.read',
 ] as const;
 
 export type Action = (typeof ACTIONS)[number];

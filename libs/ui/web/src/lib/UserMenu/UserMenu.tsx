@@ -3,6 +3,7 @@ import { useTheme } from '../ThemeProvider';
 import { Avatar } from '../Avatar';
 import { Icon } from '../Icon';
 import { Text } from '../Text';
+import { getBoxShadow } from '../utils';
 
 export interface UserMenuProps {
   name: string;
@@ -16,10 +17,21 @@ export interface UserMenuProps {
  * Top-bar user menu (Design System §3.1's "User Menu") - identity display
  * plus logout (STEP 4). A disclosure button, same keyboard-operable
  * pattern as `NotificationBell`.
+ *
+ * `[Product Experience Sprint II, Phase 3 - AppShell pass]` Two fixes:
+ * the popover's shadow was a hardcoded `rgba(0,0,0,0.15)` literal, not a
+ * token - now `getBoxShadow(theme, 2)`, the same elevation-2 (modals/
+ * toasts/dropdowns) value every other floating surface in the system
+ * already uses. The trigger button also had no hover or focus-visible
+ * styling at all (only `cursor: pointer`) - now gets the same quiet
+ * `surface.default` hover fill and on-brand focus ring every other
+ * interactive control in the shell uses.
  */
 export function UserMenu({ name, roleLabel, onLogout, testId }: UserMenuProps) {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
 
   return (
     <div style={{ position: 'relative' }} data-testid={testId}>
@@ -29,15 +41,22 @@ export function UserMenu({ name, roleLabel, onLogout, testId }: UserMenuProps) {
         aria-expanded={open}
         aria-label={`Account menu for ${name}`}
         onClick={() => setOpen((o) => !o)}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
         style={{
           display: 'flex',
           alignItems: 'center',
           gap: theme.spacing[2],
-          background: 'none',
+          background: hovered ? theme.colors.surface.default : 'none',
           border: 'none',
           cursor: 'pointer',
           padding: theme.spacing[1],
           borderRadius: theme.radius.sm,
+          outline: focused ? `2px solid ${theme.colors.border.focus}` : 'none',
+          outlineOffset: 2,
+          transition: `background-color ${theme.motion.duration.fast}ms`,
         }}
       >
         <Avatar name={name} size="sm" />
@@ -56,7 +75,7 @@ export function UserMenu({ name, roleLabel, onLogout, testId }: UserMenuProps) {
             backgroundColor: theme.colors.surface.raised,
             border: `1px solid ${theme.colors.border.subtle}`,
             borderRadius: theme.radius.md,
-            boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+            boxShadow: getBoxShadow(theme, 2),
             padding: theme.spacing[2],
             zIndex: theme.zIndex.overlay,
           }}

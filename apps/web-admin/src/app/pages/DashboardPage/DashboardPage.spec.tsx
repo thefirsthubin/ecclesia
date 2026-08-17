@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { ThemeProvider, ToastProvider } from '@ecclesia/ui-web';
 
 import { RouterProvider } from '../../router/router';
@@ -177,48 +177,100 @@ describe('DashboardPage', () => {
 
     renderWithProviders(<DashboardPage />);
 
-    expect(screen.getByText("Couldn't load Church Pulse")).toBeInTheDocument();
+    expect(screen.getByText('No Bacentas assigned')).toBeInTheDocument();
   });
 
   /**
-   * `[Cross-Persona Dashboards verification]` A real cluster-Bacenta
-   * fixture live-tested against `nx serve api` this pass showed that
-   * `GET /groups?type=MINISTRY` structurally 403s for every
-   * `ASSISTANT_PASTOR`, regardless of their cluster - `GroupListResourceContextGuard`'s
-   * own doc comment already discloses why ("an ASSISTANT_PASTOR's CLUSTER
-   * scope cannot match a bare `{ branchId }` resource at all... this route
-   * correctly denies them"). `BranchPastorDashboard.tsx`'s own doc comment
-   * claims this card is "real, live data" - contradicted by that guard's
-   * own documented behavior. No prior test exercised an in-cluster
-   * `ASSISTANT_PASTOR` against a realistic fetch mock at all, which is
-   * exactly why this went uncaught. Not fixed here (RBAC/resource-context
-   * semantics change, a product decision - see
-   * `RELEASE_1_WORKFLOW_MATRIX.md`'s Cross-Persona Dashboards entry) -
-   * this test only pins the current, confirmed-live behavior so a future
-   * change to either side is a deliberate, visible diff, not a silent one.
+   * `[Branch Pastor Dashboard sprint]` The hero Bacenta Performance table
+   * against a realistic single-Bacenta cluster fixture - real Members
+   * (`GET /people?groupId=`), real Sunday attendance (the Branch-wide
+   * Sunday Service Gathering + its attendance-records, cross-referenced
+   * against this Bacenta's own roster), real Bacenta Meeting attendance
+   * (this Bacenta's own CELL_MEETING Gathering + attendance-records), and
+   * real Bacenta Meeting Offering (`GET
+   * /bank-deposit-confirmations/reconciliation`). Every one of these
+   * endpoints is real and already authorized - two of them
+   * (`gatherings.gathering.read` widened to BRANCH,
+   * `gatherings.attendance.read` newly granted) only became reachable for
+   * `ASSISTANT_PASTOR` via this sprint's own `permission-matrix.ts` fix,
+   * which is exactly why no prior test exercised this path with a
+   * realistic fetch mock at all.
    */
-  it('shows a real error (not fabricated data) for the Ministries card - GET /groups?type=MINISTRY structurally 403s for every ASSISTANT_PASTOR', async () => {
+  it('renders real Bacenta-by-Bacenta performance data (not fabricated) for ASSISTANT_PASTOR', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('ASSISTANT_PASTOR', { clusterBacentaIds: ['bacenta-1'] }));
     global.fetch = jest.fn().mockImplementation((url: string) => {
-      if (url.includes('/groups?type=MINISTRY')) {
+      if (url.includes('/groups/bacenta-1')) {
         return Promise.resolve({
-          ok: false,
-          status: 403,
-          json: async () => ({ message: "Resource is outside the actor's CLUSTER scope for 'people.group.read'" }),
+          ok: true,
+          json: async () => ({
+            id: 'bacenta-1',
+            branchId: 'branch-1',
+            type: 'PASTORAL_CARE',
+            name: 'Grace Bacenta',
+            meetingSchedule: null,
+            meetingLocation: null,
+            category: null,
+            lifecycleStatus: 'ACTIVE',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          }),
+        });
+      }
+      if (url.includes('/people?groupId=bacenta-1')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => [
+            { id: 'person-a', branchId: 'branch-1', firstName: 'A', lastName: 'One', phone: null, email: null, dateOfBirth: null, address: null, lifecycleStage: 'MEMBER', guardianPersonId: null, createdAt: '', updatedAt: '' },
+            { id: 'person-b', branchId: 'branch-1', firstName: 'B', lastName: 'Two', phone: null, email: null, dateOfBirth: null, address: null, lifecycleStage: 'MEMBER', guardianPersonId: null, createdAt: '', updatedAt: '' },
+          ],
+        });
+      }
+      if (url.includes('/gatherings/gathering-sunday/attendance-records')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => [{ id: 'ar-1', gatheringId: 'gathering-sunday', personId: 'person-a', branchId: 'branch-1', status: 'PRESENT', recordedByPersonId: 'x', recordedAt: new Date().toISOString() }],
+        });
+      }
+      if (url.includes('/gatherings/gathering-meeting/attendance-records')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => [{ id: 'ar-2', gatheringId: 'gathering-meeting', personId: 'person-a', branchId: 'branch-1', status: 'PRESENT', recordedByPersonId: 'x', recordedAt: new Date().toISOString() }],
+        });
+      }
+      if (url.includes('/gatherings?type=SUNDAY_SERVICE')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => [{ id: 'gathering-sunday', branchId: 'branch-1', ownerGroupId: null, seriesId: null, type: 'SUNDAY_SERVICE', scheduledStart: new Date().toISOString(), scheduledEnd: null, venue: null, status: 'COMPLETED', config: null, createdByPersonId: 'x', createdAt: '', updatedAt: '' }],
+        });
+      }
+      if (url.includes('/gatherings?ownerGroupId=bacenta-1&type=CELL_MEETING')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => [{ id: 'gathering-meeting', branchId: 'branch-1', ownerGroupId: 'bacenta-1', seriesId: null, type: 'CELL_MEETING', scheduledStart: new Date().toISOString(), scheduledEnd: null, venue: null, status: 'COMPLETED', config: null, createdByPersonId: 'x', createdAt: '', updatedAt: '' }],
+        });
+      }
+      if (url.includes('/bank-deposit-confirmations/reconciliation')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ branchId: 'branch-1', weekStartDate: '2026-01-05', rows: [{ groupId: 'bacenta-1', verifiedTotalMinor: '25000', depositedAmountMinor: null, bankReference: null, matched: false }] }),
         });
       }
       if (url.includes('/insights/cluster-dashboard/')) {
-        return Promise.resolve({
-          ok: true,
-          json: async () => ({ branchId: 'branch-1', groupId: 'bacenta-1', pulseScore: undefined, alerts: [] }),
-        });
+        return Promise.resolve({ ok: true, json: async () => ({ branchId: 'branch-1', groupId: 'bacenta-1', pulseScore: undefined, alerts: [] }) });
       }
       return Promise.resolve({ ok: true, json: async () => [] });
     });
 
     renderWithProviders(<DashboardPage />);
 
-    await waitFor(() => expect(screen.getByText("Couldn't load Ministries")).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByTestId('bacenta-performance-table')).toBeInTheDocument());
+    const table = within(screen.getByTestId('bacenta-performance-table'));
+    expect(table.getByText('Grace Bacenta')).toBeInTheDocument();
+    // 2 real members, 1 real Sunday PRESENT record, 1 real Meeting PRESENT record, real GHS 250.00 offering - none fabricated.
+    expect(table.getByText('2')).toBeInTheDocument();
+    expect(table.getByText('GHS 250.00')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByTestId('branch-kpi-bacentas')).toHaveTextContent('1'));
+    expect(screen.getByTestId('branch-kpi-members')).toHaveTextContent('2');
   });
 
   it('renders the Super Administrator dashboard for ADMIN', async () => {

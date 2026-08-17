@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { Avatar, Badge, Button, Card, ErrorState, Heading, Icon, Input, RecordPicker, Select, Skeleton, Table, Tabs, Text, useTheme, useToast } from '@ecclesia/ui-web';
 import type { RecordOption, TableColumn, TabItem } from '@ecclesia/ui-web';
 import { ROLE_VALUES } from '@ecclesia/contracts';
-import type { GroupMembershipResponseDto, LifecycleStageDto, RoleAssignmentResponseDto, RoleDto } from '@ecclesia/contracts';
+import type { FollowUpTaskResponseDto, GroupMembershipResponseDto, LifecycleStageDto, RoleAssignmentResponseDto, RoleDto } from '@ecclesia/contracts';
 
 import { useAuth } from '../../auth/AuthContext';
 import { ApiError } from '../../lib/api-client';
 import { useParams } from '../../router/router';
 import { roleLabel } from '../../shell/nav-items';
-import { createFollowUpTask, searchPeopleForEscalation } from '../PastoralCare/usePastoralCareData';
+import { PersonNameText } from '../PastoralCare/PersonNameText';
+import { createFollowUpTask, searchPeopleForEscalation, usePersonFollowUpTasks } from '../PastoralCare/usePastoralCareData';
 import { GroupNameText } from './GroupNameText';
 import { LIFECYCLE_BADGE_STATUS, LIFECYCLE_LABEL } from './lifecycleLabels';
 import {
@@ -78,6 +79,19 @@ export function PersonDetailPage() {
   const personState = usePersonDetail(state.accessToken, id);
   const membershipState = useGroupMembershipHistory(state.accessToken, id);
   const roleState = useRoleAssignmentHistory(state.accessToken, id);
+
+  // `[Branch Pastor portal, Pastoral Care sprint]` The "People -> Member
+  // -> Pastoral Care" direction (approved Pastoral Care brief §5) - a
+  // Branch Pastor-only tab (see the `tabs` array below), so this hook is
+  // only ever active for `ASSISTANT_PASTOR`; every other role's render
+  // stays byte-for-byte identical to before (`Overview`/`Groups`/`Roles`
+  // only), matching the "compute conditionally, don't ship an inert
+  // fetch to every role" restraint already used elsewhere in this app.
+  // Called unconditionally regardless of role (Rules of Hooks) - passing
+  // `undefined` as the access token is this codebase's own "don't fetch"
+  // idiom (every `useAsyncData`-based hook already short-circuits on it).
+  const isBranchPastor = state.actor.role === 'ASSISTANT_PASTOR';
+  const followUpHistoryState = usePersonFollowUpTasks(isBranchPastor ? state.accessToken : undefined, id);
 
   // Declared before any conditional `return` below (Rules of Hooks) even
   // though this action only ever renders once `personState` has
@@ -292,24 +306,43 @@ export function PersonDetailPage() {
           unlabeled lines of text that were only distinguishable by their
           "No X on file" fallback copy. Same fields, same values, no new
           data - purely a scannability improvement. */}
+      {/* `[Product Experience Sprint II, Phase 5]` Found during this
+          sprint's own 390px check - a real seed email
+          ("assistant.pastor@dev.ecclesia.local") had no wrap/truncation
+          protection at all and pushed the whole page wider than the
+          viewport, the same nested-flex overflow class this sprint
+          already fixed elsewhere (`KpiCard`, `RecentActivityTimeline`,
+          `LineChart`). Each row now gets `minWidth: 0` (the icon, an SVG
+          with its own fixed width/height, was never the problem - the
+          text next to it was) and the text itself gets a single-line
+          ellipsis wrapper (`title` carries the untruncated value, same
+          pattern `KpiCard`'s action-label footer already established) -
+          a long email or address degrades gracefully instead of forcing
+          overflow. */}
       <div style={{ marginTop: theme.spacing[4], display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2], minWidth: 0 }}>
           <Icon name="phone" size="sm" color={theme.colors.text.secondary} />
-          <Text variant="bodySmall" color={theme.colors.text.secondary}>
-            {person.phone ?? 'No phone on file'}
-          </Text>
+          <div title={person.phone ?? undefined} style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <Text variant="bodySmall" color={theme.colors.text.secondary}>
+              {person.phone ?? 'No phone on file'}
+            </Text>
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2], minWidth: 0 }}>
           <Icon name="mail" size="sm" color={theme.colors.text.secondary} />
-          <Text variant="bodySmall" color={theme.colors.text.secondary}>
-            {person.email ?? 'No email on file'}
-          </Text>
+          <div title={person.email ?? undefined} style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <Text variant="bodySmall" color={theme.colors.text.secondary}>
+              {person.email ?? 'No email on file'}
+            </Text>
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2], minWidth: 0 }}>
           <Icon name="mapPin" size="sm" color={theme.colors.text.secondary} />
-          <Text variant="bodySmall" color={theme.colors.text.secondary}>
-            {person.address ?? 'No address on file'}
-          </Text>
+          <div title={person.address ?? undefined} style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <Text variant="bodySmall" color={theme.colors.text.secondary}>
+              {person.address ?? 'No address on file'}
+            </Text>
+          </div>
         </div>
       </div>
 
@@ -649,10 +682,77 @@ export function PersonDetailPage() {
     </div>
   );
 
+  const followUpHistoryColumns: TableColumn<FollowUpTaskResponseDto>[] = [
+    {
+      key: 'status',
+      header: 'Status',
+      render: (task) => (
+        <Badge status={task.status === 'COMPLETED' ? 'success' : task.status === 'ESCALATED' ? 'danger' : 'warning'}>
+          {task.status === 'COMPLETED' ? 'Completed' : task.status === 'ESCALATED' ? 'Escalated' : 'Open'}
+        </Badge>
+      ),
+    },
+    {
+      key: 'assignedTo',
+      header: 'Assigned to',
+      render: (task) => <PersonNameText personId={task.assignedToPersonId} />,
+    },
+    {
+      key: 'due',
+      header: 'Due',
+      render: (task) => (
+        <Text variant="bodySmall" color={theme.colors.text.secondary}>
+          {task.dueAt ? formatDate(task.dueAt) : '—'}
+        </Text>
+      ),
+    },
+    {
+      key: 'created',
+      header: 'Created',
+      render: (task) => (
+        <Text variant="bodySmall" color={theme.colors.text.secondary}>
+          {formatDate(task.createdAt)}
+        </Text>
+      ),
+    },
+  ];
+
+  /** `[Branch Pastor portal, Pastoral Care sprint]` The "People -> Member
+   * -> Pastoral Care" direction (approved Pastoral Care brief §5) - a
+   * read-only history, not a duplicate of the Overview tab's own "Create
+   * Follow-up task" action above (that already exists; this only closes
+   * the missing read direction). Every status shown, not just open ones -
+   * a history view, matching `usePersonFollowUpTasks`'s own doc comment. */
+  const pastoralCareContent = (
+    <div data-testid="person-follow-up-history-card">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+        <Heading level={3}>Follow-ups</Heading>
+        {followUpHistoryState.status === 'loading' && <Skeleton height={20} />}
+        {followUpHistoryState.status === 'error' && <ErrorState title="Couldn't load Follow-up history" onRetry={followUpHistoryState.refetch} />}
+        {followUpHistoryState.status === 'success' && (
+          <Table
+            testId="person-follow-up-history-table"
+            columns={followUpHistoryColumns}
+            data={followUpHistoryState.data}
+            getRowId={(task) => task.id}
+            emptyTitle="No Follow-ups yet"
+          />
+        )}
+      </div>
+    </div>
+  );
+
   const tabs: TabItem[] = [
     { id: 'overview', label: 'Overview', content: overviewContent },
     { id: 'groups', label: 'Groups', content: groupsContent },
     { id: 'roles', label: 'Roles', content: rolesContent },
+    // `[Branch Pastor portal, Pastoral Care sprint]` Branch-Pastor-only -
+    // every other role keeps the exact three tabs this page has always
+    // had (`Overview`/`Groups`/`Roles`), unaffected. Not a general
+    // "Pastoral Care belongs on every profile" redesign - the approved
+    // brief for this addition names the Branch Pastor persona
+    // specifically.
+    ...(isBranchPastor ? [{ id: 'pastoral-care', label: 'Pastoral Care', content: pastoralCareContent }] : []),
   ];
 
   return (

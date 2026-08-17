@@ -116,6 +116,35 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     );
   }
 
+  /**
+   * `[Multi-Tenant Foundation, Phase 1]` Council-scoped equivalent of
+   * `runInBranchScope` above, for an actor whose authorization scope is
+   * every Branch in their Council (`ActorContext.councilBranchIds`), not
+   * one Branch. Deliberately NOT a new RLS policy or session variable -
+   * it calls the existing, unmodified `runInBranchScope` once per
+   * `branchId`, so every read still goes through the exact same hardened
+   * per-Branch RLS policy every other query in this codebase already
+   * relies on. See this phase's migration (`db/migrations/
+   * 20260815000000_multi_tenant_foundation/migration.sql`, Part 3) for
+   * the full reasoning against a new cross-Branch RLS policy shape in
+   * this same foundational phase.
+   *
+   * Sequential, not `Promise.all` - each `runInBranchScope` call opens its
+   * own Prisma interactive transaction; running them concurrently would
+   * mean N simultaneous transactions/connections per Council-scoped
+   * request instead of N sequential ones. A known, disclosed performance
+   * limitation for a Council with many Branches, not a correctness one -
+   * left for a later phase to optimize once a real Council-scoped
+   * endpoint exists to measure it against.
+   */
+  async runInCouncilScope<T>(branchIds: readonly string[], fn: () => Promise<T>): Promise<T[]> {
+    const results: T[] = [];
+    for (const branchId of branchIds) {
+      results.push(await this.runInBranchScope(branchId, fn));
+    }
+    return results;
+  }
+
   async onModuleInit(): Promise<void> {
     await this.$connect();
     this.logger.info('Prisma connected to the database (ecclesia_app role, RLS-scoped)');

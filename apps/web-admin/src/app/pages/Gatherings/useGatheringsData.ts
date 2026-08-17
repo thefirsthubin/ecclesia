@@ -45,6 +45,21 @@ export interface AttendanceCompletenessResult {
  * so it fell through to the same unreachable `{}` query and 403'd. Same
  * class of bug as the ASSISTANT_PASTOR fix above, on the Basonta/Ministry
  * Leader persona instead of Branch Pastor; now closed the same way.
+ *
+ * `[Branch Pastor portal]` `ASSISTANT_PASTOR`'s own single-Bacenta default
+ * above is now stale and has been removed - `gatherings.gathering.read`
+ * was widened from CLUSTER to BRANCH in the Branch Pastor Dashboard
+ * sprint specifically so this role can read every Gathering in their
+ * Branch, not only their own cluster's (`permission-matrix.ts`'s own doc
+ * comment on that row, traced directly, not assumed). This hook had never
+ * been updated to match - it kept narrowing every request to
+ * `clusterBacentaIds[0]`, so the Gatherings page showed only one Bacenta's
+ * meetings even though the backend grant already covered the whole
+ * Branch, including the Branch-wide Sunday Service and any other
+ * Branch-level Gathering (`ownerGroupId: null`) a single-group filter can
+ * never match at all. `ASSISTANT_PASTOR` now falls through to the same
+ * unfiltered `{}` query RESIDENT_PASTOR/ADMIN already use - matching its
+ * real, current scope exactly, not widening anything.
  */
 export function resolveDefaultGatheringsQuery(
   actor: Pick<ActorContext, 'role' | 'bacentaId' | 'basontaId' | 'clusterBacentaIds'>,
@@ -55,14 +70,12 @@ export function resolveDefaultGatheringsQuery(
   if (actor.role === 'BASONTA_LEADER' && actor.basontaId) {
     return { ownerGroupId: actor.basontaId };
   }
-  if (actor.role === 'ASSISTANT_PASTOR' && actor.clusterBacentaIds?.[0]) {
-    return { ownerGroupId: actor.clusterBacentaIds[0] };
-  }
-  // RESIDENT_PASTOR/ADMIN resolve to whole-Branch (BRANCH-scope rows).
-  // Every other role either has no scope row for this action at all, or
-  // nothing to default to - falls through to the same `{}` query, which
-  // the backend correctly 403s rather than this hook trying to pre-empt
-  // that.
+  // RESIDENT_PASTOR/ADMIN/ASSISTANT_PASTOR all resolve to whole-Branch
+  // (BRANCH-scope rows - see this function's own doc comment for
+  // ASSISTANT_PASTOR's history). Every other role either has no scope row
+  // for this action at all, or nothing to default to - falls through to
+  // the same `{}` query, which the backend correctly 403s rather than
+  // this hook trying to pre-empt that.
   return {};
 }
 
@@ -130,18 +143,16 @@ export function useAttendanceCompleteness(
  * around; duplicating a capture UI here would re-open a decision that
  * milestone already made deliberately, not close a real omission.
  *
- * **RBAC gap, traced against `permission-matrix.ts` directly, not
- * assumed:** `ASSISTANT_PASTOR` holds `gatherings.attendance.create`
- * (CLUSTER) but has **no `gatherings.attendance.read` row at all** -
- * every other role that can create attendance
- * (`BACENTA_LEADER`/`BASONTA_LEADER`/`ADMIN`/`USHER`) also has a
- * matching `.read` row, `ASSISTANT_PASTOR` is the one exception. A
- * Branch Pastor who records attendance therefore cannot read it back
- * through this view - a real, pre-existing backend defect, not
- * something this page can or should paper over. Not fixed here (out of
- * this phase's scope - RBAC rows are backend authorization semantics);
- * the backend's real 403 is what that role sees, same as every other
- * gated action in this app.
+ * **RBAC gap, closed in the Branch Pastor Dashboard sprint.** Traced
+ * against `permission-matrix.ts` directly, not assumed: `ASSISTANT_PASTOR`
+ * held `gatherings.attendance.create` (CLUSTER) but had **no
+ * `gatherings.attendance.read` row at all** - every other role that can
+ * create attendance (`BACENTA_LEADER`/`BASONTA_LEADER`/`ADMIN`/`USHER`)
+ * already had a matching `.read` row, `ASSISTANT_PASTOR` was the one
+ * exception, blocking the Branch Pastor Dashboard's Bacenta-by-Bacenta
+ * attendance view. User-approved and added (CLUSTER scope, matching the
+ * `.create` row's own scope) rather than papered over client-side - see
+ * `permission-matrix.ts`'s own doc comment on this exact grant.
  */
 export function useAttendanceRecords(accessToken: string | undefined, gatheringId: string): AsyncDataResult<AttendanceRecordResponseDto[]> {
   return useAsyncData<AttendanceRecordResponseDto[]>(

@@ -1,5 +1,6 @@
 import { useState, type ComponentType, type ReactNode } from 'react';
 import { useTheme } from '../ThemeProvider';
+import { Heading } from '../Heading';
 import { Icon } from '../Icon';
 import { Text } from '../Text';
 import type { IconName } from '@ecclesia/ui-core';
@@ -17,7 +18,12 @@ export type SidebarLinkComponent = ComponentType<{
   children: ReactNode;
   onFocus?: () => void;
   onBlur?: () => void;
-  style?: { outline: string };
+  /** `[Product Experience Sprint II, Phase 3]` Hover tracking, same
+   * reasoning as the pre-existing `onFocus`/`onBlur` - a hover background
+   * previously didn't exist on nav items at all. */
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
+  style?: { outline: string; textDecoration: string };
 }>;
 
 export interface SidebarItem {
@@ -45,6 +51,11 @@ export interface SidebarProps {
   linkAs: SidebarLinkComponent;
   /** Icon-rail collapse (Design System §6.11 tablet breakpoint) - labels hidden, icons + tooltip-equivalent `aria-label` remain. */
   collapsed?: boolean;
+  /** `[Product Experience Sprint II, Phase 3]` Where the wordmark links -
+   * defaults to `/dashboard`, the same landing route every persona's nav
+   * taxonomy already starts with (`nav-items.ts`). Not hardcoded so a
+   * future consumer with a different landing route isn't stuck. */
+  homeHref?: string;
   testId?: string;
 }
 
@@ -70,10 +81,46 @@ export interface SidebarProps {
  * already use on keyboard focus, closing the one shell inconsistency
  * that verification pass found (the browser's unstyled default outline
  * was visible but didn't match the rest of the system).
+ *
+ * `[Sidebar underline fix]` `LinkAs` renders a real `<a>` (`app/router/
+ * router.tsx`'s `Link`, in every real usage), and nothing anywhere in
+ * this codebase had ever overridden the browser's default `<a>`
+ * underline - `outline: 'none'` was the only style this component ever
+ * passed through. `textDecoration: 'none'` is now set alongside it, in
+ * the same plain inline-style object, so it applies unconditionally
+ * (default/hover/active/focus-visible/visited all read this one style,
+ * there is no separate per-state rule anywhere to also fix). Scoped to
+ * this component's own `LinkAs` call, not `Link` itself - `Link` is also
+ * reused for ordinary in-content links (e.g. a Person row's name) that
+ * are supposed to look like links.
+ *
+ * `[Product Experience Sprint II, Phase 3 - AppShell pass]` Three
+ * changes, all presentation/interaction only (no new nav grammar, no
+ * RBAC/route change - `items`/`linkAs` behave exactly as before):
+ *
+ * 1. A wordmark header ("Ecclesia", `Heading level={2}` - the smallest
+ *    role that gets Phase 2's serif display font, so this is the *one*
+ *    deliberate, non-repeating place personality shows up in the shell
+ *    chrome). Links to `homeHref` via the same `linkAs` mechanism every
+ *    nav item already uses - no new routing concept.
+ * 2. A hover background on non-active items (`hoveredHref`, same pattern
+ *    as the pre-existing `focusedHref`) - previously nav items had zero
+ *    hover feedback at all.
+ * 3. The active item's signal is now two quiet things together, not one
+ *    loud one: the existing soft `brand.subtle` fill, plus a 3px
+ *    `brand.default` left edge (a `borderLeft`, not absolute
+ *    positioning - reserved at the same width, transparent, on every
+ *    item, so nothing shifts between states). Deliberately *not* a pill
+ *    (`radius.sm`, unchanged) and *not* a bolder font weight (`Text`'s
+ *    `variant` is one atomic size/weight/tracking unit - see
+ *    `typography.ts`'s own doc comment - cherry-picking just the weight
+ *    out of it for this one spot would be exactly the "one-off value"
+ *    the design system's token discipline exists to prevent).
  */
-export function Sidebar({ items, linkAs: LinkAs, collapsed = false, testId }: SidebarProps) {
+export function Sidebar({ items, linkAs: LinkAs, collapsed = false, homeHref = '/dashboard', testId }: SidebarProps) {
   const theme = useTheme();
   const [focusedHref, setFocusedHref] = useState<string | undefined>(undefined);
+  const [hoveredHref, setHoveredHref] = useState<string | undefined>(undefined);
   let previousGroup: string | undefined;
 
   return (
@@ -83,10 +130,21 @@ export function Sidebar({ items, linkAs: LinkAs, collapsed = false, testId }: Si
       style={{
         width: collapsed ? 72 : 240,
         flexShrink: 0,
+        display: 'flex',
+        flexDirection: 'column',
         backgroundColor: theme.colors.surface.raised,
         borderRight: `1px solid ${theme.colors.border.subtle}`,
       }}
     >
+      {!collapsed && (
+        <div style={{ padding: `${theme.spacing[4]}px ${theme.spacing[4]}px ${theme.spacing[3]}px`, borderBottom: `1px solid ${theme.colors.border.subtle}` }}>
+          <LinkAs to={homeHref} style={{ outline: 'none', textDecoration: 'none' }}>
+            <Heading level={2} color={theme.colors.text.primary}>
+              Ecclesia
+            </Heading>
+          </LinkAs>
+        </div>
+      )}
       <ul
         style={{
           listStyle: 'none',
@@ -100,6 +158,7 @@ export function Sidebar({ items, linkAs: LinkAs, collapsed = false, testId }: Si
         {items.map((item) => {
           const startsNewGroup = Boolean(item.group) && item.group !== previousGroup;
           previousGroup = item.group;
+          const isHovered = hoveredHref === item.href && !item.active;
           return (
             <li key={item.href}>
               {startsNewGroup && (
@@ -132,7 +191,9 @@ export function Sidebar({ items, linkAs: LinkAs, collapsed = false, testId }: Si
                 aria-current={item.active ? 'page' : undefined}
                 onFocus={() => setFocusedHref(item.href)}
                 onBlur={() => setFocusedHref(undefined)}
-                style={{ outline: 'none' }}
+                onMouseEnter={() => setHoveredHref(item.href)}
+                onMouseLeave={() => setHoveredHref(undefined)}
+                style={{ outline: 'none', textDecoration: 'none' }}
               >
                 <span
                   style={{
@@ -140,11 +201,14 @@ export function Sidebar({ items, linkAs: LinkAs, collapsed = false, testId }: Si
                     alignItems: 'center',
                     gap: theme.spacing[3],
                     padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
+                    paddingLeft: theme.spacing[3] - 3,
+                    borderLeft: `3px solid ${item.active ? theme.colors.brand.default : 'transparent'}`,
                     borderRadius: theme.radius.sm,
-                    backgroundColor: item.active ? theme.colors.brand.subtle : 'transparent',
+                    backgroundColor: item.active ? theme.colors.brand.subtle : isHovered ? theme.colors.surface.default : 'transparent',
                     color: item.active ? theme.colors.brand.default : theme.colors.text.secondary,
                     outline: focusedHref === item.href ? `2px solid ${theme.colors.border.focus}` : 'none',
                     outlineOffset: 1,
+                    transition: `background-color ${theme.motion.duration.fast}ms`,
                   }}
                 >
                   <Icon name={item.icon} size="sm" color={item.active ? theme.colors.brand.default : theme.colors.text.secondary} aria-label={collapsed ? item.label : undefined} />

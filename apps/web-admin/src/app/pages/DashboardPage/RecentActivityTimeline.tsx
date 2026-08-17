@@ -112,17 +112,55 @@ export function RecentActivityTimeline({ status, alerts, onRetry }: RecentActivi
               <div key={row.id}>
                 {index > 0 && <Divider />}
                 <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[3], padding: `${theme.spacing[3]}px 0` }}>
-                  <Icon
-                    name={row.icon}
-                    size="sm"
-                    color={row.icon === 'checkCircle' ? theme.colors.status.success.strong : theme.colors.text.secondary}
-                  />
+                  {/* `[Dashboard Visual Redesign]` Icon-in-tinted-circle -
+                      the same row treatment now applied consistently to
+                      every icon-bearing list row across the dashboards
+                      (`UpcomingEventsTimeline`'s own pattern, extended
+                      here rather than extracted into a shared component -
+                      see `DASHBOARD_REDESIGN_NOTES.md`). */}
+                  <div
+                    aria-hidden
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 36,
+                      height: 36,
+                      flexShrink: 0,
+                      borderRadius: theme.radius.full,
+                      backgroundColor: row.icon === 'checkCircle' ? theme.colors.status.success.background : theme.colors.border.subtle,
+                    }}
+                  >
+                    <Icon
+                      name={row.icon}
+                      size="sm"
+                      color={row.icon === 'checkCircle' ? theme.colors.status.success.strong : theme.colors.text.secondary}
+                    />
+                  </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1], flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
-                      <Text variant="bodySmall" as="span">
-                        {row.description}
-                      </Text>
-                      {row.isSample && <SampleDataBadge testId={`recent-activity-sample-badge-${row.id}`} />}
+                    {/* `[Product Experience Sprint II, Phase 4]` Found
+                        during this sprint's own 1024px breakpoint check -
+                        the same nested-flex overflow class as `KpiCard`'s
+                        (fixed this same sprint): `minWidth: 0` on a row
+                        alone doesn't make its *children* shrink evenly -
+                        the description now explicitly takes the flexible
+                        share (`flex: 1, minWidth: 0`, wraps onto a second
+                        line under pressure) while the badge explicitly
+                        keeps its full, always-readable size
+                        (`flexShrink: 0`), the same "one flexible sibling,
+                        one fixed one" split `KpiCard`'s own label/trend
+                        row now uses. */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2], minWidth: 0 }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <Text variant="bodySmall" as="span">
+                          {row.description}
+                        </Text>
+                      </div>
+                      {row.isSample && (
+                        <div style={{ flexShrink: 0 }}>
+                          <SampleDataBadge testId={`recent-activity-sample-badge-${row.id}`} />
+                        </div>
+                      )}
                     </div>
                     <Text variant="caption" color={theme.colors.text.secondary}>
                       {hoursAgoLabel(row.hoursAgo)}

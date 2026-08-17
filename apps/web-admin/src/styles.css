@@ -1,9 +1,64 @@
-/* Global stylesheet placeholder. Design-system tokens and Tailwind (or
-   equivalent) integration are introduced alongside the first real screen,
-   not in this Sprint 0 scaffold. */
+/* `[Product Experience Sprint II, Phase 2]` Self-hosted, not a Google
+   Fonts `<link>` - no external runtime dependency for something this
+   central to every page rendering correctly (this app already avoids
+   npm-registry-dependent tooling for the same reason - see `BarChart`'s
+   own "no charting library" doc comment). Files live in `src/assets/fonts`
+   (served as static assets per `project.json`'s `assets` config) and were
+   fetched once from Google Fonts' own CDN, not hand-authored.
+   `latin`/`latin-ext` subsets only - this deployment's real content
+   (English + Ghanaian names) doesn't need the full Unicode range every
+   other subset (cyrillic, greek, vietnamese, etc.) would add weight for.
+   Both are variable fonts (one file covers the whole weight range each
+   role in `typography.ts` uses) so `font-weight` on any element Just
+   Works without per-weight files or `font-variation-settings`.
+
+   Real gap closed here, not introduced: `typography.ts`'s `fontFamily.base`
+   has named "Inter" since the UI Foundation sprint, but no `@font-face`
+   for it existed anywhere in this app until now - every page has always
+   silently rendered in `body`'s literal `system-ui` fallback instead. */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/assets/fonts/inter-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/assets/fonts/inter-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* `[Product Experience Sprint II, Phase 2]` The one new display typeface -
+   see `typography.ts`'s `fontFamily.display` doc comment for which
+   typographic roles use it (display/heading1/heading2 only; heading3 and
+   everything smaller stays Inter). Fraunces' variable axes default to its
+   standard (non-"soft", non-"wonk") cut, which is the deliberate choice -
+   see this sprint's own design-direction report for why. */
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/assets/fonts/fraunces-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/assets/fonts/fraunces-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+2020, U+20A0-20AB, U+2C60-2C7F, U+A720-A7FF;
+}
+
 body {
   margin: 0;
-  font-family: system-ui, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* Dashboard Redesign sprint - a staggered entrance for the dashboard's

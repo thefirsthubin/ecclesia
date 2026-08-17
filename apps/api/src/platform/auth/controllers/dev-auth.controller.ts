@@ -38,7 +38,10 @@ export class DevAuthController {
   @Public()
   async listUsers() {
     const users = await this.devAuthService.listAvailableUsers();
-    return users.map((user) => ({ id: user.id, label: user.label, role: user.role }));
+    // `[Multi-Tenant Foundation, Phase 2]` `context` passed through
+    // verbatim (undefined stays undefined, matching `devUserSchema`'s own
+    // `.optional()`) - see that schema's doc comment.
+    return users.map((user) => ({ id: user.id, label: user.label, role: user.role, context: user.context }));
   }
 
   /** No password, no MFA (STEP 6: "No passwords required in development

@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { Sidebar, TopBar, Breadcrumbs, CommandPalette, NotificationBell, UserMenu, useTheme, Text } from '@ecclesia/ui-web';
+import { Sidebar, TopBar, Breadcrumbs, CommandPalette, Icon, NotificationBell, UserMenu, useTheme, Text } from '@ecclesia/ui-web';
 import type { BreadcrumbItem, CommandItem } from '@ecclesia/ui-web';
 import type { AlertResponseDto, PersonResponseDto } from '@ecclesia/contracts';
 
@@ -8,6 +8,70 @@ import { useAuth } from '../auth/AuthContext';
 import { apiGet } from '../lib/api-client';
 import { useAsyncData } from '../lib/useAsyncData';
 import { navItemsForRole, roleLabel } from './nav-items';
+
+/**
+ * `[Product Experience Sprint II, Phase 3 - AppShell pass]` A discoverable
+ * trigger for `CommandPalette` - the palette itself has existed and been
+ * wired to a global Cmd/Ctrl+K listener since the Product Experience
+ * Sprint I, but nothing in the rendered UI ever hinted it existed; the
+ * only way to find it was to already know the shortcut. This closes that
+ * gap with a small, quiet control, not a full search box competing with
+ * breadcrumbs/notifications/user menu for TopBar space ("do not put
+ * every possible control in the header" - this sprint's own brief).
+ * Presentation/interaction only - opens the exact same `CommandPalette`
+ * instance `AppShell` already renders, no new search logic.
+ *
+ * `[Phase 3 design-test fix]` The full label overflowed the TopBar at
+ * 390px (found during this sprint's own required 1440/1280/1024/768/390
+ * inspection pass - the label + hint pushed the right-hand cluster wider
+ * than the viewport, forcing the whole page into horizontal scroll and
+ * cutting off KPI cards well below the shell itself). `isNarrow` collapses
+ * it to an icon-only button below `sm` (640px) - same `aria-label`
+ * either way, so it stays just as reachable for assistive tech, only the
+ * visible label is conditional.
+ */
+function CommandPaletteTrigger({ onOpen, isNarrow }: { onOpen: () => void; isNarrow: boolean }) {
+  const theme = useTheme();
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      aria-label="Search (Ctrl+K)"
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: theme.spacing[2],
+        padding: isNarrow ? theme.spacing[2] : `${theme.spacing[1]}px ${theme.spacing[3]}px`,
+        borderRadius: theme.radius.sm,
+        border: isNarrow ? 'none' : `1px solid ${theme.colors.border.default}`,
+        backgroundColor: hovered ? theme.colors.surface.default : 'transparent',
+        cursor: 'pointer',
+        outline: focused ? `2px solid ${theme.colors.border.focus}` : 'none',
+        outlineOffset: 2,
+        transition: `background-color ${theme.motion.duration.fast}ms`,
+      }}
+    >
+      <Icon name="search" size="sm" color={theme.colors.text.secondary} />
+      {!isNarrow && (
+        <>
+          <Text as="span" variant="bodySmall" color={theme.colors.text.secondary}>
+            Search
+          </Text>
+          <Text as="span" variant="caption" color={theme.colors.text.disabled}>
+            ⌘K
+          </Text>
+        </>
+      )}
+    </button>
+  );
+}
 
 export interface AppShellProps {
   children: ReactNode;
@@ -41,7 +105,21 @@ export function AppShell({ children, breadcrumbs, notifications = [] }: AppShell
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isCompact, setIsCompact] = useState(false);
+  const [isNarrow, setIsNarrow] = useState(false);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
+
+  // `[Product Experience Sprint II, Phase 5]` A real bug found by this
+  // sprint's own end-to-end workflow test (open the mobile overlay, tap a
+  // nav link, land on a new page) - `sidebarOpen` was never reset on
+  // navigation, so the 240px overlay stayed rendered *alongside* the
+  // destination page's content on every route after the first tap,
+  // squeezing it down to a sliver. That's what a "table overflow" on
+  // `PersonDetailPage` actually was; the table/tabs were never the bug.
+  // Closing on every `path` change is the standard mobile-nav-overlay
+  // expectation this shell was missing.
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [path]);
 
   // `[Product Experience Sprint I]` Objective 4 - `CommandPalette`
   // (`@ecclesia/ui-web`) has existed since the Nav/Data/Layout tier of the
@@ -77,6 +155,20 @@ export function AppShell({ children, breadcrumbs, notifications = [] }: AppShell
     query.addEventListener('change', update);
     return () => query.removeEventListener('change', update);
   }, [theme.breakpoints.md]);
+
+  // `[Product Experience Sprint II, Phase 3]` A second, finer threshold -
+  // only `CommandPaletteTrigger` reads this today (collapsing to
+  // icon-only below `sm`, see its own doc comment for why). Kept
+  // independent of `isCompact` above rather than derived from it, since
+  // the two thresholds gate genuinely different things (sidebar layout
+  // vs. one TopBar control's label).
+  useEffect(() => {
+    const query = window.matchMedia(`(max-width: ${theme.breakpoints.sm - 1}px)`);
+    const update = () => setIsNarrow(query.matches);
+    update();
+    query.addEventListener('change', update);
+    return () => query.removeEventListener('change', update);
+  }, [theme.breakpoints.sm]);
 
   const accessToken = state.status === 'authenticated' ? state.accessToken : undefined;
   const personId = state.status === 'authenticated' ? state.actor.personId : undefined;
@@ -133,6 +225,7 @@ export function AppShell({ children, breadcrumbs, notifications = [] }: AppShell
 
   const identitySlot = (
     <>
+      <CommandPaletteTrigger onOpen={() => setIsPaletteOpen(true)} isNarrow={isNarrow} />
       <NotificationBell count={openAlerts.length}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }}>
           {openAlerts.map((alert) => (
@@ -196,7 +289,19 @@ export function AppShell({ children, breadcrumbs, notifications = [] }: AppShell
         {(!isCompact || sidebarOpen) && (
           <Sidebar items={items} linkAs={Link} collapsed={false} />
         )}
-        <main id="main-content" style={{ flex: 1, padding: theme.spacing[6] }}>
+        {/* `[Phase 3 design-test fix]` `minWidth: 0` - a flex item's
+            default `min-width: auto` refuses to shrink below its
+            content's intrinsic min-content width, which was silently
+            forcing this whole element (and the entire page) wider than
+            the viewport on narrow screens - found during this sprint's
+            own required 390px inspection pass on more than one page
+            (Dashboard's KPI grid, People's table), so it's this
+            container's problem, not each page's individually. Every
+            page's own internal overflow handling (`Table`'s horizontal
+            scroll wrapper, grid column collapsing) already exists and
+            now actually gets to run, instead of being pre-empted by the
+            shell itself refusing to shrink. */}
+        <main id="main-content" style={{ flex: 1, minWidth: 0, padding: theme.spacing[6] }}>
           {children}
         </main>
       </div>

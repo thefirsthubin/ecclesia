@@ -115,26 +115,41 @@ export function LoginPage() {
                         onChange={() => setSelectedDevUserId(user.id)}
                       />
                       <span>
-                        <Text as="span" variant="body">
-                          {/* `[Product terminology fix]` `user.label` is
-                              `DevAuthController.listUsers()`'s own seeded
-                              persona label (`dev-users.ts`), which still
-                              says "Assistant Pastor" - it predates the
-                              approved Final UX Design Specification §18
-                              terminology decision and was never routed
-                              through it. `roleLabel()` (`shell/nav-items.ts`)
-                              is the one already-approved mapping every
-                              other screen in this app uses for this exact
-                              purpose (e.g. `AppShell`'s `UserMenu`) - reused
-                              here instead of a second, competing label
-                              source. Falls back to the raw seed label only
-                              if a future dev role isn't in `ROLE_LABELS`
-                              yet, so this can never render blank. */}
-                          {roleLabel(user.role as RoleDto) || user.label}
-                        </Text>{' '}
-                        <Text as="span" variant="bodySmall" color={theme.colors.text.secondary}>
-                          ({user.role})
-                        </Text>
+                        <div>
+                          <Text as="span" variant="body">
+                            {/* `[Product terminology fix]` `user.label` is
+                                `DevAuthController.listUsers()`'s own seeded
+                                persona label (`dev-users.ts`), which still
+                                says "Assistant Pastor" - it predates the
+                                approved Final UX Design Specification §18
+                                terminology decision and was never routed
+                                through it. `roleLabel()` (`shell/nav-items.ts`)
+                                is the one already-approved mapping every
+                                other screen in this app uses for this exact
+                                purpose (e.g. `AppShell`'s `UserMenu`) - reused
+                                here instead of a second, competing label
+                                source. Falls back to the raw seed label only
+                                if a future dev role isn't in `ROLE_LABELS`
+                                yet, so this can never render blank. */}
+                            {roleLabel(user.role as RoleDto) || user.label}
+                          </Text>{' '}
+                          <Text as="span" variant="bodySmall" color={theme.colors.text.secondary}>
+                            ({user.role})
+                          </Text>
+                        </div>
+                        {/* `[Multi-Tenant Foundation, Phase 2]` `user.context`
+                            (e.g. "River of Life Headquarters", "Grace
+                            Bacenta") - makes a Branch- or group-scoped
+                            persona's actual Branch/Bacenta/Basonta obvious
+                            without folding it into the role identifier
+                            above. Absent for Council-scoped/platform
+                            personas (no single Branch/group to name), so
+                            this line simply doesn't render for those. */}
+                        {user.context && (
+                          <Text as="span" variant="caption" color={theme.colors.text.disabled}>
+                            — {user.context}
+                          </Text>
+                        )}
                       </span>
                     </label>
                   ))}

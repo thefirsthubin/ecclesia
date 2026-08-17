@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react';
 import { ThemeProvider, ToastProvider } from '@ecclesia/ui-web';
 
 import { PersonDetailPage } from './PersonDetailPage';
@@ -40,7 +40,7 @@ jest.mock('../../router/router', () => ({
  * actually reach that content now - Overview is the default tab, so
  * tests that only touch profile/lifecycle-transition content need no
  * switch at all. */
-function switchToTab(name: 'Overview' | 'Groups' | 'Roles') {
+function switchToTab(name: 'Overview' | 'Groups' | 'Roles' | 'Pastoral Care') {
   fireEvent.click(screen.getByRole('tab', { name }));
 }
 
@@ -119,7 +119,9 @@ afterEach(() => jest.clearAllMocks());
 
 describe('PersonDetailPage', () => {
   it('renders the profile on the default Overview tab, and group/role history on their own tabs (FR-PPL-07)', async () => {
-    mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+    mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
     global.fetch = mockFetchByPath({
       '/people/person-1/group-memberships': [membership()],
       '/people/person-1/role-assignments': [roleAssignment()],
@@ -149,7 +151,9 @@ describe('PersonDetailPage', () => {
    * never "success" green - `LAPSED` maps to `danger` (a Person who
    * stopped attending, not good news). */
   it('shows the lifecycle badge in a color that matches the actual stage, not always green', async () => {
-    mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+    mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
     global.fetch = mockFetchByPath({
       '/people/person-1/group-memberships': [],
       '/people/person-1/role-assignments': [],
@@ -165,7 +169,9 @@ describe('PersonDetailPage', () => {
   });
 
   it('shows an empty state on the Groups tab and the Roles tab when a Person has no history yet', async () => {
-    mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+    mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
     global.fetch = mockFetchByPath({
       '/people/person-1/group-memberships': [],
       '/people/person-1/role-assignments': [],
@@ -184,7 +190,9 @@ describe('PersonDetailPage', () => {
   });
 
   it('shows a retryable error state when the Person record itself fails to load', async () => {
-    mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+    mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
     global.fetch = jest.fn().mockRejectedValue(new Error('network unavailable in test'));
 
     renderPage();
@@ -204,7 +212,9 @@ describe('PersonDetailPage', () => {
    */
   describe('Follow-up Task creation', () => {
     it('offers the action unconditionally on the Overview tab', async () => {
-      mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+      mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
       global.fetch = mockFetchByPath({
         '/people/person-1/group-memberships': [],
         '/people/person-1/role-assignments': [],
@@ -217,7 +227,9 @@ describe('PersonDetailPage', () => {
     });
 
     it('searches People via RecordPicker and POSTs /people/:id/follow-up-tasks, then shows a success toast and closes the form', async () => {
-      mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+      mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
       const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
         if (url.includes('/people/person-1/follow-up-tasks') && init?.method === 'POST') {
           return Promise.resolve({
@@ -264,7 +276,9 @@ describe('PersonDetailPage', () => {
     });
 
     it('shows the server-provided error inline and keeps the form open on failure', async () => {
-      mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+      mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
       global.fetch = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
         if (url.includes('/people/person-1/follow-up-tasks') && init?.method === 'POST') {
           return Promise.resolve({
@@ -310,7 +324,9 @@ describe('PersonDetailPage', () => {
    */
   describe('lifecycle stage transition', () => {
     it('offers the transition action for a Person at a non-terminal stage, scoped to the modeled next stage(s)', async () => {
-      mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+      mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
       global.fetch = mockFetchByPath({
         '/people/person-1/group-memberships': [],
         '/people/person-1/role-assignments': [],
@@ -330,7 +346,9 @@ describe('PersonDetailPage', () => {
     });
 
     it('does not offer the transition action for a Person already at the terminal MEMBER stage', async () => {
-      mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+      mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
       global.fetch = mockFetchByPath({
         '/people/person-1/group-memberships': [],
         '/people/person-1/role-assignments': [],
@@ -344,7 +362,9 @@ describe('PersonDetailPage', () => {
     });
 
     it('submits the chosen stage and reason, then re-fetches so the new stage renders', async () => {
-      mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+      mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
       let personCallCount = 0;
       const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
         if (url.includes('/people/person-1/lifecycle-transitions') && init?.method === 'POST') {
@@ -384,7 +404,9 @@ describe('PersonDetailPage', () => {
     });
 
     it('shows the server-provided reason inline and keeps the form open when the transition is denied', async () => {
-      mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+      mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
       const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
         if (url.includes('/lifecycle-transitions') && init?.method === 'POST') {
           return Promise.resolve({
@@ -422,7 +444,9 @@ describe('PersonDetailPage', () => {
    */
   describe('Bacenta/Basonta assignment', () => {
     it('offers the action unconditionally - unlike lifecycle transition, there is no terminal state that removes it', async () => {
-      mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+      mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
       global.fetch = mockFetchByPath({
         '/people/person-1/group-memberships': [],
         '/people/person-1/role-assignments': [],
@@ -438,7 +462,9 @@ describe('PersonDetailPage', () => {
     });
 
     it('searches Groups via RecordPicker and POSTs the selection, then refetches membership history and the Person', async () => {
-      mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+      mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
       let personCallCount = 0;
       let membershipCallCount = 0;
       const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
@@ -509,7 +535,9 @@ describe('PersonDetailPage', () => {
     });
 
     it('shows the server-provided reason-required message inline and keeps the form open on a 400', async () => {
-      mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+      mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
       const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
         if (url.includes('/people/person-1/group-memberships') && init?.method === 'POST') {
           return Promise.resolve({
@@ -542,7 +570,9 @@ describe('PersonDetailPage', () => {
     });
 
     it('shows the server-provided conflict message inline on a 409 (e.g. already active in the target Group)', async () => {
-      mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+      mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
       const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
         if (url.includes('/people/person-1/group-memberships') && init?.method === 'POST') {
           return Promise.resolve({
@@ -583,7 +613,9 @@ describe('PersonDetailPage', () => {
    */
   describe('role grant', () => {
     it('offers the Grant role action unconditionally', async () => {
-      mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+      mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
       global.fetch = mockFetchByPath({
         '/people/person-1/group-memberships': [],
         '/people/person-1/role-assignments': [],
@@ -599,7 +631,9 @@ describe('PersonDetailPage', () => {
     });
 
     it('grants a plain role (no Group required) and refetches role history', async () => {
-      mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+      mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
       let roleCallCount = 0;
       const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
         if (url.includes('/people/person-1/role-assignments') && init?.method === 'POST') {
@@ -639,7 +673,9 @@ describe('PersonDetailPage', () => {
     });
 
     it('requires a Group for a Group-scoped role (BACENTA_LEADER) before Confirm is enabled, and sends groupId', async () => {
-      mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+      mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
       const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
         if (url.includes('/people/person-1/role-assignments') && init?.method === 'POST') {
           return Promise.resolve({ ok: true, json: async () => roleAssignment({ role: 'BACENTA_LEADER', groupId: 'bacenta-9' }) });
@@ -677,7 +713,9 @@ describe('PersonDetailPage', () => {
     });
 
     it('shows the server-provided RBAC denial message inline and keeps the form open (e.g. ADMIN has no grant authority)', async () => {
-      mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+      mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
       const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
         if (url.includes('/people/person-1/role-assignments') && init?.method === 'POST') {
           return Promise.resolve({
@@ -707,7 +745,9 @@ describe('PersonDetailPage', () => {
     });
 
     it('shows the server-provided BR-PPL-04 eligibility conflict inline on a 409', async () => {
-      mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+      mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
       const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
         if (url.includes('/people/person-1/role-assignments') && init?.method === 'POST') {
           return Promise.resolve({
@@ -746,7 +786,9 @@ describe('PersonDetailPage', () => {
    */
   describe('role revoke', () => {
     it('offers Revoke on an active role but not on a past one', async () => {
-      mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+      mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
       global.fetch = mockFetchByPath({
         '/people/person-1/group-memberships': [],
         '/people/person-1/role-assignments': [
@@ -767,7 +809,9 @@ describe('PersonDetailPage', () => {
     });
 
     it('reveals a confirm step before submitting, and cancel sends no request', async () => {
-      mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+      mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
       const fetchMock = jest.fn().mockImplementation((url: string) => {
         if (url.includes('/people/person-1/group-memberships')) return Promise.resolve({ ok: true, json: async () => [] });
         if (url.includes('/people/person-1/role-assignments')) return Promise.resolve({ ok: true, json: async () => [roleAssignment()] });
@@ -790,7 +834,9 @@ describe('PersonDetailPage', () => {
     });
 
     it('revokes the role on confirm, refetches history, and the row now shows as Past', async () => {
-      mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+      mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
       let roleCallCount = 0;
       const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
         if (url.includes('/role-assignments/role-1/revoke') && init?.method === 'POST') {
@@ -834,7 +880,9 @@ describe('PersonDetailPage', () => {
     });
 
     it('shows the server-provided error inline and keeps the confirm step open on failure', async () => {
-      mockUseAuth.mockReturnValue({ state: { status: 'authenticated', accessToken: 'token' } });
+      mockUseAuth.mockReturnValue({
+      state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+    });
       const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
         if (url.includes('/revoke') && init?.method === 'POST') {
           return Promise.resolve({
@@ -862,6 +910,131 @@ describe('PersonDetailPage', () => {
         expect(screen.getByText("No Role Assignment grants 'people.role_assignment.update' to role 'ADMIN'")).toBeInTheDocument(),
       );
       expect(screen.getByTestId('role-revoke-confirm')).toBeInTheDocument();
+    });
+  });
+
+  /**
+   * `[Branch Pastor portal, Pastoral Care sprint]` The "People -> Member
+   * -> Pastoral Care" direction (approved Pastoral Care brief §5) -
+   * Branch-Pastor-only, per this page's own doc comment on why the tab is
+   * conditionally included. Every other role's absence of this tab is
+   * already locked in by the 24 tests above (all `ADMIN`), which keep
+   * passing unchanged.
+   */
+  describe('Pastoral Care tab (Branch Pastor only)', () => {
+    function followUpTask(overrides: Record<string, unknown> = {}) {
+      return {
+        id: 'ft-1',
+        branchId: 'branch-1',
+        groupId: null,
+        personId: 'person-1',
+        assignedToPersonId: 'assignee-1',
+        status: 'OPEN',
+        dueAt: new Date('2026-01-15').toISOString(),
+        escalatedAt: null,
+        escalatedToPersonId: null,
+        createdByPersonId: 'ap-1',
+        createdAt: new Date('2026-01-01').toISOString(),
+        updatedAt: new Date('2026-01-01').toISOString(),
+        ...overrides,
+      };
+    }
+
+    it('shows a Pastoral Care tab only for ASSISTANT_PASTOR, not for other roles', async () => {
+      mockUseAuth.mockReturnValue({
+        state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'ap-1', role: 'ASSISTANT_PASTOR', branchId: 'branch-1' } },
+      });
+      global.fetch = mockFetchByPath({
+        '/people/person-1/group-memberships': [],
+        '/people/person-1/role-assignments': [],
+        '/people/person-1/follow-up-tasks': [followUpTask()],
+        '/people/assignee-1': person({ id: 'assignee-1', firstName: 'Kwame', lastName: 'Asante' }),
+        '/people/person-1': person(),
+      });
+
+      renderPage();
+
+      await waitFor(() => expect(screen.getByRole('tab', { name: 'Pastoral Care' })).toBeInTheDocument());
+    });
+
+    it('does not show a Pastoral Care tab for ADMIN or any other non-Branch-Pastor role', async () => {
+      mockUseAuth.mockReturnValue({
+        state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } },
+      });
+      global.fetch = mockFetchByPath({
+        '/people/person-1/group-memberships': [],
+        '/people/person-1/role-assignments': [],
+        '/people/person-1': person(),
+      });
+
+      renderPage();
+
+      await waitFor(() => expect(screen.getByTestId('person-profile-card')).toBeInTheDocument());
+      expect(screen.queryByRole('tab', { name: 'Pastoral Care' })).not.toBeInTheDocument();
+    });
+
+    it('renders the Person\'s full Follow-up history (every status, not just open ones) on the Pastoral Care tab', async () => {
+      mockUseAuth.mockReturnValue({
+        state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'ap-1', role: 'ASSISTANT_PASTOR', branchId: 'branch-1' } },
+      });
+      const fetchMock = mockFetchByPath({
+        '/people/person-1/group-memberships': [],
+        '/people/person-1/role-assignments': [],
+        '/people/person-1/follow-up-tasks': [followUpTask({ id: 'ft-1', status: 'COMPLETED' }), followUpTask({ id: 'ft-2', status: 'ESCALATED' })],
+        '/people/assignee-1': person({ id: 'assignee-1', firstName: 'Kwame', lastName: 'Asante' }),
+        '/people/person-1': person(),
+      });
+      global.fetch = fetchMock;
+
+      renderPage();
+      await waitFor(() => expect(screen.getByRole('tab', { name: 'Pastoral Care' })).toBeInTheDocument());
+      switchToTab('Pastoral Care');
+
+      await waitFor(() => expect(screen.getByTestId('person-follow-up-history-table')).toBeInTheDocument());
+      const table = within(screen.getByTestId('person-follow-up-history-table'));
+      await waitFor(() => expect(table.getAllByText('Kwame Asante')).toHaveLength(2));
+      expect(table.getByText('Completed')).toBeInTheDocument();
+      expect(table.getByText('Escalated')).toBeInTheDocument();
+
+      // The full-history endpoint, not the queue's own open-only one.
+      expect(fetchMock.mock.calls.some(([url]) => (url as string).includes('/people/person-1/follow-up-tasks'))).toBe(true);
+    });
+
+    it('shows an empty state when the Person has no Follow-ups yet', async () => {
+      mockUseAuth.mockReturnValue({
+        state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'ap-1', role: 'ASSISTANT_PASTOR', branchId: 'branch-1' } },
+      });
+      global.fetch = mockFetchByPath({
+        '/people/person-1/group-memberships': [],
+        '/people/person-1/role-assignments': [],
+        '/people/person-1/follow-up-tasks': [],
+        '/people/person-1': person(),
+      });
+
+      renderPage();
+      await waitFor(() => expect(screen.getByRole('tab', { name: 'Pastoral Care' })).toBeInTheDocument());
+      switchToTab('Pastoral Care');
+
+      await waitFor(() => expect(screen.getByText('No Follow-ups yet')).toBeInTheDocument());
+    });
+
+    it('shows a retryable error state when the Follow-up history request fails', async () => {
+      mockUseAuth.mockReturnValue({
+        state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'ap-1', role: 'ASSISTANT_PASTOR', branchId: 'branch-1' } },
+      });
+      global.fetch = jest.fn().mockImplementation((url: string) => {
+        if (url.includes('/people/person-1/follow-up-tasks')) return Promise.reject(new Error('network unavailable in test'));
+        if (url.includes('/people/person-1/group-memberships')) return Promise.resolve({ ok: true, json: async () => [] });
+        if (url.includes('/people/person-1/role-assignments')) return Promise.resolve({ ok: true, json: async () => [] });
+        if (url.includes('/people/person-1')) return Promise.resolve({ ok: true, json: async () => person() });
+        return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
+      });
+
+      renderPage();
+      await waitFor(() => expect(screen.getByRole('tab', { name: 'Pastoral Care' })).toBeInTheDocument());
+      switchToTab('Pastoral Care');
+
+      await waitFor(() => expect(screen.getByText("Couldn't load Follow-up history")).toBeInTheDocument());
     });
   });
 });

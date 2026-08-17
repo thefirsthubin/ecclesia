@@ -20,6 +20,14 @@ import { useGroupNameById } from './hooks/useGroupName';
  * eleven-role coverage, kept complete since the Mobile Application Shell
  * sprint "costs nothing extra," now actually earns its keep.
  */
+// `[Multi-Tenant Foundation, Phase 1]` `COUNCIL_TREASURER`/
+// `SYSTEM_ADMINISTRATOR` added only because `Record<RoleDto, string>` is
+// exhaustive - same reasoning as `apps/web-admin/src/app/shell/nav-items.ts`'s
+// own `ROLE_LABELS` (see that file's doc comment). This map was already
+// disclosed as drifted from web-admin's terminology (still "Assistant
+// Pastor"/"Admin"/"Council Overseer", not "Branch Pastor"/"Super
+// Administrator"/"Council Administrator") - unaffected, unchanged by this
+// phase; only the two new entries were added.
 const ROLE_LABELS: Record<RoleDto, string> = {
   RESIDENT_PASTOR: 'Resident Pastor',
   ACTING_RESIDENT_PASTOR: 'Acting Resident Pastor',
@@ -27,12 +35,14 @@ const ROLE_LABELS: Record<RoleDto, string> = {
   BACENTA_LEADER: 'Bacenta Leader',
   BASONTA_LEADER: 'Basonta Leader',
   TREASURER: 'Treasurer',
+  COUNCIL_TREASURER: 'Council Treasurer',
   WORKER: 'Worker',
   USHER: 'Usher',
   MEMBER: 'Member',
   VISITOR: 'Visitor',
   ADMIN: 'Admin',
   COUNCIL_OVERSEER: 'Council Overseer',
+  SYSTEM_ADMINISTRATOR: 'System Administrator',
 };
 
 /** `[Mobile Personas sprint]` Which group-scoped label (if any) this

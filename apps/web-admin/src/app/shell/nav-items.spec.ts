@@ -17,7 +17,14 @@ import { navItemsForRole, roleLabel } from './nav-items';
 describe('navItemsForRole', () => {
   const UNGATED_LABELS = ['Dashboard', 'People', 'Pastoral Care', 'Ministry', 'Gatherings', 'Stewardship', 'Insights'];
 
-  it.each(['RESIDENT_PASTOR', 'ACTING_RESIDENT_PASTOR', 'ASSISTANT_PASTOR', 'BASONTA_LEADER', 'TREASURER', 'ADMIN', 'BACENTA_LEADER'] as const)(
+  /**
+   * `[Branch Pastor portal]` `ASSISTANT_PASTOR` removed from this shared
+   * "sees everything ungated" list - Ministry/Stewardship are now
+   * deliberately hidden from this one role (`excludeRoles`) as part of
+   * the approved Branch Pastor sidebar. Every other role's visibility is
+   * unaffected - still asserted here exactly as before.
+   */
+  it.each(['RESIDENT_PASTOR', 'ACTING_RESIDENT_PASTOR', 'BASONTA_LEADER', 'TREASURER', 'ADMIN', 'BACENTA_LEADER'] as const)(
     'shows every ungated item to %s',
     (role) => {
       const labels = navItemsForRole(role).map((item) => item.label);
@@ -26,6 +33,32 @@ describe('navItemsForRole', () => {
       }
     },
   );
+
+  /**
+   * `[Branch Pastor portal]` The approved sidebar, exactly: Dashboard /
+   * People / Gatherings / Finance / Insights / Pastoral Care, in that
+   * order - Ministry, Stewardship, Administration (Configuration/Audit
+   * Log) all absent, and no Bacentas/Basontas standalone item (there
+   * never was one - Bacenta/Basonta detail is reached by drill-down from
+   * `/ministry/:groupId`, not a top-level nav entry for any role).
+   */
+  it('shows the approved Branch Pastor sidebar, in the approved order, with Ministry/Stewardship/Administration absent', () => {
+    const labels = navItemsForRole('ASSISTANT_PASTOR').map((item) => item.label);
+    expect(labels).toEqual(['Dashboard', 'People', 'Gatherings', 'Finance', 'Insights', 'Pastoral Care']);
+    expect(labels).not.toContain('Ministry');
+    expect(labels).not.toContain('Stewardship');
+    expect(labels).not.toContain('Configuration');
+    expect(labels).not.toContain('Audit Log');
+  });
+
+  it('shows Finance only to Branch Pastor - every other role keeps Stewardship, unaffected', () => {
+    expect(navItemsForRole('ASSISTANT_PASTOR').map((item) => item.label)).toContain('Finance');
+    for (const role of ['RESIDENT_PASTOR', 'ACTING_RESIDENT_PASTOR', 'BASONTA_LEADER', 'TREASURER', 'ADMIN', 'BACENTA_LEADER'] as const) {
+      const labels = navItemsForRole(role).map((item) => item.label);
+      expect(labels).not.toContain('Finance');
+      expect(labels).toContain('Stewardship');
+    }
+  });
 
   it('shows Configuration only to ADMIN and COUNCIL_OVERSEER - matches this codebase\'s "Council Administrator roles" client gate (ConfigurationPage.tsx\'s own ALLOWED_ROLES)', () => {
     expect(navItemsForRole('ADMIN').map((i) => i.label)).toContain('Configuration');
@@ -55,10 +88,19 @@ describe('navItemsForRole', () => {
 });
 
 describe('roleLabel', () => {
-  it('applies the three approved terminology corrections (decisions 2 & 3)', () => {
-    expect(roleLabel('ADMIN')).toBe('Super Administrator');
+  it('applies the three Phase 1 terminology corrections (decisions 2 & 3)', () => {
     expect(roleLabel('COUNCIL_OVERSEER')).toBe('Council Administrator');
     expect(roleLabel('ASSISTANT_PASTOR')).toBe('Branch Pastor');
+  });
+
+  /**
+   * `[Multi-Tenant Foundation, Phase 2]` `ADMIN`/`TREASURER` relabeled
+   * now that `SYSTEM_ADMINISTRATOR` exists and is intentionally
+   * restricted - the precondition Phase 1 named for this exact change.
+   */
+  it('applies the Phase 2 Branch Administrator/Branch Treasurer relabel', () => {
+    expect(roleLabel('ADMIN')).toBe('Branch Administrator');
+    expect(roleLabel('TREASURER')).toBe('Branch Treasurer');
   });
 
   it('leaves every other role label unchanged', () => {
@@ -66,6 +108,10 @@ describe('roleLabel', () => {
     expect(roleLabel('ACTING_RESIDENT_PASTOR')).toBe('Acting Resident Pastor');
     expect(roleLabel('BACENTA_LEADER')).toBe('Bacenta Leader');
     expect(roleLabel('BASONTA_LEADER')).toBe('Basonta Leader');
-    expect(roleLabel('TREASURER')).toBe('Treasurer');
+  });
+
+  it('resolves the two new Phase 1 roles to their approved Phase 2 labels', () => {
+    expect(roleLabel('COUNCIL_TREASURER')).toBe('Council Treasurer');
+    expect(roleLabel('SYSTEM_ADMINISTRATOR')).toBe('System Administrator');
   });
 });

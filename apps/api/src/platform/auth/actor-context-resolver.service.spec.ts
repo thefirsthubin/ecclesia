@@ -14,6 +14,7 @@ function buildLogger(): PinoLogger {
 function buildPrisma(overrides: {
   user?: unknown;
   roleAssignments?: unknown[];
+  council?: unknown;
 }): PrismaRootService {
   return {
     user: {
@@ -21,6 +22,14 @@ function buildPrisma(overrides: {
     },
     roleAssignment: {
       findMany: jest.fn().mockResolvedValue(overrides.roleAssignments ?? []),
+    },
+    // `[Multi-Tenant Foundation, Phase 1]` Only consulted by
+    // `resolveCouncilScopedActor` - `overrides.council` defaults to
+    // `undefined` (Prisma's own "not found" shape), not `null`, matching
+    // every other mock in this file that leaves an unused override unset
+    // rather than guessing a default that happens to pass.
+    council: {
+      findUnique: jest.fn().mockResolvedValue(overrides.council),
     },
   } as unknown as PrismaRootService;
 }
@@ -180,5 +189,82 @@ describe('ActorContextResolverService', () => {
 
     await expect(service.resolve('sub-1')).rejects.toThrow(ConflictException);
     expect(logger.error).toHaveBeenCalled();
+  });
+
+  /**
+   * `[Multi-Tenant Foundation, Phase 1]` A Council-scoped Role Assignment
+   * (branchId null, councilId set) - the new path this phase adds. Kept
+   * as its own describe block, separate from the Branch-scoped tests
+   * above, mirroring how `resolve()` itself branches early rather than
+   * threading this case through the existing logic.
+   */
+  describe('Council-scoped Role Assignments', () => {
+    const COUNCIL_ID = 'council-1';
+    const TENANT_ID = 'tenant-1';
+
+    it('resolves tenantId, councilId, and councilBranchIds, with branchId from the Person (not the assignment)', async () => {
+      const prisma = buildPrisma({
+        user: { id: 'user-1', person: { id: PERSON_ID, branchId: BRANCH_ID, lifecycleStage: 'MEMBER' } },
+        roleAssignments: [
+          { role: 'COUNCIL_TREASURER', branchId: null, councilId: COUNCIL_ID, scopeGroupIds: [], group: null },
+        ],
+        council: {
+          tenantId: TENANT_ID,
+          branches: [{ id: 'branch-a' }, { id: 'branch-b' }, { id: 'branch-c' }],
+        },
+      });
+      const service = new ActorContextResolverService(prisma, buildLogger());
+
+      const actor = await service.resolve('sub-1');
+
+      expect(actor).toEqual({
+        personId: PERSON_ID,
+        role: 'COUNCIL_TREASURER',
+        branchId: BRANCH_ID, // the Person's own home Branch, not the (nonexistent) assignment.branchId
+        tenantId: TENANT_ID,
+        councilId: COUNCIL_ID,
+        councilBranchIds: ['branch-a', 'branch-b', 'branch-c'],
+      });
+    });
+
+    it('resolves an empty councilBranchIds array (not undefined) for a Council with no Branches', async () => {
+      const prisma = buildPrisma({
+        user: { id: 'user-1', person: { id: PERSON_ID, branchId: BRANCH_ID, lifecycleStage: 'MEMBER' } },
+        roleAssignments: [
+          { role: 'COUNCIL_OVERSEER', branchId: null, councilId: COUNCIL_ID, scopeGroupIds: [], group: null },
+        ],
+        council: { tenantId: TENANT_ID, branches: [] },
+      });
+      const service = new ActorContextResolverService(prisma, buildLogger());
+
+      const actor = await service.resolve('sub-1');
+
+      expect(actor.councilBranchIds).toEqual([]);
+    });
+
+    it('throws ConflictException when the assignment references a Council that no longer exists', async () => {
+      const prisma = buildPrisma({
+        user: { id: 'user-1', person: { id: PERSON_ID, branchId: BRANCH_ID, lifecycleStage: 'MEMBER' } },
+        roleAssignments: [
+          { role: 'COUNCIL_TREASURER', branchId: null, councilId: COUNCIL_ID, scopeGroupIds: [], group: null },
+        ],
+        council: undefined,
+      });
+      const service = new ActorContextResolverService(prisma, buildLogger());
+
+      await expect(service.resolve('sub-1')).rejects.toThrow(ConflictException);
+    });
+
+    it('throws ConflictException when a Role Assignment has neither branchId nor councilId (should be unreachable given the DB CHECK constraint)', async () => {
+      const prisma = buildPrisma({
+        user: { id: 'user-1', person: { id: PERSON_ID, branchId: BRANCH_ID, lifecycleStage: 'MEMBER' } },
+        roleAssignments: [
+          { role: 'COUNCIL_TREASURER', branchId: null, councilId: null, scopeGroupIds: [], group: null },
+        ],
+      });
+      const service = new ActorContextResolverService(prisma, buildLogger());
+
+      await expect(service.resolve('sub-1')).rejects.toThrow(ConflictException);
+    });
   });
 });

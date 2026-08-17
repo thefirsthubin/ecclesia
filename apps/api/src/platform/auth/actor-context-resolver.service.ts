@@ -42,6 +42,28 @@ import { PrismaRootService } from '../database/prisma-root.service';
  * RLS-scoped `PrismaService` here would be circular: `BranchScopeInterceptor`
  * runs after `AuthGuard`, which is what calls this method in the first
  * place.
+ *
+ * `[Multi-Tenant Foundation, Phase 1]` A Role Assignment can now be
+ * Council-scoped (`branchId` null, `councilId` set) instead of
+ * Branch-scoped - see `RoleAssignment`'s own `db/schema.prisma` doc
+ * comment. That case is resolved by `resolveCouncilScopedActor` below, a
+ * separate branch taken before the existing Branch-scoped logic runs at
+ * all - so the existing, well-tested behavior for every Branch-scoped
+ * role (Branch Pastor/Administrator/Treasurer, Bacenta/Basonta Leader) is
+ * provably untouched: same code path, same output shape, same existing
+ * tests, still green.
+ *
+ * A deliberate, disclosed scope decision for this phase: `tenantId`/
+ * `councilId`/`councilBranchIds` are populated ONLY for a Council-scoped
+ * actor, not for every actor (even though every Branch does, in
+ * principle, belong to a knowable Council/Tenant). Populating them
+ * universally would mean every existing Branch-scoped `ActorContext`
+ * this service already produces gains new fields, breaking every
+ * existing exact-equality test in `actor-context-resolver.service.spec.ts`
+ * for zero behavioral benefit this phase (nothing yet reads `tenantId`/
+ * `councilId` off a Branch-scoped actor) - "preserve existing Branch-
+ * scoped behavior" is read literally here, not just "the same scope
+ * still works."
  */
 @Injectable()
 export class ActorContextResolverService {
@@ -102,6 +124,15 @@ export class ActorContextResolverService {
     }
 
     const assignment = activeAssignments[0];
+
+    if (assignment.branchId === null) {
+      // `[Multi-Tenant Foundation, Phase 1]` A Council-scoped assignment -
+      // no group/scopeGroupIds logic below applies to it (a Council-scoped
+      // role is never also Bacenta/Basonta/cluster-scoped), so this
+      // returns directly rather than falling through.
+      return this.resolveCouncilScopedActor(user.person, assignment);
+    }
+
     const actor: ActorContext = {
       personId: user.person.id,
       role: assignment.role,
@@ -129,5 +160,51 @@ export class ActorContextResolverService {
     }
 
     return actor;
+  }
+
+  /**
+   * `[Multi-Tenant Foundation, Phase 1]` See this class's own doc comment
+   * for why `branchId` comes from the Person, not the assignment, and why
+   * `tenantId`/`councilId`/`councilBranchIds` are populated here and
+   * nowhere else in this service.
+   */
+  private async resolveCouncilScopedActor(
+    person: { id: string; branchId: string },
+    assignment: { role: Role; councilId: string | null },
+  ): Promise<ActorContext> {
+    // Guaranteed non-null here by the migration's own
+    // `role_assignments_branch_xor_council_check` CHECK constraint
+    // (exactly one of branch_id/council_id, never neither) - this guard
+    // exists only so a database-level inconsistency this service cannot
+    // itself have caused fails loudly (ConflictException) rather than
+    // silently, the same "fail closed, don't guess" discipline the
+    // existing multiple-active-assignments check above already applies.
+    if (!assignment.councilId) {
+      throw new ConflictException(
+        `Role Assignment for role '${assignment.role}' has neither a branchId nor a councilId - this violates ` +
+          'the branch_id/council_id CHECK constraint and should be unreachable; indicates database corruption.',
+      );
+    }
+
+    const council = await this.prisma.council.findUnique({
+      where: { id: assignment.councilId },
+      select: { tenantId: true, branches: { select: { id: true } } },
+    });
+
+    if (!council) {
+      throw new ConflictException(
+        `Role Assignment references Council '${assignment.councilId}', which no longer exists - this violates ` +
+          'the council_id foreign key and should be unreachable.',
+      );
+    }
+
+    return {
+      personId: person.id,
+      role: assignment.role,
+      branchId: person.branchId,
+      tenantId: council.tenantId,
+      councilId: assignment.councilId,
+      councilBranchIds: council.branches.map((branch) => branch.id),
+    };
   }
 }

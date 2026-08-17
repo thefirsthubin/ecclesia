@@ -18,8 +18,16 @@ export type Effect = 'ALLOW' | 'DENY';
  * §9.1's hybrid RBAC+ABAC model. Ordered here roughly by breadth for
  * readability only - scope comparison is by resource-membership, not by
  * this ordering.
+ *
+ * `COUNCIL` (Multi-Tenant Foundation, Phase 1): a resource whose
+ * `branchId` belongs to one of the Branches in the actor's own Council -
+ * set membership against `ActorContext.councilBranchIds`, the exact same
+ * shape `CLUSTER` already uses against `clusterBacentaIds`. Deliberately
+ * NOT implemented as `GLOBAL` - `GLOBAL` matches every resource
+ * unconditionally, in every Council, in every future Tenant; `COUNCIL`
+ * must not.
  */
-export type Scope = 'SELF' | 'OWN_GROUP' | 'CLUSTER' | 'BRANCH' | 'GLOBAL';
+export type Scope = 'SELF' | 'OWN_GROUP' | 'CLUSTER' | 'BRANCH' | 'COUNCIL' | 'GLOBAL';
 
 /**
  * Record-level policy checks (Blueprint §9.1, §9.4): the subset of PRD
@@ -85,10 +93,54 @@ export interface PermissionRule {
 export interface ActorContext {
   personId: string;
   role: Role;
+  /**
+   * Always populated, for every actor, Council-scoped roles included -
+   * see `ActorContextResolverService`'s own doc comment for where this
+   * comes from for a Council-scoped Role Assignment (the Person's own
+   * home Branch, not a Branch the assignment itself is pinned to). This
+   * is identity/RLS-session-default information, not an authorization
+   * boundary for a Council-scoped actor - `COUNCIL` scope (see `Scope`'s
+   * own doc comment) is evaluated against `councilBranchIds` below, never
+   * against this field.
+   */
   branchId: string;
   clusterBacentaIds?: string[];
   bacentaId?: string;
   basontaId?: string;
+  /**
+   * (Multi-Tenant Foundation, Phase 1) The Tenant this actor's Council
+   * belongs to. Populated for every actor (every Branch belongs to a
+   * Council, which - per this phase's locked ONE TENANT = ONE COUNCIL
+   * decision - belongs to exactly one Tenant), even though nothing in
+   * this phase's `Scope`/`resourceInScope` yet evaluates against it. Not
+   * a substitute for `GLOBAL`, and not itself an authorization scope
+   * value - purely identity/context, the same role `branchId` played
+   * before `BRANCH` scope existed as a concept separate from "the actor's
+   * one Branch."
+   */
+  tenantId?: string;
+  /**
+   * (Multi-Tenant Foundation, Phase 1) The Council this actor belongs
+   * to - populated for every actor (every Branch belongs to a Council),
+   * not only Council-scoped ones. Identity only, like `tenantId` above;
+   * `COUNCIL` scope evaluation uses `councilBranchIds` below, not this
+   * field directly.
+   */
+  councilId?: string;
+  /**
+   * (Multi-Tenant Foundation, Phase 1) Set membership target for
+   * `COUNCIL` scope, mirroring `clusterBacentaIds`'s own shape exactly:
+   * every Branch id belonging to the actor's Council. Populated ONLY for
+   * a genuinely Council-scoped Role Assignment (mirroring
+   * `clusterBacentaIds`'s own "only when the assignment is actually
+   * cluster-scoped" discipline) - a Branch-scoped actor (Branch Pastor/
+   * Administrator/Treasurer, Bacenta/Basonta Leader) never has this
+   * populated, even though `councilId` above still is. Deliberately not
+   * "every actor gets their Council's Branches" - that would silently
+   * grant Council-wide read access the moment any `COUNCIL`-scoped
+   * permission-matrix row exists for a role never meant to hold one.
+   */
+  councilBranchIds?: string[];
 }
 
 /**

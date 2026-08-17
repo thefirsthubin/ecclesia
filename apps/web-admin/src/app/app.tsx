@@ -16,6 +16,7 @@ import { MinistryPage } from './pages/Ministry/MinistryPage';
 import { GroupDetailPage } from './pages/Ministry/GroupDetailPage';
 import { GatheringsListPage } from './pages/Gatherings/GatheringsListPage';
 import { StewardshipPage } from './pages/Stewardship/StewardshipPage';
+import { BranchFinanceOverviewPage } from './pages/Finance/BranchFinanceOverviewPage';
 import { InsightsPage } from './pages/Insights/InsightsPage';
 
 /**
@@ -140,6 +141,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Stewardship' }]}>
             <StewardshipPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/finance"
+        element={
+          <ProtectedRoute breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Finance' }]}>
+            <BranchFinanceOverviewPage />
           </ProtectedRoute>
         }
       />

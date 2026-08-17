@@ -8,15 +8,21 @@ function FakeLink({
   'aria-current': ariaCurrent,
   onFocus,
   onBlur,
+  onMouseEnter,
+  onMouseLeave,
+  style,
 }: {
   to: string;
   children: React.ReactNode;
   'aria-current'?: 'page';
   onFocus?: () => void;
   onBlur?: () => void;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
+  style?: { outline: string; textDecoration: string };
 }) {
   return (
-    <a href={to} aria-current={ariaCurrent} onFocus={onFocus} onBlur={onBlur}>
+    <a href={to} aria-current={ariaCurrent} onFocus={onFocus} onBlur={onBlur} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} style={style}>
       {children}
     </a>
   );
@@ -140,6 +146,91 @@ describe('Sidebar', () => {
     );
 
     expect(screen.getByText('ADMINISTRATION')).toHaveStyle({ color: '#5B6472' });
+  });
+
+  /** `[Sidebar underline fix]` The browser's default `<a>` underline was
+   * leaking through because nothing overrode it - pinned here as a real
+   * assertion (not just a visual check) so it can't silently regress.
+   * One unconditional inline style covers every interaction state, since
+   * nothing else in this component (or its real `Link`) re-applies a
+   * decoration for hover/focus/active/visited specifically. */
+  it('never underlines a nav link, active or not', () => {
+    render(
+      <ThemeProvider>
+        <Sidebar
+          linkAs={FakeLink}
+          items={[
+            { label: 'Dashboard', href: '/dashboard', icon: 'home', active: true },
+            { label: 'People', href: '/people', icon: 'users', active: false },
+          ]}
+        />
+      </ThemeProvider>,
+    );
+
+    expect(screen.getByRole('link', { name: /Dashboard/ })).toHaveStyle({ textDecoration: 'none' });
+    expect(screen.getByRole('link', { name: /People/ })).toHaveStyle({ textDecoration: 'none' });
+  });
+
+  /** `[Product Experience Sprint II, Phase 3]` The one deliberate,
+   * non-repeating identity moment in the shell chrome - see `Sidebar`'s
+   * own doc comment. */
+  it('renders an "Ecclesia" wordmark linking to homeHref (defaulting to /dashboard)', () => {
+    render(
+      <ThemeProvider>
+        <Sidebar linkAs={FakeLink} items={[{ label: 'Dashboard', href: '/dashboard', icon: 'home', active: true }]} />
+      </ThemeProvider>,
+    );
+
+    expect(screen.getByRole('link', { name: 'Ecclesia' })).toHaveAttribute('href', '/dashboard');
+  });
+
+  it('omits the wordmark header when collapsed', () => {
+    render(
+      <ThemeProvider>
+        <Sidebar collapsed linkAs={FakeLink} items={[{ label: 'Dashboard', href: '/dashboard', icon: 'home', active: true }]} />
+      </ThemeProvider>,
+    );
+
+    expect(screen.queryByRole('link', { name: 'Ecclesia' })).not.toBeInTheDocument();
+  });
+
+  /** `[Product Experience Sprint II, Phase 3]` Nav items previously had
+   * no hover feedback at all. */
+  it('shows a hover background on a non-active item, cleared on mouse leave', () => {
+    render(
+      <ThemeProvider>
+        <Sidebar
+          linkAs={FakeLink}
+          items={[
+            { label: 'Dashboard', href: '/dashboard', icon: 'home', active: true },
+            { label: 'People', href: '/people', icon: 'users', active: false },
+          ]}
+        />
+      </ThemeProvider>,
+    );
+
+    const peopleLink = screen.getByRole('link', { name: /People/ });
+    fireEvent.mouseEnter(peopleLink);
+    expect(peopleLink.firstChild).toHaveStyle({ backgroundColor: '#F9F8F5' });
+    fireEvent.mouseLeave(peopleLink);
+    expect(peopleLink.firstChild).toHaveStyle({ backgroundColor: 'transparent' });
+  });
+
+  it('gives only the active item a visible left accent border', () => {
+    render(
+      <ThemeProvider>
+        <Sidebar
+          linkAs={FakeLink}
+          items={[
+            { label: 'Dashboard', href: '/dashboard', icon: 'home', active: true },
+            { label: 'People', href: '/people', icon: 'users', active: false },
+          ]}
+        />
+      </ThemeProvider>,
+    );
+
+    expect(screen.getByRole('link', { name: /Dashboard/ }).firstChild).toHaveStyle({ borderLeft: '3px solid #1F6F5B' });
+    expect(screen.getByRole('link', { name: /People/ }).firstChild).toHaveStyle({ borderLeft: '3px solid transparent' });
   });
 
   it('renders no group label at all when no item declares a group', () => {

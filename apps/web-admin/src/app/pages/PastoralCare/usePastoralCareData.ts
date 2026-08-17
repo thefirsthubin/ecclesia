@@ -66,6 +66,43 @@ export function useFollowUpTaskQueue(
   );
 }
 
+/**
+ * `[Branch Pastor portal]` `ASSISTANT_PASTOR`'s real
+ * `pastoral_care.followup_task.read` grant is CLUSTER (unchanged), which
+ * spans every Bacenta in `actor.clusterBacentaIds` - not just the first
+ * one `resolveDefaultFollowUpTaskQuery` defaults to (that function's own
+ * disclosed limitation). The exact same `Promise.all` + dedupe-by-id shape
+ * `usePeopleListForGroups` (`People/usePeopleData.ts`) already established
+ * for the identical "one groupId per request, CLUSTER spans several"
+ * mismatch - not a new backend capability, every individual request is
+ * the same `GET /pastoral-care/follow-up-tasks?groupId=X` call
+ * `useFollowUpTaskQueue` above already makes, run once per Bacenta the
+ * actor's real CLUSTER grant already covers.
+ */
+export function useFollowUpTaskQueueForGroups(
+  accessToken: string | undefined,
+  groupIds: string[],
+): AsyncDataResult<FollowUpTaskResponseDto[]> {
+  return useAsyncData<FollowUpTaskResponseDto[]>(
+    async (signal) => {
+      if (!accessToken) return Promise.reject(new Error('not authenticated'));
+      if (groupIds.length === 0) return [];
+      const perGroup = await Promise.all(
+        groupIds.map((groupId) => {
+          const params = new URLSearchParams({ groupId });
+          return apiGet<FollowUpTaskResponseDto[]>(`/pastoral-care/follow-up-tasks?${params.toString()}`, { authToken: accessToken, signal });
+        }),
+      );
+      const byId = new Map<string, FollowUpTaskResponseDto>();
+      for (const task of perGroup.flat()) {
+        byId.set(task.id, task);
+      }
+      return [...byId.values()];
+    },
+    [accessToken, groupIds.join(',')],
+  );
+}
+
 /** `PATCH /follow-up-tasks/:id/complete` - no request body, same
  * no-payload PATCH shape `AlertPriorityCard`'s `resolve()` already
  * established for `PATCH /insights/alerts/:id/resolve`. */
@@ -137,6 +174,28 @@ export function createFollowUpTask(accessToken: string, personId: string, input:
   return apiPost<FollowUpTaskResponseDto>(`/people/${personId}/follow-up-tasks`, input, { authToken: accessToken });
 }
 
+/**
+ * `[Branch Pastor portal, Pastoral Care sprint]` `GET
+ * /people/:personId/follow-up-tasks` - the "People -> Member -> Pastoral
+ * Care" direction (see `PersonDetailPage.tsx`'s own Follow-ups tab). Every
+ * one of the Person's tasks regardless of status, newest first - a
+ * history view, not the open-only/SLA-urgency queue
+ * `useFollowUpTaskQueue` above renders. Same RBAC action
+ * (`pastoral_care.followup_task.read`) as every other read in this file -
+ * a role that cannot already see this Person's Follow-ups via the queue
+ * cannot see them here either; the backend's real 403 is what a denied
+ * actor sees, same precedent as everywhere else in this app.
+ */
+export function usePersonFollowUpTasks(accessToken: string | undefined, personId: string): AsyncDataResult<FollowUpTaskResponseDto[]> {
+  return useAsyncData<FollowUpTaskResponseDto[]>(
+    (signal) => {
+      if (!accessToken) return Promise.reject(new Error('not authenticated'));
+      return apiGet<FollowUpTaskResponseDto[]>(`/people/${personId}/follow-up-tasks`, { authToken: accessToken, signal });
+    },
+    [accessToken, personId],
+  );
+}
+
 export function usePersonName(accessToken: string | undefined, personId: string): AsyncDataResult<PersonResponseDto> {
   return useAsyncData<PersonResponseDto>(
     (signal) => {
@@ -199,5 +258,36 @@ export function useSilentDriftFlags(
       });
     },
     [accessToken, query.groupId, query.status?.join(',')],
+  );
+}
+
+/**
+ * `[Branch Pastor portal]` The same CLUSTER-spans-several-Bacentas fix as
+ * `useFollowUpTaskQueueForGroups` above, applied to Silent-drift flags -
+ * `pastoral_care.silent_drift_flag.read` is CLUSTER for `ASSISTANT_PASTOR`
+ * too (traced against `permission-matrix.ts`, same as Follow-up Tasks'
+ * own doc comment already establishes).
+ */
+export function useSilentDriftFlagsForGroups(
+  accessToken: string | undefined,
+  groupIds: string[],
+): AsyncDataResult<SilentDriftFlagResponseDto[]> {
+  return useAsyncData<SilentDriftFlagResponseDto[]>(
+    async (signal) => {
+      if (!accessToken) return Promise.reject(new Error('not authenticated'));
+      if (groupIds.length === 0) return [];
+      const perGroup = await Promise.all(
+        groupIds.map((groupId) => {
+          const params = new URLSearchParams({ groupId });
+          return apiGet<SilentDriftFlagResponseDto[]>(`/pastoral-care/silent-drift-flags?${params.toString()}`, { authToken: accessToken, signal });
+        }),
+      );
+      const byId = new Map<string, SilentDriftFlagResponseDto>();
+      for (const flag of perGroup.flat()) {
+        byId.set(flag.id, flag);
+      }
+      return [...byId.values()];
+    },
+    [accessToken, groupIds.join(',')],
   );
 }

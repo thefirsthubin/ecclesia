@@ -117,6 +117,49 @@ describe('FollowUpTaskQueuePage', () => {
     await waitFor(() => expect(screen.getByText('No open Follow-up tasks')).toBeInTheDocument());
   });
 
+  /** `[Branch Pastor portal]` `ASSISTANT_PASTOR`'s real
+   * `pastoral_care.followup_task.read` grant is CLUSTER, spanning every
+   * Bacenta in `clusterBacentaIds` - not just the first one
+   * `resolveDefaultFollowUpTaskQuery` defaults to. Two Bacentas here, one
+   * task (`ft-2`) returned by both queries (e.g. re-assigned mid-week);
+   * asserts the rendered queue shows the deduplicated two-task union and
+   * that a request went out per Bacenta in the cluster. */
+  it('merges the Follow-up task queue across every Bacenta in an ASSISTANT_PASTOR\'s cluster, deduplicated by id', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('ASSISTANT_PASTOR', { clusterBacentaIds: ['bacenta-1', 'bacenta-2'] }));
+    const fetchMock = jest.fn().mockImplementation((url: string) => {
+      if (url.includes('/pastoral-care/follow-up-tasks') && url.includes('groupId=bacenta-1')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => [task({ id: 'ft-1', personId: 'subject-1', assignedToPersonId: 'assignee-1' }), task({ id: 'ft-2', personId: 'subject-2', assignedToPersonId: 'assignee-1' })],
+        });
+      }
+      if (url.includes('/pastoral-care/follow-up-tasks') && url.includes('groupId=bacenta-2')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => [task({ id: 'ft-2', personId: 'subject-2', assignedToPersonId: 'assignee-1' }), task({ id: 'ft-3', personId: 'subject-3', assignedToPersonId: 'assignee-1' })],
+        });
+      }
+      if (url.includes('/pastoral-care/silent-drift-flags')) return Promise.resolve({ ok: true, json: async () => [] });
+      if (url.includes('/people/subject-1')) return Promise.resolve({ ok: true, json: async () => personResponse('subject-1', 'Ama', 'Owusu') });
+      if (url.includes('/people/subject-2')) return Promise.resolve({ ok: true, json: async () => personResponse('subject-2', 'Kofi', 'Mensah') });
+      if (url.includes('/people/subject-3')) return Promise.resolve({ ok: true, json: async () => personResponse('subject-3', 'Zainab', 'Alhassan') });
+      if (url.includes('/people/assignee-1')) return Promise.resolve({ ok: true, json: async () => personResponse('assignee-1', 'Kwame', 'Asante') });
+      return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
+    });
+    global.fetch = fetchMock;
+
+    renderPage();
+
+    await waitFor(() => expect(screen.getByText('Ama Owusu')).toBeInTheDocument());
+    expect(screen.getByText('Kofi Mensah')).toBeInTheDocument();
+    expect(screen.getByText('Zainab Alhassan')).toBeInTheDocument();
+    expect(screen.getAllByText('Kofi Mensah')).toHaveLength(1);
+
+    const urls = fetchMock.mock.calls.map((call) => call[0] as string);
+    expect(urls.some((url) => url.includes('groupId=bacenta-1'))).toBe(true);
+    expect(urls.some((url) => url.includes('groupId=bacenta-2'))).toBe(true);
+  });
+
   it('shows a retryable error state when the queue request fails', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('ADMIN'));
     global.fetch = jest.fn().mockRejectedValue(new Error('network unavailable in test'));
@@ -329,7 +372,7 @@ describe('FollowUpTaskQueuePage', () => {
    */
   describe('Create Follow-up task', () => {
     it('POSTs the selected Person/Assignee, then refetches and shows the newly created task in the queue', async () => {
-      mockUseAuth.mockReturnValue(actorWithRole('ASSISTANT_PASTOR'));
+      mockUseAuth.mockReturnValue(actorWithRole('ASSISTANT_PASTOR', { clusterBacentaIds: ['bacenta-1'] }));
       let listCallCount = 0;
       const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
         if (url.includes('/people/subject-1/follow-up-tasks') && init?.method === 'POST') {
@@ -512,6 +555,46 @@ describe('FollowUpTaskQueuePage', () => {
       await waitFor(() =>
         expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('/pastoral-care/silent-drift-flags?groupId=bacenta-1'), expect.anything()),
       );
+    });
+
+    /** `[Branch Pastor portal]` Same cluster-merge fix as Follow-up Tasks
+     * above, applied to Silent-Drift flags - `pastoral_care.silent_drift_flag.read`
+     * is CLUSTER for `ASSISTANT_PASTOR` too. */
+    it('merges Silent-Drift flags across every Bacenta in an ASSISTANT_PASTOR\'s cluster, deduplicated by id', async () => {
+      mockUseAuth.mockReturnValue(actorWithRole('ASSISTANT_PASTOR', { clusterBacentaIds: ['bacenta-1', 'bacenta-2'] }));
+      const fetchMock = jest.fn().mockImplementation((url: string) => {
+        if (url.includes('/pastoral-care/follow-up-tasks')) {
+          return Promise.resolve({ ok: true, json: async () => [] });
+        }
+        if (url.includes('/pastoral-care/silent-drift-flags') && url.includes('groupId=bacenta-1')) {
+          return Promise.resolve({
+            ok: true,
+            json: async () => [silentDriftFlag({ id: 'sdf-1', groupId: 'bacenta-1', personId: 'subject-1' }), silentDriftFlag({ id: 'sdf-2', groupId: 'bacenta-2', personId: 'subject-2' })],
+          });
+        }
+        if (url.includes('/pastoral-care/silent-drift-flags') && url.includes('groupId=bacenta-2')) {
+          return Promise.resolve({
+            ok: true,
+            json: async () => [silentDriftFlag({ id: 'sdf-2', groupId: 'bacenta-2', personId: 'subject-2' }), silentDriftFlag({ id: 'sdf-3', groupId: 'bacenta-2', personId: 'subject-3' })],
+          });
+        }
+        if (url.includes('/people/subject-1')) return Promise.resolve({ ok: true, json: async () => personResponse('subject-1', 'Ama', 'Owusu') });
+        if (url.includes('/people/subject-2')) return Promise.resolve({ ok: true, json: async () => personResponse('subject-2', 'Kofi', 'Mensah') });
+        if (url.includes('/people/subject-3')) return Promise.resolve({ ok: true, json: async () => personResponse('subject-3', 'Zainab', 'Alhassan') });
+        return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
+      });
+      global.fetch = fetchMock;
+
+      renderPage();
+
+      await waitFor(() => expect(screen.getByText('Ama Owusu')).toBeInTheDocument());
+      expect(screen.getByText('Kofi Mensah')).toBeInTheDocument();
+      expect(screen.getByText('Zainab Alhassan')).toBeInTheDocument();
+      expect(screen.getAllByText('Kofi Mensah')).toHaveLength(1);
+
+      const urls = fetchMock.mock.calls.map((call) => call[0] as string);
+      expect(urls.some((url) => url.includes('/pastoral-care/silent-drift-flags?groupId=bacenta-1'))).toBe(true);
+      expect(urls.some((url) => url.includes('/pastoral-care/silent-drift-flags?groupId=bacenta-2'))).toBe(true);
     });
 
     it('shows an empty state when no Persons are flagged', async () => {

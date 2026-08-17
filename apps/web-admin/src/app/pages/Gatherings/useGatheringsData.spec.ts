@@ -33,14 +33,16 @@ describe('resolveDefaultGatheringsQuery', () => {
   });
 
   /** `[Bug fix, Branch Pastor Gatherings Access]` mirrors
-   * `resolveDefaultPeopleQuery`'s own ASSISTANT_PASTOR coverage. */
-  it('scopes an Assistant Pastor to the first Bacenta in their cluster (CLUSTER)', () => {
+   * `resolveDefaultPeopleQuery`'s own ASSISTANT_PASTOR coverage
+   * (deliberately still CLUSTER there - `people.person.read` was never
+   * widened, unlike `gatherings.gathering.read`). */
+  it('[Branch Pastor portal] resolves an Assistant Pastor to the whole Branch (unfiltered), not just the first Bacenta in their cluster', () => {
     expect(
       resolveDefaultGatheringsQuery(actor({ role: 'ASSISTANT_PASTOR', clusterBacentaIds: ['bacenta-1', 'bacenta-2'] })),
-    ).toEqual({ ownerGroupId: 'bacenta-1' });
+    ).toEqual({});
   });
 
-  it('leaves an Assistant Pastor with no clusterBacentaIds unscoped rather than throwing', () => {
+  it('resolves an Assistant Pastor with no clusterBacentaIds to the same whole-Branch query - clusterBacentaIds is irrelevant to this action now', () => {
     expect(resolveDefaultGatheringsQuery(actor({ role: 'ASSISTANT_PASTOR' }))).toEqual({});
   });
 

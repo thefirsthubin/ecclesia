@@ -211,10 +211,9 @@ Documented here explicitly (closing a real Objective-1 gap: this
 pattern existed in practice, in five-plus screens, but had never been
 written down once):
 
-- **Page header**: `AppShell`'s `Breadcrumbs` (sidebar layout) or
-  `DashboardHeader`-style greeting block (pill-nav dashboard layout) +
-  an `<h1>`-equivalent `Heading level={1}` or the page's own
-  `DashboardHeader`. Every page has exactly one.
+- **Page header**: `AppShell`'s `Breadcrumbs` + an `<h1>`-equivalent
+  `Heading level={1}`, or, on dashboards, the page's own
+  `DashboardHeader`-style greeting block. Every page has exactly one.
 - **Section header**: `Heading level={3}` + optional `Text
   variant="bodySmall" color={theme.colors.text.secondary}` subtitle,
   directly inside the section's `Card`, exactly as `ChurchPulseCard`,
@@ -255,15 +254,21 @@ lucide directly. Adding an icon means adding one line to
 
 ### 4.1 The application shell (`AppShell.tsx`)
 
-Every authenticated page renders inside `<AppShell breadcrumbs=... 
-notifications=...>`. Two nav variants:
+Every authenticated page renders inside `<AppShell breadcrumbs=...
+notifications=...>`: persistent `Sidebar` + `TopBar` (breadcrumbs left,
+notification bell + user menu right), collapsing to a toggle below `md`.
 
-- **`navVariant="sidebar"`** (default, every page except `/dashboard`):
-  persistent `Sidebar` + `TopBar` (breadcrumbs left, notification bell +
-  user menu right). Collapses to a toggle below `md`.
-- **`navVariant="pill"`** (`/dashboard` only, a deliberate, disclosed,
-  page-scoped exception from the Dashboard Redesign sprint): a top
-  `PillNav` segmented control instead of the sidebar.
+**`[Correction, Product Experience Sprint II, Phase 1 audit]`** This
+section previously documented a second `navVariant="pill"` layout
+(`/dashboard` only, a top `PillNav` segmented control instead of the
+sidebar) as a "deliberate, disclosed, page-scoped exception." That
+variant, and the `navVariant` prop itself, were removed from `AppShell.tsx`
+in a later pass than this document ("Final UX Design Specification §12
+decision 1... the `navVariant` prop this component used to branch on is
+gone entirely, not merely defaulted" - `AppShell.tsx`'s own doc comment).
+Every route, Dashboard included, has rendered the one persistent-sidebar
+grammar for some time; this document was simply never updated to match.
+Corrected here rather than left to mislead the next reader.
 
 A skip-link (`Skip to main content`) precedes everything, and page
 content sits inside a `<main id="main-content">` landmark — every page
@@ -279,6 +284,19 @@ Enter/Space activates it exactly like a click — this is a real
 dashboard KPI tiles across all five personas, and `QuickActionsRow`'s
 tinted stack all reuse this one mechanism rather than five different
 hover implementations.
+
+**Hero vs. standard resting elevation** (`[Dashboard Visual Redesign]`,
+Release 1) — `Card`'s own default (`elevation={0}`, border only) stays
+correct for the common case: an ordinary KPI tile, list card, or form
+card sitting flat on the page. Exactly one zone per screen may
+deliberately opt into `elevation={1}` at rest instead of on hover: the
+page's own single hero metric (today, only `ChurchPulseInsightsPanel`
+on the Resident Pastor dashboard — the same "exactly one hero metric"
+rule already documented for that panel). This is a resting-state
+exception granted to a specific, named zone, not a general "raise
+elevation for visual interest" license — a second card claiming
+`elevation={1}` without being that screen's one hero would just be the
+flat-hierarchy problem restated one level up.
 
 ### 4.3 Empty & loading states
 

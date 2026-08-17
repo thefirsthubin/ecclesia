@@ -71,7 +71,7 @@ describe('LoginPage', () => {
       mode: 'development',
       devUsers: [
         { id: 'dev-resident-pastor', label: 'Resident Pastor', role: 'RESIDENT_PASTOR' },
-        { id: 'dev-treasurer', label: 'Treasurer', role: 'TREASURER' },
+        { id: 'dev-treasurer', label: 'Branch Treasurer', role: 'TREASURER', context: 'River of Life Headquarters' },
       ],
       login: jest.fn(),
       submitMfaCode: jest.fn(),
@@ -83,8 +83,33 @@ describe('LoginPage', () => {
 
     expect(screen.getByRole('radiogroup')).toBeInTheDocument();
     expect(screen.getByText('Resident Pastor')).toBeInTheDocument();
-    expect(screen.getByText('Treasurer')).toBeInTheDocument();
+    expect(screen.getByText('Branch Treasurer')).toBeInTheDocument();
     expect(screen.queryByLabelText('Password')).not.toBeInTheDocument();
+  });
+
+  /**
+   * `[Multi-Tenant Foundation, Phase 2]` `context` (e.g. "River of Life
+   * Headquarters") renders as a secondary line under the role label, not
+   * folded into it - and simply doesn't render at all for a persona that
+   * doesn't have one (Council-scoped/platform personas).
+   */
+  it('shows a persona\'s context label when present, and omits the line entirely when absent', () => {
+    mockUseAuth.mockReturnValue({
+      state: { status: 'unauthenticated' },
+      mode: 'development',
+      devUsers: [
+        { id: 'dev-bacenta-leader', label: 'Bacenta Leader', role: 'BACENTA_LEADER', context: 'Grace Bacenta' },
+        { id: 'dev-resident-pastor', label: 'Resident Pastor', role: 'RESIDENT_PASTOR' },
+      ],
+      login: jest.fn(),
+      submitMfaCode: jest.fn(),
+      loginAsDevUser: jest.fn(),
+      logout: jest.fn(),
+    });
+
+    renderLoginPage();
+
+    expect(screen.getByText('— Grace Bacenta')).toBeInTheDocument();
   });
 
   it('calls loginAsDevUser with the selected persona id and no other credentials', async () => {

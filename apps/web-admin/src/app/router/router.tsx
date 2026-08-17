@@ -138,9 +138,15 @@ export interface LinkProps {
    * call site is unaffected. */
   onFocus?: () => void;
   onBlur?: () => void;
+  /** `[Product Experience Sprint II, Phase 3]` Same reasoning as
+   * `onFocus`/`onBlur` above - lets shell consumers (`Breadcrumbs`) apply
+   * a hover state, which nothing did before this. Optional, every other
+   * call site unaffected. */
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
-export function Link({ to, children, className, style, 'aria-current': ariaCurrent, onClick, onFocus, onBlur }: LinkProps) {
+export function Link({ to, children, className, style, 'aria-current': ariaCurrent, onClick, onFocus, onBlur, onMouseEnter, onMouseLeave }: LinkProps) {
   const navigate = useNavigate();
   return (
     <a
@@ -150,6 +156,8 @@ export function Link({ to, children, className, style, 'aria-current': ariaCurre
       aria-current={ariaCurrent}
       onFocus={onFocus}
       onBlur={onBlur}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       onClick={(event) => {
         // Plain left-click, no modifier keys held: intercept for client-side
         // navigation. Modifier-clicks (open in new tab, etc.) fall through

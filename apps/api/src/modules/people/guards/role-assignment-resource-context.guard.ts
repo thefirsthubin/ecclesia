@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import type { ActorContext, ResourceContext } from '@ecclesia/rbac';
 
 import { BranchConfigurationService } from '../../../platform/rbac/branch-configuration.service';
@@ -73,6 +73,22 @@ export class RoleAssignmentRevokeResourceContextGuard extends EcclesiaContextGua
     }
     if (assignment.groupId) {
       return this.groupScopeService.loadResourceContext(assignment.groupId);
+    }
+    // `[Multi-Tenant Foundation, Phase 1]` `assignment.branchId` can now be
+    // null (a Council-scoped assignment) - unreachable via the grant flow
+    // today (`RoleAssignmentService.grant()` rejects COUNCIL_TREASURER/
+    // SYSTEM_ADMINISTRATOR before one can ever be created), but this
+    // guard's own type no longer guarantees that on its own. Revoking a
+    // Council-scoped assignment has no defined resource-scope policy yet
+    // (who is authorized to revoke a Council Treasurer's own assignment,
+    // and against what scope, is a real product decision this phase does
+    // not make) - failing loudly here, not guessing a scope that could
+    // silently grant or deny revoke authority incorrectly.
+    if (!assignment.branchId) {
+      throw new ConflictException(
+        `Role Assignment '${assignmentId}' is Council-scoped - revoking a Council-scoped Role Assignment isn't ` +
+          'supported yet (no resource-scope policy exists for it). This is a deliberately deferred capability.',
+      );
     }
     return { branchId: assignment.branchId };
   }

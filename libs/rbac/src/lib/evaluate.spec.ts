@@ -163,6 +163,72 @@ describe('evaluate() - scope resolution (Blueprint §9.2)', () => {
     expect(decision.effect).toBe('DENY');
   });
 
+  /**
+   * `[Multi-Tenant Foundation, Phase 1]` COUNCIL scope - set membership
+   * against `councilBranchIds`, the same shape as CLUSTER's
+   * `clusterBacentaIds` tests above, one level up the hierarchy.
+   */
+  it('COUNCIL scope allows when the resource’s branchId is in the actor’s councilBranchIds set', () => {
+    const councilTreasurer: ActorContext = {
+      personId: 'ct-1',
+      role: 'COUNCIL_TREASURER',
+      branchId: 'branch-1',
+      councilId: 'council-1',
+      councilBranchIds: ['branch-1', 'branch-2', 'branch-3'],
+    };
+    const councilMatrix: PermissionRule[] = [
+      { role: 'COUNCIL_TREASURER', action: 'stewardship.transaction.read', effect: 'ALLOW', scope: 'COUNCIL' },
+    ];
+
+    const decision = evaluateRoleAndScope(
+      councilTreasurer,
+      'stewardship.transaction.read',
+      { branchId: 'branch-2' },
+      councilMatrix,
+    );
+    expect(decision.effect).toBe('ALLOW');
+  });
+
+  it('COUNCIL scope denies when the resource’s branchId is not in the actor’s councilBranchIds set (a different Council’s Branch)', () => {
+    const councilTreasurer: ActorContext = {
+      personId: 'ct-1',
+      role: 'COUNCIL_TREASURER',
+      branchId: 'branch-1',
+      councilId: 'council-1',
+      councilBranchIds: ['branch-1', 'branch-2'],
+    };
+    const councilMatrix: PermissionRule[] = [
+      { role: 'COUNCIL_TREASURER', action: 'stewardship.transaction.read', effect: 'ALLOW', scope: 'COUNCIL' },
+    ];
+
+    const decision = evaluateRoleAndScope(
+      councilTreasurer,
+      'stewardship.transaction.read',
+      { branchId: 'a-branch-in-a-different-council' },
+      councilMatrix,
+    );
+    expect(decision.effect).toBe('DENY');
+  });
+
+  it('COUNCIL scope denies when the actor holds no councilBranchIds at all (e.g. a Branch-scoped actor)', () => {
+    const branchTreasurer: ActorContext = {
+      personId: 'bt-1',
+      role: 'TREASURER',
+      branchId: 'branch-1',
+    };
+    const councilMatrix: PermissionRule[] = [
+      { role: 'TREASURER', action: 'stewardship.transaction.read', effect: 'ALLOW', scope: 'COUNCIL' },
+    ];
+
+    const decision = evaluateRoleAndScope(
+      branchTreasurer,
+      'stewardship.transaction.read',
+      { branchId: 'branch-1' },
+      councilMatrix,
+    );
+    expect(decision.effect).toBe('DENY');
+  });
+
   it('GLOBAL scope matches any resource', () => {
     const councilOverseer: ActorContext = { personId: 'actor-3', role: 'COUNCIL_OVERSEER', branchId: 'branch-1' };
     const globalMatrix: PermissionRule[] = [
