@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { RbacGuard, RequirePermission } from '@ecclesia/rbac';
-import { createGroupMembershipRequestSchema } from '@ecclesia/contracts';
-import type { CreateGroupMembershipRequestInput } from '@ecclesia/contracts';
+import { createGroupMembershipRequestSchema, leaveGroupMembershipSchema } from '@ecclesia/contracts';
+import type { CreateGroupMembershipRequestInput, LeaveGroupMembershipInput } from '@ecclesia/contracts';
 
 import { ZodValidationPipe } from '../../../platform/pipes/zod-validation.pipe';
 import { GroupMembershipResourceContextGuard } from '../guards/group-membership-resource-context.guard';
@@ -36,5 +36,24 @@ export class GroupMembershipController {
   @UseGuards(GroupMembershipResourceContextGuard, RbacGuard)
   listForPerson(@Param('personId') personId: string) {
     return this.groupMembershipService.listForPerson(personId);
+  }
+
+  /**
+   * `[Milestone B: People + Pastoral + Outreach Foundation]` Closes an
+   * active membership with no replacement opened - the "leave" gap
+   * MILESTONE_B_DESIGN_NOTES.md Part 3 identified. Reuses
+   * `people.group_membership.update`, the same action `assign` above
+   * requires - no new RBAC action needed, this is the same capability
+   * ("change this Person's Bacenta/Basonta membership state") with a
+   * different shape of change.
+   */
+  @Post('leave')
+  @RequirePermission('people.group_membership.update')
+  @UseGuards(GroupMembershipResourceContextGuard, RbacGuard)
+  leave(
+    @Param('personId') personId: string,
+    @Body(new ZodValidationPipe(leaveGroupMembershipSchema)) body: LeaveGroupMembershipInput,
+  ) {
+    return this.groupMembershipService.leave(personId, body);
   }
 }

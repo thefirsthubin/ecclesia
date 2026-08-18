@@ -1,14 +1,15 @@
 import { randomUUID } from 'crypto';
 
 import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { computeFollowUpTaskDueAt } from '@ecclesia/domain-pastoral-care';
-import type { FollowUpTaskTrigger } from '@ecclesia/domain-pastoral-care';
+import { checkFollowUpTaskStatusTransition, computeFollowUpTaskDueAt } from '@ecclesia/domain-pastoral-care';
+import type { FollowUpTaskStatusValue, FollowUpTaskTrigger } from '@ecclesia/domain-pastoral-care';
 import type {
   CreateFollowUpTaskInput,
   PublishableEngagementSignal,
   FollowUpTaskResponseDto,
   FollowUpTaskStatusDto,
   ListFollowUpTasksForActorQuery,
+  UpdateFollowUpTaskInput,
 } from '@ecclesia/contracts';
 import type { ActorContext } from '@ecclesia/rbac';
 import type { FollowUpTask, FollowUpTaskStatus } from '@prisma/client';
@@ -25,9 +26,13 @@ function toResponseDto(task: FollowUpTask): FollowUpTaskResponseDto {
     personId: task.personId,
     assignedToPersonId: task.assignedToPersonId,
     status: task.status,
+    priority: task.priority,
+    description: task.description,
     dueAt: task.dueAt ? task.dueAt.toISOString() : null,
+    trigger: task.trigger,
     escalatedAt: task.escalatedAt ? task.escalatedAt.toISOString() : null,
     escalatedToPersonId: task.escalatedToPersonId,
+    completedAt: task.completedAt ? task.completedAt.toISOString() : null,
     createdByPersonId: task.createdByPersonId,
     createdAt: task.createdAt.toISOString(),
     updatedAt: task.updatedAt.toISOString(),
@@ -101,6 +106,16 @@ export class FollowUpTaskService {
       groupId: input.groupId,
       dueAt,
       createdByPersonId: actor.personId,
+      // `[Milestone B]` `priority` defaults server-side (Prisma's own
+      // `@default(MEDIUM)`) when omitted - passed through only when the
+      // caller actually supplied one. `description` passed through as-is
+      // (length already capped by `createFollowUpTaskSchema`).
+      // `input.trigger` is the real value the caller sent (MANUAL by the
+      // schema's own default) - previously only consumed to compute
+      // `dueAt` above and then discarded; now persisted too.
+      priority: input.priority,
+      description: input.description,
+      trigger: input.trigger,
     });
     return toResponseDto(task);
   }
@@ -144,11 +159,36 @@ export class FollowUpTaskService {
     return toResponseDto(task);
   }
 
+  /**
+   * `[Milestone B]` `PATCH /follow-up-tasks/:id` - edits the brief
+   * operational fields only. Never touches `status` - each status
+   * transition keeps its own dedicated method (`start`/`complete`/
+   * `escalate`/`cancel`), the pattern this class already established
+   * before this milestone.
+   */
+  async updateDetails(id: string, input: UpdateFollowUpTaskInput): Promise<FollowUpTaskResponseDto> {
+    await this.requireExisting(id);
+    const task = await this.followUpTaskRepository.updateDetails(id, {
+      priority: input.priority,
+      description: input.description,
+    });
+    return toResponseDto(task);
+  }
+
+  /** `[Milestone B]` `OPEN -> IN_PROGRESS` - a Shepherd/Pastor picking up
+   * a task they've started acting on but not yet resolved. */
+  async start(id: string): Promise<FollowUpTaskResponseDto> {
+    const existing = await this.requireTransition(id, 'IN_PROGRESS');
+    const task = await this.followUpTaskRepository.updateStatus(existing.id, { status: 'IN_PROGRESS' });
+    return toResponseDto(task);
+  }
+
   /** FR-PC-04 acceptance: Shepherd logs an outcome, moving the task to its
-   * terminal `COMPLETED` state. */
+   * terminal `COMPLETED` state. `[Milestone B]` now also sets
+   * `completedAt`. */
   async complete(id: string): Promise<FollowUpTaskResponseDto> {
-    const existing = await this.requireOpenOrEscalated(id);
-    const task = await this.followUpTaskRepository.update(existing.id, { status: 'COMPLETED' });
+    const existing = await this.requireTransition(id, 'COMPLETED');
+    const task = await this.followUpTaskRepository.updateStatus(existing.id, { status: 'COMPLETED', completedAt: new Date() });
 
     // `[Engagement Signal Ingestion Pipeline milestone]` Blueprint §10.4's
     // `follow_up.completed` (Follow-up responsiveness category).
@@ -180,13 +220,12 @@ export class FollowUpTaskService {
   /** BR-PC-04: "escalates to the assigned Person's organizational
    * superior." `escalatedToPersonId` is caller-supplied - see this
    * class's doc comment for why automatic hierarchy resolution is out of
-   * scope here. */
+   * scope here. `[Milestone B]` now reachable from `OPEN` or
+   * `IN_PROGRESS` (previously `OPEN` only, in effect - see the new
+   * `checkFollowUpTaskStatusTransition` graph). */
   async escalate(id: string, escalatedToPersonId: string): Promise<FollowUpTaskResponseDto> {
-    const existing = await this.requireOpenOrEscalated(id);
-    if (existing.status === 'ESCALATED') {
-      throw new ConflictException(`Follow-up task '${id}' is already escalated`);
-    }
-    const task = await this.followUpTaskRepository.update(existing.id, {
+    const existing = await this.requireTransition(id, 'ESCALATED');
+    const task = await this.followUpTaskRepository.updateStatus(existing.id, {
       status: 'ESCALATED',
       escalatedAt: new Date(),
       escalatedToPersonId,
@@ -194,13 +233,40 @@ export class FollowUpTaskService {
     return toResponseDto(task);
   }
 
-  private async requireOpenOrEscalated(id: string): Promise<FollowUpTask> {
+  /**
+   * `[Milestone B]` `PATCH /follow-up-tasks/:id/cancel` - reachable from
+   * any active state (`OPEN`/`IN_PROGRESS`/`ESCALATED`), never from a
+   * terminal one. Reuses `pastoral_care.followup_task.update`, the same
+   * action every other status-transition method already requires - no
+   * new RBAC action.
+   */
+  async cancel(id: string): Promise<FollowUpTaskResponseDto> {
+    const existing = await this.requireTransition(id, 'CANCELLED');
+    const task = await this.followUpTaskRepository.updateStatus(existing.id, { status: 'CANCELLED' });
+    return toResponseDto(task);
+  }
+
+  private async requireExisting(id: string): Promise<FollowUpTask> {
     const existing = await this.followUpTaskRepository.findById(id);
     if (!existing) {
       throw new NotFoundException(`No Follow-up task found with id '${id}'`);
     }
-    if (existing.status === 'COMPLETED') {
-      throw new ConflictException(`Follow-up task '${id}' is already COMPLETED`);
+    return existing;
+  }
+
+  /**
+   * `[Milestone B]` Replaces the old 3-state `requireOpenOrEscalated` -
+   * every status transition now goes through the real
+   * `checkFollowUpTaskStatusTransition` graph (`libs/domain/pastoral-care`),
+   * the same "validate against a modeled state machine, not an ad hoc
+   * per-method check" discipline `PersonService.transitionLifecycleStage`/
+   * `GatheringService.update` already established for their own domains.
+   */
+  private async requireTransition(id: string, to: FollowUpTaskStatusValue): Promise<FollowUpTask> {
+    const existing = await this.requireExisting(id);
+    const check = checkFollowUpTaskStatusTransition(existing.status, to);
+    if (!check.allowed) {
+      throw new ConflictException(check.reason);
     }
     return existing;
   }

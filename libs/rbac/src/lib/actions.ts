@@ -212,6 +212,55 @@ export const ACTIONS = [
   // `permission-matrix.ts`'s SYSTEM_ADMINISTRATOR row for the GLOBAL-scope
   // reasoning specific to this one action.
   'platform.tenant.read',
+
+  // `[Milestone B: People + Pastoral + Outreach Foundation]` Outreach - no
+  // PRD §17.3 row covers this (Outreach did not exist as a domain until
+  // this milestone). See MILESTONE_B_DESIGN_NOTES.md Part 4. One event
+  // (`Outreach`), many people reached at it (`OutreachContact`) - separate
+  // actions since a role could plausibly hold one without the other (e.g.
+  // Resident Pastor's read-only oversight of the outreach domain overall).
+  'outreach.event.create',
+  'outreach.event.read',
+  'outreach.contact.create',
+  'outreach.contact.read',
+  // Promoting a lazily-created OutreachContact into a real Person
+  // (MILESTONE_B_DESIGN_NOTES.md Part 4's lazy-promotion design) - a
+  // mutation of the contact record itself (setting its personId), not a
+  // new People-domain action; `people.person.create` still separately
+  // gates the actual Person creation this triggers, via `PersonService`.
+  'outreach.contact.update',
+
+  // `[Milestone B: People + Pastoral + Outreach Foundation]` The private
+  // pastoral domain (Part 5's Option C) - deliberately its own action
+  // namespace, distinct from `pastoral_care.notes.*`, so no role's
+  // existing `pastoral_care.notes.*` grant (e.g. BACENTA_LEADER's) can
+  // ever imply access to this data. See MILESTONE_B_DESIGN_NOTES.md Part
+  // 5/6. Author-only visibility is enforced at the query layer, not by a
+  // scope value - no separate "read own only" action is needed for that.
+  'pastoral_care.prayer_note.create',
+  'pastoral_care.prayer_note.read',
+  // Status only (OPEN/RESOLVED triage) - content itself is immutable,
+  // matching `pastoral_care.notes`' own no-update-route precedent.
+  'pastoral_care.prayer_note.update',
+
+  // `[Milestone B]` Counselling (MILESTONE_B_DESIGN_NOTES.md Part 8) -
+  // operational scheduling only, same private-pastoral-domain RBAC
+  // pattern as prayer notes (own action namespace, explicit ADMIN DENY)
+  // but NOT author-only - see `CounsellingSession`'s own schema.prisma
+  // doc comment for why.
+  'pastoral_care.counselling.create',
+  'pastoral_care.counselling.read',
+  'pastoral_care.counselling.update',
+
+  // `[Milestone B]` Member interactions (MILESTONE_B_DESIGN_NOTES.md Part
+  // 9) - pastor-only for this milestone, an approved, explicit decision
+  // (not an oversight) - no Bacenta/Basonta Leader row exists for this
+  // action, unlike e.g. `pastoral_care.followup_task.*`. No separate
+  // `.update` action - like `gatherings.attendance.create`, a correction
+  // is a new entry, not an edit to an old one (this is a log, not a
+  // mutable record).
+  'pastoral_care.interaction.create',
+  'pastoral_care.interaction.read',
 ] as const;
 
 export type Action = (typeof ACTIONS)[number];

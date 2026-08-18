@@ -148,4 +148,34 @@ describe('PersonRepository', () => {
       expect(result).toBe(470);
     });
   });
+
+  describe('[Milestone B] findWithoutActiveBacenta', () => {
+    it('filters to Persons with no active PASTORAL_CARE membership', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.person.findMany.mockResolvedValue([]);
+
+      await repository.findWithoutActiveBacenta('branch-1');
+
+      expect(prisma.person.findMany).toHaveBeenCalledWith({
+        where: {
+          branchId: 'branch-1',
+          groupMemberships: { none: { groupType: 'PASTORAL_CARE', endedAt: null } },
+        },
+        orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }],
+      });
+    });
+
+    it('also filters by search when given', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.person.findMany.mockResolvedValue([]);
+
+      await repository.findWithoutActiveBacenta('branch-1', 'Ama');
+
+      const call = prisma.person.findMany.mock.calls[0][0];
+      expect(call.where.OR).toEqual([
+        { firstName: { contains: 'Ama', mode: 'insensitive' } },
+        { lastName: { contains: 'Ama', mode: 'insensitive' } },
+      ]);
+    });
+  });
 });

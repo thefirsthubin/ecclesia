@@ -93,6 +93,21 @@ export class GroupMembershipRepository {
     return membership;
   }
 
+  /**
+   * `[Milestone B: People + Pastoral + Outreach Foundation]` Ends a single
+   * active membership with no replacement opened - the "leave" gap
+   * `MILESTONE_B_DESIGN_NOTES.md` Part 3 identified (`applyChange` above
+   * is the only other mutation, and it always requires a target group to
+   * open). Same `endedAt`/`reason` shape `applyChange` already uses for
+   * closing a membership.
+   */
+  closeMembership(membershipId: string, reason: string): Promise<GroupMembership> {
+    return this.prisma.groupMembership.update({
+      where: { id: membershipId },
+      data: { endedAt: new Date(), reason },
+    });
+  }
+
   /** Ministry milestone (FR-MIN-03): "rostered workers" for a Basonta -
    * see `GroupRosterService`'s own doc comment for why this lives here
    * rather than as a new Ministry-owned query. */

@@ -742,6 +742,100 @@ const BASE_MATRIX: PermissionRule[] = [
     reason: 'NFR-PRIV-01 - configuration authority does not imply pastoral-content access',
   },
 
+  // --- `[Milestone B: People + Pastoral + Outreach Foundation]` Prayer
+  // notes: the private pastoral domain (MILESTONE_B_DESIGN_NOTES.md Part
+  // 5/6's approved Option C). Deliberately narrower than
+  // `pastoral_care.notes.*` immediately above: no BACENTA_LEADER row at
+  // all (the approved decision explicitly excludes Bacenta/Basonta
+  // Leaders from this tier, unlike the general PastoralNote model). Scope
+  // here only gates "can this actor read/create prayer notes for a
+  // Person in their organizational scope at all" - the additionally
+  // stronger author-only restriction (approved: even Resident Pastor and
+  // Assistant Pastor do not see each other's notes) is enforced at the
+  // query layer (`PrayerNoteService`/`PrayerNoteRepository`), which this
+  // matrix cannot express (no "author only" Scope value exists). ---
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'pastoral_care.prayer_note.read',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason: '[Milestone B] Same organizational scope as pastoral_care.notes.read - the stronger author-only restriction is enforced separately, at the query layer.',
+  },
+  { role: 'RESIDENT_PASTOR', action: 'pastoral_care.prayer_note.create', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'RESIDENT_PASTOR', action: 'pastoral_care.prayer_note.update', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'ASSISTANT_PASTOR', action: 'pastoral_care.prayer_note.read', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'ASSISTANT_PASTOR', action: 'pastoral_care.prayer_note.create', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'ASSISTANT_PASTOR', action: 'pastoral_care.prayer_note.update', effect: 'ALLOW', scope: 'CLUSTER' },
+  {
+    role: 'ADMIN',
+    action: 'pastoral_care.prayer_note.read',
+    effect: 'DENY',
+    reason: '[Milestone B] Same NFR-PRIV-01 reasoning as pastoral_care.notes.read - configuration authority does not imply pastoral-content access.',
+  },
+  {
+    role: 'ADMIN',
+    action: 'pastoral_care.prayer_note.create',
+    effect: 'DENY',
+    reason: '[Milestone B] Same NFR-PRIV-01 reasoning as pastoral_care.notes.create.',
+  },
+  {
+    role: 'ADMIN',
+    action: 'pastoral_care.prayer_note.update',
+    effect: 'DENY',
+    reason: '[Milestone B] Same NFR-PRIV-01 reasoning as pastoral_care.notes.create.',
+  },
+
+  // --- `[Milestone B]` Counselling - same private-pastoral-domain
+  // pattern as prayer notes above, but NOT author-only (organizational
+  // BRANCH/CLUSTER scope only - see CounsellingSession's own schema
+  // doc comment). ---
+  { role: 'RESIDENT_PASTOR', action: 'pastoral_care.counselling.read', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'RESIDENT_PASTOR', action: 'pastoral_care.counselling.create', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'RESIDENT_PASTOR', action: 'pastoral_care.counselling.update', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'ASSISTANT_PASTOR', action: 'pastoral_care.counselling.read', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'ASSISTANT_PASTOR', action: 'pastoral_care.counselling.create', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'ASSISTANT_PASTOR', action: 'pastoral_care.counselling.update', effect: 'ALLOW', scope: 'CLUSTER' },
+  {
+    role: 'ADMIN',
+    action: 'pastoral_care.counselling.read',
+    effect: 'DENY',
+    reason: '[Milestone B] Same NFR-PRIV-01 reasoning as pastoral_care.notes.read.',
+  },
+  {
+    role: 'ADMIN',
+    action: 'pastoral_care.counselling.create',
+    effect: 'DENY',
+    reason: '[Milestone B] Same NFR-PRIV-01 reasoning as pastoral_care.notes.create.',
+  },
+  {
+    role: 'ADMIN',
+    action: 'pastoral_care.counselling.update',
+    effect: 'DENY',
+    reason: '[Milestone B] Same NFR-PRIV-01 reasoning as pastoral_care.notes.create.',
+  },
+
+  // --- `[Milestone B]` Member interactions - pastor-only for this
+  // milestone (approved decision: "keep them pastor-only for Milestone
+  // B, revisit leader visibility later" - deliberately no BACENTA_LEADER/
+  // BASONTA_LEADER row, unlike this file's own pastoral_care.followup_task.*
+  // rows a few sections above). ---
+  { role: 'RESIDENT_PASTOR', action: 'pastoral_care.interaction.read', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'RESIDENT_PASTOR', action: 'pastoral_care.interaction.create', effect: 'ALLOW', scope: 'BRANCH' },
+  { role: 'ASSISTANT_PASTOR', action: 'pastoral_care.interaction.read', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'ASSISTANT_PASTOR', action: 'pastoral_care.interaction.create', effect: 'ALLOW', scope: 'CLUSTER' },
+  {
+    role: 'ADMIN',
+    action: 'pastoral_care.interaction.read',
+    effect: 'DENY',
+    reason: '[Milestone B] Same NFR-PRIV-01 reasoning as pastoral_care.notes.read.',
+  },
+  {
+    role: 'ADMIN',
+    action: 'pastoral_care.interaction.create',
+    effect: 'DENY',
+    reason: '[Milestone B] Same NFR-PRIV-01 reasoning as pastoral_care.notes.create.',
+  },
+
   // --- [INFERRED - no PRD §17.3 row covers this] Poimen enrollment ------------
   // tracking (FR-PC-06). §19.4's workflow narrative names "Resident Pastor
   // or Assistant Pastor" as the actors who enroll/graduate a Poimen, plus
@@ -986,6 +1080,40 @@ const BASE_MATRIX: PermissionRule[] = [
     reason:
       "[Multi-Tenant Foundation, Phase 1] GLOBAL is used here deliberately, not as a shortcut - Tenant is the platform's own administrative resource, not customer (church) data, so there is no Tenant/Council boundary for this specific action to violate the way there would be for e.g. stewardship.transaction.read. This is the one legitimate use of GLOBAL this phase's own instructions anticipate (\"do not use GLOBAL as tenant access\" refers to granting access to customer data across tenants, which this is not) - every other action in this matrix keeps GLOBAL unused.",
   },
+
+  // --- `[Milestone B: People + Pastoral + Outreach Foundation]` Outreach
+  // (MILESTONE_B_DESIGN_NOTES.md Part 4/11). Organizational data, not
+  // pastoral-sensitive (Part 13's privacy matrix) - unlike the private
+  // pastoral domain below, no explicit ADMIN DENY is needed here; ADMIN
+  // simply holds no grant at all yet (not proposed by the approved
+  // design - a future decision, not an oversight). RESIDENT_PASTOR is
+  // read-only (Council-level oversight of the outreach pipeline overall,
+  // matching this file's own Resident Pastor Council-visibility policy),
+  // never `.create` - Outreach itself is a Bacenta/Basonta/Cluster-level
+  // activity Resident Pastor oversees, not personally performs. ---
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'outreach.event.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Milestone B] Council-level oversight of the outreach pipeline, read-only - see this file\'s own Resident Pastor Council-visibility policy comment.',
+  },
+  { role: 'RESIDENT_PASTOR', action: 'outreach.contact.read', effect: 'ALLOW', scope: 'COUNCIL' },
+  { role: 'ASSISTANT_PASTOR', action: 'outreach.event.create', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'ASSISTANT_PASTOR', action: 'outreach.event.read', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'ASSISTANT_PASTOR', action: 'outreach.contact.create', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'ASSISTANT_PASTOR', action: 'outreach.contact.read', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'ASSISTANT_PASTOR', action: 'outreach.contact.update', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'BACENTA_LEADER', action: 'outreach.event.create', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BACENTA_LEADER', action: 'outreach.event.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BACENTA_LEADER', action: 'outreach.contact.create', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BACENTA_LEADER', action: 'outreach.contact.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BACENTA_LEADER', action: 'outreach.contact.update', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BASONTA_LEADER', action: 'outreach.event.create', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BASONTA_LEADER', action: 'outreach.event.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BASONTA_LEADER', action: 'outreach.contact.create', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BASONTA_LEADER', action: 'outreach.contact.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BASONTA_LEADER', action: 'outreach.contact.update', effect: 'ALLOW', scope: 'OWN_GROUP' },
 ];
 
 /**

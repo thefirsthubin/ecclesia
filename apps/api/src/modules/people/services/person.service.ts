@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto';
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { checkLifecycleTransition, findDuplicateCandidates, requiresGroupMembershipToTransition } from '@ecclesia/domain-people';
 import type {
+  BacentaRosterGroupDto,
   CreatePersonInput,
   PublishableEngagementSignal,
   LifecycleTransitionRequestInput,
@@ -16,6 +17,7 @@ import type { Person } from '@prisma/client';
 import { EventBridgePublisherService } from '../../../platform/events/eventbridge-publisher.service';
 import { PersonRepository } from '../repositories/person.repository';
 import { GroupRosterService } from './group-roster.service';
+import { GroupService } from './group.service';
 
 function toResponseDto(person: Person): PersonResponseDto {
   return {
@@ -48,6 +50,7 @@ export class PersonService {
   constructor(
     private readonly personRepository: PersonRepository,
     private readonly groupRosterService: GroupRosterService,
+    private readonly groupService: GroupService,
     private readonly eventPublisher: EventBridgePublisherService,
   ) {}
 
@@ -221,5 +224,41 @@ export class PersonService {
    * doc comment. */
   countByBranchCreatedBefore(branchId: string, cutoffExclusive: Date): Promise<number> {
     return this.personRepository.countByBranchCreatedBefore(branchId, cutoffExclusive);
+  }
+
+  /**
+   * `[Milestone B: People + Pastoral + Outreach Foundation]` `GET
+   * /people/without-bacenta` - Branch Administrator's "people without a
+   * Bacenta" (MILESTONE_B_DESIGN_NOTES.md Part 3). Confirmed absent
+   * before this milestone - no repository query, no endpoint.
+   */
+  async listWithoutActiveBacenta(actor: ActorContext, search?: string): Promise<PersonResponseDto[]> {
+    const persons = await this.personRepository.findWithoutActiveBacenta(actor.branchId, search);
+    return persons.map(toResponseDto);
+  }
+
+  /**
+   * `[Milestone B: People + Pastoral + Outreach Foundation]` `GET
+   * /people/organized-by-bacenta` - Branch Administrator's "People
+   * organized by Bacenta" (MILESTONE_B_DESIGN_NOTES.md Part 3). Pure
+   * composition of three already-existing primitives - no new repository
+   * query needed beyond what this milestone's other addition (above)
+   * provides: `GroupService.listActiveBacentasForBranch` (every active
+   * Bacenta in the Branch), `GroupRosterService.listActiveMembers` (each
+   * Bacenta's own active roster), `PersonRepository.findByIds` (resolve
+   * roster person ids to full Person records). One roster fetch per
+   * Bacenta - acceptable at this data volume (a Branch's Bacenta count is
+   * small, single digits to low tens), not a candidate for a single
+   * grouped SQL query this milestone.
+   */
+  async listOrganizedByBacenta(actor: ActorContext): Promise<BacentaRosterGroupDto[]> {
+    const bacentas = await this.groupService.listActiveBacentasForBranch(actor.branchId);
+    const results: BacentaRosterGroupDto[] = [];
+    for (const group of bacentas) {
+      const roster = await this.groupRosterService.listActiveMembers(group.id);
+      const members = await this.personRepository.findByIds(roster.map((member) => member.personId));
+      results.push({ group, memberCount: members.length, members: members.map(toResponseDto) });
+    }
+    return results;
   }
 }

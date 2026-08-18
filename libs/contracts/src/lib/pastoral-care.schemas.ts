@@ -37,13 +37,33 @@ export const poimenEnrollmentResponseSchema = z.object({
 });
 export type PoimenEnrollmentResponseDto = z.infer<typeof poimenEnrollmentResponseSchema>;
 
-export const FOLLOW_UP_TASK_STATUS_VALUES = ['OPEN', 'ESCALATED', 'COMPLETED'] as const;
+/**
+ * `[Milestone B: People + Pastoral + Outreach Foundation]` `IN_PROGRESS`/
+ * `CANCELLED` added - confirmed absent before this milestone. See
+ * `libs/domain/pastoral-care`'s `checkFollowUpTaskStatusTransition` for
+ * the full transition graph this enum's values participate in.
+ */
+export const FOLLOW_UP_TASK_STATUS_VALUES = ['OPEN', 'IN_PROGRESS', 'ESCALATED', 'COMPLETED', 'CANCELLED'] as const;
 export const followUpTaskStatusSchema = z.enum(FOLLOW_UP_TASK_STATUS_VALUES);
 export type FollowUpTaskStatusDto = z.infer<typeof followUpTaskStatusSchema>;
 
 export const FOLLOW_UP_TASK_TRIGGER_VALUES = ['FIRST_TIME_GUEST', 'LAPSED_REENGAGEMENT', 'MANUAL'] as const;
 export const followUpTaskTriggerSchema = z.enum(FOLLOW_UP_TASK_TRIGGER_VALUES);
 export type FollowUpTaskTriggerDto = z.infer<typeof followUpTaskTriggerSchema>;
+
+export const FOLLOW_UP_TASK_PRIORITY_VALUES = ['LOW', 'MEDIUM', 'HIGH'] as const;
+export const followUpTaskPrioritySchema = z.enum(FOLLOW_UP_TASK_PRIORITY_VALUES);
+export type FollowUpTaskPriorityDto = z.infer<typeof followUpTaskPrioritySchema>;
+
+/**
+ * `[Milestone B]` Deliberately short - a follow-up's `description` is
+ * brief operational context ("missed three Sundays in a row"), never a
+ * place for sensitive counselling content (`PrayerNote`/
+ * `CounsellingSession` are the separate, pastor-only tier for that -
+ * MILESTONE_B_DESIGN_NOTES.md Part 7). The 500-character cap is a
+ * deliberate structural discouragement, not a citation.
+ */
+const followUpTaskDescriptionSchema = z.string().trim().min(1).max(500);
 
 /**
  * FR-PC-03/FR-PC-04: creating a Follow-up task always requires an
@@ -63,8 +83,24 @@ export const createFollowUpTaskSchema = z.object({
   groupId: z.string().uuid().optional(),
   trigger: followUpTaskTriggerSchema.default('MANUAL'),
   dueAtOverride: z.string().datetime().optional(),
+  /** `[Milestone B]` Defaults server-side to `MEDIUM` when omitted
+   * (Prisma's own `@default`) - not defaulted here so the repository's
+   * own default is the single source of truth. */
+  priority: followUpTaskPrioritySchema.optional(),
+  description: followUpTaskDescriptionSchema.optional(),
 });
 export type CreateFollowUpTaskInput = z.infer<typeof createFollowUpTaskSchema>;
+
+/** `[Milestone B]` `PATCH /follow-up-tasks/:id` - the brief operational
+ * fields only, never `status` (each transition has its own dedicated
+ * route: `/start`, `/complete`, `/escalate`, `/cancel`). */
+export const updateFollowUpTaskSchema = z
+  .object({
+    priority: followUpTaskPrioritySchema.optional(),
+    description: followUpTaskDescriptionSchema.nullable().optional(),
+  })
+  .refine((value) => Object.keys(value).length > 0, { message: 'At least one field must be provided' });
+export type UpdateFollowUpTaskInput = z.infer<typeof updateFollowUpTaskSchema>;
 
 /**
  * BR-PC-04: escalation names the target explicitly - resolving "the
@@ -85,9 +121,13 @@ export const followUpTaskResponseSchema = z.object({
   personId: z.string().uuid(),
   assignedToPersonId: z.string().uuid(),
   status: followUpTaskStatusSchema,
+  priority: followUpTaskPrioritySchema,
+  description: z.string().nullable(),
   dueAt: z.string().nullable(),
+  trigger: followUpTaskTriggerSchema.nullable(),
   escalatedAt: z.string().nullable(),
   escalatedToPersonId: z.string().uuid().nullable(),
+  completedAt: z.string().nullable(),
   createdByPersonId: z.string().uuid().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
@@ -215,3 +255,153 @@ export const pastoralNoteResponseSchema = z.object({
   createdAt: z.string(),
 });
 export type PastoralNoteResponseDto = z.infer<typeof pastoralNoteResponseSchema>;
+
+/**
+ * `[Milestone B: People + Pastoral + Outreach Foundation]` The private
+ * pastoral domain - MILESTONE_B_DESIGN_NOTES.md Part 5/6's approved
+ * Option C. `content` deliberately has no length cap the way
+ * `followUpTaskDescriptionSchema`/`Outreach.notes` do - a prayer note is
+ * *meant* to hold sensitive, personal content (that's the entire reason
+ * this domain exists, separate from the brief-by-design `PastoralNote`/
+ * `FollowUpTask`), so capping it would work against its own purpose.
+ */
+export const PRAYER_NOTE_STATUS_VALUES = ['OPEN', 'RESOLVED'] as const;
+export const prayerNoteStatusSchema = z.enum(PRAYER_NOTE_STATUS_VALUES);
+export type PrayerNoteStatusDto = z.infer<typeof prayerNoteStatusSchema>;
+
+export const createPrayerNoteSchema = z.object({
+  content: z.string().trim().min(1, 'content is required'),
+  followUpDate: z.string().date().optional(),
+});
+export type CreatePrayerNoteInput = z.infer<typeof createPrayerNoteSchema>;
+
+export const updatePrayerNoteStatusSchema = z.object({
+  status: prayerNoteStatusSchema,
+});
+export type UpdatePrayerNoteStatusInput = z.infer<typeof updatePrayerNoteStatusSchema>;
+
+export const prayerNoteResponseSchema = z.object({
+  id: z.string().uuid(),
+  branchId: z.string().uuid(),
+  personId: z.string().uuid(),
+  authorPersonId: z.string().uuid(),
+  content: z.string(),
+  followUpDate: z.string().nullable(),
+  status: prayerNoteStatusSchema,
+  createdAt: z.string(),
+});
+export type PrayerNoteResponseDto = z.infer<typeof prayerNoteResponseSchema>;
+
+/**
+ * `[Milestone B: People + Pastoral + Outreach Foundation]` Deliberately
+ * operational-only - MILESTONE_B_DESIGN_NOTES.md Part 8. `briefNote` is
+ * length-capped, same discipline as `followUpTaskDescriptionSchema` -
+ * this field is a case reference, never a narrative counselling record.
+ */
+export const COUNSELLING_SESSION_STATUS_VALUES = ['SCHEDULED', 'COMPLETED', 'CANCELLED'] as const;
+export const counsellingSessionStatusSchema = z.enum(COUNSELLING_SESSION_STATUS_VALUES);
+export type CounsellingSessionStatusDto = z.infer<typeof counsellingSessionStatusSchema>;
+
+const counsellingBriefNoteSchema = z.string().trim().min(1).max(300);
+
+export const createCounsellingSessionSchema = z.object({
+  scheduledAt: z.string().datetime(),
+  briefNote: counsellingBriefNoteSchema.optional(),
+});
+export type CreateCounsellingSessionInput = z.infer<typeof createCounsellingSessionSchema>;
+
+export const updateCounsellingSessionStatusSchema = z.object({
+  status: counsellingSessionStatusSchema,
+});
+export type UpdateCounsellingSessionStatusInput = z.infer<typeof updateCounsellingSessionStatusSchema>;
+
+export const counsellingSessionResponseSchema = z.object({
+  id: z.string().uuid(),
+  branchId: z.string().uuid(),
+  personId: z.string().uuid(),
+  counsellorPersonId: z.string().uuid(),
+  scheduledAt: z.string(),
+  status: counsellingSessionStatusSchema,
+  briefNote: z.string().nullable(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+export type CounsellingSessionResponseDto = z.infer<typeof counsellingSessionResponseSchema>;
+
+/**
+ * `[Milestone B: People + Pastoral + Outreach Foundation]` The
+ * general-purpose pastoral activity log - MILESTONE_B_DESIGN_NOTES.md
+ * Part 9. `scheduledAt` is distinct from `occurredAt` - a planned/future
+ * interaction (feeds the Slice 7 Pastoral Calendar); omitted for a
+ * logged-after-the-fact entry. `briefNote` length-capped, same discipline
+ * as `followUpTaskDescriptionSchema`.
+ */
+export const MEMBER_INTERACTION_TYPE_VALUES = ['VISIT', 'CALL', 'MEETING', 'FOLLOW_UP', 'PRAYER', 'COUNSELLING'] as const;
+export const memberInteractionTypeSchema = z.enum(MEMBER_INTERACTION_TYPE_VALUES);
+export type MemberInteractionTypeDto = z.infer<typeof memberInteractionTypeSchema>;
+
+export const createMemberInteractionSchema = z.object({
+  type: memberInteractionTypeSchema,
+  occurredAt: z.string().datetime(),
+  scheduledAt: z.string().datetime().optional(),
+  briefNote: z.string().trim().min(1).max(300).optional(),
+});
+export type CreateMemberInteractionInput = z.infer<typeof createMemberInteractionSchema>;
+
+export const memberInteractionResponseSchema = z.object({
+  id: z.string().uuid(),
+  branchId: z.string().uuid(),
+  personId: z.string().uuid(),
+  pastorPersonId: z.string().uuid(),
+  type: memberInteractionTypeSchema,
+  occurredAt: z.string(),
+  scheduledAt: z.string().nullable(),
+  briefNote: z.string().nullable(),
+  createdAt: z.string(),
+});
+export type MemberInteractionResponseDto = z.infer<typeof memberInteractionResponseSchema>;
+
+/**
+ * `[Milestone B: People + Pastoral + Outreach Foundation, Slice 7 -
+ * Pastoral Calendar]` A pure composition read-model - MILESTONE_B_DESIGN_NOTES.md
+ * Part 10. No new table; each section is a thin projection of an
+ * already-existing model's own response shape (just enough to render a
+ * calendar entry, not the full record - callers needing more detail
+ * already have `GET /follow-up-tasks/:id` etc.).
+ */
+export const getPastoralCalendarQuerySchema = z.object({
+  from: z.string().datetime(),
+  to: z.string().datetime(),
+});
+export type GetPastoralCalendarQuery = z.infer<typeof getPastoralCalendarQuerySchema>;
+
+export const pastoralCalendarFollowUpEntrySchema = z.object({
+  id: z.string().uuid(),
+  personId: z.string().uuid(),
+  dueAt: z.string().nullable(),
+  priority: followUpTaskPrioritySchema,
+  status: followUpTaskStatusSchema,
+});
+
+export const pastoralCalendarCounsellingEntrySchema = z.object({
+  id: z.string().uuid(),
+  personId: z.string().uuid(),
+  scheduledAt: z.string(),
+  status: counsellingSessionStatusSchema,
+});
+
+export const pastoralCalendarInteractionEntrySchema = z.object({
+  id: z.string().uuid(),
+  personId: z.string().uuid(),
+  scheduledAt: z.string().nullable(),
+  type: memberInteractionTypeSchema,
+});
+
+export const pastoralCalendarResponseSchema = z.object({
+  from: z.string(),
+  to: z.string(),
+  followUpTasks: z.array(pastoralCalendarFollowUpEntrySchema),
+  counsellingSessions: z.array(pastoralCalendarCounsellingEntrySchema),
+  interactions: z.array(pastoralCalendarInteractionEntrySchema),
+});
+export type PastoralCalendarResponseDto = z.infer<typeof pastoralCalendarResponseSchema>;

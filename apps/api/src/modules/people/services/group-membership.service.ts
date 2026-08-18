@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { planGroupMembershipChange } from '@ecclesia/domain-people';
-import type { CreateGroupMembershipRequestInput, PublishableEngagementSignal, GroupMembershipResponseDto } from '@ecclesia/contracts';
+import type { CreateGroupMembershipRequestInput, LeaveGroupMembershipInput, PublishableEngagementSignal, GroupMembershipResponseDto } from '@ecclesia/contracts';
 import type { GroupMembership } from '@prisma/client';
 
 import { EventBridgePublisherService } from '../../../platform/events/eventbridge-publisher.service';
@@ -134,6 +134,29 @@ export class GroupMembershipService {
   async listForPerson(personId: string): Promise<GroupMembershipResponseDto[]> {
     const memberships = await this.groupMembershipRepository.listByPerson(personId);
     return memberships.map(toResponseDto);
+  }
+
+  /**
+   * `[Milestone B: People + Pastoral + Outreach Foundation]` `POST
+   * /people/:personId/group-memberships/leave` - closes one active
+   * membership with no replacement opened, the gap
+   * MILESTONE_B_DESIGN_NOTES.md Part 3 identified (`assign` above is the
+   * only other mutation, and it always requires a target Group to join).
+   * `reason` is required, not optional - `GroupMembership.reason`'s own
+   * schema doc comment states "[BLUEPRINT-EXACT] Required when a
+   * membership is closed" with no reassignment-only qualifier, so this
+   * explicit-removal path holds it to the same requirement
+   * `planGroupMembershipChange`'s `reasonRequiredForClose` already
+   * enforces for a reassignment-triggered close.
+   */
+  async leave(personId: string, input: LeaveGroupMembershipInput): Promise<GroupMembershipResponseDto> {
+    const activeMemberships = await this.personRepository.findActiveGroupMemberships(personId);
+    const target = activeMemberships.find((membership) => membership.groupId === input.groupId);
+    if (!target) {
+      throw new NotFoundException(`Person '${personId}' has no active membership in Group '${input.groupId}'`);
+    }
+    const membership = await this.groupMembershipRepository.closeMembership(target.id, input.reason);
+    return toResponseDto(membership);
   }
 
   /** `[Resident Pastor Dashboard - Volunteers milestone]` Thin passthrough

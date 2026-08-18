@@ -14,6 +14,9 @@ describe('FollowUpTaskController', () => {
       listForGroup: jest.fn(),
       list: jest.fn(),
       listByPerson: jest.fn(),
+      updateDetails: jest.fn(),
+      start: jest.fn(),
+      cancel: jest.fn(),
     };
     const controller = new FollowUpTaskController(followUpTaskService as never);
     return { controller, followUpTaskService };
@@ -76,5 +79,30 @@ describe('FollowUpTaskController', () => {
     await controller.listByPerson('person-1');
 
     expect(followUpTaskService.listByPerson).toHaveBeenCalledWith('person-1');
+  });
+
+  it('[Milestone B] updateDetails() delegates to FollowUpTaskService.updateDetails', async () => {
+    const { controller, followUpTaskService } = buildController();
+    const body = { priority: 'HIGH' } as never;
+
+    await controller.updateDetails('ft-1', body);
+
+    expect(followUpTaskService.updateDetails).toHaveBeenCalledWith('ft-1', body);
+  });
+
+  it('[Milestone B] start() delegates to FollowUpTaskService.start', async () => {
+    const { controller, followUpTaskService } = buildController();
+
+    await controller.start('ft-1');
+
+    expect(followUpTaskService.start).toHaveBeenCalledWith('ft-1');
+  });
+
+  it('[Milestone B] cancel() delegates to FollowUpTaskService.cancel', async () => {
+    const { controller, followUpTaskService } = buildController();
+
+    await controller.cancel('ft-1');
+
+    expect(followUpTaskService.cancel).toHaveBeenCalledWith('ft-1');
   });
 });

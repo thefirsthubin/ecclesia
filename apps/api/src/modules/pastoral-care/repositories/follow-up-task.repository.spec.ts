@@ -24,9 +24,30 @@ describe('FollowUpTaskRepository', () => {
         groupId: undefined,
         dueAt: undefined,
         createdByPersonId: undefined,
+        priority: undefined,
+        description: undefined,
+        trigger: undefined,
       },
     });
     expect(result).toEqual({ id: 'ft-1' });
+  });
+
+  it('[Milestone B] create() passes priority/description/trigger through when given', async () => {
+    const { repository, prisma } = buildRepository();
+    prisma.followUpTask.create.mockResolvedValue({ id: 'ft-1' });
+
+    await repository.create({
+      branchId: 'branch-1',
+      personId: 'person-1',
+      assignedToPersonId: 'shepherd-1',
+      priority: 'HIGH',
+      description: 'missed three Sundays',
+      trigger: 'LAPSED_REENGAGEMENT',
+    });
+
+    expect(prisma.followUpTask.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ priority: 'HIGH', description: 'missed three Sundays', trigger: 'LAPSED_REENGAGEMENT' }),
+    });
   });
 
   it('findById() delegates directly to prisma.followUpTask.findUnique', async () => {
@@ -39,14 +60,51 @@ describe('FollowUpTaskRepository', () => {
     expect(result).toEqual({ id: 'ft-1' });
   });
 
-  it('update() delegates directly to prisma.followUpTask.update', async () => {
+  it('updateStatus() delegates directly to prisma.followUpTask.update', async () => {
     const { repository, prisma } = buildRepository();
     prisma.followUpTask.update.mockResolvedValue({ id: 'ft-1', status: 'COMPLETED' });
 
-    const result = await repository.update('ft-1', { status: 'COMPLETED' });
+    const result = await repository.updateStatus('ft-1', { status: 'COMPLETED' });
 
     expect(prisma.followUpTask.update).toHaveBeenCalledWith({ where: { id: 'ft-1' }, data: { status: 'COMPLETED' } });
     expect(result).toEqual({ id: 'ft-1', status: 'COMPLETED' });
+  });
+
+  it('[Milestone B] updateStatus() also passes completedAt through when given', async () => {
+    const { repository, prisma } = buildRepository();
+    prisma.followUpTask.update.mockResolvedValue({ id: 'ft-1', status: 'COMPLETED' });
+    const completedAt = new Date('2026-08-18T00:00:00.000Z');
+
+    await repository.updateStatus('ft-1', { status: 'COMPLETED', completedAt });
+
+    expect(prisma.followUpTask.update).toHaveBeenCalledWith({ where: { id: 'ft-1' }, data: { status: 'COMPLETED', completedAt } });
+  });
+
+  describe('[Milestone B, Slice 7] listByBranchWithDueAtInRange', () => {
+    it('filters by branchId, the default open statuses, and a dueAt window', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.followUpTask.findMany.mockResolvedValue([{ id: 'ft-1' }]);
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-08-31T00:00:00.000Z');
+
+      const result = await repository.listByBranchWithDueAtInRange('branch-1', from, to);
+
+      expect(prisma.followUpTask.findMany).toHaveBeenCalledWith({
+        where: { branchId: 'branch-1', status: { in: ['OPEN', 'ESCALATED'] }, dueAt: { gte: from, lte: to } },
+        orderBy: { dueAt: 'asc' },
+      });
+      expect(result).toEqual([{ id: 'ft-1' }]);
+    });
+  });
+
+  it('[Milestone B] updateDetails() delegates directly to prisma.followUpTask.update', async () => {
+    const { repository, prisma } = buildRepository();
+    prisma.followUpTask.update.mockResolvedValue({ id: 'ft-1', priority: 'HIGH', description: 'urgent' });
+
+    const result = await repository.updateDetails('ft-1', { priority: 'HIGH', description: 'urgent' });
+
+    expect(prisma.followUpTask.update).toHaveBeenCalledWith({ where: { id: 'ft-1' }, data: { priority: 'HIGH', description: 'urgent' } });
+    expect(result).toEqual({ id: 'ft-1', priority: 'HIGH', description: 'urgent' });
   });
 
   describe('listByGroup', () => {

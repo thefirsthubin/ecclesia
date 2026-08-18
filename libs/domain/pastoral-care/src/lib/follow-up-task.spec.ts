@@ -1,4 +1,5 @@
 import {
+  checkFollowUpTaskStatusTransition,
   computeFollowUpTaskDueAt,
   DEFAULT_FOLLOW_UP_SLA_DAYS,
   determineFollowUpTaskTrigger,
@@ -69,5 +70,40 @@ describe('isFollowUpTaskPastSla (FR-PC-04, BR-PC-04)', () => {
 
   it('is false for an OPEN task with no dueAt set', () => {
     expect(isFollowUpTaskPastSla({ status: 'OPEN', dueAt: null, now })).toBe(false);
+  });
+});
+
+describe('[Milestone B] checkFollowUpTaskStatusTransition', () => {
+  it.each([
+    ['OPEN', 'IN_PROGRESS'],
+    ['OPEN', 'ESCALATED'],
+    ['OPEN', 'CANCELLED'],
+    ['IN_PROGRESS', 'COMPLETED'],
+    ['IN_PROGRESS', 'ESCALATED'],
+    ['IN_PROGRESS', 'CANCELLED'],
+    ['ESCALATED', 'COMPLETED'],
+    ['ESCALATED', 'CANCELLED'],
+  ] as const)('allows %s -> %s', (from, to) => {
+    expect(checkFollowUpTaskStatusTransition(from, to).allowed).toBe(true);
+  });
+
+  it.each([
+    ['OPEN', 'COMPLETED'],
+    ['ESCALATED', 'IN_PROGRESS'],
+    ['COMPLETED', 'OPEN'],
+    ['COMPLETED', 'IN_PROGRESS'],
+    ['CANCELLED', 'OPEN'],
+    ['CANCELLED', 'COMPLETED'],
+  ] as const)('rejects %s -> %s', (from, to) => {
+    expect(checkFollowUpTaskStatusTransition(from, to).allowed).toBe(false);
+  });
+
+  it('rejects a same-status "transition"', () => {
+    expect(checkFollowUpTaskStatusTransition('OPEN', 'OPEN').allowed).toBe(false);
+  });
+
+  it('COMPLETED and CANCELLED are both terminal - no outbound transition exists', () => {
+    expect(checkFollowUpTaskStatusTransition('COMPLETED', 'CANCELLED').allowed).toBe(false);
+    expect(checkFollowUpTaskStatusTransition('CANCELLED', 'COMPLETED').allowed).toBe(false);
   });
 });

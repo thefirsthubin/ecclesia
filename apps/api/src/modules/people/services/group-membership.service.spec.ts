@@ -9,6 +9,7 @@ describe('GroupMembershipService', () => {
       applyChange: jest.fn(),
       listByPerson: jest.fn(),
       countDistinctActiveMinistryMembersByBranch: jest.fn(),
+      closeMembership: jest.fn(),
     };
     const personRepository = {
       findById: jest.fn(),
@@ -157,6 +158,28 @@ describe('GroupMembershipService', () => {
 
       expect(groupMembershipRepository.countDistinctActiveMinistryMembersByBranch).toHaveBeenCalledWith('branch-1', asOf);
       expect(result).toBe(67);
+    });
+  });
+
+  describe('[Milestone B] leave', () => {
+    it('closes the matching active membership with the given reason', async () => {
+      const { service, groupMembershipRepository, personRepository } = buildService();
+      personRepository.findActiveGroupMemberships.mockResolvedValue([
+        { id: 'membership-1', groupId: 'bacenta-2', groupType: 'PASTORAL_CARE' },
+      ]);
+      groupMembershipRepository.closeMembership.mockResolvedValue({ ...membershipRow, endedAt: new Date(), reason: 'moved house' });
+
+      const result = await service.leave('person-1', { groupId: 'bacenta-2', reason: 'moved house' });
+
+      expect(groupMembershipRepository.closeMembership).toHaveBeenCalledWith('membership-1', 'moved house');
+      expect(result.reason).toBe('moved house');
+    });
+
+    it('throws NotFoundException when the Person has no active membership in that Group', async () => {
+      const { service, personRepository } = buildService();
+      personRepository.findActiveGroupMemberships.mockResolvedValue([]);
+
+      await expect(service.leave('person-1', { groupId: 'bacenta-2', reason: 'moved house' })).rejects.toThrow(NotFoundException);
     });
   });
 });

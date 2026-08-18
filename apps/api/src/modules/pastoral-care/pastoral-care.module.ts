@@ -4,29 +4,50 @@ import { DatabaseModule } from '../../platform/database/database.module';
 import { EventsModule } from '../../platform/events/events.module';
 import { RbacPlatformModule } from '../../platform/rbac/rbac-platform.module';
 import { PeopleModule } from '../people/people.module';
+import { CounsellingSessionController, CounsellingSessionStatusController } from './controllers/counselling-session.controller';
 import { FollowUpTaskController } from './controllers/follow-up-task.controller';
+import { MemberInteractionController } from './controllers/member-interaction.controller';
+import { PastoralCalendarController } from './controllers/pastoral-calendar.controller';
 import { PastoralNoteController } from './controllers/pastoral-note.controller';
 import { PoimenEnrollmentController } from './controllers/poimen-enrollment.controller';
+import { PrayerNoteController, PrayerNoteStatusController } from './controllers/prayer-note.controller';
 import { SilentDriftFlagController } from './controllers/silent-drift-flag.controller';
+import {
+  CounsellingSessionResourceContextGuard,
+  CounsellingSessionStatusResourceContextGuard,
+} from './guards/counselling-session-resource-context.guard';
 import {
   FollowUpTaskCreateResourceContextGuard,
   FollowUpTaskListForActorResourceContextGuard,
   FollowUpTaskListResourceContextGuard,
   FollowUpTaskResourceContextGuard,
 } from './guards/follow-up-task-resource-context.guard';
+import { MemberInteractionResourceContextGuard } from './guards/member-interaction-resource-context.guard';
+import { PastoralCalendarResourceContextGuard } from './guards/pastoral-calendar-resource-context.guard';
 import { PastoralNoteResourceContextGuard } from './guards/pastoral-note-resource-context.guard';
 import { PoimenEnrollmentResourceContextGuard } from './guards/poimen-enrollment-resource-context.guard';
+import {
+  PrayerNoteResourceContextGuard,
+  PrayerNoteStatusResourceContextGuard,
+} from './guards/prayer-note-resource-context.guard';
 import {
   SilentDriftFlagListForActorResourceContextGuard,
   SilentDriftFlagListResourceContextGuard,
 } from './guards/silent-drift-flag-resource-context.guard';
+import { CounsellingSessionRepository } from './repositories/counselling-session.repository';
 import { FollowUpTaskRepository } from './repositories/follow-up-task.repository';
+import { MemberInteractionRepository } from './repositories/member-interaction.repository';
 import { PastoralNoteRepository } from './repositories/pastoral-note.repository';
 import { PoimenEnrollmentRepository } from './repositories/poimen-enrollment.repository';
+import { PrayerNoteRepository } from './repositories/prayer-note.repository';
 import { SilentDriftFlagRepository } from './repositories/silent-drift-flag.repository';
+import { CounsellingSessionService } from './services/counselling-session.service';
 import { FollowUpTaskService } from './services/follow-up-task.service';
+import { MemberInteractionService } from './services/member-interaction.service';
+import { PastoralCalendarService } from './services/pastoral-calendar.service';
 import { PastoralNoteService } from './services/pastoral-note.service';
 import { PoimenEnrollmentService } from './services/poimen-enrollment.service';
+import { PrayerNoteService } from './services/prayer-note.service';
 import { SilentDriftFlagService } from './services/silent-drift-flag.service';
 
 /**
@@ -54,7 +75,18 @@ import { SilentDriftFlagService } from './services/silent-drift-flag.service';
  */
 @Module({
   imports: [DatabaseModule, RbacPlatformModule, EventsModule, forwardRef(() => PeopleModule)],
-  controllers: [PoimenEnrollmentController, FollowUpTaskController, PastoralNoteController, SilentDriftFlagController],
+  controllers: [
+    PoimenEnrollmentController,
+    FollowUpTaskController,
+    PastoralNoteController,
+    PrayerNoteController,
+    PrayerNoteStatusController,
+    CounsellingSessionController,
+    CounsellingSessionStatusController,
+    MemberInteractionController,
+    PastoralCalendarController,
+    SilentDriftFlagController,
+  ],
   providers: [
     PoimenEnrollmentRepository,
     PoimenEnrollmentService,
@@ -68,6 +100,19 @@ import { SilentDriftFlagService } from './services/silent-drift-flag.service';
     PastoralNoteRepository,
     PastoralNoteService,
     PastoralNoteResourceContextGuard,
+    PrayerNoteRepository,
+    PrayerNoteService,
+    PrayerNoteResourceContextGuard,
+    PrayerNoteStatusResourceContextGuard,
+    CounsellingSessionRepository,
+    CounsellingSessionService,
+    CounsellingSessionResourceContextGuard,
+    CounsellingSessionStatusResourceContextGuard,
+    MemberInteractionRepository,
+    MemberInteractionService,
+    MemberInteractionResourceContextGuard,
+    PastoralCalendarService,
+    PastoralCalendarResourceContextGuard,
     SilentDriftFlagRepository,
     SilentDriftFlagService,
     SilentDriftFlagListResourceContextGuard,

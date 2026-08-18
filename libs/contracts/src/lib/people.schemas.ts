@@ -298,3 +298,34 @@ export const groupMembershipResponseSchema = z.object({
   reason: z.string().nullable(),
 });
 export type GroupMembershipResponseDto = z.infer<typeof groupMembershipResponseSchema>;
+
+/**
+ * `[Milestone B: People + Pastoral + Outreach Foundation]` `POST
+ * /people/:personId/group-memberships/leave` - closes an active
+ * membership with no replacement, the "leave" gap
+ * MILESTONE_B_DESIGN_NOTES.md Part 3 identified. `reason` is required
+ * (not optional, unlike `createGroupMembershipRequestSchema`'s own
+ * conditionally-required `reason`) - see `GroupMembershipService.leave`'s
+ * own doc comment for why: `GroupMembership.reason`'s schema doc comment
+ * states it is required whenever a membership is closed, with no
+ * reassignment-only qualifier.
+ */
+export const leaveGroupMembershipSchema = z.object({
+  groupId: z.string().uuid(),
+  reason: z.string().trim().min(1, 'reason is required'),
+});
+export type LeaveGroupMembershipInput = z.infer<typeof leaveGroupMembershipSchema>;
+
+/**
+ * `[Milestone B: People + Pastoral + Outreach Foundation]` `GET
+ * /people/organized-by-bacenta` - Branch Administrator's "People
+ * organized by Bacenta" (MILESTONE_B_DESIGN_NOTES.md Part 3). One entry
+ * per active Bacenta in the Branch, its own active roster resolved to
+ * full Person records.
+ */
+export const bacentaRosterGroupResponseSchema = z.object({
+  group: groupResponseSchema,
+  memberCount: z.number().int().nonnegative(),
+  members: z.array(personResponseSchema),
+});
+export type BacentaRosterGroupDto = z.infer<typeof bacentaRosterGroupResponseSchema>;

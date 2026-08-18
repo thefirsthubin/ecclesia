@@ -12,6 +12,8 @@ describe('PersonController', () => {
       update: jest.fn(),
       transitionLifecycleStage: jest.fn(),
       list: jest.fn(),
+      listWithoutActiveBacenta: jest.fn(),
+      listOrganizedByBacenta: jest.fn(),
     };
     const controller = new PersonController(personService as never);
     return { controller, personService };
@@ -59,5 +61,21 @@ describe('PersonController', () => {
     await controller.list(actor, query);
 
     expect(personService.list).toHaveBeenCalledWith(actor, query);
+  });
+
+  it('[Milestone B] listWithoutBacenta() delegates to PersonService.listWithoutActiveBacenta with the actor and search', async () => {
+    const { controller, personService } = buildController();
+
+    await controller.listWithoutBacenta(actor, 'Ama');
+
+    expect(personService.listWithoutActiveBacenta).toHaveBeenCalledWith(actor, 'Ama');
+  });
+
+  it('[Milestone B] listOrganizedByBacenta() delegates to PersonService.listOrganizedByBacenta with the actor', async () => {
+    const { controller, personService } = buildController();
+
+    await controller.listOrganizedByBacenta(actor);
+
+    expect(personService.listOrganizedByBacenta).toHaveBeenCalledWith(actor);
   });
 });

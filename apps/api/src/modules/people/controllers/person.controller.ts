@@ -49,6 +49,30 @@ export class PersonController {
     return this.personService.list(actor, query);
   }
 
+  /**
+   * `[Milestone B: People + Pastoral + Outreach Foundation]` `GET
+   * /people/without-bacenta` - **must stay declared before `@Get(':id')`
+   * below**, same reason `GET /financial-transactions/summary` was
+   * declared before its own `:id` route in Milestone A: `without-bacenta`
+   * is a literal path segment that would otherwise be swallowed by the
+   * `:id` wildcard.
+   */
+  @Get('without-bacenta')
+  @RequirePermission('people.person.read')
+  @UseGuards(PersonListResourceContextGuard, RbacGuard)
+  listWithoutBacenta(@CurrentActor() actor: ActorContext, @Query('search') search?: string) {
+    return this.personService.listWithoutActiveBacenta(actor, search);
+  }
+
+  /** `GET /people/organized-by-bacenta` - same ordering requirement as
+   * `without-bacenta` above. */
+  @Get('organized-by-bacenta')
+  @RequirePermission('people.person.read')
+  @UseGuards(PersonListResourceContextGuard, RbacGuard)
+  listOrganizedByBacenta(@CurrentActor() actor: ActorContext) {
+    return this.personService.listOrganizedByBacenta(actor);
+  }
+
   @Get(':id')
   @RequirePermission('people.person.read')
   @UseGuards(PersonResourceContextGuard, RbacGuard)

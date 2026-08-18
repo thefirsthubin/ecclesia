@@ -155,6 +155,35 @@ export class PersonRepository {
   }
 
   /**
+   * `[Milestone B: People + Pastoral + Outreach Foundation]` Branch
+   * Administrator's "people without a Bacenta" - confirmed absent from
+   * this repository before this milestone (MILESTONE_B_DESIGN_NOTES.md
+   * Part 3). A Person has no active Bacenta when no `GroupMembership` row
+   * with `groupType: 'PASTORAL_CARE'` and `endedAt: null` exists for them
+   * - the Prisma relation filter below is the direct translation of that
+   * condition, not a new business rule (the same "active membership"
+   * definition `GroupRosterService`/`one_active_bacenta_per_person`
+   * already use).
+   */
+  findWithoutActiveBacenta(branchId: string, search?: string): Promise<Person[]> {
+    return this.prisma.person.findMany({
+      where: {
+        branchId,
+        groupMemberships: { none: { groupType: 'PASTORAL_CARE', endedAt: null } },
+        ...(search
+          ? {
+              OR: [
+                { firstName: { contains: search, mode: 'insensitive' } },
+                { lastName: { contains: search, mode: 'insensitive' } },
+              ],
+            }
+          : {}),
+      },
+      orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }],
+    });
+  }
+
+  /**
    * `[Resident Pastor Dashboard - real Members data milestone]` The
    * Members KPI's current total - the same `count`-of-`findByBranch`
    * shape `CouncilAdministratorDashboard` (`apps/web-admin`) already

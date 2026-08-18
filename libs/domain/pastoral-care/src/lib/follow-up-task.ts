@@ -86,3 +86,54 @@ export function isFollowUpTaskPastSla(input: FollowUpTaskSlaInput): boolean {
   }
   return input.now.getTime() > input.dueAt.getTime();
 }
+
+/**
+ * `[Milestone B: People + Pastoral + Outreach Foundation]` The 5-state
+ * status machine, extending the original 3-state one (`OPEN, ESCALATED,
+ * COMPLETED`) with `IN_PROGRESS`/`CANCELLED` (MILESTONE_B_DESIGN_NOTES.md
+ * Part 7). No PRD citation for this specific graph, unlike
+ * `checkLifecycleTransition`'s PRD §12.5 or `checkGatheringStatusTransition`'s
+ * own source - approved as an explicit product decision:
+ *
+ * ```
+ * OPEN -> IN_PROGRESS | ESCALATED | CANCELLED
+ * IN_PROGRESS -> COMPLETED | ESCALATED | CANCELLED
+ * ESCALATED -> COMPLETED | CANCELLED
+ * COMPLETED -> (terminal)
+ * CANCELLED -> (terminal)
+ * ```
+ */
+export const FOLLOW_UP_TASK_STATUSES = ['OPEN', 'IN_PROGRESS', 'ESCALATED', 'COMPLETED', 'CANCELLED'] as const;
+export type FollowUpTaskStatusValue = (typeof FOLLOW_UP_TASK_STATUSES)[number];
+
+const STATUS_TRANSITIONS: Record<FollowUpTaskStatusValue, readonly FollowUpTaskStatusValue[]> = {
+  OPEN: ['IN_PROGRESS', 'ESCALATED', 'CANCELLED'],
+  IN_PROGRESS: ['COMPLETED', 'ESCALATED', 'CANCELLED'],
+  ESCALATED: ['COMPLETED', 'CANCELLED'],
+  COMPLETED: [],
+  CANCELLED: [],
+};
+
+export interface FollowUpTaskStatusTransitionCheck {
+  allowed: boolean;
+  reason: string;
+}
+
+export function checkFollowUpTaskStatusTransition(
+  from: FollowUpTaskStatusValue,
+  to: FollowUpTaskStatusValue,
+): FollowUpTaskStatusTransitionCheck {
+  if (from === to) {
+    return { allowed: false, reason: `'${from}' is already the current status; not a transition` };
+  }
+  const allowedNext = STATUS_TRANSITIONS[from];
+  if (!allowedNext.includes(to)) {
+    return {
+      allowed: false,
+      reason: `'${from}' -> '${to}' is not a modeled transition (allowed: ${
+        allowedNext.length > 0 ? allowedNext.join(', ') : 'none - terminal status'
+      })`,
+    };
+  }
+  return { allowed: true, reason: `'${from}' -> '${to}' is a modeled transition` };
+}

@@ -6,7 +6,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["gatherings", "insights", "ministry", "pastoral_care", "people", "platform", "stewardship"]
+  schemas  = ["gatherings", "insights", "ministry", "outreach", "pastoral_care", "people", "platform", "stewardship"]
 }
 
 /// [PRD-DERIVED] FR-ADM-03 ("Branch and Council as first-class entities
@@ -51,6 +51,9 @@ model Branch {
   pulseScores              PulseScore[]
   followUpTasks            FollowUpTask[]
   pastoralNotes            PastoralNote[]
+  prayerNotes              PrayerNote[]
+  counsellingSessions      CounsellingSession[]
+  memberInteractions       MemberInteraction[]
   silentDriftFlags         SilentDriftFlag[]
   groups                   Group[]
   persons                  Person[]
@@ -63,6 +66,8 @@ model Branch {
   bankDepositConfirmations BankDepositConfirmation[]
   financialTransactions    FinancialTransaction[]
   projects                 Project[]
+  outreaches               Outreach[]
+  outreachContacts         OutreachContact[]
 
   @@map("branches")
   @@schema("platform")
@@ -222,6 +227,7 @@ model Group {
   roleAssignments          RoleAssignment[]
   bankDepositConfirmations BankDepositConfirmation[]
   financialTransactions    FinancialTransaction[]
+  outreaches               Outreach[]
 
   @@index([branchId, type])
   @@map("groups")
@@ -264,6 +270,12 @@ model Person {
   followUpTasksSubject              FollowUpTask[]            @relation("FollowUpTaskSubject")
   pastoralNotesAuthored             PastoralNote[]            @relation("PastoralNoteAuthor")
   pastoralNotesSubject              PastoralNote[]            @relation("PastoralNoteSubject")
+  prayerNotesAuthored               PrayerNote[]              @relation("PrayerNoteAuthor")
+  prayerNotesSubject                PrayerNote[]              @relation("PrayerNoteSubject")
+  counsellingSessionsCounselled     CounsellingSession[]      @relation("CounsellingSessionCounsellor")
+  counsellingSessionsSubject        CounsellingSession[]      @relation("CounsellingSessionSubject")
+  memberInteractionsAsPastor        MemberInteraction[]       @relation("MemberInteractionPastor")
+  memberInteractionsSubject         MemberInteraction[]       @relation("MemberInteractionSubject")
   poimenEnrollment                  PoimenEnrollment?
   silentDriftFlagsAssigned          SilentDriftFlag[]         @relation("SilentDriftFlagShepherd")
   silentDriftFlagsSubject           SilentDriftFlag[]         @relation("SilentDriftFlagPerson")
@@ -279,6 +291,9 @@ model Person {
   financialTransactionsGiven        FinancialTransaction[]    @relation("FinancialTransactionGiver")
   pledges                           Pledge[]
   projectsCreated                   Project[]                 @relation("ProjectCreatedBy")
+  outreachesLed                     Outreach[]                @relation("OutreachLeader")
+  outreachesCreated                 Outreach[]                @relation("OutreachCreatedBy")
+  outreachContacts                  OutreachContact[]
 
   @@index([branchId])
   @@index([guardianPersonId])
@@ -393,24 +408,44 @@ model PoimenEnrollment {
 /// [PRD-DERIVED] FR-PC-03 (auto-created), FR-PC-04 (assignment to a
 /// specific Person - "typically the Shepherd", SLA window, escalation).
 model FollowUpTask {
-  id                  String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  branchId            String             @map("branch_id") @db.Uuid
-  groupId             String?            @map("group_id") @db.Uuid
-  personId            String             @map("person_id") @db.Uuid
-  assignedToPersonId  String             @map("assigned_to_person_id") @db.Uuid
-  status              FollowUpTaskStatus @default(OPEN)
-  dueAt               DateTime?          @map("due_at") @db.Timestamptz(6)
-  escalatedAt         DateTime?          @map("escalated_at") @db.Timestamptz(6)
-  escalatedToPersonId String?            @map("escalated_to_person_id") @db.Uuid
-  createdByPersonId   String?            @map("created_by_person_id") @db.Uuid
-  createdAt           DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt           DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
-  assignedToPerson    Person             @relation("FollowUpTaskAssignedTo", fields: [assignedToPersonId], references: [id])
-  branch              Branch             @relation(fields: [branchId], references: [id], onDelete: Cascade)
-  createdByPerson     Person?            @relation("FollowUpTaskCreatedBy", fields: [createdByPersonId], references: [id])
-  escalatedToPerson   Person?            @relation("FollowUpTaskEscalatedTo", fields: [escalatedToPersonId], references: [id])
-  group               Group?             @relation(fields: [groupId], references: [id])
-  person              Person             @relation("FollowUpTaskSubject", fields: [personId], references: [id], onDelete: Cascade)
+  id                  String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  branchId            String               @map("branch_id") @db.Uuid
+  groupId             String?              @map("group_id") @db.Uuid
+  personId            String               @map("person_id") @db.Uuid
+  assignedToPersonId  String               @map("assigned_to_person_id") @db.Uuid
+  status              FollowUpTaskStatus   @default(OPEN)
+  /// `[Milestone B: People + Pastoral + Outreach Foundation]` Confirmed
+  /// absent before this milestone (audit finding). Defaulted, not
+  /// required - every pre-existing row gets a sensible present-tense
+  /// default rather than an invented history.
+  priority            FollowUpTaskPriority @default(MEDIUM)
+  /// Brief operational reason/context only - deliberately length-capped at
+  /// the Zod layer (`createFollowUpTaskSchema`/`updateFollowUpTaskSchema`),
+  /// never a place for sensitive counselling content (a different privacy
+  /// tier - see `PrayerNote`/`CounsellingSession`).
+  description         String?
+  dueAt               DateTime?            @map("due_at") @db.Timestamptz(6)
+  /// The trigger that led to this task - previously computed transiently
+  /// in `FollowUpTaskService.create` to derive `dueAt`, then discarded.
+  /// Nullable - pre-existing rows never had this persisted and cannot be
+  /// reconstructed after the fact (no invented history).
+  trigger             FollowUpTaskTrigger? @map("trigger")
+  escalatedAt         DateTime?            @map("escalated_at") @db.Timestamptz(6)
+  escalatedToPersonId String?              @map("escalated_to_person_id") @db.Uuid
+  /// Set when `status` transitions to `COMPLETED`. Nullable - pre-existing
+  /// `COMPLETED` rows never captured this and their true completion time
+  /// cannot be honestly reconstructed from `updatedAt` alone (no invented
+  /// history).
+  completedAt         DateTime?            @map("completed_at") @db.Timestamptz(6)
+  createdByPersonId   String?              @map("created_by_person_id") @db.Uuid
+  createdAt           DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
+  assignedToPerson    Person               @relation("FollowUpTaskAssignedTo", fields: [assignedToPersonId], references: [id])
+  branch              Branch               @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  createdByPerson     Person?              @relation("FollowUpTaskCreatedBy", fields: [createdByPersonId], references: [id])
+  escalatedToPerson   Person?              @relation("FollowUpTaskEscalatedTo", fields: [escalatedToPersonId], references: [id])
+  group               Group?               @relation(fields: [groupId], references: [id])
+  person              Person               @relation("FollowUpTaskSubject", fields: [personId], references: [id], onDelete: Cascade)
 
   @@index([branchId, status])
   @@index([assignedToPersonId])
@@ -461,6 +496,147 @@ model PastoralNote {
   @@index([branchId])
   @@index([personId])
   @@map("pastoral_notes")
+  @@schema("pastoral_care")
+}
+
+/// `[Milestone B: People + Pastoral + Outreach Foundation]` A deliberately
+/// separate model from `PastoralNote` above, not a discriminator column on
+/// it - see MILESTONE_B_DESIGN_NOTES.md Part 5's Option C: physical
+/// separation (own table, own RBAC action namespace
+/// `pastoral_care.prayer_note.*`) means no role has any path to this data
+/// unless a permission-matrix row explicitly names the new action - there
+/// is no shared query or discriminator filter a future change could
+/// accidentally widen. Author-only visibility (the approved product
+/// decision) is enforced at the service/repository query layer, not by a
+/// scope value - `evaluate.ts`'s `Scope` type has no "author only"
+/// concept, and this codebase's own established pattern for this exact
+/// shape of narrowing (e.g. `BACENTA_LEADER`'s `sourceGroupId` filter on
+/// `FinancialTransactionService.listByBranch`) is a repository-level
+/// `WHERE` clause, not a new RBAC primitive.
+model PrayerNote {
+  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  branchId       String           @map("branch_id") @db.Uuid
+  personId       String           @map("person_id") @db.Uuid
+  authorPersonId String           @map("author_person_id") @db.Uuid
+  content        String
+  followUpDate   DateTime?        @map("follow_up_date") @db.Date
+  status         PrayerNoteStatus @default(OPEN)
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  authorPerson   Person           @relation("PrayerNoteAuthor", fields: [authorPersonId], references: [id])
+  branch         Branch           @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  person         Person           @relation("PrayerNoteSubject", fields: [personId], references: [id], onDelete: Cascade)
+
+  @@index([branchId])
+  @@index([personId, authorPersonId])
+  @@map("prayer_notes")
+  @@schema("pastoral_care")
+}
+
+/// `[Milestone B]` A minimal, closed set - not a full workflow, just
+/// enough for a pastor's own list-triage.
+enum PrayerNoteStatus {
+  OPEN
+  RESOLVED
+
+  @@schema("pastoral_care")
+}
+
+/// `[Milestone B: People + Pastoral + Outreach Foundation]` Deliberately
+/// operational-only - MILESTONE_B_DESIGN_NOTES.md Part 8's explicit
+/// answer to "should detailed counselling information live outside
+/// Ecclesia entirely": yes. This model tracks the fact that a session
+/// happened, with whom, when, and its status, for scheduling/light
+/// reporting only - never the content of what was discussed.
+/// `briefNote` is deliberately short (length-capped at the Zod layer,
+/// same discipline as `FollowUpTask.description`) and optional - a case
+/// reference ("marriage counselling, session 2 of 4"), never a narrative
+/// record. Same private-pastoral-domain RBAC pattern as `PrayerNote`
+/// (own action namespace, explicit ADMIN DENY) but NOT author-only -
+/// unlike a prayer note, a counselling session's *scheduling fact* is
+/// reasonable for pastoral leadership to have organizational (BRANCH/
+/// CLUSTER) oversight of, the same shared-scope precedent `PastoralNote`/
+/// `FollowUpTask` already establish - see this milestone's own approved
+/// decisions (author-only was decided specifically and only for prayer
+/// notes).
+model CounsellingSession {
+  id                 String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  branchId           String                   @map("branch_id") @db.Uuid
+  personId           String                   @map("person_id") @db.Uuid
+  counsellorPersonId String                   @map("counsellor_person_id") @db.Uuid
+  scheduledAt        DateTime                 @map("scheduled_at") @db.Timestamptz(6)
+  status             CounsellingSessionStatus @default(SCHEDULED)
+  briefNote          String?                  @map("brief_note")
+  createdAt          DateTime                 @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime                 @updatedAt @map("updated_at") @db.Timestamptz(6)
+  branch             Branch                   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  counsellorPerson   Person                   @relation("CounsellingSessionCounsellor", fields: [counsellorPersonId], references: [id])
+  person             Person                   @relation("CounsellingSessionSubject", fields: [personId], references: [id], onDelete: Cascade)
+
+  @@index([branchId, status])
+  @@index([personId])
+  @@map("counselling_sessions")
+  @@schema("pastoral_care")
+}
+
+/// `[Milestone B]` A minimal, closed set - matches
+/// MILESTONE_B_DESIGN_NOTES.md Part 8's explicit "do not design a large
+/// case-management system" instruction.
+enum CounsellingSessionStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+
+  @@schema("pastoral_care")
+}
+
+/// `[Milestone B: People + Pastoral + Outreach Foundation]` One simple
+/// interaction table, not several models - MILESTONE_B_DESIGN_NOTES.md
+/// Part 9's own recommendation. The general-purpose, low-detail pastoral
+/// activity log for touches that don't rise to a full `FollowUpTask` or
+/// a `PrayerNote` (a phone check-in, a chat after service). Pastor-only
+/// for this milestone (approved decision - no Bacenta/Basonta Leader
+/// grant; revisit leader visibility for the non-sensitive `type` values
+/// later, per the design doc's own open question). Organizational
+/// (BRANCH/CLUSTER) scope, not author-only - same reasoning as
+/// `CounsellingSession`. `scheduledAt` is nullable and distinct from
+/// `occurredAt` - a planned-but-not-yet-happened interaction (feeds the
+/// Slice 7 Pastoral Calendar read-model); when null, `occurredAt` alone
+/// represents a logged-after-the-fact entry. `briefNote` deliberately
+/// short, same discipline as `FollowUpTask.description`.
+model MemberInteraction {
+  id             String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  branchId       String                @map("branch_id") @db.Uuid
+  personId       String                @map("person_id") @db.Uuid
+  pastorPersonId String                @map("pastor_person_id") @db.Uuid
+  type           MemberInteractionType
+  occurredAt     DateTime              @map("occurred_at") @db.Timestamptz(6)
+  scheduledAt    DateTime?             @map("scheduled_at") @db.Timestamptz(6)
+  briefNote      String?               @map("brief_note")
+  createdAt      DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  branch         Branch                @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  pastorPerson   Person                @relation("MemberInteractionPastor", fields: [pastorPersonId], references: [id])
+  person         Person                @relation("MemberInteractionSubject", fields: [personId], references: [id], onDelete: Cascade)
+
+  @@index([branchId])
+  @@index([personId])
+  @@index([scheduledAt])
+  @@map("member_interactions")
+  @@schema("pastoral_care")
+}
+
+/// `[Milestone B]` A closed set spanning both non-sensitive
+/// (VISIT/CALL/MEETING/FOLLOW_UP) and sensitive (PRAYER/COUNSELLING)
+/// touchpoints - the type split the design doc's own Part 9 names as the
+/// basis for a possible future leader-visibility split, not acted on this
+/// milestone (the whole table stays pastor-only for now).
+enum MemberInteractionType {
+  VISIT
+  CALL
+  MEETING
+  FOLLOW_UP
+  PRAYER
+  COUNSELLING
+
   @@schema("pastoral_care")
 }
 
@@ -997,10 +1173,45 @@ enum SilentDriftStatus {
 /// [PRD-DERIVED] FR-PC-03/04 - not enumerated verbatim anywhere; a
 /// reasonable minimal set for an assign -> escalate -> complete workflow.
 /// See db/DESIGN_NOTES.md.
+/// `[Milestone B: People + Pastoral + Outreach Foundation]` `IN_PROGRESS`
+/// and `CANCELLED` added - confirmed absent before this milestone (the
+/// audit's own finding). Transition graph (see
+/// `libs/domain/pastoral-care/follow-up-task.ts`'s `checkFollowUpTaskStatusTransition`):
+/// OPEN -> IN_PROGRESS/ESCALATED/CANCELLED; IN_PROGRESS ->
+/// COMPLETED/ESCALATED/CANCELLED; ESCALATED -> COMPLETED/CANCELLED;
+/// COMPLETED/CANCELLED terminal. No PRD citation for this specific graph -
+/// approved as an explicit product decision, not transcribed from a
+/// source document (see MILESTONE_B_DESIGN_NOTES.md Part 7).
 enum FollowUpTaskStatus {
   OPEN
+  IN_PROGRESS
   ESCALATED
   COMPLETED
+  CANCELLED
+
+  @@schema("pastoral_care")
+}
+
+/// `[Milestone B: People + Pastoral + Outreach Foundation]` Persists what
+/// `FollowUpTaskService.create` already computed but discarded before this
+/// milestone (`libs/domain/pastoral-care`'s `FollowUpTaskTrigger` union -
+/// duplicated here as an enum for the same module-boundary reason every
+/// other domain-vs-Prisma enum pair in this schema already documents).
+enum FollowUpTaskTrigger {
+  FIRST_TIME_GUEST
+  LAPSED_REENGAGEMENT
+  MANUAL
+
+  @@schema("pastoral_care")
+}
+
+/// `[Milestone B: People + Pastoral + Outreach Foundation]` A minimal,
+/// closed set - not a fixed SLA/urgency system, just enough to sort/filter
+/// a queue. No PRD citation; approved as an explicit product decision.
+enum FollowUpTaskPriority {
+  LOW
+  MEDIUM
+  HIGH
 
   @@schema("pastoral_care")
 }
@@ -1088,4 +1299,88 @@ enum AuthorizationEffect {
   DENY
 
   @@schema("platform")
+}
+
+// =============================================================================
+// `[Milestone B: People + Pastoral + Outreach Foundation]` Outreach - a new
+// bounded-context schema, its own Postgres schema per this codebase's
+// established "one schema per bounded context" convention (Blueprint
+// §7.2), not bolted onto `gatherings` even though `VisitorIntakeSubmission`
+// is its closest existing analog. See MILESTONE_B_DESIGN_NOTES.md Part 4
+// for the full design and why the two domains stay separate this
+// milestone: VisitorIntakeSubmission is structurally 1:1 (one row per
+// person, tied to a specific Gathering); Outreach is one event with many
+// people reached, not necessarily tied to any Gathering at all.
+// =============================================================================
+
+/// One outreach event - a Bacenta/Basonta/Cluster going out, not tied to
+/// a specific Gathering (`groupId` names the leading Group when
+/// applicable; a Branch-wide/Assistant-Pastor-led outreach may have none).
+model Outreach {
+  id                String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  branchId          String            @map("branch_id") @db.Uuid
+  groupId           String?           @map("group_id") @db.Uuid
+  occurredAt        DateTime          @map("occurred_at") @db.Timestamptz(6)
+  location          String?
+  leaderPersonId    String            @map("leader_person_id") @db.Uuid
+  /// Brief operational notes only - same discipline as
+  /// `FollowUpTask.description`, never a place for sensitive content.
+  notes             String?
+  createdByPersonId String            @map("created_by_person_id") @db.Uuid
+  createdAt         DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  branch            Branch            @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  group             Group?            @relation(fields: [groupId], references: [id])
+  leaderPerson      Person            @relation("OutreachLeader", fields: [leaderPersonId], references: [id])
+  createdByPerson   Person            @relation("OutreachCreatedBy", fields: [createdByPersonId], references: [id])
+  contacts          OutreachContact[]
+
+  @@index([branchId, occurredAt])
+  @@index([groupId, occurredAt])
+  @@map("outreaches")
+  @@schema("outreach")
+}
+
+/// `[Milestone B]` A minimal, closed outcome set - not a full pipeline
+/// status machine, just enough to triage after the fact.
+enum OutreachContactOutcome {
+  NOT_INTERESTED
+  FOLLOW_UP_REQUESTED
+  ATTENDED
+
+  @@schema("outreach")
+}
+
+/// One Person reached at an Outreach event. `personId` is deliberately
+/// nullable - lazy/deferred Person promotion (MILESTONE_B_DESIGN_NOTES.md
+/// Part 4's approved decision): most outreach contacts never re-engage, so
+/// a full `Person` record (visible in the People directory, attendance
+/// eligibility, RBAC scope resolution) is only created at an explicit
+/// promotion point, not for every doorstep encounter. `firstName`/`lastName`/
+/// `phone` are captured directly on this row for the lightweight,
+/// not-yet-promoted case; once promoted, the same facts also live on the
+/// real `Person` row `personId` then points to (some duplication across
+/// that boundary is the deliberate cost of not forcing early Person
+/// creation - see the design doc's own reasoning).
+model OutreachContact {
+  id         String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  outreachId String                  @map("outreach_id") @db.Uuid
+  /// Denormalized from Outreach.branchId - every Branch-scoped table needs
+  /// a direct branch_id column for the RLS policy pattern (GroupMembership's
+  /// own doc comment states this same rationale).
+  branchId   String                  @map("branch_id") @db.Uuid
+  personId   String?                 @map("person_id") @db.Uuid
+  firstName  String                  @map("first_name")
+  lastName   String?                 @map("last_name")
+  phone      String?
+  howReached String?                 @map("how_reached")
+  outcome    OutreachContactOutcome?
+  createdAt  DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
+  branch     Branch                  @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  outreach   Outreach                @relation(fields: [outreachId], references: [id], onDelete: Cascade)
+  person     Person?                 @relation(fields: [personId], references: [id])
+
+  @@index([branchId])
+  @@index([outreachId])
+  @@map("outreach_contacts")
+  @@schema("outreach")
 }

@@ -13,9 +13,13 @@ function buildTask(overrides: Partial<Record<string, unknown>> = {}) {
     personId: 'person-1',
     assignedToPersonId: 'shepherd-1',
     status: 'OPEN',
+    priority: 'MEDIUM',
+    description: null,
     dueAt: NOW,
+    trigger: null,
     escalatedAt: null,
     escalatedToPersonId: null,
+    completedAt: null,
     createdByPersonId: 'ap-1',
     createdAt: NOW,
     updatedAt: NOW,
@@ -30,7 +34,8 @@ describe('FollowUpTaskService', () => {
     const followUpTaskRepository = {
       create: jest.fn(),
       findById: jest.fn(),
-      update: jest.fn(),
+      updateStatus: jest.fn(),
+      updateDetails: jest.fn(),
       listByGroup: jest.fn(),
       listByBranch: jest.fn(),
       listByPerson: jest.fn(),
@@ -97,6 +102,22 @@ describe('FollowUpTaskService', () => {
 
       expect(followUpTaskRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({ dueAt: new Date(override) }),
+      );
+    });
+
+    it('[Milestone B] persists priority/description/trigger (previously computed then discarded)', async () => {
+      const { service, followUpTaskRepository } = buildService();
+      followUpTaskRepository.create.mockResolvedValue(buildTask());
+
+      await service.create(actor, 'person-1', {
+        assignedToPersonId: 'shepherd-1',
+        trigger: 'LAPSED_REENGAGEMENT',
+        priority: 'HIGH',
+        description: 'missed three Sundays in a row',
+      } as never);
+
+      expect(followUpTaskRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({ priority: 'HIGH', description: 'missed three Sundays in a row', trigger: 'LAPSED_REENGAGEMENT' }),
       );
     });
   });
@@ -169,15 +190,16 @@ describe('FollowUpTaskService', () => {
   });
 
   describe('complete', () => {
-    it('moves an OPEN task to COMPLETED and publishes follow_up.completed', async () => {
+    it('moves an IN_PROGRESS task to COMPLETED, sets completedAt, and publishes follow_up.completed', async () => {
       const { service, followUpTaskRepository, eventPublisher } = buildService();
-      followUpTaskRepository.findById.mockResolvedValue(buildTask({ status: 'OPEN' }));
-      followUpTaskRepository.update.mockResolvedValue(buildTask({ status: 'COMPLETED' }));
+      followUpTaskRepository.findById.mockResolvedValue(buildTask({ status: 'IN_PROGRESS' }));
+      followUpTaskRepository.updateStatus.mockResolvedValue(buildTask({ status: 'COMPLETED', completedAt: NOW }));
 
       const result = await service.complete('ft-1');
 
-      expect(followUpTaskRepository.update).toHaveBeenCalledWith('ft-1', { status: 'COMPLETED' });
+      expect(followUpTaskRepository.updateStatus).toHaveBeenCalledWith('ft-1', { status: 'COMPLETED', completedAt: expect.any(Date) });
       expect(result.status).toBe('COMPLETED');
+      expect(result.completedAt).toBe(NOW.toISOString());
       expect(eventPublisher.publish).toHaveBeenCalledWith(
         expect.objectContaining({
           eventType: 'follow_up.completed',
@@ -188,11 +210,93 @@ describe('FollowUpTaskService', () => {
       );
     });
 
+    it('[Milestone B] also allows completing directly from OPEN (no IN_PROGRESS detour required)', async () => {
+      const { service, followUpTaskRepository } = buildService();
+      followUpTaskRepository.findById.mockResolvedValue(buildTask({ status: 'OPEN' }));
+      followUpTaskRepository.updateStatus.mockResolvedValue(buildTask({ status: 'COMPLETED' }));
+
+      await expect(service.complete('ft-1')).rejects.toThrow(ConflictException);
+    });
+
     it('rejects completing an already-COMPLETED task', async () => {
       const { service, followUpTaskRepository } = buildService();
       followUpTaskRepository.findById.mockResolvedValue(buildTask({ status: 'COMPLETED' }));
 
       await expect(service.complete('ft-1')).rejects.toThrow(ConflictException);
+    });
+
+    it('rejects completing a CANCELLED task', async () => {
+      const { service, followUpTaskRepository } = buildService();
+      followUpTaskRepository.findById.mockResolvedValue(buildTask({ status: 'CANCELLED' }));
+
+      await expect(service.complete('ft-1')).rejects.toThrow(ConflictException);
+    });
+  });
+
+  describe('[Milestone B] start', () => {
+    it('moves an OPEN task to IN_PROGRESS', async () => {
+      const { service, followUpTaskRepository } = buildService();
+      followUpTaskRepository.findById.mockResolvedValue(buildTask({ status: 'OPEN' }));
+      followUpTaskRepository.updateStatus.mockResolvedValue(buildTask({ status: 'IN_PROGRESS' }));
+
+      const result = await service.start('ft-1');
+
+      expect(followUpTaskRepository.updateStatus).toHaveBeenCalledWith('ft-1', { status: 'IN_PROGRESS' });
+      expect(result.status).toBe('IN_PROGRESS');
+    });
+
+    it('rejects starting an already-IN_PROGRESS task', async () => {
+      const { service, followUpTaskRepository } = buildService();
+      followUpTaskRepository.findById.mockResolvedValue(buildTask({ status: 'IN_PROGRESS' }));
+
+      await expect(service.start('ft-1')).rejects.toThrow(ConflictException);
+    });
+  });
+
+  describe('[Milestone B] cancel', () => {
+    it.each(['OPEN', 'IN_PROGRESS', 'ESCALATED'])('cancels a task in the active state %s', async (status) => {
+      const { service, followUpTaskRepository } = buildService();
+      followUpTaskRepository.findById.mockResolvedValue(buildTask({ status }));
+      followUpTaskRepository.updateStatus.mockResolvedValue(buildTask({ status: 'CANCELLED' }));
+
+      const result = await service.cancel('ft-1');
+
+      expect(followUpTaskRepository.updateStatus).toHaveBeenCalledWith('ft-1', { status: 'CANCELLED' });
+      expect(result.status).toBe('CANCELLED');
+    });
+
+    it('rejects cancelling an already-COMPLETED task', async () => {
+      const { service, followUpTaskRepository } = buildService();
+      followUpTaskRepository.findById.mockResolvedValue(buildTask({ status: 'COMPLETED' }));
+
+      await expect(service.cancel('ft-1')).rejects.toThrow(ConflictException);
+    });
+
+    it('rejects cancelling an already-CANCELLED task', async () => {
+      const { service, followUpTaskRepository } = buildService();
+      followUpTaskRepository.findById.mockResolvedValue(buildTask({ status: 'CANCELLED' }));
+
+      await expect(service.cancel('ft-1')).rejects.toThrow(ConflictException);
+    });
+  });
+
+  describe('[Milestone B] updateDetails', () => {
+    it('throws NotFoundException when the task does not exist', async () => {
+      const { service, followUpTaskRepository } = buildService();
+      followUpTaskRepository.findById.mockResolvedValue(null);
+
+      await expect(service.updateDetails('missing', { priority: 'HIGH' } as never)).rejects.toThrow(NotFoundException);
+    });
+
+    it('passes priority/description through to the repository, never status', async () => {
+      const { service, followUpTaskRepository } = buildService();
+      followUpTaskRepository.findById.mockResolvedValue(buildTask());
+      followUpTaskRepository.updateDetails.mockResolvedValue(buildTask({ priority: 'HIGH', description: 'urgent' }));
+
+      const result = await service.updateDetails('ft-1', { priority: 'HIGH', description: 'urgent' } as never);
+
+      expect(followUpTaskRepository.updateDetails).toHaveBeenCalledWith('ft-1', { priority: 'HIGH', description: 'urgent' });
+      expect(result.priority).toBe('HIGH');
     });
   });
 
@@ -200,15 +304,23 @@ describe('FollowUpTaskService', () => {
     it('moves an OPEN task to ESCALATED with the caller-supplied target', async () => {
       const { service, followUpTaskRepository } = buildService();
       followUpTaskRepository.findById.mockResolvedValue(buildTask({ status: 'OPEN' }));
-      followUpTaskRepository.update.mockResolvedValue(buildTask({ status: 'ESCALATED', escalatedToPersonId: 'ap-2' }));
+      followUpTaskRepository.updateStatus.mockResolvedValue(buildTask({ status: 'ESCALATED', escalatedToPersonId: 'ap-2' }));
 
       const result = await service.escalate('ft-1', 'ap-2');
 
-      expect(followUpTaskRepository.update).toHaveBeenCalledWith(
+      expect(followUpTaskRepository.updateStatus).toHaveBeenCalledWith(
         'ft-1',
         expect.objectContaining({ status: 'ESCALATED', escalatedToPersonId: 'ap-2' }),
       );
       expect(result.escalatedToPersonId).toBe('ap-2');
+    });
+
+    it('[Milestone B] also allows escalating from IN_PROGRESS', async () => {
+      const { service, followUpTaskRepository } = buildService();
+      followUpTaskRepository.findById.mockResolvedValue(buildTask({ status: 'IN_PROGRESS' }));
+      followUpTaskRepository.updateStatus.mockResolvedValue(buildTask({ status: 'ESCALATED' }));
+
+      await expect(service.escalate('ft-1', 'ap-2')).resolves.toBeDefined();
     });
 
     it('rejects escalating an already-ESCALATED task', async () => {

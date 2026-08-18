@@ -19,4 +19,14 @@ describe('GroupMembershipController', () => {
 
     expect(groupMembershipService.listForPerson).toHaveBeenCalledWith('person-1');
   });
+
+  it('[Milestone B] leave() delegates to GroupMembershipService.leave with the personId param and body', async () => {
+    const groupMembershipService = { assign: jest.fn(), listForPerson: jest.fn(), leave: jest.fn() };
+    const controller = new GroupMembershipController(groupMembershipService as never);
+    const body = { groupId: '11111111-1111-1111-1111-111111111111', reason: 'moved house' } as never;
+
+    await controller.leave('person-1', body);
+
+    expect(groupMembershipService.leave).toHaveBeenCalledWith('person-1', body);
+  });
 });

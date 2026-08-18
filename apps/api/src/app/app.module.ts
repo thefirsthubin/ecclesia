@@ -7,6 +7,7 @@ import { ConfigurationModule } from '../modules/configuration/configuration.modu
 import { GatheringsModule } from '../modules/gatherings/gatherings.module';
 import { InsightsModule } from '../modules/insights/insights.module';
 import { MinistryModule } from '../modules/ministry/ministry.module';
+import { OutreachModule } from '../modules/outreach/outreach.module';
 import { PastoralCareModule } from '../modules/pastoral-care/pastoral-care.module';
 import { PeopleModule } from '../modules/people/people.module';
 import { StewardshipModule } from '../modules/stewardship/stewardship.module';
@@ -39,6 +40,8 @@ import { PlatformModule } from '../platform/platform.module';
  * `AuditLogModule` (Audit Log milestone) is the eighth, the read side of
  * `platform.audit_log` - same reasoning as `ConfigurationModule` for
  * staying out of `PlatformModule`, see its own doc comment.
+ * `OutreachModule` (`[Milestone B: People + Pastoral + Outreach
+ * Foundation]`) is the ninth - see that module's own doc comment.
  * `PeopleModule` and `PastoralCareModule` import each other
  * (`forwardRef`) for their bidirectional public-service dependency - see
  * both modules' own doc comments. `GatheringsModule`, `StewardshipModule`,
@@ -59,6 +62,7 @@ import { PlatformModule } from '../platform/platform.module';
     MinistryModule,
     ConfigurationModule,
     AuditLogModule,
+    OutreachModule,
   ],
   controllers: [AppController],
   providers: [AppService],

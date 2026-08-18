@@ -6,12 +6,14 @@ import {
   escalateFollowUpTaskSchema,
   listFollowUpTasksForActorQuerySchema,
   listFollowUpTasksQuerySchema,
+  updateFollowUpTaskSchema,
 } from '@ecclesia/contracts';
 import type {
   CreateFollowUpTaskInput,
   EscalateFollowUpTaskInput,
   ListFollowUpTasksForActorQuery,
   ListFollowUpTasksQuery,
+  UpdateFollowUpTaskInput,
 } from '@ecclesia/contracts';
 
 import { CurrentActor } from '../../../platform/auth/decorators/current-actor.decorator';
@@ -90,6 +92,27 @@ export class FollowUpTaskController {
     return this.followUpTaskService.getById(id);
   }
 
+  /** `[Milestone B]` Edits `priority`/`description` only - reuses
+   * `pastoral_care.followup_task.update`, the same action every status
+   * transition below already requires. No new RBAC action. */
+  @Patch('follow-up-tasks/:id')
+  @RequirePermission('pastoral_care.followup_task.update')
+  @UseGuards(FollowUpTaskResourceContextGuard, RbacGuard)
+  updateDetails(
+    @Param('id') id: string,
+    @Body(new ZodValidationPipe(updateFollowUpTaskSchema)) body: UpdateFollowUpTaskInput,
+  ) {
+    return this.followUpTaskService.updateDetails(id, body);
+  }
+
+  /** `[Milestone B]` `OPEN -> IN_PROGRESS`. */
+  @Patch('follow-up-tasks/:id/start')
+  @RequirePermission('pastoral_care.followup_task.update')
+  @UseGuards(FollowUpTaskResourceContextGuard, RbacGuard)
+  start(@Param('id') id: string) {
+    return this.followUpTaskService.start(id);
+  }
+
   @Patch('follow-up-tasks/:id/complete')
   @RequirePermission('pastoral_care.followup_task.update')
   @UseGuards(FollowUpTaskResourceContextGuard, RbacGuard)
@@ -105,5 +128,14 @@ export class FollowUpTaskController {
     @Body(new ZodValidationPipe(escalateFollowUpTaskSchema)) body: EscalateFollowUpTaskInput,
   ) {
     return this.followUpTaskService.escalate(id, body.escalatedToPersonId);
+  }
+
+  /** `[Milestone B]` Reachable from any active state - see
+   * `checkFollowUpTaskStatusTransition`'s own doc comment. */
+  @Patch('follow-up-tasks/:id/cancel')
+  @RequirePermission('pastoral_care.followup_task.update')
+  @UseGuards(FollowUpTaskResourceContextGuard, RbacGuard)
+  cancel(@Param('id') id: string) {
+    return this.followUpTaskService.cancel(id);
   }
 }

@@ -4,7 +4,13 @@ describe('GroupMembershipRepository', () => {
   function buildRepository() {
     const prisma = {
       group: { findUnique: jest.fn() },
-      groupMembership: { count: jest.fn(), findMany: jest.fn(), updateMany: jest.fn(), create: jest.fn().mockResolvedValue({ id: 'membership-new' }) },
+      groupMembership: {
+        count: jest.fn(),
+        findMany: jest.fn(),
+        updateMany: jest.fn(),
+        update: jest.fn(),
+        create: jest.fn().mockResolvedValue({ id: 'membership-new' }),
+      },
       person: { update: jest.fn() },
     };
     const repository = new GroupMembershipRepository(prisma as never);
@@ -202,6 +208,21 @@ describe('GroupMembershipRepository', () => {
 
       const call = prisma.groupMembership.findMany.mock.calls[0][0];
       expect(call.where.startedAt.lte.getTime()).toBeGreaterThanOrEqual(before);
+    });
+  });
+
+  describe('[Milestone B] closeMembership', () => {
+    it('sets endedAt and reason on the given membership', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.groupMembership.update.mockResolvedValue({ id: 'membership-1', endedAt: new Date(), reason: 'moved house' });
+
+      const result = await repository.closeMembership('membership-1', 'moved house');
+
+      expect(prisma.groupMembership.update).toHaveBeenCalledWith({
+        where: { id: 'membership-1' },
+        data: { endedAt: expect.any(Date), reason: 'moved house' },
+      });
+      expect(result).toEqual({ id: 'membership-1', endedAt: expect.any(Date), reason: 'moved house' });
     });
   });
 });

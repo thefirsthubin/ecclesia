@@ -15,15 +15,19 @@ describe('PersonService', () => {
       updateLifecycleStage: jest.fn(),
       findByBranch: jest.fn().mockResolvedValue([]),
       findByIds: jest.fn().mockResolvedValue([]),
+      findWithoutActiveBacenta: jest.fn().mockResolvedValue([]),
       countByBranch: jest.fn(),
       countByBranchCreatedBefore: jest.fn(),
     };
     const groupRosterService = {
       listActiveMembers: jest.fn().mockResolvedValue([]),
     };
+    const groupService = {
+      listActiveBacentasForBranch: jest.fn().mockResolvedValue([]),
+    };
     const eventPublisher = { publish: jest.fn() };
-    const service = new PersonService(personRepository as never, groupRosterService as never, eventPublisher as never);
-    return { service, personRepository, groupRosterService, eventPublisher };
+    const service = new PersonService(personRepository as never, groupRosterService as never, groupService as never, eventPublisher as never);
+    return { service, personRepository, groupRosterService, groupService, eventPublisher };
   }
 
   const personRow = {
@@ -233,6 +237,44 @@ describe('PersonService', () => {
 
       expect(personRepository.countByBranchCreatedBefore).toHaveBeenCalledWith('branch-1', cutoff);
       expect(result).toBe(470);
+    });
+  });
+
+  describe('[Milestone B] listWithoutActiveBacenta', () => {
+    it('delegates to personRepository.findWithoutActiveBacenta with the actor\'s Branch and an optional search term', async () => {
+      const { service, personRepository } = buildService();
+      personRepository.findWithoutActiveBacenta.mockResolvedValue([personRow]);
+
+      const result = await service.listWithoutActiveBacenta(actor, 'Ama');
+
+      expect(personRepository.findWithoutActiveBacenta).toHaveBeenCalledWith('branch-1', 'Ama');
+      expect(result).toHaveLength(1);
+    });
+  });
+
+  describe('[Milestone B] listOrganizedByBacenta', () => {
+    it('returns one entry per active Bacenta with its own resolved roster', async () => {
+      const { service, personRepository, groupRosterService, groupService } = buildService();
+      const graceBacenta = { id: 'bacenta-1', branchId: 'branch-1', type: 'PASTORAL_CARE', name: 'Grace' };
+      groupService.listActiveBacentasForBranch.mockResolvedValue([graceBacenta]);
+      groupRosterService.listActiveMembers.mockResolvedValue([{ personId: 'person-1', startedAt: new Date() }]);
+      personRepository.findByIds.mockResolvedValue([personRow]);
+
+      const result = await service.listOrganizedByBacenta(actor);
+
+      expect(groupService.listActiveBacentasForBranch).toHaveBeenCalledWith('branch-1');
+      expect(groupRosterService.listActiveMembers).toHaveBeenCalledWith('bacenta-1');
+      expect(personRepository.findByIds).toHaveBeenCalledWith(['person-1']);
+      expect(result).toEqual([{ group: graceBacenta, memberCount: 1, members: expect.any(Array) }]);
+    });
+
+    it('returns an empty array when the Branch has no active Bacentas', async () => {
+      const { service, groupService } = buildService();
+      groupService.listActiveBacentasForBranch.mockResolvedValue([]);
+
+      const result = await service.listOrganizedByBacenta(actor);
+
+      expect(result).toEqual([]);
     });
   });
 });
