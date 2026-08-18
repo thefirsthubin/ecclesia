@@ -25,6 +25,8 @@ function toResponseDto(gathering: Gathering): GatheringResponseDto {
     scheduledEnd: gathering.scheduledEnd ? gathering.scheduledEnd.toISOString() : null,
     venue: gathering.venue,
     status: gathering.status,
+    preacherPersonId: gathering.preacherPersonId,
+    message: gathering.message,
     config: (gathering.config as Record<string, unknown> | null) ?? null,
     createdByPersonId: gathering.createdByPersonId,
     createdAt: gathering.createdAt.toISOString(),
@@ -51,6 +53,8 @@ export class GatheringService {
       scheduledStart: new Date(input.scheduledStart),
       scheduledEnd: input.scheduledEnd ? new Date(input.scheduledEnd) : undefined,
       venue: input.venue,
+      preacherPersonId: input.preacherPersonId,
+      message: input.message,
       config: input.config as Prisma.InputJsonValue | undefined,
       createdByPersonId: actor.personId,
     });
@@ -108,6 +112,8 @@ export class GatheringService {
       scheduledEnd: input.scheduledEnd === undefined ? undefined : input.scheduledEnd ? new Date(input.scheduledEnd) : null,
       venue: input.venue,
       status: input.status,
+      preacherPersonId: input.preacherPersonId,
+      message: input.message,
       // Prisma's own quirk for nullable Json columns: a literal `null`
       // does not mean "clear this field" the way it does for every other
       // column - it has to be the `Prisma.JsonNull` sentinel instead, or

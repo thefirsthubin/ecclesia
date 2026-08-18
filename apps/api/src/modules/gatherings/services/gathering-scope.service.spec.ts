@@ -16,12 +16,21 @@ describe('GatheringScopeService', () => {
     await expect(service.loadScope('missing')).rejects.toThrow(NotFoundException);
   });
 
-  it('resolves to { branchId } for an existing Gathering', async () => {
+  it('resolves to { branchId, ownerGroupId } for an existing Gathering', async () => {
     const { service, gatheringRepository } = buildService();
-    gatheringRepository.findById.mockResolvedValue({ id: 'gathering-1', branchId: 'branch-1' });
+    gatheringRepository.findById.mockResolvedValue({ id: 'gathering-1', branchId: 'branch-1', ownerGroupId: 'bacenta-1' });
 
     const result = await service.loadScope('gathering-1');
 
-    expect(result).toEqual({ branchId: 'branch-1' });
+    expect(result).toEqual({ branchId: 'branch-1', ownerGroupId: 'bacenta-1' });
+  });
+
+  it('[Milestone A] resolves ownerGroupId to null for a Branch-wide Gathering (Sunday/Midweek Service)', async () => {
+    const { service, gatheringRepository } = buildService();
+    gatheringRepository.findById.mockResolvedValue({ id: 'gathering-1', branchId: 'branch-1', ownerGroupId: null });
+
+    const result = await service.loadScope('gathering-1');
+
+    expect(result).toEqual({ branchId: 'branch-1', ownerGroupId: null });
   });
 });

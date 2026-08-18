@@ -86,7 +86,7 @@ export class BankDepositConfirmationService {
     const weekEndDate = new Date(weekStartDate.getTime() + MILLISECONDS_PER_WEEK);
 
     const [verifiedTotals, confirmations] = await Promise.all([
-      this.financialTransactionRepository.sumVerifiedAmountByGroupForWeek(actor.branchId, weekStartDate, weekEndDate),
+      this.financialTransactionRepository.sumVerifiedAmountByGroupForRange(actor.branchId, weekStartDate, weekEndDate),
       this.bankDepositConfirmationRepository.findManyByBranchAndWeek(actor.branchId, weekStartDate),
     ]);
 

@@ -4,6 +4,7 @@ import { DatabaseModule } from '../../platform/database/database.module';
 import { EventsModule } from '../../platform/events/events.module';
 import { RbacPlatformModule } from '../../platform/rbac/rbac-platform.module';
 import { StorageModule } from '../../platform/storage/storage.module';
+import { GatheringsModule } from '../gatherings/gatherings.module';
 import { PeopleModule } from '../people/people.module';
 import { BankDepositConfirmationController } from './controllers/bank-deposit-confirmation.controller';
 import { ExpenseController } from './controllers/expense.controller';
@@ -23,6 +24,7 @@ import {
   FinancialTransactionCreateResourceContextGuard,
   FinancialTransactionListResourceContextGuard,
   FinancialTransactionResourceContextGuard,
+  FinancialTransactionSummaryResourceContextGuard,
 } from './guards/financial-transaction-resource-context.guard';
 import { PledgeCreateResourceContextGuard, PledgeResourceContextGuard } from './guards/pledge-resource-context.guard';
 import { ProjectCreateResourceContextGuard, ProjectResourceContextGuard } from './guards/project-resource-context.guard';
@@ -53,6 +55,16 @@ import { ProjectService } from './services/project.service';
  * `StorageModule` now - `ExpenseController`'s new Receipt Upload endpoints
  * are this module's first consumer of `StorageService`.
  *
+ * `[Milestone A: Financial + Gathering Backend Foundation]` Also imports
+ * `GatheringsModule` now, for its exported `GatheringScopeService` -
+ * `FinancialTransactionService.record()` needs it to validate a
+ * client-supplied `gatheringId` exists, belongs to the same Branch, and
+ * (when both are set) agrees with `sourceGroupId`, before linking a
+ * transaction to a Gathering occurrence. The same "ordinary import, no
+ * `forwardRef`" shape `MinistryModule` already established for consuming
+ * this exact export - Gatherings needs nothing from Stewardship, so there
+ * is no cycle to break.
+ *
  * **Exports `FinancialTransactionService`** (Resident Pastor Dashboard -
  * real Giving data milestone) - the first time this module exports
  * anything. `BranchDashboardSummaryService` (`apps/api/src/modules/insights`)
@@ -61,7 +73,7 @@ import { ProjectService } from './services/project.service';
  * `PeopleModule`/`GatheringsModule`'s own exports already establish.
  */
 @Module({
-  imports: [DatabaseModule, RbacPlatformModule, EventsModule, PeopleModule, StorageModule],
+  imports: [DatabaseModule, RbacPlatformModule, EventsModule, PeopleModule, StorageModule, GatheringsModule],
   controllers: [FinancialTransactionController, ExpenseController, ProjectController, PledgeController, BankDepositConfirmationController],
   providers: [
     FinancialTransactionRepository,
@@ -77,6 +89,7 @@ import { ProjectService } from './services/project.service';
     FinancialTransactionCreateResourceContextGuard,
     FinancialTransactionResourceContextGuard,
     FinancialTransactionListResourceContextGuard,
+    FinancialTransactionSummaryResourceContextGuard,
     ExpenseCreateResourceContextGuard,
     ExpenseResourceContextGuard,
     ExpenseListResourceContextGuard,

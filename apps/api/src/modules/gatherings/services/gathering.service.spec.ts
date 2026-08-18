@@ -16,6 +16,8 @@ function buildGathering(overrides: Partial<Record<string, unknown>> = {}) {
     scheduledEnd: null,
     venue: null,
     status: 'SCHEDULED',
+    preacherPersonId: null,
+    message: null,
     config: null,
     createdByPersonId: 'ap-1',
     createdAt: NOW,
@@ -49,6 +51,22 @@ describe('GatheringService', () => {
       expect(gatheringRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({ branchId: 'branch-1', type: 'SUNDAY_SERVICE', createdByPersonId: 'ap-1' }),
       );
+    });
+
+    it('[Milestone A] passes preacherPersonId/message through when given', async () => {
+      const { service, gatheringRepository } = buildService();
+      gatheringRepository.create.mockResolvedValue(buildGathering({ preacherPersonId: 'rp-1', message: 'Faith Over Fear' }));
+
+      const result = await service.create(actor, {
+        type: 'SUNDAY_SERVICE',
+        scheduledStart: NOW.toISOString(),
+        preacherPersonId: 'rp-1',
+        message: 'Faith Over Fear',
+      } as never);
+
+      expect(gatheringRepository.create).toHaveBeenCalledWith(expect.objectContaining({ preacherPersonId: 'rp-1', message: 'Faith Over Fear' }));
+      expect(result.preacherPersonId).toBe('rp-1');
+      expect(result.message).toBe('Faith Over Fear');
     });
   });
 
@@ -155,6 +173,16 @@ describe('GatheringService', () => {
       const result = await service.update('g-1', { status: 'CANCELLED' } as never);
 
       expect(result.seriesId).toBe('series-1');
+    });
+
+    it('[Milestone A] passes preacherPersonId/message through when given', async () => {
+      const { service, gatheringRepository } = buildService();
+      gatheringRepository.findById.mockResolvedValue(buildGathering());
+      gatheringRepository.update.mockResolvedValue(buildGathering({ preacherPersonId: 'rp-1', message: 'Faith Over Fear' }));
+
+      await service.update('g-1', { preacherPersonId: 'rp-1', message: 'Faith Over Fear' } as never);
+
+      expect(gatheringRepository.update).toHaveBeenCalledWith('g-1', expect.objectContaining({ preacherPersonId: 'rp-1', message: 'Faith Over Fear' }));
     });
   });
 });

@@ -253,6 +253,7 @@ model Person {
   attendanceRecorded                AttendanceRecord[]        @relation("AttendanceRecordRecordedBy")
   createdGatheringSeries            GatheringSeries[]         @relation("GatheringSeriesCreatedBy")
   createdGatherings                 Gathering[]               @relation("GatheringCreatedBy")
+  gatheringsPreached                Gathering[]               @relation("GatheringPreacher")
   visitorIntakeSubmission           VisitorIntakeSubmission[]
   alertsResolved                    Alert[]                   @relation("AlertResolvedBy")
   staffingTargetsCreated            StaffingTarget[]          @relation("StaffingTargetCreatedBy")
@@ -542,6 +543,16 @@ model Gathering {
   scheduledEnd             DateTime?                 @map("scheduled_end") @db.Timestamptz(6)
   venue                    String?
   status                   GatheringStatus           @default(SCHEDULED)
+  /// `[Milestone A: Financial + Gathering Backend Foundation]` Who preached,
+  /// if applicable - a `Person` reference (not free text), matching every
+  /// other actor-like field on this schema (`createdByPersonId`,
+  /// `giverPersonId`, etc.). A guest speaker with no `Person` record is a
+  /// known, accepted limitation - no free-text fallback field, by design
+  /// (see MILESTONE_A_DESIGN_NOTES.md).
+  preacherPersonId         String?                   @map("preacher_person_id") @db.Uuid
+  /// The message/sermon title or topic (e.g. "Faith Over Fear") - not a
+  /// notes/transcript field, deliberately out of scope.
+  message                  String?
   /// Type-specific fields (e.g. stream URL for an online Gathering).
   config                   Json?
   createdByPersonId        String                    @map("created_by_person_id") @db.Uuid
@@ -550,10 +561,12 @@ model Gathering {
   attendanceRecords        AttendanceRecord[]
   branch                   Branch                    @relation(fields: [branchId], references: [id], onDelete: Cascade)
   createdByPerson          Person                    @relation("GatheringCreatedBy", fields: [createdByPersonId], references: [id])
+  preacherPerson           Person?                   @relation("GatheringPreacher", fields: [preacherPersonId], references: [id])
   ownerGroup               Group?                    @relation(fields: [ownerGroupId], references: [id])
   series                   GatheringSeries?          @relation(fields: [seriesId], references: [id])
   visitorIntakeSubmissions VisitorIntakeSubmission[]
   staffingTargets          StaffingTarget[]
+  financialTransactions    FinancialTransaction[]
 
   @@index([branchId, scheduledStart])
   @@index([ownerGroupId, scheduledStart])
@@ -612,6 +625,17 @@ model FinancialTransaction {
   branchId         String                       @map("branch_id") @db.Uuid
   type             FinancialTransactionType
   sourceGroupId    String?                      @map("source_group_id") @db.Uuid
+  /// `[Milestone A: Financial + Gathering Backend Foundation]` The specific
+  /// Gathering occurrence this money was given at (which exact Sunday,
+  /// which exact Bacenta meeting instance) - distinct from `sourceGroupId`,
+  /// which answers "which Bacenta/Basonta organizationally collected this"
+  /// with no notion of a specific dated occurrence. Both may be set
+  /// together (enforced consistent by `FinancialTransactionService.record`,
+  /// not a DB constraint - see MILESTONE_A_DESIGN_NOTES.md); either may be
+  /// set alone; both may be omitted. Nullable and expected to stay null on
+  /// every pre-existing row - no historical backfill was performed (no
+  /// reliable, non-invented attribution exists for past rows).
+  gatheringId      String?                      @map("gathering_id") @db.Uuid
   giverPersonId    String?                      @map("giver_person_id") @db.Uuid
   channel          FinancialTransactionChannel?
   /// Stored in minor currency units (e.g. pesewas/cents) to avoid float
@@ -627,9 +651,11 @@ model FinancialTransaction {
   branch           Branch                       @relation(fields: [branchId], references: [id])
   giverPerson      Person?                      @relation("FinancialTransactionGiver", fields: [giverPersonId], references: [id])
   sourceGroup      Group?                       @relation(fields: [sourceGroupId], references: [id])
+  gathering        Gathering?                   @relation(fields: [gatheringId], references: [id])
   pledgesFulfilled Pledge[]
 
   @@index([branchId, type, currentState])
+  @@index([gatheringId])
   @@map("financial_transactions")
   @@schema("stewardship")
 }

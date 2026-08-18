@@ -11,6 +11,7 @@ function buildTransaction(overrides: Partial<Record<string, unknown>> = {}) {
     branchId: 'branch-1',
     type: 'OFFERING',
     sourceGroupId: 'bacenta-1',
+    gatheringId: null,
     giverPersonId: null,
     channel: 'CASH',
     amountMinor: 5000n,
@@ -36,10 +37,12 @@ describe('FinancialTransactionService', () => {
       findRecordedByPersonId: jest.fn(),
       findFirstEventByToState: jest.fn(),
       sumVerifiedAmountForBranch: jest.fn(),
+      sumVerifiedAmountByGroupForRange: jest.fn(),
     };
     const eventPublisher = { publish: jest.fn() };
-    const service = new FinancialTransactionService(financialTransactionRepository as never, eventPublisher as never);
-    return { service, financialTransactionRepository, eventPublisher };
+    const gatheringScopeService = { loadScope: jest.fn() };
+    const service = new FinancialTransactionService(financialTransactionRepository as never, eventPublisher as never, gatheringScopeService as never);
+    return { service, financialTransactionRepository, eventPublisher, gatheringScopeService };
   }
 
   describe('record', () => {
@@ -98,6 +101,70 @@ describe('FinancialTransactionService', () => {
 
       await expect(
         service.record(treasurer, { type: 'DONATION', channel: 'MOBILE_MONEY', amountMinor: '1000' } as never),
+      ).rejects.toThrow(ConflictException);
+    });
+
+    it('[Milestone A] passes gatheringId through to createWithEvent when the Gathering is valid and consistent', async () => {
+      const { service, financialTransactionRepository, gatheringScopeService } = buildService();
+      gatheringScopeService.loadScope.mockResolvedValue({ branchId: 'branch-1', ownerGroupId: 'bacenta-1' });
+      financialTransactionRepository.findUserIdByPersonId.mockResolvedValue('user-1');
+      financialTransactionRepository.createWithEvent.mockResolvedValue(buildTransaction({ gatheringId: 'gathering-1' }));
+
+      await service.record(bacentaLeader, {
+        type: 'OFFERING',
+        sourceGroupId: 'bacenta-1',
+        gatheringId: 'gathering-1',
+        channel: 'CASH',
+        amountMinor: '5000',
+      } as never);
+
+      expect(gatheringScopeService.loadScope).toHaveBeenCalledWith('gathering-1');
+      expect(financialTransactionRepository.createWithEvent).toHaveBeenCalledWith(expect.objectContaining({ gatheringId: 'gathering-1' }));
+    });
+
+    it('[Milestone A] allows gatheringId with no sourceGroupId (Branch-wide Sunday/Midweek Gathering)', async () => {
+      const { service, financialTransactionRepository, gatheringScopeService } = buildService();
+      gatheringScopeService.loadScope.mockResolvedValue({ branchId: 'branch-1', ownerGroupId: null });
+      financialTransactionRepository.findUserIdByPersonId.mockResolvedValue('user-1');
+      financialTransactionRepository.createWithEvent.mockResolvedValue(buildTransaction({ sourceGroupId: null, gatheringId: 'sunday-1' }));
+
+      await service.record(treasurer, { type: 'OFFERING', gatheringId: 'sunday-1', channel: 'CASH', amountMinor: '5000' } as never);
+
+      expect(financialTransactionRepository.createWithEvent).toHaveBeenCalledWith(expect.objectContaining({ gatheringId: 'sunday-1' }));
+    });
+
+    it('[Milestone A] allows a Bacenta collection folded into a Branch-wide Gathering (ownerGroupId null, sourceGroupId set)', async () => {
+      const { service, financialTransactionRepository, gatheringScopeService } = buildService();
+      gatheringScopeService.loadScope.mockResolvedValue({ branchId: 'branch-1', ownerGroupId: null });
+      financialTransactionRepository.findUserIdByPersonId.mockResolvedValue('user-1');
+      financialTransactionRepository.createWithEvent.mockResolvedValue(buildTransaction({ gatheringId: 'sunday-1' }));
+
+      await expect(
+        service.record(treasurer, { type: 'OFFERING', sourceGroupId: 'bacenta-1', gatheringId: 'sunday-1', channel: 'CASH', amountMinor: '5000' } as never),
+      ).resolves.toBeDefined();
+    });
+
+    it('[Milestone A] rejects a Gathering that belongs to a different Branch', async () => {
+      const { service, gatheringScopeService } = buildService();
+      gatheringScopeService.loadScope.mockResolvedValue({ branchId: 'branch-OTHER', ownerGroupId: null });
+
+      await expect(
+        service.record(treasurer, { type: 'OFFERING', gatheringId: 'foreign-gathering', channel: 'CASH', amountMinor: '5000' } as never),
+      ).rejects.toThrow(ConflictException);
+    });
+
+    it('[Milestone A] rejects when the Gathering\'s ownerGroupId does not match sourceGroupId (cross-Bacenta attribution)', async () => {
+      const { service, gatheringScopeService } = buildService();
+      gatheringScopeService.loadScope.mockResolvedValue({ branchId: 'branch-1', ownerGroupId: 'bacenta-OTHER' });
+
+      await expect(
+        service.record(bacentaLeader, {
+          type: 'OFFERING',
+          sourceGroupId: 'bacenta-1',
+          gatheringId: 'someone-elses-meeting',
+          channel: 'CASH',
+          amountMinor: '5000',
+        } as never),
       ).rejects.toThrow(ConflictException);
     });
 
@@ -212,7 +279,7 @@ describe('FinancialTransactionService', () => {
 
       const result = await service.listByBranch(treasurer, 'RECORDED');
 
-      expect(financialTransactionRepository.findManyByBranch).toHaveBeenCalledWith('branch-1', 'RECORDED');
+      expect(financialTransactionRepository.findManyByBranch).toHaveBeenCalledWith('branch-1', 'RECORDED', undefined, undefined);
       expect(result[0].recordedByPersonId).toBeNull();
     });
 
@@ -225,6 +292,25 @@ describe('FinancialTransactionService', () => {
 
       expect(financialTransactionRepository.findManyByBranch).toHaveBeenCalledWith('branch-1', 'RECORDED', undefined, 'bacenta-1');
     });
+
+    it('[Milestone A] actor.bacentaId wins over an explicit sourceGroupId query param', async () => {
+      const { service, financialTransactionRepository } = buildService();
+      const bacentaLeaderWithGroup: ActorContext = { ...bacentaLeader, bacentaId: 'bacenta-1' };
+      financialTransactionRepository.findManyByBranch.mockResolvedValue([]);
+
+      await service.listByBranch(bacentaLeaderWithGroup, 'RECORDED', 'TITHE', 'someone-elses-bacenta');
+
+      expect(financialTransactionRepository.findManyByBranch).toHaveBeenCalledWith('branch-1', 'RECORDED', 'TITHE', 'bacenta-1');
+    });
+
+    it('[Milestone A] passes an explicit sourceGroupId through for a BRANCH-scoped actor with no bacentaId', async () => {
+      const { service, financialTransactionRepository } = buildService();
+      financialTransactionRepository.findManyByBranch.mockResolvedValue([]);
+
+      await service.listByBranch(treasurer, undefined, 'OFFERING', 'bacenta-2');
+
+      expect(financialTransactionRepository.findManyByBranch).toHaveBeenCalledWith('branch-1', undefined, 'OFFERING', 'bacenta-2');
+    });
   });
 
   describe('sumVerifiedAmountForBranch', () => {
@@ -236,8 +322,79 @@ describe('FinancialTransactionService', () => {
 
       const result = await service.sumVerifiedAmountForBranch('branch-1', from, to);
 
-      expect(financialTransactionRepository.sumVerifiedAmountForBranch).toHaveBeenCalledWith('branch-1', from, to);
+      expect(financialTransactionRepository.sumVerifiedAmountForBranch).toHaveBeenCalledWith('branch-1', from, to, undefined);
       expect(result).toBe(2450000n);
+    });
+
+    it('[Milestone A] passes an optional type filter through', async () => {
+      const { service, financialTransactionRepository } = buildService();
+      financialTransactionRepository.sumVerifiedAmountForBranch.mockResolvedValue(0n);
+
+      await service.sumVerifiedAmountForBranch('branch-1', new Date(), new Date(), 'TITHE');
+
+      expect(financialTransactionRepository.sumVerifiedAmountForBranch).toHaveBeenCalledWith('branch-1', expect.any(Date), expect.any(Date), 'TITHE');
+    });
+  });
+
+  describe('[Milestone A] summarize', () => {
+    const from = new Date('2026-08-01T00:00:00.000Z');
+    const to = new Date('2026-09-01T00:00:00.000Z');
+
+    it('defaults to groupBy "none" and returns one row with sourceGroupId null for a BRANCH-scoped actor', async () => {
+      const { service, financialTransactionRepository } = buildService();
+      financialTransactionRepository.sumVerifiedAmountForBranch.mockResolvedValue(12345n);
+
+      const result = await service.summarize(treasurer, from, to);
+
+      expect(financialTransactionRepository.sumVerifiedAmountForBranch).toHaveBeenCalledWith('branch-1', from, to, undefined);
+      expect(result).toEqual({
+        branchId: 'branch-1',
+        from: from.toISOString(),
+        to: to.toISOString(),
+        type: null,
+        groupBy: 'none',
+        rows: [{ sourceGroupId: null, totalAmountMinor: '12345' }],
+      });
+    });
+
+    it('groupBy "group" returns one row per Group', async () => {
+      const { service, financialTransactionRepository } = buildService();
+      financialTransactionRepository.sumVerifiedAmountByGroupForRange.mockResolvedValue([
+        { sourceGroupId: 'bacenta-1', totalAmountMinor: 5000n },
+        { sourceGroupId: 'bacenta-2', totalAmountMinor: 7000n },
+      ]);
+
+      const result = await service.summarize(treasurer, from, to, 'OFFERING', 'group');
+
+      expect(financialTransactionRepository.sumVerifiedAmountByGroupForRange).toHaveBeenCalledWith('branch-1', from, to, 'OFFERING');
+      expect(result.rows).toEqual([
+        { sourceGroupId: 'bacenta-1', totalAmountMinor: '5000' },
+        { sourceGroupId: 'bacenta-2', totalAmountMinor: '7000' },
+      ]);
+    });
+
+    it('a Bacenta-scoped actor always gets groupBy "none" narrowed to their own Bacenta, even if "group" was requested', async () => {
+      const { service, financialTransactionRepository } = buildService();
+      const bacentaLeaderWithGroup: ActorContext = { ...bacentaLeader, bacentaId: 'bacenta-1' };
+      financialTransactionRepository.sumVerifiedAmountByGroupForRange.mockResolvedValue([
+        { sourceGroupId: 'bacenta-1', totalAmountMinor: 5000n },
+        { sourceGroupId: 'bacenta-2', totalAmountMinor: 7000n },
+      ]);
+
+      const result = await service.summarize(bacentaLeaderWithGroup, from, to, undefined, 'group');
+
+      expect(result.groupBy).toBe('none');
+      expect(result.rows).toEqual([{ sourceGroupId: 'bacenta-1', totalAmountMinor: '5000' }]);
+    });
+
+    it('a Bacenta-scoped actor with no matching row gets a zeroed row, not an empty array', async () => {
+      const { service, financialTransactionRepository } = buildService();
+      const bacentaLeaderWithGroup: ActorContext = { ...bacentaLeader, bacentaId: 'bacenta-1' };
+      financialTransactionRepository.sumVerifiedAmountByGroupForRange.mockResolvedValue([]);
+
+      const result = await service.summarize(bacentaLeaderWithGroup, from, to);
+
+      expect(result.rows).toEqual([{ sourceGroupId: 'bacenta-1', totalAmountMinor: '0' }]);
     });
   });
 });

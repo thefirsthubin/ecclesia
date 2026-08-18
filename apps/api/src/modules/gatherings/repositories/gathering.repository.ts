@@ -11,6 +11,11 @@ export interface CreateGatheringRecord {
   scheduledStart: Date;
   scheduledEnd?: Date;
   venue?: string;
+  /** `[Milestone A: Financial + Gathering Backend Foundation]` See
+   * `Gathering.preacherPersonId`/`.message`'s own doc comments in
+   * `db/schema.prisma`. */
+  preacherPersonId?: string;
+  message?: string;
   config?: Prisma.InputJsonValue;
   createdByPersonId: string;
 }
@@ -20,6 +25,8 @@ export interface UpdateGatheringRecord {
   scheduledEnd?: Date | null;
   venue?: string | null;
   status?: GatheringStatus;
+  preacherPersonId?: string | null;
+  message?: string | null;
   config?: Prisma.InputJsonValue | typeof Prisma.JsonNull;
 }
 

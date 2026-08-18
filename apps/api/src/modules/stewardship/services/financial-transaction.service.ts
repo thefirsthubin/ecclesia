@@ -6,12 +6,15 @@ import type { InboundTransactionState } from '@ecclesia/domain-stewardship';
 import type {
   PublishableEngagementSignal,
   FinancialTransactionResponseDto,
+  FinancialTransactionSummaryResponseDto,
+  FinancialTransactionSummaryRowDto,
   FlagFinancialTransactionInput,
   RecordFinancialTransactionInput,
 } from '@ecclesia/contracts';
 import type { ActorContext } from '@ecclesia/rbac';
-import type { FinancialTransaction } from '@prisma/client';
+import type { FinancialTransaction, FinancialTransactionType } from '@prisma/client';
 
+import { GatheringScopeService } from '../../gatherings/services/gathering-scope.service';
 import { EventBridgePublisherService } from '../../../platform/events/eventbridge-publisher.service';
 import { FinancialTransactionRepository } from '../repositories/financial-transaction.repository';
 
@@ -21,6 +24,7 @@ function toResponseDto(transaction: FinancialTransaction, recordedByPersonId: st
     branchId: transaction.branchId,
     type: transaction.type,
     sourceGroupId: transaction.sourceGroupId,
+    gatheringId: transaction.gatheringId,
     giverPersonId: transaction.giverPersonId,
     channel: transaction.channel,
     amountMinor: transaction.amountMinor.toString(),
@@ -47,6 +51,7 @@ export class FinancialTransactionService {
   constructor(
     private readonly financialTransactionRepository: FinancialTransactionRepository,
     private readonly eventPublisher: EventBridgePublisherService,
+    private readonly gatheringScopeService: GatheringScopeService,
   ) {}
 
   /**
@@ -56,8 +61,45 @@ export class FinancialTransactionService {
    * an individual Mobile Money entry, whose `giverPersonId` is always the
    * *acting* Person - see `recordFinancialTransactionSchema`'s doc comment
    * in `libs/contracts` for why this is never taken from client input.
+   *
+   * `[Milestone A: Financial + Gathering Backend Foundation]` When
+   * `input.gatheringId` is supplied, this method validates it before
+   * writing anything - the approved design's own invariants, enforced here
+   * (application layer) rather than a DB constraint, since "does this
+   * Gathering belong to my Branch" and "does its ownerGroupId agree with
+   * sourceGroupId" both need to read a second table, which a plain
+   * Postgres `CHECK` can't express:
+   *
+   * 1. The referenced Gathering must exist and belong to `actor.branchId` -
+   *    otherwise a cross-Branch id (however unlikely to be guessed) could
+   *    link a transaction to a Gathering RLS would never let this actor
+   *    read back.
+   * 2. If the Gathering has a non-null `ownerGroupId` (a Bacenta/Basonta
+   *    meeting, not a Branch-wide Sunday/Midweek/Other service) AND
+   *    `input.sourceGroupId` is also set, they must be equal - closes the
+   *    cross-Bacenta-attribution risk this exact field introduces (see
+   *    MILESTONE_A_DESIGN_NOTES.md Part 7): without this check, a
+   *    `BACENTA_LEADER`'s OWN_GROUP scope check would still pass (it's
+   *    evaluated against `sourceGroupId`, not `gatheringId`), but the
+   *    stored row could reference a foreign Bacenta's meeting, corrupting
+   *    that Gathering's own future linked-giving view.
+   * 3. A Branch-wide Gathering (`ownerGroupId: null` - Sunday/Midweek/
+   *    Other) imposes no such match - a Bacenta's collection folded into a
+   *    combined Sunday offering is a legitimate, real scenario.
    */
   async record(actor: ActorContext, input: RecordFinancialTransactionInput): Promise<FinancialTransactionResponseDto> {
+    if (input.gatheringId) {
+      const gatheringScope = await this.gatheringScopeService.loadScope(input.gatheringId);
+      if (gatheringScope.branchId !== actor.branchId) {
+        throw new ConflictException(`Gathering '${input.gatheringId}' does not belong to this Branch`);
+      }
+      if (gatheringScope.ownerGroupId && input.sourceGroupId && gatheringScope.ownerGroupId !== input.sourceGroupId) {
+        throw new ConflictException(
+          `Gathering '${input.gatheringId}' belongs to Group '${gatheringScope.ownerGroupId}', which does not match sourceGroupId '${input.sourceGroupId}'`,
+        );
+      }
+    }
+
     const actorUserId = await this.financialTransactionRepository.findUserIdByPersonId(actor.personId);
     if (!actorUserId) {
       throw new ConflictException(
@@ -69,6 +111,7 @@ export class FinancialTransactionService {
       branchId: actor.branchId,
       type: input.type,
       sourceGroupId: input.sourceGroupId,
+      gatheringId: input.gatheringId,
       giverPersonId: input.sourceGroupId ? undefined : actor.personId,
       channel: input.channel,
       amountMinor: BigInt(input.amountMinor),
@@ -124,10 +167,20 @@ export class FinancialTransactionService {
    * check (`stewardship.transaction.read`'s BACENTA_LEADER row) actually
    * passes for this endpoint - see that guard's own doc comment.
    */
-  async listByBranch(actor: ActorContext, currentState?: string): Promise<FinancialTransactionResponseDto[]> {
+  /**
+   * `[Milestone A: Financial + Gathering Backend Foundation]` `type`/
+   * `sourceGroupId` are new optional filters (`listFinancialTransactionsQuerySchema`).
+   * `actor.bacentaId`, when present, still wins over an explicit
+   * `sourceGroupId` query param - a `BACENTA_LEADER`'s OWN_GROUP scope is
+   * enforced by always narrowing to their own Bacenta server-side, not by
+   * trusting a client-supplied filter; a BRANCH-scoped actor (Treasurer/
+   * Resident Pastor) has no `bacentaId`, so their own explicit
+   * `sourceGroupId` filter (if any) passes through untouched.
+   */
+  async listByBranch(actor: ActorContext, currentState?: string, type?: FinancialTransactionType, sourceGroupId?: string): Promise<FinancialTransactionResponseDto[]> {
     const transactions = actor.bacentaId
-      ? await this.financialTransactionRepository.findManyByBranch(actor.branchId, currentState, undefined, actor.bacentaId)
-      : await this.financialTransactionRepository.findManyByBranch(actor.branchId, currentState);
+      ? await this.financialTransactionRepository.findManyByBranch(actor.branchId, currentState, type, actor.bacentaId)
+      : await this.financialTransactionRepository.findManyByBranch(actor.branchId, currentState, type, sourceGroupId);
     return transactions.map((transaction) => toResponseDto(transaction, null));
   }
 
@@ -216,8 +269,56 @@ export class FinancialTransactionService {
    * own doc comment. No `actor`/authorization parameter, matching this
    * module's other cross-module-consumed methods elsewhere in this
    * codebase - the caller (`BranchDashboardSummaryService`) is only ever
-   * reached from an already-RBAC-guarded controller route. */
-  sumVerifiedAmountForBranch(branchId: string, from: Date, to: Date): Promise<bigint> {
-    return this.financialTransactionRepository.sumVerifiedAmountForBranch(branchId, from, to);
+   * reached from an already-RBAC-guarded controller route. `type` is new
+   * (`[Milestone A]`) and optional - `BranchDashboardSummaryService`'s
+   * existing call site is unaffected, passing none. */
+  sumVerifiedAmountForBranch(branchId: string, from: Date, to: Date, type?: FinancialTransactionType): Promise<bigint> {
+    return this.financialTransactionRepository.sumVerifiedAmountForBranch(branchId, from, to, type);
+  }
+
+  /**
+   * `[Milestone A: Financial + Gathering Backend Foundation]` `GET
+   * /financial-transactions/summary` - the generalized Giving-analytics
+   * read model the approved design calls for, unifying
+   * `sumVerifiedAmountForBranch` (branch-wide total) and
+   * `sumVerifiedAmountByGroupForRange` (per-group breakdown) behind one
+   * response shape rather than a union type: `groupBy=none` returns
+   * exactly one row with `sourceGroupId: null` standing in for "the whole
+   * branch, as if it were one group." `actor.bacentaId`, when present,
+   * narrows `groupBy=group` to that one Bacenta's own row only (mirroring
+   * `listByBranch`'s own OWN_GROUP-scope handling) and forces `groupBy=none`
+   * regardless of what was requested, since a single-Bacenta-scoped actor
+   * has no meaningful "per group" breakdown beyond their own one group.
+   */
+  async summarize(
+    actor: ActorContext,
+    from: Date,
+    to: Date,
+    type?: FinancialTransactionType,
+    groupBy: 'none' | 'group' = 'none',
+  ): Promise<FinancialTransactionSummaryResponseDto> {
+    const effectiveGroupBy = actor.bacentaId ? 'none' : groupBy;
+
+    let rows: FinancialTransactionSummaryRowDto[];
+    if (effectiveGroupBy === 'group') {
+      const grouped = await this.financialTransactionRepository.sumVerifiedAmountByGroupForRange(actor.branchId, from, to, type);
+      rows = grouped.map((row) => ({ sourceGroupId: row.sourceGroupId, totalAmountMinor: row.totalAmountMinor.toString() }));
+    } else if (actor.bacentaId) {
+      const grouped = await this.financialTransactionRepository.sumVerifiedAmountByGroupForRange(actor.branchId, from, to, type);
+      const own = grouped.find((row) => row.sourceGroupId === actor.bacentaId);
+      rows = [{ sourceGroupId: actor.bacentaId, totalAmountMinor: (own?.totalAmountMinor ?? 0n).toString() }];
+    } else {
+      const total = await this.financialTransactionRepository.sumVerifiedAmountForBranch(actor.branchId, from, to, type);
+      rows = [{ sourceGroupId: null, totalAmountMinor: total.toString() }];
+    }
+
+    return {
+      branchId: actor.branchId,
+      from: from.toISOString(),
+      to: to.toISOString(),
+      type: type ?? null,
+      groupBy: effectiveGroupBy,
+      rows,
+    };
   }
 }

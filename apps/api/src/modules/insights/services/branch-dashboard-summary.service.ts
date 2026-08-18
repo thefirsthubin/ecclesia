@@ -20,7 +20,7 @@ interface MonthBoundary {
   start: Date;
   /** Exclusive end (the following month's start) - matches every
    * `[from, to)` window this codebase's date-range queries already use
-   * (e.g. `FinancialTransactionRepository.sumVerifiedAmountByGroupForWeek`). */
+   * (e.g. `FinancialTransactionRepository.sumVerifiedAmountByGroupForRange`). */
   end: Date;
   label: string;
 }

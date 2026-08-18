@@ -75,11 +75,43 @@ export type ProjectStatusDto = z.infer<typeof projectStatusSchema>;
 export const recordFinancialTransactionSchema = z.object({
   type: financialTransactionTypeSchema.exclude(['EXPENSE']),
   sourceGroupId: z.string().uuid().optional(),
+  /**
+   * `[Milestone A: Financial + Gathering Backend Foundation]` The specific
+   * Gathering occurrence this was given at - optional, and expected to
+   * stay optional (not every gift has one obvious Gathering to attach to,
+   * e.g. an ad-hoc Mobile Money gift on an ordinary day). When both this
+   * and `sourceGroupId` are set, `FinancialTransactionService.record()`
+   * requires them to agree with the referenced Gathering's own
+   * `ownerGroupId` (when it has one) - see that method's own doc comment.
+   */
+  gatheringId: z.string().uuid().optional(),
   channel: financialTransactionChannelSchema,
   amountMinor: amountMinorSchema,
   currency: currencySchema.optional(),
 });
 export type RecordFinancialTransactionInput = z.infer<typeof recordFinancialTransactionSchema>;
+
+/**
+ * `[Milestone A: Financial + Gathering Backend Foundation]` `GET
+ * /financial-transactions`'s query - previously validated by nothing at
+ * all (`@Query('state') state?: string` directly on the controller),
+ * unlike `listGatheringsQuerySchema`'s established precedent on the
+ * sibling Gatherings module. `type` excludes `EXPENSE` for the same reason
+ * `recordFinancialTransactionSchema` does - `ExpenseService.list` already
+ * owns the `type: 'EXPENSE'` case via its own hardcoded filter, so this
+ * inbound-giving-queue route should not become a second door to the same
+ * rows. `sourceGroupId` was already supported by the repository
+ * (`findManyByBranch`) but never exposed as an explicit filter - added so
+ * a BRANCH-scoped Treasurer/Admin can browse one Bacenta's transactions
+ * without a separate endpoint (a `BACENTA_LEADER`'s own OWN_GROUP scope
+ * already narrows server-side regardless of this param, unchanged).
+ */
+export const listFinancialTransactionsQuerySchema = z.object({
+  state: z.string().trim().min(1).optional(),
+  type: financialTransactionTypeSchema.exclude(['EXPENSE']).optional(),
+  sourceGroupId: z.string().uuid().optional(),
+});
+export type ListFinancialTransactionsQuery = z.infer<typeof listFinancialTransactionsQuerySchema>;
 
 /** FR-STW-04: "mark a transaction Flagged with a reason." */
 export const flagFinancialTransactionSchema = z.object({
@@ -92,6 +124,7 @@ export const financialTransactionResponseSchema = z.object({
   branchId: z.string().uuid(),
   type: financialTransactionTypeSchema,
   sourceGroupId: z.string().uuid().nullable(),
+  gatheringId: z.string().uuid().nullable(),
   giverPersonId: z.string().uuid().nullable(),
   channel: financialTransactionChannelSchema.nullable(),
   amountMinor: amountMinorSchema,
@@ -295,3 +328,45 @@ export const weeklyReconciliationResponseSchema = z.object({
   rows: z.array(reconciliationRowSchema),
 });
 export type WeeklyReconciliationResponseDto = z.infer<typeof weeklyReconciliationResponseSchema>;
+
+/**
+ * `[Milestone A: Financial + Gathering Backend Foundation]` `GET
+ * /financial-transactions/summary` - the generalized, date-range-agnostic
+ * successor to the Bank Deposit Reconciliation flow's own narrow
+ * per-week/per-group query, exposed as its own read model rather than a
+ * `groupBy` flag layered onto `GET /financial-transactions` (which stays
+ * committed to returning raw `financialTransactionResponseSchema[]` rows,
+ * never an aggregate). `EXPENSE` excluded from `type`, same reasoning as
+ * `recordFinancialTransactionSchema`/`listFinancialTransactionsQuerySchema`.
+ * `groupBy` defaults to `'none'` when omitted (service-layer default, not
+ * this schema's).
+ */
+export const financialTransactionSummaryQuerySchema = z.object({
+  from: z.string().datetime(),
+  to: z.string().datetime(),
+  type: financialTransactionTypeSchema.exclude(['EXPENSE']).optional(),
+  groupBy: z.enum(['none', 'group']).optional(),
+});
+export type FinancialTransactionSummaryQuery = z.infer<typeof financialTransactionSummaryQuerySchema>;
+
+/**
+ * One row per Group for `groupBy=group`; exactly one row with
+ * `sourceGroupId: null` (the whole branch, treated as a single implicit
+ * group) for `groupBy=none` - a single consistent response shape for both
+ * cases rather than a union type, so every client handles one shape.
+ */
+export const financialTransactionSummaryRowSchema = z.object({
+  sourceGroupId: z.string().uuid().nullable(),
+  totalAmountMinor: amountMinorSchema,
+});
+export type FinancialTransactionSummaryRowDto = z.infer<typeof financialTransactionSummaryRowSchema>;
+
+export const financialTransactionSummaryResponseSchema = z.object({
+  branchId: z.string().uuid(),
+  from: z.string().datetime(),
+  to: z.string().datetime(),
+  type: financialTransactionTypeSchema.nullable(),
+  groupBy: z.enum(['none', 'group']),
+  rows: z.array(financialTransactionSummaryRowSchema),
+});
+export type FinancialTransactionSummaryResponseDto = z.infer<typeof financialTransactionSummaryResponseSchema>;

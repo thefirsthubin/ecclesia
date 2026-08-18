@@ -114,35 +114,69 @@ describe('FinancialTransactionRepository', () => {
     });
   });
 
-  it('[Stewardship gaps sprint] sumVerifiedAmountByGroupForWeek() groups by sourceGroupId, filters VERIFIED/RECONCILED within the window, and defaults a null sum to 0n', async () => {
-    const { repository, prisma } = buildRepository();
-    prisma.financialTransaction.groupBy.mockResolvedValue([
-      { sourceGroupId: 'bacenta-1', _sum: { amountMinor: 5000n } },
-      { sourceGroupId: null, _sum: { amountMinor: 100n } },
-      { sourceGroupId: 'bacenta-2', _sum: { amountMinor: null } },
-    ]);
-    const weekStart = new Date('2026-08-03T00:00:00.000Z');
-    const weekEnd = new Date('2026-08-10T00:00:00.000Z');
+  describe('sumVerifiedAmountByGroupForRange', () => {
+    it('[Stewardship gaps sprint] groups by sourceGroupId, filters VERIFIED/RECONCILED within the window, and defaults a null sum to 0n', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.financialTransaction.groupBy.mockResolvedValue([
+        { sourceGroupId: 'bacenta-1', _sum: { amountMinor: 5000n } },
+        { sourceGroupId: null, _sum: { amountMinor: 100n } },
+        { sourceGroupId: 'bacenta-2', _sum: { amountMinor: null } },
+      ]);
+      const weekStart = new Date('2026-08-03T00:00:00.000Z');
+      const weekEnd = new Date('2026-08-10T00:00:00.000Z');
 
-    const result = await repository.sumVerifiedAmountByGroupForWeek('branch-1', weekStart, weekEnd);
+      const result = await repository.sumVerifiedAmountByGroupForRange('branch-1', weekStart, weekEnd);
 
-    expect(prisma.financialTransaction.groupBy).toHaveBeenCalledWith({
-      by: ['sourceGroupId'],
-      where: {
-        branchId: 'branch-1',
-        sourceGroupId: { not: null },
-        currentState: { in: ['VERIFIED', 'RECONCILED'] },
-        createdAt: { gte: weekStart, lt: weekEnd },
-      },
-      _sum: { amountMinor: true },
+      expect(prisma.financialTransaction.groupBy).toHaveBeenCalledWith({
+        by: ['sourceGroupId'],
+        where: {
+          branchId: 'branch-1',
+          sourceGroupId: { not: null },
+          currentState: { in: ['VERIFIED', 'RECONCILED'] },
+          createdAt: { gte: weekStart, lt: weekEnd },
+        },
+        _sum: { amountMinor: true },
+      });
+      // The `sourceGroupId: null` row is filtered out (it should never occur
+      // given the `where` clause above already excludes it, but the
+      // repository's own defensive filter is exercised here regardless).
+      expect(result).toEqual([
+        { sourceGroupId: 'bacenta-1', totalAmountMinor: 5000n },
+        { sourceGroupId: 'bacenta-2', totalAmountMinor: 0n },
+      ]);
     });
-    // The `sourceGroupId: null` row is filtered out (it should never occur
-    // given the `where` clause above already excludes it, but the
-    // repository's own defensive filter is exercised here regardless).
-    expect(result).toEqual([
-      { sourceGroupId: 'bacenta-1', totalAmountMinor: 5000n },
-      { sourceGroupId: 'bacenta-2', totalAmountMinor: 0n },
-    ]);
+
+    it('[Milestone A] is not limited to a one-week span - accepts an arbitrary range', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.financialTransaction.groupBy.mockResolvedValue([]);
+      const monthStart = new Date('2026-08-01T00:00:00.000Z');
+      const monthEnd = new Date('2026-09-01T00:00:00.000Z');
+
+      await repository.sumVerifiedAmountByGroupForRange('branch-1', monthStart, monthEnd);
+
+      expect(prisma.financialTransaction.groupBy).toHaveBeenCalledWith(
+        expect.objectContaining({ where: expect.objectContaining({ createdAt: { gte: monthStart, lt: monthEnd } }) }),
+      );
+    });
+
+    it('[Milestone A] filters by type when given', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.financialTransaction.groupBy.mockResolvedValue([]);
+
+      await repository.sumVerifiedAmountByGroupForRange('branch-1', new Date(), new Date(), 'TITHE');
+
+      expect(prisma.financialTransaction.groupBy).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ type: 'TITHE' }) }));
+    });
+
+    it('[Milestone A] omits the type filter when not given', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.financialTransaction.groupBy.mockResolvedValue([]);
+
+      await repository.sumVerifiedAmountByGroupForRange('branch-1', new Date(), new Date());
+
+      const call = prisma.financialTransaction.groupBy.mock.calls[0][0];
+      expect(call.where).not.toHaveProperty('type');
+    });
   });
 
   it('findFirstEventByToState() orders by occurredAt ascending to find the first entry into that state', async () => {
@@ -227,6 +261,64 @@ describe('FinancialTransactionRepository', () => {
       const result = await repository.sumVerifiedAmountForBranch('branch-1', new Date(), new Date());
 
       expect(result).toBe(0n);
+    });
+
+    it('[Milestone A] filters by type when given', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.financialTransaction.aggregate.mockResolvedValue({ _sum: { amountMinor: 500n } });
+
+      await repository.sumVerifiedAmountForBranch('branch-1', new Date(), new Date(), 'OFFERING');
+
+      expect(prisma.financialTransaction.aggregate).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ type: 'OFFERING' }) }));
+    });
+
+    it('[Milestone A] omits the type filter when not given', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.financialTransaction.aggregate.mockResolvedValue({ _sum: { amountMinor: 500n } });
+
+      await repository.sumVerifiedAmountForBranch('branch-1', new Date(), new Date());
+
+      const call = prisma.financialTransaction.aggregate.mock.calls[0][0];
+      expect(call.where).not.toHaveProperty('type');
+    });
+  });
+
+  describe('[Milestone A] createWithEvent() with gatheringId', () => {
+    it('passes gatheringId through to financialTransaction.create when given', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.financialTransaction.create.mockResolvedValue({ id: 'ft-1' });
+
+      await repository.createWithEvent({
+        branchId: 'branch-1',
+        type: 'OFFERING',
+        gatheringId: 'gathering-1',
+        amountMinor: 5000n,
+        currency: 'GHS',
+        initialState: 'RECORDED',
+        actorUserId: 'user-1',
+      });
+
+      expect(prisma.financialTransaction.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({ gatheringId: 'gathering-1' }),
+      });
+    });
+
+    it('passes gatheringId through as undefined when not given', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.financialTransaction.create.mockResolvedValue({ id: 'ft-1' });
+
+      await repository.createWithEvent({
+        branchId: 'branch-1',
+        type: 'OFFERING',
+        amountMinor: 5000n,
+        currency: 'GHS',
+        initialState: 'RECORDED',
+        actorUserId: 'user-1',
+      });
+
+      expect(prisma.financialTransaction.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({ gatheringId: undefined }),
+      });
     });
   });
 });

@@ -110,3 +110,26 @@ export class FinancialTransactionListResourceContextGuard extends EcclesiaContex
     return { branchId: actor.branchId, bacentaId: actor.bacentaId };
   }
 }
+
+/**
+ * `[Milestone A: Financial + Gathering Backend Foundation]` `GET
+ * /v1/financial-transactions/summary` - structurally identical to
+ * `FinancialTransactionListResourceContextGuard` above (same `.branchId`/
+ * `.bacentaId` resolution, same "the guard commits this endpoint to the
+ * actor's own scope, by construction" pattern), kept as its own guard
+ * class rather than reusing the List guard directly so each route's
+ * `@UseGuards(...)` names its own guard explicitly - matching how every
+ * other action pairing in this module (`FinancialTransactionResourceContextGuard`
+ * vs. `FinancialTransactionListResourceContextGuard`) already keeps
+ * distinct guard classes even when their bodies are near-identical.
+ */
+@Injectable()
+export class FinancialTransactionSummaryResourceContextGuard extends EcclesiaContextGuardBase {
+  constructor(branchConfigurationService: BranchConfigurationService, prisma: PrismaService) {
+    super(branchConfigurationService, prisma);
+  }
+
+  protected async loadResource(_request: RequestWithActorContext, actor: ActorContext): Promise<ResourceContext> {
+    return { branchId: actor.branchId, bacentaId: actor.bacentaId };
+  }
+}

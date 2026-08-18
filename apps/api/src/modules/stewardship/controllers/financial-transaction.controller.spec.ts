@@ -9,6 +9,7 @@ describe('FinancialTransactionController', () => {
     const financialTransactionService = {
       record: jest.fn(),
       listByBranch: jest.fn(),
+      summarize: jest.fn(),
       getById: jest.fn(),
       verify: jest.fn(),
       flag: jest.fn(),
@@ -28,12 +29,26 @@ describe('FinancialTransactionController', () => {
     expect(financialTransactionService.record).toHaveBeenCalledWith(actor, body);
   });
 
-  it('listByBranch() delegates to FinancialTransactionService.listByBranch with the actor and state query param', async () => {
+  it('listByBranch() delegates to FinancialTransactionService.listByBranch with the actor and state/type/sourceGroupId query params', async () => {
     const { controller, financialTransactionService } = buildController();
 
-    await controller.listByBranch(actor, 'FLAGGED');
+    await controller.listByBranch(actor, { state: 'FLAGGED', type: 'OFFERING', sourceGroupId: 'bacenta-1' });
 
-    expect(financialTransactionService.listByBranch).toHaveBeenCalledWith(actor, 'FLAGGED');
+    expect(financialTransactionService.listByBranch).toHaveBeenCalledWith(actor, 'FLAGGED', 'OFFERING', 'bacenta-1');
+  });
+
+  it('[Milestone A] summarize() delegates to FinancialTransactionService.summarize with parsed from/to Dates', async () => {
+    const { controller, financialTransactionService } = buildController();
+
+    await controller.summarize(actor, { from: '2026-08-01T00:00:00.000Z', to: '2026-09-01T00:00:00.000Z', type: 'TITHE', groupBy: 'group' });
+
+    expect(financialTransactionService.summarize).toHaveBeenCalledWith(
+      actor,
+      new Date('2026-08-01T00:00:00.000Z'),
+      new Date('2026-09-01T00:00:00.000Z'),
+      'TITHE',
+      'group',
+    );
   });
 
   it('getById() delegates to FinancialTransactionService.getById', async () => {

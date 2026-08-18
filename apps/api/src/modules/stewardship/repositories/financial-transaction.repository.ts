@@ -7,6 +7,14 @@ export interface CreateTransactionRecord {
   branchId: string;
   type: FinancialTransactionType;
   sourceGroupId?: string;
+  /** `[Milestone A: Financial + Gathering Backend Foundation]` The specific
+   * Gathering occurrence this was given at - see `FinancialTransaction.gatheringId`'s
+   * own doc comment in `db/schema.prisma`. Validated against `sourceGroupId`
+   * (when both are set) and the actor's own Branch by
+   * `FinancialTransactionService.record()` before this method is ever
+   * called - this repository trusts its caller, the same division of
+   * responsibility every other method here already assumes. */
+  gatheringId?: string;
   giverPersonId?: string;
   channel?: 'CASH' | 'MOBILE_MONEY';
   amountMinor: bigint;
@@ -63,6 +71,7 @@ export class FinancialTransactionRepository {
         branchId: input.branchId,
         type: input.type,
         sourceGroupId: input.sourceGroupId,
+        gatheringId: input.gatheringId,
         giverPersonId: input.giverPersonId,
         channel: input.channel,
         amountMinor: input.amountMinor,
@@ -190,22 +199,36 @@ export class FinancialTransactionRepository {
   }
 
   /**
-   * FR-STW-07's weekly reconciliation comparison: for every Bacenta with
-   * at least one Verified-or-later (`VERIFIED`/`RECONCILED`) inbound
-   * transaction inside `[weekStart, weekEnd)`, the SUM of those
-   * transactions' `amountMinor`. `sourceGroupId IS NOT NULL` excludes
-   * individual Mobile Money entries (no Bacenta to reconcile against a
-   * bank deposit) - [INFERRED], consistent with FR-STW-07's own "per
-   * Bacenta" framing. See `BankDepositConfirmationService.getWeeklyReconciliation`.
+   * FR-STW-07's weekly reconciliation comparison, generalized (`[Milestone
+   * A: Financial + Gathering Backend Foundation]`, renamed from
+   * `sumVerifiedAmountByGroupForWeek`): for every Group with at least one
+   * Verified-or-later (`VERIFIED`/`RECONCILED`) inbound transaction inside
+   * `[from, to)`, the SUM of those transactions' `amountMinor`. This
+   * method never actually hard-coded a one-week window - `weekStart`/
+   * `weekEnd` were always plain `Date` bounds; only the name and its sole
+   * caller's convention were week-specific. Renamed and given an optional
+   * `type` filter (mirroring `findManyByBranch`'s own) so it can genuinely
+   * serve week/month/arbitrary-range/year callers, per the approved
+   * Milestone A design - `BankDepositConfirmationService.getWeeklyReconciliation`
+   * keeps calling it with week-sized bounds and no `type`, unchanged
+   * behavior. `sourceGroupId IS NOT NULL` excludes individual Mobile Money
+   * entries (no Bacenta to reconcile against a bank deposit) - [INFERRED],
+   * consistent with FR-STW-07's own "per Bacenta" framing.
    */
-  async sumVerifiedAmountByGroupForWeek(branchId: string, weekStart: Date, weekEnd: Date): Promise<{ sourceGroupId: string; totalAmountMinor: bigint }[]> {
+  async sumVerifiedAmountByGroupForRange(
+    branchId: string,
+    from: Date,
+    to: Date,
+    type?: FinancialTransactionType,
+  ): Promise<{ sourceGroupId: string; totalAmountMinor: bigint }[]> {
     const grouped = await this.prisma.financialTransaction.groupBy({
       by: ['sourceGroupId'],
       where: {
         branchId,
         sourceGroupId: { not: null },
         currentState: { in: ['VERIFIED', 'RECONCILED'] },
-        createdAt: { gte: weekStart, lt: weekEnd },
+        createdAt: { gte: from, lt: to },
+        ...(type ? { type } : {}),
       },
       _sum: { amountMinor: true },
     });
@@ -240,12 +263,13 @@ export class FinancialTransactionRepository {
    * confirmed, the same "verified" semantics this codebase's only other
    * branch-wide sum already established, not a new business rule.
    */
-  async sumVerifiedAmountForBranch(branchId: string, from: Date, to: Date): Promise<bigint> {
+  async sumVerifiedAmountForBranch(branchId: string, from: Date, to: Date, type?: FinancialTransactionType): Promise<bigint> {
     const result = await this.prisma.financialTransaction.aggregate({
       where: {
         branchId,
         currentState: { in: ['VERIFIED', 'RECONCILED'] },
         createdAt: { gte: from, lt: to },
+        ...(type ? { type } : {}),
       },
       _sum: { amountMinor: true },
     });

@@ -1,8 +1,18 @@
 import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { RbacGuard, RecordLevelPolicyGuard, RequirePermission } from '@ecclesia/rbac';
 import type { ActorContext } from '@ecclesia/rbac';
-import { flagFinancialTransactionSchema, recordFinancialTransactionSchema } from '@ecclesia/contracts';
-import type { FlagFinancialTransactionInput, RecordFinancialTransactionInput } from '@ecclesia/contracts';
+import {
+  financialTransactionSummaryQuerySchema,
+  flagFinancialTransactionSchema,
+  listFinancialTransactionsQuerySchema,
+  recordFinancialTransactionSchema,
+} from '@ecclesia/contracts';
+import type {
+  FinancialTransactionSummaryQuery,
+  FlagFinancialTransactionInput,
+  ListFinancialTransactionsQuery,
+  RecordFinancialTransactionInput,
+} from '@ecclesia/contracts';
 
 import { CurrentActor } from '../../../platform/auth/decorators/current-actor.decorator';
 import { ZodValidationPipe } from '../../../platform/pipes/zod-validation.pipe';
@@ -10,6 +20,7 @@ import {
   FinancialTransactionCreateResourceContextGuard,
   FinancialTransactionListResourceContextGuard,
   FinancialTransactionResourceContextGuard,
+  FinancialTransactionSummaryResourceContextGuard,
 } from '../guards/financial-transaction-resource-context.guard';
 import { FinancialTransactionService } from '../services/financial-transaction.service';
 
@@ -45,8 +56,24 @@ export class FinancialTransactionController {
   @Get()
   @RequirePermission('stewardship.transaction.read')
   @UseGuards(FinancialTransactionListResourceContextGuard, RbacGuard)
-  listByBranch(@CurrentActor() actor: ActorContext, @Query('state') state?: string) {
-    return this.financialTransactionService.listByBranch(actor, state);
+  listByBranch(@CurrentActor() actor: ActorContext, @Query(new ZodValidationPipe(listFinancialTransactionsQuerySchema)) query: ListFinancialTransactionsQuery) {
+    return this.financialTransactionService.listByBranch(actor, query.state, query.type, query.sourceGroupId);
+  }
+
+  /**
+   * `[Milestone A: Financial + Gathering Backend Foundation]` `GET
+   * /financial-transactions/summary` - **must stay declared before
+   * `@Get(':id')` below.** Unlike `GatheringController`'s own `list`-vs-
+   * `:id` ordering note (two same-shaped routes that don't actually
+   * conflict), `summary` is a literal path segment competing directly
+   * against the `:id` wildcard here - declared after it, Nest would match
+   * `GET /financial-transactions/summary` as `getById('summary')` instead.
+   */
+  @Get('summary')
+  @RequirePermission('stewardship.transaction.read')
+  @UseGuards(FinancialTransactionSummaryResourceContextGuard, RbacGuard)
+  summarize(@CurrentActor() actor: ActorContext, @Query(new ZodValidationPipe(financialTransactionSummaryQuerySchema)) query: FinancialTransactionSummaryQuery) {
+    return this.financialTransactionService.summarize(actor, new Date(query.from), new Date(query.to), query.type, query.groupBy);
   }
 
   @Get(':id')

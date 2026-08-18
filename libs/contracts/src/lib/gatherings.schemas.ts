@@ -63,6 +63,16 @@ export const createGatheringSchema = z.object({
   scheduledStart: z.string().datetime(),
   scheduledEnd: z.string().datetime().optional(),
   venue: z.string().trim().min(1).optional(),
+  /**
+   * `[Milestone A: Financial + Gathering Backend Foundation]` Who preached
+   * - a `Person` id, not a free-text name (matches every other actor-like
+   * field in this codebase). A guest preacher with no `Person` record is a
+   * known, accepted limitation - left unset, not worked around with a
+   * second free-text field.
+   */
+  preacherPersonId: z.string().uuid().optional(),
+  /** The message/sermon title or topic - not a notes/transcript field. */
+  message: z.string().trim().min(1).optional(),
   config: z.record(z.unknown()).optional(),
 });
 export type CreateGatheringInput = z.infer<typeof createGatheringSchema>;
@@ -80,6 +90,8 @@ export const updateGatheringSchema = z
     scheduledEnd: z.string().datetime().nullable().optional(),
     venue: z.string().trim().min(1).nullable().optional(),
     status: gatheringStatusSchema.optional(),
+    preacherPersonId: z.string().uuid().nullable().optional(),
+    message: z.string().trim().min(1).nullable().optional(),
     config: z.record(z.unknown()).nullable().optional(),
   })
   .refine((value) => Object.keys(value).length > 0, { message: 'At least one field must be provided' });
@@ -95,6 +107,8 @@ export const gatheringResponseSchema = z.object({
   scheduledEnd: z.string().nullable(),
   venue: z.string().nullable(),
   status: gatheringStatusSchema,
+  preacherPersonId: z.string().uuid().nullable(),
+  message: z.string().nullable(),
   config: z.record(z.unknown()).nullable(),
   createdByPersonId: z.string().uuid(),
   createdAt: z.string(),

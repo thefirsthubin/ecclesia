@@ -7,6 +7,7 @@ import {
   FinancialTransactionCreateResourceContextGuard,
   FinancialTransactionListResourceContextGuard,
   FinancialTransactionResourceContextGuard,
+  FinancialTransactionSummaryResourceContextGuard,
 } from './financial-transaction-resource-context.guard';
 import type { RequestWithActorContext } from '../../../platform/auth/auth.guard';
 
@@ -115,6 +116,34 @@ describe('FinancialTransactionListResourceContextGuard', () => {
 
     expect((request as Record<string, unknown>)[ECCLESIA_REQUEST_CONTEXT_KEY]).toMatchObject({
       resource: { branchId: 'branch-1' },
+    });
+  });
+});
+
+/** `[Milestone A: Financial + Gathering Backend Foundation]` Mirrors
+ * `FinancialTransactionListResourceContextGuard`'s own test above -
+ * the two guards resolve scope identically by design. */
+describe('FinancialTransactionSummaryResourceContextGuard', () => {
+  it('resolves to the actor\'s own Branch', async () => {
+    const guard = new FinancialTransactionSummaryResourceContextGuard(branchConfigurationService as never, prisma as never);
+    const request: Partial<RequestWithActorContext> = { actorContext: treasurer, query: {} } as never;
+
+    await guard.canActivate(buildContext(request));
+
+    expect((request as Record<string, unknown>)[ECCLESIA_REQUEST_CONTEXT_KEY]).toMatchObject({
+      resource: { branchId: 'branch-1' },
+    });
+  });
+
+  it('also resolves bacentaId when the actor has one (BACENTA_LEADER)', async () => {
+    const guard = new FinancialTransactionSummaryResourceContextGuard(branchConfigurationService as never, prisma as never);
+    const bacentaLeader: ActorContext = { personId: 'bl-1', role: 'BACENTA_LEADER', branchId: 'branch-1', bacentaId: 'bacenta-1' };
+    const request: Partial<RequestWithActorContext> = { actorContext: bacentaLeader, query: {} } as never;
+
+    await guard.canActivate(buildContext(request));
+
+    expect((request as Record<string, unknown>)[ECCLESIA_REQUEST_CONTEXT_KEY]).toMatchObject({
+      resource: { branchId: 'branch-1', bacentaId: 'bacenta-1' },
     });
   });
 });

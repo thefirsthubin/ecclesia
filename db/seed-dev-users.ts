@@ -415,6 +415,14 @@ async function seedBacenta(spec: BacentaSpec, createdByPersonId: string): Promis
         branchId: spec.branchId,
         type: 'OFFERING',
         sourceGroupId: group.id,
+        // `[Milestone A: Financial + Gathering Backend Foundation]` Linked
+        // to the meeting it was collected at - authored fact, not invented
+        // historical attribution (see db/migrations's
+        // 20260818125452_financial_transaction_gathering_link/migration.sql's
+        // own doc comment on why real, pre-existing rows are never
+        // backfilled this way; seed data is regenerated from scratch each
+        // run, so linking it here carries none of that concern).
+        gatheringId: meeting.id,
         channel: 'CASH',
         amountMinor: BigInt(150_00 + spec.slot * 3700),
         currency: 'GHS',
@@ -841,6 +849,10 @@ async function main(): Promise<void> {
       scheduledStart: new Date(weekMonday.getTime() + 6 * 24 * 60 * 60 * 1000),
       venue: 'Main Auditorium',
       status: 'COMPLETED',
+      // `[Milestone A: Financial + Gathering Backend Foundation]` Real
+      // example data for the new preacher/message fields.
+      preacherPersonId: branchPastor.personId,
+      message: 'Faith Over Fear',
       createdByPersonId: branchPastor.personId,
     },
   });
@@ -874,6 +886,8 @@ async function main(): Promise<void> {
       scheduledStart: new Date(weekMonday.getTime() + 6 * 24 * 60 * 60 * 1000),
       venue: 'Asokwa Main Hall',
       status: 'COMPLETED',
+      preacherPersonId: asokwaBranchPastorPersonId,
+      message: 'Walking in Purpose',
       createdByPersonId: asokwaBranchPastorPersonId,
     },
   });
