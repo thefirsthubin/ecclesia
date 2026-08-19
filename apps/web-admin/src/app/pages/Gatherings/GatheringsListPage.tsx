@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Badge, Button, Card, ErrorState, Heading, Input, PageContainer, RecordPicker, Select, Skeleton, Table, Text, useTheme } from '@ecclesia/ui-web';
+import { Badge, Button, Card, ErrorState, Input, PageContainer, PageHeader, RecordPicker, SectionHeader, Select, Skeleton, Table, Text, useTheme } from '@ecclesia/ui-web';
 import type { RecordOption, TableColumn } from '@ecclesia/ui-web';
 import type { GatheringResponseDto, GatheringStatusDto } from '@ecclesia/contracts';
 
@@ -7,6 +7,7 @@ import { useAuth } from '../../auth/AuthContext';
 import { ApiError } from '../../lib/api-client';
 import { searchGroupsForAssignment } from '../People/usePeopleData';
 import { GroupNameText } from '../People/GroupNameText';
+import { PersonNameText } from '../PastoralCare/PersonNameText';
 import { AttendanceCompletenessBadge } from './AttendanceCompletenessBadge';
 import { AttendanceReviewPanel } from './AttendanceReviewPanel';
 import { createGathering, nextGatheringStatusOptions, resolveDefaultGatheringsQuery, updateGathering, useGatheringsList } from './useGatheringsData';
@@ -288,6 +289,18 @@ export function GatheringsListPage() {
       ),
     },
     {
+      key: 'preacher',
+      header: 'Preacher',
+      render: (gathering) =>
+        gathering.preacherPersonId ? (
+          <PersonNameText personId={gathering.preacherPersonId} />
+        ) : (
+          <Text variant="bodySmall" color={theme.colors.text.secondary}>
+            —
+          </Text>
+        ),
+    },
+    {
       key: 'status',
       header: 'Status',
       render: (gathering) => <Badge status={STATUS_BADGE_STATUS[gathering.status]}>{STATUS_LABEL[gathering.status]}</Badge>,
@@ -333,6 +346,32 @@ export function GatheringsListPage() {
       render: groupCell,
     },
     {
+      key: 'preacher',
+      header: 'Preacher',
+      render: (gathering) =>
+        gathering.preacherPersonId ? (
+          <PersonNameText personId={gathering.preacherPersonId} />
+        ) : (
+          <Text variant="bodySmall" color={theme.colors.text.secondary}>
+            —
+          </Text>
+        ),
+    },
+    {
+      key: 'message',
+      header: 'Message',
+      render: (gathering) =>
+        gathering.message ? (
+          <div title={gathering.message} style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <Text variant="bodySmall">{gathering.message}</Text>
+          </div>
+        ) : (
+          <Text variant="bodySmall" color={theme.colors.text.secondary}>
+            —
+          </Text>
+        ),
+    },
+    {
       key: 'attendance',
       header: 'Attendance',
       render: (gathering) => <AttendanceCompletenessBadge gatheringId={gathering.id} />,
@@ -368,16 +407,18 @@ export function GatheringsListPage() {
   const past = gatheringsState.status === 'success' ? gatheringsState.data.filter((gathering) => isPast(gathering, now)) : [];
 
   return (
-    <PageContainer maxWidth={900}>
+    <PageContainer maxWidth={1120}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5] }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
-          <Heading level={1}>Gatherings</Heading>
-          {!createOpen && (
-            <Button variant="secondary" size="sm" onClick={openCreate} accessibilityLabel="Create Gathering">
-              + Create Gathering
-            </Button>
-          )}
-        </div>
+        <PageHeader
+          title="Gatherings"
+          action={
+            !createOpen ? (
+              <Button variant="secondary" size="sm" onClick={openCreate} accessibilityLabel="Create Gathering">
+                + Create Gathering
+              </Button>
+            ) : undefined
+          }
+        />
         <Input label="Filter by type" value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)} placeholder="e.g. SUNDAY_SERVICE" />
 
         {/* `[Gathering Create/Update milestone]` PRD §17.3's "Gathering:
@@ -442,7 +483,7 @@ export function GatheringsListPage() {
         {gatheringsState.status === 'success' && (
           <>
             <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-              <Heading level={2}>Upcoming Gatherings</Heading>
+              <SectionHeader title="Upcoming Gatherings" />
               <Card padding={6} testId="gatherings-list-card">
                 <Table
                   testId="upcoming-gatherings-table"
@@ -461,7 +502,7 @@ export function GatheringsListPage() {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-              <Heading level={2}>Past Gatherings</Heading>
+              <SectionHeader title="Past Gatherings" />
               <Card padding={6} testId="past-gatherings-card">
                 <Table
                   testId="past-gatherings-table"

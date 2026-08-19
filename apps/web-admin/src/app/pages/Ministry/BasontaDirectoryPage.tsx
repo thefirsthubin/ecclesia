@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Badge, Button, Card, ErrorState, Heading, Input, PageContainer, Select, Table, Text, useTheme } from '@ecclesia/ui-web';
+import { Badge, Button, Card, ErrorState, Input, PageContainer, PageHeader, Select, Table, Text, useTheme } from '@ecclesia/ui-web';
 import type { TableColumn } from '@ecclesia/ui-web';
 import { GROUP_LIFECYCLE_STATUS_VALUES } from '@ecclesia/contracts';
 import type { GroupLifecycleStatusDto, GroupResponseDto, GroupTypeDto } from '@ecclesia/contracts';
@@ -217,20 +217,22 @@ export function BasontaDirectoryPage() {
   ];
 
   return (
-    <PageContainer maxWidth={900}>
+    <PageContainer maxWidth={1120}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
-          <Heading level={1}>Ministry</Heading>
-          {/* `[Bug fix]` Same "+ Create X" trigger convention every other
+        <PageHeader
+          title="Ministry"
+          action={
+            /* `[Bug fix]` Same "+ Create X" trigger convention every other
               domain this phase already follows (Pastoral Care/Gatherings) -
               `secondary`, not `primary`, so it never competes with a form's
-              own primary "Confirm create" action once opened. */}
-          {!createOpen && (
-            <Button variant="secondary" size="sm" onClick={openCreate} accessibilityLabel="Create Group">
-              + Create Group
-            </Button>
-          )}
-        </div>
+              own primary "Confirm create" action once opened. */
+            !createOpen ? (
+              <Button variant="secondary" size="sm" onClick={openCreate} accessibilityLabel="Create Group">
+                + Create Group
+              </Button>
+            ) : undefined
+          }
+        />
 
         {/* `[Group CRUD milestone]` Always offered, no client-side role
             check - traced against the real matrix, not assumed: only

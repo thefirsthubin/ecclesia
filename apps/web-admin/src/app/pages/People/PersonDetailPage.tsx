@@ -2,14 +2,28 @@ import { useState } from 'react';
 import { Avatar, Badge, Button, Card, ErrorState, Heading, Icon, Input, RecordPicker, Select, Skeleton, Table, Tabs, Text, useTheme, useToast } from '@ecclesia/ui-web';
 import type { RecordOption, TableColumn, TabItem } from '@ecclesia/ui-web';
 import { ROLE_VALUES } from '@ecclesia/contracts';
-import type { FollowUpTaskResponseDto, GroupMembershipResponseDto, LifecycleStageDto, RoleAssignmentResponseDto, RoleDto } from '@ecclesia/contracts';
+import type { FollowUpTaskResponseDto, GroupMembershipResponseDto, LifecycleStageDto, MemberInteractionTypeDto, RoleAssignmentResponseDto, RoleDto } from '@ecclesia/contracts';
 
 import { useAuth } from '../../auth/AuthContext';
 import { ApiError } from '../../lib/api-client';
 import { useParams } from '../../router/router';
 import { roleLabel } from '../../shell/nav-items';
 import { PersonNameText } from '../PastoralCare/PersonNameText';
-import { createFollowUpTask, searchPeopleForEscalation, usePersonFollowUpTasks } from '../PastoralCare/usePastoralCareData';
+import {
+  createCounsellingSession,
+  createFollowUpTask,
+  createMemberInteraction,
+  createPastoralNote,
+  createPrayerNote,
+  searchPeopleForEscalation,
+  updateCounsellingSessionStatus,
+  updatePrayerNoteStatus,
+  useCounsellingSessions,
+  useMemberInteractions,
+  usePastoralNotes,
+  usePersonFollowUpTasks,
+  usePrayerNotes,
+} from '../PastoralCare/usePastoralCareData';
 import { GroupNameText } from './GroupNameText';
 import { LIFECYCLE_BADGE_STATUS, LIFECYCLE_LABEL } from './lifecycleLabels';
 import {
@@ -42,6 +56,24 @@ function extractErrorMessage(error: unknown, fallback: string): string {
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString();
 }
+
+/** `[Milestone D — Portal Experiences, Portal 5: Resident Pastor]` Every
+ * value `memberInteractionTypeSchema` (`@ecclesia/contracts`) accepts -
+ * kept as a literal list rather than derived from the schema at runtime,
+ * matching this file's own `nextLifecycleStageOptions`/`GROUP_SCOPED_ROLES`
+ * precedent for small, stable enums. */
+const MEMBER_INTERACTION_TYPE_LABEL: Record<MemberInteractionTypeDto, string> = {
+  VISIT: 'Visit',
+  CALL: 'Call',
+  MEETING: 'Meeting',
+  FOLLOW_UP: 'Follow-up',
+  PRAYER: 'Prayer',
+  COUNSELLING: 'Counselling',
+};
+const MEMBER_INTERACTION_TYPE_OPTIONS = (Object.keys(MEMBER_INTERACTION_TYPE_LABEL) as MemberInteractionTypeDto[]).map((value) => ({
+  value,
+  label: MEMBER_INTERACTION_TYPE_LABEL[value],
+}));
 
 /**
  * PRD §16.1's "Person profile view" surface: "Shows current stage,
@@ -82,16 +114,42 @@ export function PersonDetailPage() {
 
   // `[Branch Pastor portal, Pastoral Care sprint]` The "People -> Member
   // -> Pastoral Care" direction (approved Pastoral Care brief §5) - a
-  // Branch Pastor-only tab (see the `tabs` array below), so this hook is
-  // only ever active for `ASSISTANT_PASTOR`; every other role's render
-  // stays byte-for-byte identical to before (`Overview`/`Groups`/`Roles`
-  // only), matching the "compute conditionally, don't ship an inert
-  // fetch to every role" restraint already used elsewhere in this app.
-  // Called unconditionally regardless of role (Rules of Hooks) - passing
-  // `undefined` as the access token is this codebase's own "don't fetch"
-  // idiom (every `useAsyncData`-based hook already short-circuits on it).
-  const isBranchPastor = state.actor.role === 'ASSISTANT_PASTOR';
-  const followUpHistoryState = usePersonFollowUpTasks(isBranchPastor ? state.accessToken : undefined, id);
+  // tab restricted to the roles that actually hold
+  // `pastoral_care.followup_task.read`/`pastoral_care.notes.read` at a
+  // real scope (traced against `permission-matrix.ts`, not assumed):
+  // `ASSISTANT_PASTOR` (CLUSTER, the original grant this tab was built
+  // for), `BACENTA_LEADER` (OWN_GROUP, `[Milestone D — Portal Experiences,
+  // Portal 3: Bacenta Leader]`), and now `RESIDENT_PASTOR`/
+  // `ACTING_RESIDENT_PASTOR` (BRANCH, `[Milestone D, Portal 5: Resident
+  // Pastor]` - this role held real follow-up-task/pastoral-notes grants
+  // all along but had no web-admin tab surfacing them until now, the
+  // exact same class of gap Portal 3 fixed for Bacenta Leader). Every
+  // other role's render stays byte-for-byte identical to before
+  // (`Overview`/`Groups`/`Roles` only).
+  const canSeePastoralCareTab =
+    state.actor.role === 'ASSISTANT_PASTOR' ||
+    state.actor.role === 'BACENTA_LEADER' ||
+    state.actor.role === 'RESIDENT_PASTOR' ||
+    state.actor.role === 'ACTING_RESIDENT_PASTOR';
+  const followUpHistoryState = usePersonFollowUpTasks(canSeePastoralCareTab ? state.accessToken : undefined, id);
+  const pastoralNotesState = usePastoralNotes(canSeePastoralCareTab ? state.accessToken : undefined, id);
+
+  // `[Milestone D — Portal Experiences, Portal 5: Resident Pastor]` The
+  // private pastoral domain - Prayer Notes (author-only, enforced
+  // server-side - see `usePrayerNotes`'s own doc comment), Counselling,
+  // and Member Interactions - traced against `permission-matrix.ts`:
+  // only `RESIDENT_PASTOR`/`ACTING_RESIDENT_PASTOR` (BRANCH) and
+  // `ASSISTANT_PASTOR` (CLUSTER) hold `pastoral_care.prayer_note.*`/
+  // `.counselling.*`/`.interaction.*` at any scope - `BACENTA_LEADER`/
+  // `BASONTA_LEADER` hold none of these three, by deliberate design (rule
+  // 4 of the Milestone D brief: Bacenta/Basonta Leaders must never see
+  // Prayer Note content). A narrower gate than `canSeePastoralCareTab`
+  // above, nested within the same tab rather than a second tab.
+  const canSeePrivatePastoralTools =
+    state.actor.role === 'ASSISTANT_PASTOR' || state.actor.role === 'RESIDENT_PASTOR' || state.actor.role === 'ACTING_RESIDENT_PASTOR';
+  const prayerNotesState = usePrayerNotes(canSeePrivatePastoralTools ? state.accessToken : undefined, id);
+  const counsellingSessionsState = useCounsellingSessions(canSeePrivatePastoralTools ? state.accessToken : undefined, id);
+  const memberInteractionsState = useMemberInteractions(canSeePrivatePastoralTools ? state.accessToken : undefined, id);
 
   // Declared before any conditional `return` below (Rules of Hooks) even
   // though this action only ever renders once `personState` has
@@ -121,6 +179,41 @@ export function PersonDetailPage() {
   const [followUpDueAtOverride, setFollowUpDueAtOverride] = useState('');
   const [followUpSubmitting, setFollowUpSubmitting] = useState(false);
   const [followUpError, setFollowUpError] = useState<string | undefined>(undefined);
+
+  // `[Milestone D — Portal Experiences, Portal 3: Bacenta Leader]`
+  // "Bacenta Leader operational notes" - same reveal-form shape as
+  // Follow-up task creation just above.
+  const [noteFormOpen, setNoteFormOpen] = useState(false);
+  const [noteContent, setNoteContent] = useState('');
+  const [noteSubmitting, setNoteSubmitting] = useState(false);
+  const [noteError, setNoteError] = useState<string | undefined>(undefined);
+
+  // `[Milestone D — Portal Experiences, Portal 5: Resident Pastor]` Same
+  // reveal-form shape as Pastoral Notes above, once per private-pastoral
+  // domain. `resolvingPrayerNoteId`/`updatingSessionId` track which row's
+  // status-update button is in flight (there is no bulk action, so one
+  // in-flight id at a time is enough - the same "no concurrent mutations
+  // on this page" assumption every other section here already makes).
+  const [prayerNoteFormOpen, setPrayerNoteFormOpen] = useState(false);
+  const [prayerNoteContent, setPrayerNoteContent] = useState('');
+  const [prayerNoteFollowUpDate, setPrayerNoteFollowUpDate] = useState('');
+  const [prayerNoteSubmitting, setPrayerNoteSubmitting] = useState(false);
+  const [prayerNoteError, setPrayerNoteError] = useState<string | undefined>(undefined);
+  const [resolvingPrayerNoteId, setResolvingPrayerNoteId] = useState<string | null>(null);
+
+  const [counsellingFormOpen, setCounsellingFormOpen] = useState(false);
+  const [counsellingScheduledAt, setCounsellingScheduledAt] = useState('');
+  const [counsellingBriefNote, setCounsellingBriefNote] = useState('');
+  const [counsellingSubmitting, setCounsellingSubmitting] = useState(false);
+  const [counsellingError, setCounsellingError] = useState<string | undefined>(undefined);
+  const [updatingSessionId, setUpdatingSessionId] = useState<string | null>(null);
+
+  const [interactionFormOpen, setInteractionFormOpen] = useState(false);
+  const [interactionType, setInteractionType] = useState<MemberInteractionTypeDto | ''>('');
+  const [interactionOccurredAt, setInteractionOccurredAt] = useState('');
+  const [interactionBriefNote, setInteractionBriefNote] = useState('');
+  const [interactionSubmitting, setInteractionSubmitting] = useState(false);
+  const [interactionError, setInteractionError] = useState<string | undefined>(undefined);
 
   if (personState.status === 'loading') {
     return (
@@ -283,6 +376,139 @@ export function PersonDetailPage() {
       setFollowUpError(extractErrorMessage(error, 'Something went wrong creating this Follow-up task.'));
     } finally {
       setFollowUpSubmitting(false);
+    }
+  };
+
+  const openNote = () => {
+    setNoteContent('');
+    setNoteError(undefined);
+    setNoteFormOpen(true);
+  };
+  const cancelNote = () => {
+    setNoteFormOpen(false);
+    setNoteError(undefined);
+  };
+  const submitNote = async () => {
+    if (!noteContent.trim()) return;
+    setNoteSubmitting(true);
+    setNoteError(undefined);
+    try {
+      await createPastoralNote(state.accessToken, person.id, { content: noteContent.trim() });
+      toast.show({ status: 'success', message: 'Note saved.' });
+      setNoteFormOpen(false);
+      pastoralNotesState.refetch();
+    } catch (error) {
+      setNoteError(extractErrorMessage(error, 'Something went wrong saving this note.'));
+    } finally {
+      setNoteSubmitting(false);
+    }
+  };
+
+  const openPrayerNote = () => {
+    setPrayerNoteContent('');
+    setPrayerNoteFollowUpDate('');
+    setPrayerNoteError(undefined);
+    setPrayerNoteFormOpen(true);
+  };
+  const cancelPrayerNote = () => {
+    setPrayerNoteFormOpen(false);
+    setPrayerNoteError(undefined);
+  };
+  const submitPrayerNote = async () => {
+    if (!prayerNoteContent.trim()) return;
+    setPrayerNoteSubmitting(true);
+    setPrayerNoteError(undefined);
+    try {
+      await createPrayerNote(state.accessToken, person.id, { content: prayerNoteContent.trim(), followUpDate: prayerNoteFollowUpDate || undefined });
+      toast.show({ status: 'success', message: 'Prayer note saved.' });
+      setPrayerNoteFormOpen(false);
+      prayerNotesState.refetch();
+    } catch (error) {
+      setPrayerNoteError(extractErrorMessage(error, 'Something went wrong saving this Prayer note.'));
+    } finally {
+      setPrayerNoteSubmitting(false);
+    }
+  };
+  const resolvePrayerNote = async (noteId: string) => {
+    setResolvingPrayerNoteId(noteId);
+    try {
+      await updatePrayerNoteStatus(state.accessToken, noteId, { status: 'RESOLVED' });
+      prayerNotesState.refetch();
+    } catch (error) {
+      toast.show({ status: 'danger', message: extractErrorMessage(error, 'Something went wrong updating this Prayer note.') });
+    } finally {
+      setResolvingPrayerNoteId(null);
+    }
+  };
+
+  const openCounselling = () => {
+    setCounsellingScheduledAt('');
+    setCounsellingBriefNote('');
+    setCounsellingError(undefined);
+    setCounsellingFormOpen(true);
+  };
+  const cancelCounselling = () => {
+    setCounsellingFormOpen(false);
+    setCounsellingError(undefined);
+  };
+  const submitCounselling = async () => {
+    if (!counsellingScheduledAt) return;
+    setCounsellingSubmitting(true);
+    setCounsellingError(undefined);
+    try {
+      await createCounsellingSession(state.accessToken, person.id, {
+        scheduledAt: new Date(counsellingScheduledAt).toISOString(),
+        briefNote: counsellingBriefNote.trim() ? counsellingBriefNote.trim() : undefined,
+      });
+      toast.show({ status: 'success', message: 'Counselling session scheduled.' });
+      setCounsellingFormOpen(false);
+      counsellingSessionsState.refetch();
+    } catch (error) {
+      setCounsellingError(extractErrorMessage(error, 'Something went wrong scheduling this Counselling session.'));
+    } finally {
+      setCounsellingSubmitting(false);
+    }
+  };
+  const updateCounsellingStatus = async (sessionId: string, status: 'COMPLETED' | 'CANCELLED') => {
+    setUpdatingSessionId(sessionId);
+    try {
+      await updateCounsellingSessionStatus(state.accessToken, sessionId, { status });
+      counsellingSessionsState.refetch();
+    } catch (error) {
+      toast.show({ status: 'danger', message: extractErrorMessage(error, 'Something went wrong updating this Counselling session.') });
+    } finally {
+      setUpdatingSessionId(null);
+    }
+  };
+
+  const openInteraction = () => {
+    setInteractionType('');
+    setInteractionOccurredAt('');
+    setInteractionBriefNote('');
+    setInteractionError(undefined);
+    setInteractionFormOpen(true);
+  };
+  const cancelInteraction = () => {
+    setInteractionFormOpen(false);
+    setInteractionError(undefined);
+  };
+  const submitInteraction = async () => {
+    if (!interactionType || !interactionOccurredAt) return;
+    setInteractionSubmitting(true);
+    setInteractionError(undefined);
+    try {
+      await createMemberInteraction(state.accessToken, person.id, {
+        type: interactionType,
+        occurredAt: new Date(interactionOccurredAt).toISOString(),
+        briefNote: interactionBriefNote.trim() ? interactionBriefNote.trim() : undefined,
+      });
+      toast.show({ status: 'success', message: 'Interaction logged.' });
+      setInteractionFormOpen(false);
+      memberInteractionsState.refetch();
+    } catch (error) {
+      setInteractionError(extractErrorMessage(error, 'Something went wrong logging this interaction.'));
+    } finally {
+      setInteractionSubmitting(false);
     }
   };
 
@@ -742,21 +968,319 @@ export function PersonDetailPage() {
    * the missing read direction). Every status shown, not just open ones -
    * a history view, matching `usePersonFollowUpTasks`'s own doc comment. */
   const pastoralCareContent = (
-    <div data-testid="person-follow-up-history-card">
-      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-        <Heading level={3}>Follow-ups</Heading>
-        {followUpHistoryState.status === 'loading' && <Skeleton height={20} />}
-        {followUpHistoryState.status === 'error' && <ErrorState title="Couldn't load Follow-up history" onRetry={followUpHistoryState.refetch} />}
-        {followUpHistoryState.status === 'success' && (
-          <Table
-            testId="person-follow-up-history-table"
-            columns={followUpHistoryColumns}
-            data={followUpHistoryState.data}
-            getRowId={(task) => task.id}
-            emptyTitle="No Follow-ups yet"
-          />
-        )}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5] }}>
+      <div data-testid="person-follow-up-history-card">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+          <Heading level={3}>Follow-ups</Heading>
+          {followUpHistoryState.status === 'loading' && <Skeleton height={20} />}
+          {followUpHistoryState.status === 'error' && <ErrorState title="Couldn't load Follow-up history" onRetry={followUpHistoryState.refetch} />}
+          {followUpHistoryState.status === 'success' && (
+            <Table
+              testId="person-follow-up-history-table"
+              columns={followUpHistoryColumns}
+              data={followUpHistoryState.data}
+              getRowId={(task) => task.id}
+              emptyTitle="No Follow-ups yet"
+            />
+          )}
+        </div>
       </div>
+
+      {/* `[Milestone D — Portal Experiences, Portal 3: Bacenta Leader]`
+          "Bacenta Leader operational notes" - `PastoralNote`, the general
+          tier NFR-PRIV-01 explicitly distinguishes from the private
+          `PrayerNote` model (`ADMIN` is a hard `DENY` on both `.read`/
+          `.create` for this action - Blueprint §9.3's own worked example
+          - so this section never renders anything for that role). First
+          web-admin surface for this model - the backend contract/RBAC
+          already existed from Milestone B, unused until now. */}
+      <div data-testid="person-pastoral-notes-card">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
+            <Heading level={3}>Notes</Heading>
+            {!noteFormOpen && (
+              <Button variant="secondary" size="sm" onClick={openNote} accessibilityLabel="Add a note for this Person">
+                + Add note
+              </Button>
+            )}
+          </div>
+
+          {noteFormOpen && (
+            <Card padding={4} testId="pastoral-note-form">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+                <Input label="Note" value={noteContent} onChange={(event) => setNoteContent(event.target.value)} placeholder="A brief operational note about this Person" testId="pastoral-note-content" />
+                {noteError && (
+                  <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
+                    {noteError}
+                  </Text>
+                )}
+                <div style={{ display: 'flex', gap: theme.spacing[2] }}>
+                  <Button variant="primary" size="sm" disabled={!noteContent.trim()} loading={noteSubmitting} onClick={() => void submitNote()} testId="pastoral-note-submit">
+                    Save
+                  </Button>
+                  <Button variant="secondary" size="sm" onClick={cancelNote}>
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {pastoralNotesState.status === 'loading' && <Skeleton height={20} />}
+          {pastoralNotesState.status === 'error' && <ErrorState title="Couldn't load Notes" onRetry={pastoralNotesState.refetch} />}
+          {pastoralNotesState.status === 'success' && (
+            pastoralNotesState.data.length === 0 ? (
+              <Text variant="bodySmall" color={theme.colors.text.secondary}>
+                No notes yet.
+              </Text>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }} data-testid="pastoral-notes-list">
+                {pastoralNotesState.data.map((note) => (
+                  <div key={note.id} style={{ borderBottom: `1px solid ${theme.colors.border.subtle}`, paddingBottom: theme.spacing[3] }}>
+                    <Text variant="bodySmall">{note.content}</Text>
+                    <Text variant="caption" color={theme.colors.text.secondary}>
+                      {formatDate(note.createdAt)}
+                    </Text>
+                  </div>
+                ))}
+              </div>
+            )
+          )}
+        </div>
+      </div>
+
+      {/* `[Milestone D — Portal Experiences, Portal 5: Resident Pastor]`
+          Prayer Notes - the private, author-only pastoral domain. Gated
+          behind `canSeePrivatePastoralTools`, not `canSeePastoralCareTab` -
+          `BACENTA_LEADER`/`BASONTA_LEADER` see the Follow-ups/Notes
+          sections above but never this one. What renders here is only
+          ever the acting pastor's own notes - `usePrayerNotes` already
+          returns a server-side author-filtered list, so there is nothing
+          for this component to additionally filter or hide. */}
+      {canSeePrivatePastoralTools && (
+        <div data-testid="person-prayer-notes-card">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
+              <Heading level={3}>Prayer Notes</Heading>
+              {!prayerNoteFormOpen && (
+                <Button variant="secondary" size="sm" onClick={openPrayerNote} accessibilityLabel="Add a Prayer note for this Person">
+                  + Add Prayer note
+                </Button>
+              )}
+            </div>
+            <Text variant="caption" color={theme.colors.text.secondary}>
+              Private and author-only - visible only to you, never to another pastor.
+            </Text>
+
+            {prayerNoteFormOpen && (
+              <Card padding={4} testId="prayer-note-form">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+                  <Input label="Prayer note" value={prayerNoteContent} onChange={(event) => setPrayerNoteContent(event.target.value)} placeholder="A private prayer note about this Person" testId="prayer-note-content" />
+                  <Input
+                    label="Follow-up date (optional)"
+                    type="date"
+                    value={prayerNoteFollowUpDate}
+                    onChange={(event) => setPrayerNoteFollowUpDate(event.target.value)}
+                    testId="prayer-note-follow-up-date"
+                  />
+                  {prayerNoteError && (
+                    <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
+                      {prayerNoteError}
+                    </Text>
+                  )}
+                  <div style={{ display: 'flex', gap: theme.spacing[2] }}>
+                    <Button variant="primary" size="sm" disabled={!prayerNoteContent.trim()} loading={prayerNoteSubmitting} onClick={() => void submitPrayerNote()} testId="prayer-note-submit">
+                      Save
+                    </Button>
+                    <Button variant="secondary" size="sm" onClick={cancelPrayerNote}>
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {prayerNotesState.status === 'loading' && <Skeleton height={20} />}
+            {prayerNotesState.status === 'error' && <ErrorState title="Couldn't load Prayer notes" onRetry={prayerNotesState.refetch} />}
+            {prayerNotesState.status === 'success' && (
+              prayerNotesState.data.length === 0 ? (
+                <Text variant="bodySmall" color={theme.colors.text.secondary}>
+                  No Prayer notes yet.
+                </Text>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }} data-testid="prayer-notes-list">
+                  {prayerNotesState.data.map((note) => (
+                    <div key={note.id} style={{ borderBottom: `1px solid ${theme.colors.border.subtle}`, paddingBottom: theme.spacing[3] }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: theme.spacing[2] }}>
+                        <Text variant="bodySmall">{note.content}</Text>
+                        <Badge status={note.status === 'OPEN' ? 'warning' : 'success'}>{note.status === 'OPEN' ? 'Open' : 'Resolved'}</Badge>
+                      </div>
+                      <Text variant="caption" color={theme.colors.text.secondary}>
+                        {formatDate(note.createdAt)}
+                        {note.followUpDate ? ` · Follow up ${formatDate(note.followUpDate)}` : ''}
+                      </Text>
+                      {note.status === 'OPEN' && (
+                        <Button variant="tertiary" size="sm" loading={resolvingPrayerNoteId === note.id} onClick={() => void resolvePrayerNote(note.id)}>
+                          Mark resolved
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* `[Milestone D — Portal Experiences, Portal 5: Resident Pastor]`
+          Counselling - pastor-only, organizational scope (not author-only,
+          unlike Prayer Notes just above - see `useCounsellingSessions`'s
+          own doc comment). */}
+      {canSeePrivatePastoralTools && (
+        <div data-testid="person-counselling-card">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
+              <Heading level={3}>Counselling</Heading>
+              {!counsellingFormOpen && (
+                <Button variant="secondary" size="sm" onClick={openCounselling} accessibilityLabel="Schedule a Counselling session for this Person">
+                  + Schedule session
+                </Button>
+              )}
+            </div>
+
+            {counsellingFormOpen && (
+              <Card padding={4} testId="counselling-form">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+                  <Input label="Scheduled for" type="datetime-local" value={counsellingScheduledAt} onChange={(event) => setCounsellingScheduledAt(event.target.value)} testId="counselling-scheduled-at" />
+                  <Input label="Brief note (optional)" value={counsellingBriefNote} onChange={(event) => setCounsellingBriefNote(event.target.value)} placeholder="What this session is about" testId="counselling-brief-note" />
+                  {counsellingError && (
+                    <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
+                      {counsellingError}
+                    </Text>
+                  )}
+                  <div style={{ display: 'flex', gap: theme.spacing[2] }}>
+                    <Button variant="primary" size="sm" disabled={!counsellingScheduledAt} loading={counsellingSubmitting} onClick={() => void submitCounselling()} testId="counselling-submit">
+                      Schedule
+                    </Button>
+                    <Button variant="secondary" size="sm" onClick={cancelCounselling}>
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {counsellingSessionsState.status === 'loading' && <Skeleton height={20} />}
+            {counsellingSessionsState.status === 'error' && <ErrorState title="Couldn't load Counselling sessions" onRetry={counsellingSessionsState.refetch} />}
+            {counsellingSessionsState.status === 'success' && (
+              counsellingSessionsState.data.length === 0 ? (
+                <Text variant="bodySmall" color={theme.colors.text.secondary}>
+                  No Counselling sessions yet.
+                </Text>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }} data-testid="counselling-sessions-list">
+                  {counsellingSessionsState.data.map((session) => (
+                    <div key={session.id} style={{ borderBottom: `1px solid ${theme.colors.border.subtle}`, paddingBottom: theme.spacing[3] }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: theme.spacing[2] }}>
+                        <Text variant="bodySmall">{formatDate(session.scheduledAt)}{session.briefNote ? ` — ${session.briefNote}` : ''}</Text>
+                        <Badge status={session.status === 'SCHEDULED' ? 'info' : session.status === 'COMPLETED' ? 'success' : 'neutral'}>
+                          {session.status === 'SCHEDULED' ? 'Scheduled' : session.status === 'COMPLETED' ? 'Completed' : 'Cancelled'}
+                        </Badge>
+                      </div>
+                      {session.status === 'SCHEDULED' && (
+                        <div style={{ display: 'flex', gap: theme.spacing[2] }}>
+                          <Button variant="tertiary" size="sm" loading={updatingSessionId === session.id} onClick={() => void updateCounsellingStatus(session.id, 'COMPLETED')}>
+                            Mark completed
+                          </Button>
+                          <Button variant="tertiary" size="sm" loading={updatingSessionId === session.id} onClick={() => void updateCounsellingStatus(session.id, 'CANCELLED')}>
+                            Cancel session
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* `[Milestone D — Portal Experiences, Portal 5: Resident Pastor]`
+          Member Interactions - pastor-only, organizational scope,
+          immutable once logged (no update/delete route exists - see
+          `createMemberInteraction`'s own doc comment). */}
+      {canSeePrivatePastoralTools && (
+        <div data-testid="person-interactions-card">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
+              <Heading level={3}>Interactions</Heading>
+              {!interactionFormOpen && (
+                <Button variant="secondary" size="sm" onClick={openInteraction} accessibilityLabel="Log an Interaction for this Person">
+                  + Log interaction
+                </Button>
+              )}
+            </div>
+
+            {interactionFormOpen && (
+              <Card padding={4} testId="interaction-form">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+                  <Select
+                    label="Type"
+                    placeholder="Select a type…"
+                    value={interactionType}
+                    onChange={(event) => setInteractionType(event.target.value as MemberInteractionTypeDto)}
+                    options={MEMBER_INTERACTION_TYPE_OPTIONS}
+                    testId="interaction-type"
+                  />
+                  <Input label="Occurred at" type="datetime-local" value={interactionOccurredAt} onChange={(event) => setInteractionOccurredAt(event.target.value)} testId="interaction-occurred-at" />
+                  <Input label="Brief note (optional)" value={interactionBriefNote} onChange={(event) => setInteractionBriefNote(event.target.value)} placeholder="What happened" testId="interaction-brief-note" />
+                  {interactionError && (
+                    <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
+                      {interactionError}
+                    </Text>
+                  )}
+                  <div style={{ display: 'flex', gap: theme.spacing[2] }}>
+                    <Button variant="primary" size="sm" disabled={!interactionType || !interactionOccurredAt} loading={interactionSubmitting} onClick={() => void submitInteraction()} testId="interaction-submit">
+                      Log interaction
+                    </Button>
+                    <Button variant="secondary" size="sm" onClick={cancelInteraction}>
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {memberInteractionsState.status === 'loading' && <Skeleton height={20} />}
+            {memberInteractionsState.status === 'error' && <ErrorState title="Couldn't load Interactions" onRetry={memberInteractionsState.refetch} />}
+            {memberInteractionsState.status === 'success' && (
+              memberInteractionsState.data.length === 0 ? (
+                <Text variant="bodySmall" color={theme.colors.text.secondary}>
+                  No Interactions logged yet.
+                </Text>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }} data-testid="interactions-list">
+                  {memberInteractionsState.data.map((interaction) => (
+                    <div key={interaction.id} style={{ borderBottom: `1px solid ${theme.colors.border.subtle}`, paddingBottom: theme.spacing[3] }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
+                        <Badge status="neutral">{MEMBER_INTERACTION_TYPE_LABEL[interaction.type]}</Badge>
+                        <Text variant="bodySmall">{formatDate(interaction.occurredAt)}</Text>
+                      </div>
+                      {interaction.briefNote && (
+                        <Text variant="bodySmall" color={theme.colors.text.secondary}>
+                          {interaction.briefNote}
+                        </Text>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -764,13 +1288,13 @@ export function PersonDetailPage() {
     { id: 'overview', label: 'Overview', content: overviewContent },
     { id: 'groups', label: 'Groups', content: groupsContent },
     { id: 'roles', label: 'Roles', content: rolesContent },
-    // `[Branch Pastor portal, Pastoral Care sprint]` Branch-Pastor-only -
-    // every other role keeps the exact three tabs this page has always
-    // had (`Overview`/`Groups`/`Roles`), unaffected. Not a general
-    // "Pastoral Care belongs on every profile" redesign - the approved
-    // brief for this addition names the Branch Pastor persona
-    // specifically.
-    ...(isBranchPastor ? [{ id: 'pastoral-care', label: 'Pastoral Care', content: pastoralCareContent }] : []),
+    // `[Branch Pastor portal, Pastoral Care sprint]` Restricted to the
+    // roles that actually hold `pastoral_care.followup_task.read`/
+    // `pastoral_care.notes.read` at a real scope - see
+    // `canSeePastoralCareTab`'s own doc comment above. Every other role
+    // keeps the exact three tabs this page has always had
+    // (`Overview`/`Groups`/`Roles`), unaffected.
+    ...(canSeePastoralCareTab ? [{ id: 'pastoral-care', label: 'Pastoral Care', content: pastoralCareContent }] : []),
   ];
 
   return (

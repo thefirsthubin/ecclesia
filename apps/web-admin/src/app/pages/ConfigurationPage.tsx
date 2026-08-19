@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Card, Divider, EmptyState, ErrorState, Heading, Input, PageContainer, Skeleton, Switch, Text, useTheme } from '@ecclesia/ui-web';
+import { Button, Card, Divider, EmptyState, ErrorState, Input, PageContainer, PageHeader, SectionHeader, Skeleton, Switch, Text, useTheme } from '@ecclesia/ui-web';
 import { CHURCH_PULSE_SIGNAL_TYPE_VALUES } from '@ecclesia/contracts';
 import type { ChurchPulseSignalTypeDto } from '@ecclesia/contracts';
 
@@ -158,7 +158,7 @@ export function ConfigurationPage() {
   return (
     <PageContainer maxWidth={640}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
-        <Heading level={1}>Configuration</Heading>
+        <PageHeader title="Configuration" />
 
         {configState.status === 'loading' && (
           <Card padding={6}>
@@ -194,14 +194,16 @@ export function ConfigurationPage() {
         )}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
-            <Heading level={2}>Church Pulse weights &amp; Silent-Drift thresholds</Heading>
-            {!editOpen && (
-              <Button variant="primary" size="sm" onClick={openEdit} accessibilityLabel="Edit Configuration">
-                Edit
-              </Button>
-            )}
-          </div>
+          <SectionHeader
+            title="Church Pulse weights & Silent-Drift thresholds"
+            action={
+              !editOpen ? (
+                <Button variant="primary" size="sm" onClick={openEdit} accessibilityLabel="Edit Configuration">
+                  Edit
+                </Button>
+              ) : undefined
+            }
+          />
 
           {!editOpen && configState.status === 'success' && (
             <Card padding={6} testId="configuration-summary-card">

@@ -189,9 +189,18 @@ describe('AppShell pill navigation across every role', () => {
       expect(screen.getByRole('link', { name: new RegExp(`^${item.label}`) })).toHaveAttribute('href', item.href);
     }
 
+    // `[Milestone D — Portal Experiences]` Checked by `href`, not by
+    // `item.label` - `labelOverrides` (`nav-items.ts`) means two
+    // different routes can now render the identical word for two
+    // different roles (e.g. `TREASURER`'s relabeled `/stewardship` and
+    // `ASSISTANT_PASTOR`'s own dedicated `/finance` both render "Finance"
+    // - never simultaneously, since no role holds both, but a
+    // label-only query can't tell those two hrefs apart from a single
+    // role's DOM alone).
     const hidden = NAV_ITEMS.filter((item) => !expected.some((visible) => visible.href === item.href));
+    const renderedHrefs = screen.getAllByRole('link').map((link) => link.getAttribute('href'));
     for (const item of hidden) {
-      expect(screen.queryByRole('link', { name: new RegExp(`^${item.label}$`) })).not.toBeInTheDocument();
+      expect(renderedHrefs).not.toContain(item.href);
     }
   });
 

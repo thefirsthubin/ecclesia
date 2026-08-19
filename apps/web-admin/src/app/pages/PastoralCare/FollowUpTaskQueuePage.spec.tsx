@@ -476,7 +476,12 @@ describe('FollowUpTaskQueuePage', () => {
 
     it('cancels the form without sending a request', async () => {
       mockUseAuth.mockReturnValue(actorWithRole('ASSISTANT_PASTOR'));
-      global.fetch = jest.fn().mockResolvedValue({ ok: true, json: async () => [] });
+      global.fetch = jest.fn().mockImplementation((url: string) => {
+        if (url.includes('/pastoral-care/calendar')) {
+          return Promise.resolve({ ok: true, json: async () => ({ from: '', to: '', followUpTasks: [], counsellingSessions: [], interactions: [] }) });
+        }
+        return Promise.resolve({ ok: true, json: async () => [] });
+      });
 
       renderPage();
       await waitFor(() => expect(screen.getByText('No open Follow-up tasks')).toBeInTheDocument());
@@ -634,6 +639,83 @@ describe('FollowUpTaskQueuePage', () => {
       await waitFor(() => expect(screen.getByTestId('silent-drift-flags-card')).toBeInTheDocument());
       expect(screen.queryByRole('button', { name: /resolve/i })).not.toBeInTheDocument();
       expect(screen.queryByRole('button', { name: /escalate.*flag/i })).not.toBeInTheDocument();
+    });
+  });
+
+  /** `[Milestone D — Portal Experiences, Portal 5: Resident Pastor]`
+   * Traced against `permission-matrix.ts`: the Pastoral Calendar's own
+   * gating action, `pastoral_care.interaction.read`, is held only by
+   * `RESIDENT_PASTOR`/`ACTING_RESIDENT_PASTOR` (BRANCH) and
+   * `ASSISTANT_PASTOR` (CLUSTER) - `BACENTA_LEADER` holds none of it. */
+  describe('Pastoral Calendar', () => {
+    function calendarResponse(overrides: Record<string, unknown> = {}) {
+      return {
+        from: '2026-08-01T00:00:00.000Z',
+        to: '2026-08-31T00:00:00.000Z',
+        followUpTasks: [],
+        counsellingSessions: [],
+        interactions: [],
+        ...overrides,
+      };
+    }
+
+    it('renders real Counselling sessions and Interactions for RESIDENT_PASTOR', async () => {
+      mockUseAuth.mockReturnValue(actorWithRole('RESIDENT_PASTOR'));
+      global.fetch = jest.fn().mockImplementation((url: string) => {
+        if (url.includes('/pastoral-care/calendar')) {
+          return Promise.resolve({
+            ok: true,
+            json: async () =>
+              calendarResponse({
+                counsellingSessions: [{ id: 'cs-1', personId: 'subject-1', scheduledAt: '2026-08-15T10:00:00.000Z', status: 'SCHEDULED' }],
+                interactions: [{ id: 'mi-1', personId: 'subject-2', scheduledAt: '2026-08-20T09:00:00.000Z', type: 'CALL' }],
+              }),
+          });
+        }
+        if (url.includes('/pastoral-care/follow-up-tasks')) return Promise.resolve({ ok: true, json: async () => [] });
+        if (url.includes('/pastoral-care/silent-drift-flags')) return Promise.resolve({ ok: true, json: async () => [] });
+        if (url.includes('/people/subject-1')) return Promise.resolve({ ok: true, json: async () => personResponse('subject-1', 'Ama', 'Owusu') });
+        if (url.includes('/people/subject-2')) return Promise.resolve({ ok: true, json: async () => personResponse('subject-2', 'Kofi', 'Mensah') });
+        return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
+      });
+
+      renderPage();
+
+      await waitFor(() => expect(screen.getByTestId('pastoral-calendar-card')).toBeInTheDocument());
+      await waitFor(() => expect(screen.getByTestId('pastoral-calendar-counselling-list')).toBeInTheDocument());
+      expect(screen.getByText('Ama Owusu')).toBeInTheDocument();
+      expect(screen.getByTestId('pastoral-calendar-interactions-list')).toBeInTheDocument();
+      expect(screen.getByText('Kofi Mensah')).toBeInTheDocument();
+    });
+
+    it('shows an honest empty state when nothing is scheduled', async () => {
+      mockUseAuth.mockReturnValue(actorWithRole('RESIDENT_PASTOR'));
+      global.fetch = jest.fn().mockImplementation((url: string) => {
+        if (url.includes('/pastoral-care/calendar')) return Promise.resolve({ ok: true, json: async () => calendarResponse() });
+        return Promise.resolve({ ok: true, json: async () => [] });
+      });
+
+      renderPage();
+
+      await waitFor(() => expect(screen.getByText('Nothing scheduled')).toBeInTheDocument());
+    });
+
+    it('never renders the Pastoral Calendar section for BACENTA_LEADER', async () => {
+      mockUseAuth.mockReturnValue(actorWithRole('BACENTA_LEADER', { bacentaId: 'bacenta-1' }));
+      const fetchMock = jest.fn().mockImplementation((url: string) => {
+        if (url.includes('/pastoral-care/calendar')) {
+          return Promise.resolve({ ok: true, json: async () => calendarResponse({ counsellingSessions: [{ id: 'cs-1', personId: 'subject-1', scheduledAt: '2026-08-15T10:00:00.000Z', status: 'SCHEDULED' }] }) });
+        }
+        return Promise.resolve({ ok: true, json: async () => [] });
+      });
+      global.fetch = fetchMock;
+
+      renderPage();
+
+      await waitFor(() => expect(screen.getByText('No open Follow-up tasks')).toBeInTheDocument());
+      expect(screen.queryByText('Pastoral Calendar')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('pastoral-calendar-card')).not.toBeInTheDocument();
+      expect(fetchMock.mock.calls.some(([url]) => (url as string).includes('/pastoral-care/calendar'))).toBe(false);
     });
   });
 });

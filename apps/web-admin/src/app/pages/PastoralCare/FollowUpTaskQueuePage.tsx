@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Badge, Button, Card, ErrorState, Input, PageContainer, PageHeader, RecordPicker, SectionHeader, Skeleton, Table, Text, useTheme, useToast } from '@ecclesia/ui-web';
+import { Badge, Button, Card, EmptyState, ErrorState, Input, PageContainer, PageHeader, RecordPicker, SectionHeader, Skeleton, Table, Text, useTheme, useToast } from '@ecclesia/ui-web';
 import type { RecordOption, TableColumn } from '@ecclesia/ui-web';
-import type { FollowUpTaskResponseDto, SilentDriftFlagResponseDto, SilentDriftStatusDto } from '@ecclesia/contracts';
+import type { FollowUpTaskResponseDto, PastoralCalendarResponseDto, SilentDriftFlagResponseDto, SilentDriftStatusDto } from '@ecclesia/contracts';
 
 import { useAuth } from '../../auth/AuthContext';
 import { ApiError } from '../../lib/api-client';
@@ -18,6 +18,7 @@ import {
   searchPeopleForEscalation,
   useFollowUpTaskQueue,
   useFollowUpTaskQueueForGroups,
+  usePastoralCalendar,
   useSilentDriftFlags,
   useSilentDriftFlagsForGroups,
 } from './usePastoralCareData';
@@ -38,6 +39,18 @@ function formatDate(iso: string): string {
 
 function isOverdue(task: FollowUpTaskResponseDto, now: Date): boolean {
   return task.status !== 'COMPLETED' && task.dueAt !== null && new Date(task.dueAt).getTime() < now.getTime();
+}
+
+type CalendarCounsellingEntry = PastoralCalendarResponseDto['counsellingSessions'][number];
+type CalendarInteractionEntry = PastoralCalendarResponseDto['interactions'][number];
+
+/** `[Milestone D — Portal Experiences, Portal 5: Resident Pastor]`
+ * "Calendar" - the next 30 days from today, a fixed window matching this
+ * page's own "what needs my attention soon" framing (the Follow-up queue
+ * above has no date-range control either). */
+function calendarWindow(now: Date): { from: string; to: string } {
+  const to = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+  return { from: now.toISOString(), to: to.toISOString() };
 }
 
 /** Best-effort extraction of the server's actual denial/conflict reason -
@@ -81,7 +94,23 @@ export function FollowUpTaskQueuePage() {
   const [createSubmitting, setCreateSubmitting] = useState(false);
   const [createError, setCreateError] = useState<string | undefined>(undefined);
 
+  // `[Milestone D — Portal Experiences, Portal 5: Resident Pastor]`
+  // Computed once via lazy `useState` initializer, not re-derived on every
+  // render - a plain `calendarWindow(new Date())` call inline would
+  // produce a new `from`/`to` string (and therefore a new `useAsyncData`
+  // dependency) on every render, causing an infinite refetch loop.
+  const [calendarRange] = useState(() => calendarWindow(new Date()));
+
   if (state.status !== 'authenticated') return null;
+
+  // `[Milestone D — Portal Experiences, Portal 5: Resident Pastor]` Same
+  // roles as `PersonDetailPage.tsx`'s own `canSeePrivatePastoralTools` -
+  // traced against `permission-matrix.ts`: `pastoral_care.interaction.read`
+  // (the Pastoral Calendar's own gating action) is held only by
+  // `RESIDENT_PASTOR`/`ACTING_RESIDENT_PASTOR` (BRANCH) and
+  // `ASSISTANT_PASTOR` (CLUSTER).
+  const canSeePastoralCalendar = state.actor.role === 'RESIDENT_PASTOR' || state.actor.role === 'ACTING_RESIDENT_PASTOR' || state.actor.role === 'ASSISTANT_PASTOR';
+  const calendarState = usePastoralCalendar(canSeePastoralCalendar ? state.accessToken : undefined, calendarRange.from, calendarRange.to);
 
   // `[Branch Pastor portal]` Same "compute both, activate one" fix as
   // `PeopleListPage.tsx` - `ASSISTANT_PASTOR`'s real CLUSTER grant spans
@@ -500,6 +529,78 @@ export function FollowUpTaskQueuePage() {
             </Card>
           )}
         </div>
+
+        {/* `[Milestone D — Portal Experiences, Portal 5: Resident Pastor]`
+            "Calendar" - `GET /pastoral-care/calendar`, the next 30 days.
+            Only Counselling/Interactions render here - Follow-up tasks
+            already have their own queue above, so repeating them here
+            would just be a second view of the same rows. Gated to the
+            same private-pastoral roles as `PersonDetailPage.tsx`'s own
+            Counselling/Interactions sections - `BACENTA_LEADER`/
+            `BASONTA_LEADER` never see this section at all. */}
+        {canSeePastoralCalendar && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+            <SectionHeader title="Pastoral Calendar" description="Counselling and Interactions scheduled in the next 30 days" />
+
+            {calendarState.status === 'loading' && (
+              <Card padding={6}>
+                <Skeleton height={40} />
+              </Card>
+            )}
+
+            {calendarState.status === 'error' && (
+              <Card padding={6}>
+                <ErrorState title="Couldn't load the Pastoral Calendar" onRetry={calendarState.refetch} />
+              </Card>
+            )}
+
+            {calendarState.status === 'success' && (
+              <Card padding={6} testId="pastoral-calendar-card">
+                {calendarState.data.counsellingSessions.length === 0 && calendarState.data.interactions.length === 0 ? (
+                  <EmptyState icon="calendar" title="Nothing scheduled" description="No Counselling sessions or Interactions scheduled in the next 30 days." tone="positive" />
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
+                    {calendarState.data.counsellingSessions.length > 0 && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }} data-testid="pastoral-calendar-counselling-list">
+                        <Text variant="label" color={theme.colors.text.secondary}>
+                          Counselling
+                        </Text>
+                        {calendarState.data.counsellingSessions.map((entry: CalendarCounsellingEntry) => (
+                          <Link key={entry.id} to={`/people/${entry.personId}`}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
+                              <PersonNameText personId={entry.personId} />
+                              <Text variant="caption" color={theme.colors.text.secondary}>
+                                {formatDate(entry.scheduledAt)}
+                              </Text>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                    {calendarState.data.interactions.length > 0 && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }} data-testid="pastoral-calendar-interactions-list">
+                        <Text variant="label" color={theme.colors.text.secondary}>
+                          Interactions
+                        </Text>
+                        {calendarState.data.interactions.map((entry: CalendarInteractionEntry) => (
+                          <Link key={entry.id} to={`/people/${entry.personId}`}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
+                              <PersonNameText personId={entry.personId} />
+                              <Text variant="caption" color={theme.colors.text.secondary}>
+                                {entry.type}
+                                {entry.scheduledAt ? ` · ${formatDate(entry.scheduledAt)}` : ''}
+                              </Text>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </Card>
+            )}
+          </div>
+        )}
       </div>
     </PageContainer>
   );

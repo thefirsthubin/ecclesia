@@ -23,8 +23,19 @@ describe('navItemsForRole', () => {
    * deliberately hidden from this one role (`excludeRoles`) as part of
    * the approved Branch Pastor sidebar. Every other role's visibility is
    * unaffected - still asserted here exactly as before.
+   *
+   * `[Milestone D — Portal Experiences]` `TREASURER` also removed - the
+   * Stewardship item is still present and ungated for this role, just
+   * relabeled "Finance" (`labelOverrides`), so it can no longer match the
+   * literal string `'Stewardship'` this shared list checks for. Asserted
+   * on its own below instead.
+   *
+   * `[Milestone D, Portal 2: Branch Administrator]` `ADMIN` also removed -
+   * Portal 2's read-only Finance requirement now excludes this role from
+   * `Stewardship` entirely (`excludeRoles`), routing it to the dedicated
+   * `Finance` item instead. Asserted on its own below.
    */
-  it.each(['RESIDENT_PASTOR', 'ACTING_RESIDENT_PASTOR', 'BASONTA_LEADER', 'TREASURER', 'ADMIN', 'BACENTA_LEADER'] as const)(
+  it.each(['RESIDENT_PASTOR', 'ACTING_RESIDENT_PASTOR', 'BASONTA_LEADER', 'BACENTA_LEADER'] as const)(
     'shows every ungated item to %s',
     (role) => {
       const labels = navItemsForRole(role).map((item) => item.label);
@@ -41,22 +52,66 @@ describe('navItemsForRole', () => {
    * Log) all absent, and no Bacentas/Basontas standalone item (there
    * never was one - Bacenta/Basonta detail is reached by drill-down from
    * `/ministry/:groupId`, not a top-level nav entry for any role).
+   *
+   * `[Milestone D — Portal Experiences, Portal 3: Bacenta Leader]`
+   * `Outreaches` appended at the end - `ROLE_SPECIFIC_ORDER.ASSISTANT_PASTOR`
+   * places `/outreach` last, after `/pastoral-care`.
    */
   it('shows the approved Branch Pastor sidebar, in the approved order, with Ministry/Stewardship/Administration absent', () => {
     const labels = navItemsForRole('ASSISTANT_PASTOR').map((item) => item.label);
-    expect(labels).toEqual(['Dashboard', 'People', 'Gatherings', 'Finance', 'Insights', 'Pastoral Care']);
+    expect(labels).toEqual(['Dashboard', 'People', 'Gatherings', 'Finance', 'Insights', 'Pastoral Care', 'Outreaches']);
     expect(labels).not.toContain('Ministry');
     expect(labels).not.toContain('Stewardship');
     expect(labels).not.toContain('Configuration');
     expect(labels).not.toContain('Audit Log');
   });
 
-  it('shows Finance only to Branch Pastor - every other role keeps Stewardship, unaffected', () => {
+  it('shows the dedicated read-only Finance item to Branch Pastor and Branch Administrator - every other role keeps Stewardship, unaffected', () => {
     expect(navItemsForRole('ASSISTANT_PASTOR').map((item) => item.label)).toContain('Finance');
-    for (const role of ['RESIDENT_PASTOR', 'ACTING_RESIDENT_PASTOR', 'BASONTA_LEADER', 'TREASURER', 'ADMIN', 'BACENTA_LEADER'] as const) {
+    expect(navItemsForRole('ADMIN').map((item) => item.label)).toContain('Finance');
+    for (const role of ['RESIDENT_PASTOR', 'ACTING_RESIDENT_PASTOR', 'BASONTA_LEADER', 'BACENTA_LEADER'] as const) {
       const labels = navItemsForRole(role).map((item) => item.label);
       expect(labels).not.toContain('Finance');
       expect(labels).toContain('Stewardship');
+    }
+  });
+
+  /** `[Milestone D, Portal 2: Branch Administrator]` Portal 2's own rule:
+   * "read-only financial visibility... do NOT expose Treasurer-only
+   * mutation controls." `ADMIN` must never see `Stewardship` (the
+   * mutation-heavy `StewardshipPage`) - only the dedicated read-only
+   * `Finance` item, and never both at once. */
+  it('routes Branch Administrator to the read-only Finance item, never the mutation-heavy Stewardship item', () => {
+    const labels = navItemsForRole('ADMIN').map((item) => item.label);
+    expect(labels).toContain('Finance');
+    expect(labels).not.toContain('Stewardship');
+  });
+
+  /**
+   * `[Milestone D — Portal Experiences, Portal 1: Branch Treasurer]`
+   * `TREASURER` sees the Stewardship item's real `/stewardship` route
+   * relabeled "Finance" (`labelOverrides`), not Branch Pastor's separate
+   * dedicated `/finance` item - same page, same route, only the label
+   * changes for this one role.
+   */
+  it('relabels Stewardship to Finance for Branch Treasurer, without adding a second nav item or changing the route', () => {
+    const items = navItemsForRole('TREASURER');
+    const labels = items.map((item) => item.label);
+    expect(labels).toContain('Finance');
+    expect(labels).not.toContain('Stewardship');
+    expect(items.filter((item) => item.href === '/stewardship' || item.href === '/finance')).toHaveLength(1);
+    expect(items.find((item) => item.label === 'Finance')?.href).toBe('/stewardship');
+  });
+
+  /** `[Milestone D — Portal Experiences, Portal 3: Bacenta Leader]`
+   * Traced against `permission-matrix.ts`'s real `outreach.event.read`
+   * rows, not assumed. `ADMIN` holds no grant at all for this domain. */
+  it('shows Outreaches only to the roles holding a real outreach.event.read grant', () => {
+    for (const role of ['BACENTA_LEADER', 'BASONTA_LEADER', 'ASSISTANT_PASTOR', 'RESIDENT_PASTOR', 'ACTING_RESIDENT_PASTOR'] as const) {
+      expect(navItemsForRole(role).map((i) => i.label)).toContain('Outreaches');
+    }
+    for (const role of ['ADMIN', 'TREASURER', 'COUNCIL_OVERSEER'] as const) {
+      expect(navItemsForRole(role).map((i) => i.label)).not.toContain('Outreaches');
     }
   });
 
@@ -75,6 +130,22 @@ describe('navItemsForRole', () => {
     for (const role of ['ASSISTANT_PASTOR', 'BASONTA_LEADER', 'BACENTA_LEADER', 'COUNCIL_OVERSEER'] as const) {
       expect(navItemsForRole(role).map((i) => i.label)).not.toContain('Audit Log');
     }
+  });
+
+  /** `[Milestone D — Portal Experiences, Portal 8: System Administrator]`
+   * This role holds exactly one grant in the entire matrix
+   * (`platform.tenant.read`, GLOBAL) - traced against
+   * `permission-matrix.ts`, not assumed. It previously saw
+   * People/Pastoral Care/Ministry/Gatherings/Stewardship purely via the
+   * "no `roles` array = every role" default fallthrough, a real bug: the
+   * backend already 403s every one of those routes for this role, so
+   * each was a dead-end nav item pointing at a page that could only ever
+   * show an error. Only Dashboard (its own honest "nothing to administer
+   * yet" state) and Insights (the honest generic "not available for this
+   * role" stub - also not a broken page) remain. */
+  it('shows only Dashboard and Insights for SYSTEM_ADMINISTRATOR - no church-operational nav items this role holds zero RBAC grant for', () => {
+    const labels = navItemsForRole('SYSTEM_ADMINISTRATOR').map((i) => i.label);
+    expect(labels).toEqual(['Dashboard', 'Insights']);
   });
 
   it('groups Configuration and Audit Log under one "Administration" heading, in that order', () => {

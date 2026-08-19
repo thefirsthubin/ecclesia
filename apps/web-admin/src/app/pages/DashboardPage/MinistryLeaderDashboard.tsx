@@ -1,26 +1,38 @@
-import { Badge, Button, Card, Divider, EmptyState, ErrorState, Heading, Icon, PageContainer, SampleDataBadge, Skeleton, Text, useTheme } from '@ecclesia/ui-web';
-import type { PersonResponseDto } from '@ecclesia/contracts';
+import { Badge, Button, Card, Divider, EmptyState, ErrorState, Heading, LineChart, PageContainer, Skeleton, Text, TrendPanel, useTheme } from '@ecclesia/ui-web';
+import type { AttendanceTrendResultDto, PersonResponseDto } from '@ecclesia/contracts';
 
 import { useAuth } from '../../auth/AuthContext';
 import { apiGet } from '../../lib/api-client';
 import { useAsyncData } from '../../lib/useAsyncData';
+import type { AsyncDataResult } from '../../lib/useAsyncData';
 import { useNavigate } from '../../router/router';
 import { useGatheringsList } from '../Gatherings/useGatheringsData';
 import { StaffingTargetsPanel } from '../Ministry/StaffingTargetsPanel';
 import { useOvercommitmentFlags, useRoster } from '../Ministry/useMinistryData';
 import { PersonNameText } from '../PastoralCare/PersonNameText';
 import { DashboardHeader } from './DashboardHeader';
-import { DEMO_MINISTRY_ACTIVITY, buildMinistryAttendanceSeries } from './dashboardDemoData';
-import { TrendCard } from './TrendCard';
 import { useDashboardBreakpoint } from './useDashboardBreakpoint';
 
 function formatDateTime(iso: string): string {
   return new Date(iso).toLocaleString();
 }
 
-function hoursAgoLabel(hoursAgo: number): string {
-  if (hoursAgo < 24) return `${hoursAgo}h ago`;
-  return `${Math.round(hoursAgo / 24)}d ago`;
+/** `[Milestone D — Portal Experiences, Portal 4: Basonta Leader]` Real
+ * `GET /insights/attendance-trend`, `groupId`-scoped to this Basonta,
+ * `gatheringCategory=BASONTA_MEETING` - the same `groupId`-narrowing
+ * `useBacentaLeaderInsightsData.ts` establishes for Portal 3, reused here
+ * inline (small per-page glue, this codebase's own established precedent
+ * for a single-consumer fetch not worth extracting into a shared hook
+ * file). Replaces the prior demo `buildMinistryAttendanceSeries()`. */
+function useMinistryAttendanceTrend(accessToken: string | undefined, groupId: string | undefined): AsyncDataResult<AttendanceTrendResultDto> {
+  return useAsyncData<AttendanceTrendResultDto>(
+    (signal) => {
+      if (!accessToken || !groupId) return Promise.reject(new Error('not authenticated'));
+      const params = new URLSearchParams({ granularity: 'month', count: '6', groupId, gatheringCategory: 'BASONTA_MEETING' });
+      return apiGet<AttendanceTrendResultDto>(`/insights/attendance-trend?${params.toString()}`, { authToken: accessToken, signal });
+    },
+    [accessToken, groupId],
+  );
 }
 
 /**
@@ -41,11 +53,17 @@ function hoursAgoLabel(hoursAgo: number): string {
  * this sprint's own Objective 2), Upcoming Gatherings
  * (`useGatheringsList`, `ownerGroupId` = this Basonta - `BASONTA_LEADER`
  * holds `gatherings.gathering.read` at `OWN_GROUP` scope).
- * **Demo data, disclosed**: Ministry Attendance trend and Recent Ministry
- * Activity - no aggregate attendance-by-Basonta or activity-feed endpoint
- * exists, the same class of gap `dashboardDemoData.ts` already discloses
- * for the Resident Pastor dashboard's own Church Growth/Recent Activity
- * sections.
+ *
+ * `[Milestone D — Portal Experiences, Portal 4: Basonta Leader]` Ministry
+ * Attendance is now real too (`useMinistryAttendanceTrend`,
+ * `GET /insights/attendance-trend` `groupId`-narrowed to this Basonta,
+ * `gatheringCategory=BASONTA_MEETING`) - the prior demo series is
+ * removed. Recent Ministry Activity has no honest replacement: no
+ * activity-feed/audit-log endpoint scoped to a single group exists
+ * anywhere in `apps/api` (a genuine backend gap, not merely undemoed),
+ * so that section now shows an explicit unavailable state rather than
+ * fabricated activity - the "show an honest empty/unavailable state and
+ * report the backend gap" rule, not a UI-only fix.
  */
 export function MinistryLeaderDashboard() {
   const theme = useTheme();
@@ -69,6 +87,7 @@ export function MinistryLeaderDashboard() {
   const rosterState = useRoster(accessToken, groupId ?? '');
   const overcommitmentState = useOvercommitmentFlags(accessToken, groupId ?? '');
   const gatheringsState = useGatheringsList(accessToken, groupId ? { ownerGroupId: groupId } : {});
+  const attendanceTrendState = useMinistryAttendanceTrend(accessToken, groupId);
 
   const rosterSize = rosterState.status === 'success' ? rosterState.data.length : undefined;
   const overcommittedCount = overcommitmentState.status === 'success' ? overcommitmentState.data.length : undefined;
@@ -194,47 +213,37 @@ export function MinistryLeaderDashboard() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: isNarrow ? '1fr' : 'minmax(0, 1fr) minmax(0, 1fr)', gap: theme.spacing[4] }}>
-          <TrendCard title="Ministry attendance" subtitle="Attendance at this Basonta's Gatherings" series={buildMinistryAttendanceSeries()} color={theme.colors.brand.default} testId="ministry-attendance-chart" />
+          <Card padding={6} elevation={1} testId="ministry-attendance-chart-card">
+            <TrendPanel
+              title="Ministry attendance"
+              description="Attendance at this Basonta's Gatherings"
+              status={attendanceTrendState.status}
+              onRetry={attendanceTrendState.refetch}
+              errorTitle="Couldn't load the attendance trend"
+              skeletonHeight={160}
+            >
+              {attendanceTrendState.status === 'success' &&
+                (attendanceTrendState.data.buckets.every((bucket) => bucket.presentCount === 0) ? (
+                  <EmptyState icon="trendingUp" title="No attendance recorded" description="No attendance has been recorded for this Basonta in this window yet." />
+                ) : (
+                  <LineChart
+                    data={attendanceTrendState.data.buckets.map((bucket) => ({ label: bucket.label, value: bucket.presentCount }))}
+                    height={160}
+                    color={theme.colors.brand.default}
+                    testId="ministry-attendance-line-chart"
+                  />
+                ))}
+            </TrendPanel>
+          </Card>
 
           <Card padding={6} testId="recent-ministry-activity-card">
             <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing[2] }}>
-                <Heading level={3}>Recent ministry activity</Heading>
-                <SampleDataBadge testId="recent-ministry-activity-sample-badge" />
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-                {DEMO_MINISTRY_ACTIVITY.map((activity, index) => (
-                  <div key={activity.id}>
-                    {index > 0 && <Divider />}
-                    <div style={{ paddingTop: index > 0 ? theme.spacing[3] : 0, display: 'flex', alignItems: 'center', gap: theme.spacing[3] }}>
-                      {/* `[Dashboard Visual Redesign]` Icon-in-tinted-circle -
-                          same row treatment as `UpcomingEventsTimeline`/
-                          `RecentActivityTimeline`, applied in place. */}
-                      <div
-                        aria-hidden
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          width: 36,
-                          height: 36,
-                          flexShrink: 0,
-                          borderRadius: theme.radius.full,
-                          backgroundColor: activity.tone === 'success' ? theme.colors.status.success.background : theme.colors.border.subtle,
-                        }}
-                      >
-                        <Icon name={activity.icon} size="sm" color={activity.tone === 'success' ? theme.colors.status.success.strong : theme.colors.text.secondary} />
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1], flex: 1 }}>
-                        <Text variant="bodySmall">{activity.description}</Text>
-                        <Text variant="caption" color={theme.colors.text.secondary}>
-                          {hoursAgoLabel(activity.hoursAgo)}
-                        </Text>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <Heading level={3}>Recent ministry activity</Heading>
+              <EmptyState
+                icon="clock"
+                title="Not available yet"
+                description="No activity feed exists for a single Basonta in this release - this is a disclosed backend gap, not fabricated data."
+              />
             </div>
           </Card>
         </div>

@@ -1,10 +1,21 @@
 import type {
+  CounsellingSessionResponseDto,
+  CreateCounsellingSessionInput,
   CreateFollowUpTaskInput,
+  CreateMemberInteractionInput,
+  CreatePastoralNoteInput,
+  CreatePrayerNoteInput,
   FollowUpTaskResponseDto,
   ListFollowUpTasksForActorQuery,
   ListSilentDriftFlagsForActorQuery,
+  MemberInteractionResponseDto,
+  PastoralCalendarResponseDto,
+  PastoralNoteResponseDto,
   PersonResponseDto,
+  PrayerNoteResponseDto,
   SilentDriftFlagResponseDto,
+  UpdateCounsellingSessionStatusInput,
+  UpdatePrayerNoteStatusInput,
 } from '@ecclesia/contracts';
 import type { ActorContext } from '@ecclesia/rbac';
 import type { RecordOption } from '@ecclesia/ui-web';
@@ -196,6 +207,131 @@ export function usePersonFollowUpTasks(accessToken: string | undefined, personId
   );
 }
 
+/**
+ * `[Milestone D — Portal Experiences, Portal 3: Bacenta Leader]` `GET
+ * /people/:personId/pastoral-notes` (§16.2, `pastoral_care.notes.read`) -
+ * the general operational-note tier (Blueprint §9.3's own worked
+ * example: "configuration authority does not imply pastoral-content
+ * access" - `ADMIN` is an explicit `DENY`), distinct from the
+ * author-only `PrayerNote` tier. First web-admin consumer of this
+ * endpoint - the backend contract/RBAC already existed from Milestone B,
+ * unused by any page until now.
+ */
+export function usePastoralNotes(accessToken: string | undefined, personId: string): AsyncDataResult<PastoralNoteResponseDto[]> {
+  return useAsyncData<PastoralNoteResponseDto[]>(
+    (signal) => {
+      if (!accessToken) return Promise.reject(new Error('not authenticated'));
+      return apiGet<PastoralNoteResponseDto[]>(`/people/${personId}/pastoral-notes`, { authToken: accessToken, signal });
+    },
+    [accessToken, personId],
+  );
+}
+
+/** `POST /people/:personId/pastoral-notes` (`pastoral_care.notes.create`).
+ * Imperative, same shape as `createFollowUpTask` - triggered from a form
+ * submit. `PastoralNote` is immutable once written (no `updatedAt`
+ * column - `createPastoralNoteSchema`'s own doc comment), so there is no
+ * corresponding update function. */
+export function createPastoralNote(accessToken: string, personId: string, input: CreatePastoralNoteInput): Promise<PastoralNoteResponseDto> {
+  return apiPost<PastoralNoteResponseDto>(`/people/${personId}/pastoral-notes`, input, { authToken: accessToken });
+}
+
+/**
+ * `[Milestone D — Portal Experiences, Portal 5: Resident Pastor]` `GET
+ * /people/:personId/prayer-notes` (`pastoral_care.prayer_note.read`,
+ * RESIDENT_PASTOR/ACTING_RESIDENT_PASTOR at BRANCH, ASSISTANT_PASTOR at
+ * CLUSTER - `BACENTA_LEADER`/`BASONTA_LEADER` hold no row at all for this
+ * action). **Author-only, enforced server-side, not by this hook**:
+ * `PrayerNoteRepository.findByPersonAndAuthor` filters on `authorPersonId
+ * = actor.personId` in the WHERE clause itself, so another pastor's notes
+ * for this same Person are never present in the response array at all -
+ * there is nothing for this hook (or any client code) to additionally
+ * filter. First web-admin surface for this model.
+ */
+export function usePrayerNotes(accessToken: string | undefined, personId: string): AsyncDataResult<PrayerNoteResponseDto[]> {
+  return useAsyncData<PrayerNoteResponseDto[]>(
+    (signal) => {
+      if (!accessToken) return Promise.reject(new Error('not authenticated'));
+      return apiGet<PrayerNoteResponseDto[]>(`/people/${personId}/prayer-notes`, { authToken: accessToken, signal });
+    },
+    [accessToken, personId],
+  );
+}
+
+/** `POST /people/:personId/prayer-notes` (`pastoral_care.prayer_note.create`).
+ * `authorPersonId` is server-set to the acting user, never a request
+ * field - the create body only carries `content`/`followUpDate`. */
+export function createPrayerNote(accessToken: string, personId: string, input: CreatePrayerNoteInput): Promise<PrayerNoteResponseDto> {
+  return apiPost<PrayerNoteResponseDto>(`/people/${personId}/prayer-notes`, input, { authToken: accessToken });
+}
+
+/** `PATCH /prayer-notes/:id/status` (`pastoral_care.prayer_note.update`) -
+ * flat, not nested under `/people/:personId` (matches
+ * `completeFollowUpTask`'s own flat-route precedent). Author-gated
+ * server-side too: `PrayerNoteService` throws `ForbiddenException` if the
+ * acting user did not author the note being updated. */
+export function updatePrayerNoteStatus(accessToken: string, noteId: string, input: UpdatePrayerNoteStatusInput): Promise<PrayerNoteResponseDto> {
+  return apiPatch<PrayerNoteResponseDto>(`/prayer-notes/${noteId}/status`, input, { authToken: accessToken });
+}
+
+/**
+ * `[Milestone D — Portal Experiences, Portal 5: Resident Pastor]` `GET
+ * /people/:personId/counselling-sessions` (`pastoral_care.counselling.read`,
+ * RESIDENT_PASTOR/ACTING_RESIDENT_PASTOR at BRANCH, ASSISTANT_PASTOR at
+ * CLUSTER). **Organizational scope, not author-only** - unlike Prayer
+ * Notes, every pastor holding this grant sees every Counselling session
+ * for this Person, not just their own (`CounsellingSessionRepository`'s
+ * own doc comment on `listByPerson`, traced not assumed).
+ */
+export function useCounsellingSessions(accessToken: string | undefined, personId: string): AsyncDataResult<CounsellingSessionResponseDto[]> {
+  return useAsyncData<CounsellingSessionResponseDto[]>(
+    (signal) => {
+      if (!accessToken) return Promise.reject(new Error('not authenticated'));
+      return apiGet<CounsellingSessionResponseDto[]>(`/people/${personId}/counselling-sessions`, { authToken: accessToken, signal });
+    },
+    [accessToken, personId],
+  );
+}
+
+/** `POST /people/:personId/counselling-sessions`
+ * (`pastoral_care.counselling.create`). `counsellorPersonId` is server-set
+ * to the acting user. */
+export function createCounsellingSession(accessToken: string, personId: string, input: CreateCounsellingSessionInput): Promise<CounsellingSessionResponseDto> {
+  return apiPost<CounsellingSessionResponseDto>(`/people/${personId}/counselling-sessions`, input, { authToken: accessToken });
+}
+
+/** `PATCH /counselling-sessions/:id/status`
+ * (`pastoral_care.counselling.update`) - status transitions only
+ * (`SCHEDULED`/`COMPLETED`/`CANCELLED`); no general-field update route
+ * exists for `scheduledAt`/`briefNote` once created. */
+export function updateCounsellingSessionStatus(accessToken: string, sessionId: string, input: UpdateCounsellingSessionStatusInput): Promise<CounsellingSessionResponseDto> {
+  return apiPatch<CounsellingSessionResponseDto>(`/counselling-sessions/${sessionId}/status`, input, { authToken: accessToken });
+}
+
+/**
+ * `[Milestone D — Portal Experiences, Portal 5: Resident Pastor]` `GET
+ * /people/:personId/interactions` (`pastoral_care.interaction.read`,
+ * RESIDENT_PASTOR/ACTING_RESIDENT_PASTOR at BRANCH, ASSISTANT_PASTOR at
+ * CLUSTER). Organizational scope, not author-only - same as Counselling.
+ */
+export function useMemberInteractions(accessToken: string | undefined, personId: string): AsyncDataResult<MemberInteractionResponseDto[]> {
+  return useAsyncData<MemberInteractionResponseDto[]>(
+    (signal) => {
+      if (!accessToken) return Promise.reject(new Error('not authenticated'));
+      return apiGet<MemberInteractionResponseDto[]>(`/people/${personId}/interactions`, { authToken: accessToken, signal });
+    },
+    [accessToken, personId],
+  );
+}
+
+/** `POST /people/:personId/interactions` (`pastoral_care.interaction.create`).
+ * `pastorPersonId` is server-set to the acting user. Immutable once
+ * created - no update/delete route exists for this model (traced, not
+ * assumed: `MemberInteractionController` exposes only create + list). */
+export function createMemberInteraction(accessToken: string, personId: string, input: CreateMemberInteractionInput): Promise<MemberInteractionResponseDto> {
+  return apiPost<MemberInteractionResponseDto>(`/people/${personId}/interactions`, input, { authToken: accessToken });
+}
+
 export function usePersonName(accessToken: string | undefined, personId: string): AsyncDataResult<PersonResponseDto> {
   return useAsyncData<PersonResponseDto>(
     (signal) => {
@@ -289,5 +425,26 @@ export function useSilentDriftFlagsForGroups(
       return [...byId.values()];
     },
     [accessToken, groupIds.join(',')],
+  );
+}
+
+/**
+ * `[Milestone D — Portal Experiences, Portal 5: Resident Pastor]` `GET
+ * /pastoral-care/calendar` (`pastoral_care.interaction.read` - the most
+ * restrictive of the three domains it composes, RESIDENT_PASTOR/
+ * ACTING_RESIDENT_PASTOR at BRANCH, ASSISTANT_PASTOR at CLUSTER). A pure
+ * composition read-model (Milestone B, Slice 7) - no `groupId` param, no
+ * new backend capability; scope resolves entirely from the actor's own
+ * grant, the same as every other BRANCH/CLUSTER-scoped endpoint in this
+ * app. First web-admin consumer.
+ */
+export function usePastoralCalendar(accessToken: string | undefined, from: string, to: string): AsyncDataResult<PastoralCalendarResponseDto> {
+  return useAsyncData<PastoralCalendarResponseDto>(
+    (signal) => {
+      if (!accessToken) return Promise.reject(new Error('not authenticated'));
+      const params = new URLSearchParams({ from, to });
+      return apiGet<PastoralCalendarResponseDto>(`/pastoral-care/calendar?${params.toString()}`, { authToken: accessToken, signal });
+    },
+    [accessToken, from, to],
   );
 }

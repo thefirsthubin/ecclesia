@@ -77,6 +77,29 @@ function renderPage() {
 afterEach(() => jest.clearAllMocks());
 
 describe('StewardshipPage', () => {
+  /** `[Milestone D — Portal Experiences]` The page title is role-aware,
+   * matching `nav-items.ts`'s own `labelOverrides` rename of this page's
+   * nav item to "Finance" for `TREASURER` specifically - every other
+   * role reaching this same page/route still sees "Stewardship". */
+  it('titles the page "Finance" for TREASURER, matching its renamed nav item', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('TREASURER'));
+    global.fetch = jest.fn().mockResolvedValue({ ok: true, json: async () => [] });
+
+    renderPage();
+
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Finance' })).toBeInTheDocument());
+    expect(screen.queryByRole('heading', { name: 'Stewardship' })).not.toBeInTheDocument();
+  });
+
+  it('titles the page "Stewardship" for every other role reaching this page, e.g. ADMIN', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('ADMIN'));
+    global.fetch = jest.fn().mockResolvedValue({ ok: true, json: async () => [] });
+
+    renderPage();
+
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Stewardship' })).toBeInTheDocument());
+  });
+
   it('renders both the Financial Transaction queue and the Expense queue', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('TREASURER'));
     global.fetch = jest.fn().mockImplementation((url: string) => {

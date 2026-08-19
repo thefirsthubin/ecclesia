@@ -105,13 +105,24 @@ function group(overrides: Record<string, unknown> = {}) {
   };
 }
 
+/** `[Milestone D — Portal Experiences]` Matches a route only at a real
+ * path boundary (`url` ends with `path`, or `path` is immediately
+ * followed by `?`) - plain `url.includes(path)` is a raw substring
+ * check, which silently matches a short route (e.g. `/people/person-1`)
+ * against any longer nested path that happens to start with it (e.g.
+ * `/people/person-1/pastoral-notes`), handing that call the bare Person
+ * object instead of a notes array. A real bug this exact fix uncovered
+ * (`pastoralNotesState.data.map is not a function`) and now prevents for
+ * any future route pair with the same shape. Falls back to the longest
+ * boundary-matching route as a tiebreaker for genuine ambiguity. */
 function mockFetchByPath(routes: Record<string, unknown>) {
   return jest.fn().mockImplementation((url: string) => {
-    const matched = Object.entries(routes).find(([path]) => url.includes(path));
-    if (!matched) {
+    const matches = Object.entries(routes).filter(([path]) => url.endsWith(path) || url.includes(`${path}?`));
+    if (matches.length === 0) {
       return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
     }
-    return Promise.resolve({ ok: true, json: async () => matched[1] });
+    const [, body] = matches.reduce((longest, current) => (current[0].length > longest[0].length ? current : longest));
+    return Promise.resolve({ ok: true, json: async () => body });
   });
 }
 
@@ -1026,6 +1037,10 @@ describe('PersonDetailPage', () => {
         if (url.includes('/people/person-1/follow-up-tasks')) return Promise.reject(new Error('network unavailable in test'));
         if (url.includes('/people/person-1/group-memberships')) return Promise.resolve({ ok: true, json: async () => [] });
         if (url.includes('/people/person-1/role-assignments')) return Promise.resolve({ ok: true, json: async () => [] });
+        if (url.includes('/people/person-1/pastoral-notes')) return Promise.resolve({ ok: true, json: async () => [] });
+        if (url.includes('/people/person-1/prayer-notes')) return Promise.resolve({ ok: true, json: async () => [] });
+        if (url.includes('/people/person-1/counselling-sessions')) return Promise.resolve({ ok: true, json: async () => [] });
+        if (url.includes('/people/person-1/interactions')) return Promise.resolve({ ok: true, json: async () => [] });
         if (url.includes('/people/person-1')) return Promise.resolve({ ok: true, json: async () => person() });
         return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
       });
@@ -1035,6 +1050,430 @@ describe('PersonDetailPage', () => {
       switchToTab('Pastoral Care');
 
       await waitFor(() => expect(screen.getByText("Couldn't load Follow-up history")).toBeInTheDocument());
+    });
+
+    /** `[Milestone D — Portal Experiences, Portal 3: Bacenta Leader]`
+     * `BACENTA_LEADER` holds real `pastoral_care.followup_task.read`/
+     * `pastoral_care.notes.read` grants at OWN_GROUP (traced against
+     * `permission-matrix.ts`, not assumed) - the same tab Branch Pastor
+     * already had, now also reachable for this role. */
+    it('also shows the Pastoral Care tab for BACENTA_LEADER (Portal 3)', async () => {
+      mockUseAuth.mockReturnValue({
+        state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'leader-1', role: 'BACENTA_LEADER', branchId: 'branch-1', bacentaId: 'bacenta-1' } },
+      });
+      global.fetch = mockFetchByPath({
+        '/people/person-1/group-memberships': [],
+        '/people/person-1/role-assignments': [],
+        '/people/person-1/follow-up-tasks': [],
+        '/people/person-1/pastoral-notes': [],
+        '/people/person-1': person(),
+      });
+
+      renderPage();
+
+      await waitFor(() => expect(screen.getByRole('tab', { name: 'Pastoral Care' })).toBeInTheDocument());
+    });
+
+    describe('Pastoral Notes', () => {
+      function pastoralNote(overrides: Record<string, unknown> = {}) {
+        return {
+          id: 'note-1',
+          branchId: 'branch-1',
+          personId: 'person-1',
+          authorPersonId: 'ap-1',
+          content: 'Checked in after service, doing well.',
+          createdAt: new Date('2026-01-10').toISOString(),
+          ...overrides,
+        };
+      }
+
+      it('renders the real list of Notes on the Pastoral Care tab', async () => {
+        mockUseAuth.mockReturnValue({
+          state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'ap-1', role: 'ASSISTANT_PASTOR', branchId: 'branch-1' } },
+        });
+        global.fetch = mockFetchByPath({
+          '/people/person-1/group-memberships': [],
+          '/people/person-1/role-assignments': [],
+          '/people/person-1/follow-up-tasks': [],
+          '/people/person-1/pastoral-notes': [pastoralNote()],
+          '/people/person-1': person(),
+        });
+
+        renderPage();
+        await waitFor(() => expect(screen.getByRole('tab', { name: 'Pastoral Care' })).toBeInTheDocument());
+        switchToTab('Pastoral Care');
+
+        await waitFor(() => expect(screen.getByTestId('pastoral-notes-list')).toBeInTheDocument());
+        expect(screen.getByText('Checked in after service, doing well.')).toBeInTheDocument();
+      });
+
+      it('shows an honest empty state, not a fabricated note, when the Person has no Notes yet', async () => {
+        mockUseAuth.mockReturnValue({
+          state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'ap-1', role: 'ASSISTANT_PASTOR', branchId: 'branch-1' } },
+        });
+        global.fetch = mockFetchByPath({
+          '/people/person-1/group-memberships': [],
+          '/people/person-1/role-assignments': [],
+          '/people/person-1/follow-up-tasks': [],
+          '/people/person-1/pastoral-notes': [],
+          '/people/person-1': person(),
+        });
+
+        renderPage();
+        await waitFor(() => expect(screen.getByRole('tab', { name: 'Pastoral Care' })).toBeInTheDocument());
+        switchToTab('Pastoral Care');
+
+        await waitFor(() => expect(screen.getByText('No notes yet.')).toBeInTheDocument());
+        expect(screen.queryByTestId('pastoral-notes-list')).not.toBeInTheDocument();
+      });
+
+      it('creates a Note via the reveal form, then refetches and shows it in the list', async () => {
+        mockUseAuth.mockReturnValue({
+          state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'ap-1', role: 'ASSISTANT_PASTOR', branchId: 'branch-1' } },
+        });
+        let notes: unknown[] = [];
+        const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
+          if (url.includes('/people/person-1/pastoral-notes') && init?.method === 'POST') {
+            const body = JSON.parse(init.body as string) as { content: string };
+            notes = [pastoralNote({ id: 'note-2', content: body.content })];
+            return Promise.resolve({ ok: true, json: async () => notes[0] });
+          }
+          if (url.endsWith('/people/person-1/pastoral-notes')) return Promise.resolve({ ok: true, json: async () => notes });
+          if (url.endsWith('/people/person-1/group-memberships')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.endsWith('/people/person-1/role-assignments')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.endsWith('/people/person-1/follow-up-tasks')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.endsWith('/people/person-1')) return Promise.resolve({ ok: true, json: async () => person() });
+          return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
+        });
+        global.fetch = fetchMock;
+
+        renderPage();
+        await waitFor(() => expect(screen.getByRole('tab', { name: 'Pastoral Care' })).toBeInTheDocument());
+        switchToTab('Pastoral Care');
+        await waitFor(() => expect(screen.getByText('No notes yet.')).toBeInTheDocument());
+
+        fireEvent.click(screen.getByRole('button', { name: 'Add a note for this Person' }));
+        fireEvent.change(screen.getByLabelText('Note'), {
+          target: { value: 'Called to check on the family.' },
+        });
+        fireEvent.click(screen.getByTestId('pastoral-note-submit'));
+
+        await waitFor(() => expect(screen.getByText('Called to check on the family.')).toBeInTheDocument());
+        expect(screen.queryByTestId('pastoral-note-form')).not.toBeInTheDocument();
+      });
+
+      it('shows the server-provided error inline and keeps the form open when creating a Note fails', async () => {
+        mockUseAuth.mockReturnValue({
+          state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'ap-1', role: 'ASSISTANT_PASTOR', branchId: 'branch-1' } },
+        });
+        global.fetch = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
+          if (url.includes('/people/person-1/pastoral-notes') && init?.method === 'POST') {
+            return Promise.resolve({
+              ok: false,
+              status: 403,
+              json: async () => ({ message: "No Role Assignment grants 'pastoral_care.notes.create' to role 'ASSISTANT_PASTOR'" }),
+            });
+          }
+          if (url.endsWith('/people/person-1/pastoral-notes')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.endsWith('/people/person-1/group-memberships')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.endsWith('/people/person-1/role-assignments')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.endsWith('/people/person-1/follow-up-tasks')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.endsWith('/people/person-1')) return Promise.resolve({ ok: true, json: async () => person() });
+          return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
+        });
+
+        renderPage();
+        await waitFor(() => expect(screen.getByRole('tab', { name: 'Pastoral Care' })).toBeInTheDocument());
+        switchToTab('Pastoral Care');
+        await waitFor(() => expect(screen.getByText('No notes yet.')).toBeInTheDocument());
+
+        fireEvent.click(screen.getByRole('button', { name: 'Add a note for this Person' }));
+        fireEvent.change(screen.getByLabelText('Note'), {
+          target: { value: 'x' },
+        });
+        fireEvent.click(screen.getByTestId('pastoral-note-submit'));
+
+        await waitFor(() => expect(screen.getByText(/pastoral_care.notes.create/)).toBeInTheDocument());
+        expect(screen.getByTestId('pastoral-note-form')).toBeInTheDocument();
+      });
+
+      it('shows a retryable error state when the Notes request fails', async () => {
+        mockUseAuth.mockReturnValue({
+          state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'ap-1', role: 'ASSISTANT_PASTOR', branchId: 'branch-1' } },
+        });
+        global.fetch = jest.fn().mockImplementation((url: string) => {
+          if (url.includes('/people/person-1/pastoral-notes')) return Promise.reject(new Error('network unavailable in test'));
+          if (url.includes('/people/person-1/group-memberships')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/role-assignments')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/follow-up-tasks')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/prayer-notes')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/counselling-sessions')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/interactions')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1')) return Promise.resolve({ ok: true, json: async () => person() });
+          return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
+        });
+
+        renderPage();
+        await waitFor(() => expect(screen.getByRole('tab', { name: 'Pastoral Care' })).toBeInTheDocument());
+        switchToTab('Pastoral Care');
+
+        await waitFor(() => expect(screen.getByText("Couldn't load Notes")).toBeInTheDocument());
+      });
+    });
+
+    /** `[Milestone D — Portal Experiences, Portal 5: Resident Pastor]`
+     * Prayer Notes/Counselling/Interactions - the private pastoral domain.
+     * Traced against `permission-matrix.ts`: only `RESIDENT_PASTOR`/
+     * `ACTING_RESIDENT_PASTOR` (BRANCH) and `ASSISTANT_PASTOR` (CLUSTER)
+     * hold `pastoral_care.prayer_note.*`/`.counselling.*`/`.interaction.*`
+     * at any scope. The Milestone D brief's own rule 4 is explicit:
+     * "No... Bacenta Leader, Basonta Leader... may see Prayer Note
+     * content" - the negative test below is the single highest-priority
+     * assertion in this whole file for that reason. */
+    describe('Private pastoral tools (Resident Pastor / Assistant Pastor only)', () => {
+      function prayerNote(overrides: Record<string, unknown> = {}) {
+        return {
+          id: 'pn-1',
+          branchId: 'branch-1',
+          personId: 'person-1',
+          authorPersonId: 'rp-1',
+          content: 'Praying for healing and strength.',
+          followUpDate: null,
+          status: 'OPEN',
+          createdAt: new Date('2026-08-01').toISOString(),
+          ...overrides,
+        };
+      }
+
+      function counsellingSession(overrides: Record<string, unknown> = {}) {
+        return {
+          id: 'cs-1',
+          branchId: 'branch-1',
+          personId: 'person-1',
+          counsellorPersonId: 'rp-1',
+          scheduledAt: new Date('2026-09-01T10:00:00.000Z').toISOString(),
+          status: 'SCHEDULED',
+          briefNote: 'Pre-marital counselling',
+          createdAt: new Date('2026-08-01').toISOString(),
+          updatedAt: new Date('2026-08-01').toISOString(),
+          ...overrides,
+        };
+      }
+
+      function memberInteraction(overrides: Record<string, unknown> = {}) {
+        return {
+          id: 'mi-1',
+          branchId: 'branch-1',
+          personId: 'person-1',
+          pastorPersonId: 'rp-1',
+          type: 'VISIT',
+          occurredAt: new Date('2026-08-10').toISOString(),
+          scheduledAt: null,
+          briefNote: 'Home visit',
+          createdAt: new Date('2026-08-10').toISOString(),
+          ...overrides,
+        };
+      }
+
+      function residentPastorActor() {
+        return { status: 'authenticated', accessToken: 'token', actor: { personId: 'rp-1', role: 'RESIDENT_PASTOR', branchId: 'branch-1' } };
+      }
+
+      it('shows real Prayer Notes/Counselling/Interactions for RESIDENT_PASTOR, including a Pastoral Care tab that role previously never had', async () => {
+        mockUseAuth.mockReturnValue({ state: residentPastorActor() });
+        global.fetch = mockFetchByPath({
+          '/people/person-1/group-memberships': [],
+          '/people/person-1/role-assignments': [],
+          '/people/person-1/follow-up-tasks': [],
+          '/people/person-1/pastoral-notes': [],
+          '/people/person-1/prayer-notes': [prayerNote()],
+          '/people/person-1/counselling-sessions': [counsellingSession()],
+          '/people/person-1/interactions': [memberInteraction()],
+          '/people/person-1': person(),
+        });
+
+        renderPage();
+        await waitFor(() => expect(screen.getByRole('tab', { name: 'Pastoral Care' })).toBeInTheDocument());
+        switchToTab('Pastoral Care');
+
+        await waitFor(() => expect(screen.getByTestId('prayer-notes-list')).toBeInTheDocument());
+        expect(screen.getByText('Praying for healing and strength.')).toBeInTheDocument();
+        expect(screen.getByTestId('counselling-sessions-list')).toBeInTheDocument();
+        expect(screen.getByText('Pre-marital counselling', { exact: false })).toBeInTheDocument();
+        expect(screen.getByTestId('interactions-list')).toBeInTheDocument();
+        expect(screen.getByText('Home visit')).toBeInTheDocument();
+      });
+
+      /** The privacy-critical negative test: rule 4 of the Milestone D
+       * brief, verified directly against the rendered UI, not just RBAC
+       * config. `BACENTA_LEADER` already sees Follow-ups/Notes on this
+       * same tab (Portal 3) - this asserts the three private sections
+       * specifically never render for that role, even if the backend
+       * were somehow misconfigured to return data for them. */
+      it('never shows Prayer Notes, Counselling, or Interactions for BACENTA_LEADER', async () => {
+        mockUseAuth.mockReturnValue({
+          state: { status: 'authenticated', accessToken: 'token', actor: { personId: 'leader-1', role: 'BACENTA_LEADER', branchId: 'branch-1', bacentaId: 'bacenta-1' } },
+        });
+        global.fetch = mockFetchByPath({
+          '/people/person-1/group-memberships': [],
+          '/people/person-1/role-assignments': [],
+          '/people/person-1/follow-up-tasks': [],
+          '/people/person-1/pastoral-notes': [],
+          '/people/person-1/prayer-notes': [prayerNote()],
+          '/people/person-1/counselling-sessions': [counsellingSession()],
+          '/people/person-1/interactions': [memberInteraction()],
+          '/people/person-1': person(),
+        });
+
+        renderPage();
+        await waitFor(() => expect(screen.getByRole('tab', { name: 'Pastoral Care' })).toBeInTheDocument());
+        switchToTab('Pastoral Care');
+
+        await waitFor(() => expect(screen.getByText('No notes yet.')).toBeInTheDocument());
+        expect(screen.queryByTestId('person-prayer-notes-card')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('person-counselling-card')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('person-interactions-card')).not.toBeInTheDocument();
+        expect(screen.queryByText('Praying for healing and strength.')).not.toBeInTheDocument();
+        // The hooks themselves must never even be called for this role -
+        // not merely hidden by CSS (Milestone D rule 2).
+        expect(global.fetch).not.toHaveBeenCalledWith(expect.stringContaining('/prayer-notes'), expect.anything());
+      });
+
+      it('creates a Prayer Note via the reveal form, then refetches and shows it', async () => {
+        mockUseAuth.mockReturnValue({ state: residentPastorActor() });
+        let notes: unknown[] = [];
+        const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
+          if (url.includes('/people/person-1/prayer-notes') && init?.method === 'POST') {
+            const body = JSON.parse(init.body as string) as Record<string, unknown>;
+            notes = [prayerNote({ content: body.content })];
+            return Promise.resolve({ ok: true, json: async () => notes[0] });
+          }
+          if (url.includes('/people/person-1/prayer-notes')) return Promise.resolve({ ok: true, json: async () => notes });
+          if (url.includes('/people/person-1/counselling-sessions')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/interactions')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/pastoral-notes')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/follow-up-tasks')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/group-memberships')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/role-assignments')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1')) return Promise.resolve({ ok: true, json: async () => person() });
+          return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
+        });
+        global.fetch = fetchMock;
+
+        renderPage();
+        await waitFor(() => expect(screen.getByRole('tab', { name: 'Pastoral Care' })).toBeInTheDocument());
+        switchToTab('Pastoral Care');
+        await waitFor(() => expect(screen.getByText('No Prayer notes yet.')).toBeInTheDocument());
+
+        fireEvent.click(screen.getByRole('button', { name: 'Add a Prayer note for this Person' }));
+        fireEvent.change(screen.getByLabelText('Prayer note'), { target: { value: 'Praying for a swift recovery.' } });
+        fireEvent.click(screen.getByTestId('prayer-note-submit'));
+
+        await waitFor(() => expect(screen.getByText('Praying for a swift recovery.')).toBeInTheDocument());
+        expect(screen.queryByTestId('prayer-note-form')).not.toBeInTheDocument();
+      });
+
+      it('marks a Prayer Note resolved and refetches', async () => {
+        mockUseAuth.mockReturnValue({ state: residentPastorActor() });
+        let status = 'OPEN';
+        const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
+          if (url.includes('/prayer-notes/pn-1/status') && init?.method === 'PATCH') {
+            status = 'RESOLVED';
+            return Promise.resolve({ ok: true, json: async () => prayerNote({ status }) });
+          }
+          if (url.includes('/people/person-1/prayer-notes')) return Promise.resolve({ ok: true, json: async () => [prayerNote({ status })] });
+          if (url.includes('/people/person-1/counselling-sessions')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/interactions')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/pastoral-notes')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/follow-up-tasks')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/group-memberships')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/role-assignments')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1')) return Promise.resolve({ ok: true, json: async () => person() });
+          return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
+        });
+        global.fetch = fetchMock;
+
+        renderPage();
+        await waitFor(() => expect(screen.getByRole('tab', { name: 'Pastoral Care' })).toBeInTheDocument());
+        switchToTab('Pastoral Care');
+        await waitFor(() => expect(screen.getByRole('button', { name: 'Mark resolved' })).toBeInTheDocument());
+
+        fireEvent.click(screen.getByRole('button', { name: 'Mark resolved' }));
+
+        await waitFor(() => expect(screen.getByText('Resolved')).toBeInTheDocument());
+        expect(fetchMock.mock.calls.some(([url, init]) => (url as string).includes('/prayer-notes/pn-1/status') && (init as RequestInit | undefined)?.method === 'PATCH')).toBe(true);
+      });
+
+      it('schedules a Counselling session via the reveal form, then refetches and shows it', async () => {
+        mockUseAuth.mockReturnValue({ state: residentPastorActor() });
+        let sessions: unknown[] = [];
+        const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
+          if (url.includes('/people/person-1/counselling-sessions') && init?.method === 'POST') {
+            const body = JSON.parse(init.body as string) as Record<string, unknown>;
+            sessions = [counsellingSession({ id: 'cs-new', briefNote: body.briefNote })];
+            return Promise.resolve({ ok: true, json: async () => sessions[0] });
+          }
+          if (url.includes('/people/person-1/counselling-sessions')) return Promise.resolve({ ok: true, json: async () => sessions });
+          if (url.includes('/people/person-1/prayer-notes')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/interactions')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/pastoral-notes')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/follow-up-tasks')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/group-memberships')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/role-assignments')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1')) return Promise.resolve({ ok: true, json: async () => person() });
+          return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
+        });
+        global.fetch = fetchMock;
+
+        renderPage();
+        await waitFor(() => expect(screen.getByRole('tab', { name: 'Pastoral Care' })).toBeInTheDocument());
+        switchToTab('Pastoral Care');
+        await waitFor(() => expect(screen.getByText('No Counselling sessions yet.')).toBeInTheDocument());
+
+        fireEvent.click(screen.getByRole('button', { name: 'Schedule a Counselling session for this Person' }));
+        fireEvent.change(screen.getByTestId('counselling-scheduled-at'), { target: { value: '2026-09-01T10:00' } });
+        fireEvent.change(screen.getByLabelText('Brief note (optional)'), { target: { value: 'Marriage counselling' } });
+        fireEvent.click(screen.getByTestId('counselling-submit'));
+
+        await waitFor(() => expect(screen.getByText('Marriage counselling', { exact: false })).toBeInTheDocument());
+        expect(screen.queryByTestId('counselling-form')).not.toBeInTheDocument();
+      });
+
+      it('logs a Member Interaction via the reveal form, then refetches and shows it', async () => {
+        mockUseAuth.mockReturnValue({ state: residentPastorActor() });
+        let interactions: unknown[] = [];
+        const fetchMock = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
+          if (url.includes('/people/person-1/interactions') && init?.method === 'POST') {
+            const body = JSON.parse(init.body as string) as Record<string, unknown>;
+            interactions = [memberInteraction({ id: 'mi-new', type: body.type, briefNote: body.briefNote })];
+            return Promise.resolve({ ok: true, json: async () => interactions[0] });
+          }
+          if (url.includes('/people/person-1/interactions')) return Promise.resolve({ ok: true, json: async () => interactions });
+          if (url.includes('/people/person-1/prayer-notes')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/counselling-sessions')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/pastoral-notes')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/follow-up-tasks')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/group-memberships')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1/role-assignments')) return Promise.resolve({ ok: true, json: async () => [] });
+          if (url.includes('/people/person-1')) return Promise.resolve({ ok: true, json: async () => person() });
+          return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
+        });
+        global.fetch = fetchMock;
+
+        renderPage();
+        await waitFor(() => expect(screen.getByRole('tab', { name: 'Pastoral Care' })).toBeInTheDocument());
+        switchToTab('Pastoral Care');
+        await waitFor(() => expect(screen.getByText('No Interactions logged yet.')).toBeInTheDocument());
+
+        fireEvent.click(screen.getByRole('button', { name: 'Log an Interaction for this Person' }));
+        fireEvent.change(screen.getByTestId('interaction-type'), { target: { value: 'CALL' } });
+        fireEvent.change(screen.getByTestId('interaction-occurred-at'), { target: { value: '2026-08-15T09:00' } });
+        fireEvent.change(screen.getByLabelText('Brief note (optional)'), { target: { value: 'Checked in by phone' } });
+        fireEvent.click(screen.getByTestId('interaction-submit'));
+
+        await waitFor(() => expect(screen.getByText('Checked in by phone')).toBeInTheDocument());
+        expect(screen.queryByTestId('interaction-form')).not.toBeInTheDocument();
+      });
     });
   });
 });

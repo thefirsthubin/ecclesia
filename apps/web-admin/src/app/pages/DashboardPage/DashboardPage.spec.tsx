@@ -130,12 +130,26 @@ describe('DashboardPage', () => {
     expect(screen.queryByText(/coming soon/i)).not.toBeInTheDocument();
   });
 
-  it('points a Bacenta Leader to the mobile app instead of a broken web dashboard', () => {
-    mockUseAuth.mockReturnValue(actorWithRole('BACENTA_LEADER'));
+  /** `[Milestone D — Portal Experiences, Portal 3: Bacenta Leader]`
+   * `BACENTA_LEADER` previously fell to a "lives on mobile" stub - now
+   * renders `BacentaLeaderDashboard`, real `GET /people`, `GET
+   * /insights/attendance-trend`, and `GET /insights/giving-trend` data,
+   * scoped to this leader's own Bacenta. */
+  it('renders the real Bacenta Leader dashboard, scoped to their own Bacenta', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('BACENTA_LEADER', { bacentaId: 'bacenta-1' }));
+    global.fetch = jest.fn().mockImplementation((url: string) => {
+      if (url.includes('/people?groupId=bacenta-1')) return Promise.resolve({ ok: true, json: async () => [{ id: 'p1' }, { id: 'p2' }] });
+      if (url.includes('/insights/attendance-trend')) return Promise.resolve({ ok: true, json: async () => ({ from: '', to: '', buckets: [{ label: 'Week', presentCount: 8 }], byGroup: [], unmappedGatheringTypes: [] }) });
+      if (url.includes('/insights/giving-trend')) return Promise.resolve({ ok: true, json: async () => ({ from: '', to: '', buckets: [{ label: 'Week', totalAmountMinor: '5000', byType: {} }], unattributedAmountMinor: '0', unmappedGatheringTypes: [] }) });
+      return Promise.resolve({ ok: true, json: async () => [] });
+    });
 
     renderWithProviders(<DashboardPage />);
 
-    expect(screen.getByText('Your Bacenta dashboard lives on mobile')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByTestId('bacenta-leader-metrics-grid')).toBeInTheDocument());
+    expect(screen.getByTestId('metric-bacenta-members')).toHaveTextContent('2');
+    expect(screen.getByTestId('metric-sunday-attendance')).toHaveTextContent('8');
+    expect(screen.getByTestId('metric-bacenta-giving')).toHaveTextContent('GHS 50.00');
   });
 
   it('shows a coming-soon stub for a role with no built dashboard yet', () => {
@@ -163,13 +177,110 @@ describe('DashboardPage', () => {
     await waitFor(() => expect(screen.getByText('Staffing targets')).toBeInTheDocument());
   });
 
-  it('renders the Finance Officer dashboard for TREASURER', async () => {
+  it('renders the Branch Treasurer dashboard for TREASURER', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('TREASURER'));
-    global.fetch = jest.fn().mockResolvedValue({ ok: true, json: async () => [] });
+    global.fetch = jest.fn().mockImplementation((url: string) => {
+      if (url.includes('/insights/giving-trend')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            branchId: 'branch-1',
+            from: '2026-08-16T00:00:00.000Z',
+            to: '2026-08-23T00:00:00.000Z',
+            buckets: [
+              {
+                bucketStart: '2026-08-16T00:00:00.000Z',
+                bucketEnd: '2026-08-23T00:00:00.000Z',
+                label: '2026-08-16',
+                totalAmountMinor: '10000',
+                byType: { OFFERING: '6000', TITHE: '4000' },
+              },
+            ],
+            unattributedAmountMinor: '0',
+            unmappedGatheringTypes: [],
+          }),
+        });
+      }
+      return Promise.resolve({ ok: true, json: async () => [] });
+    });
 
     renderWithProviders(<DashboardPage />);
 
-    await waitFor(() => expect(screen.getByText('Offering summary')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('Giving Breakdown')).toBeInTheDocument());
+  });
+
+  /**
+   * `[Milestone D — Portal Experiences]` Proves each of the six real
+   * giving-breakdown numbers is sourced from its own distinct
+   * `gatheringCategory` fetch (Branch Tithes/Offerings, Previous Sunday
+   * Offering/Tithe, Midweek Offering/Tithe, Bacenta Giving, Basonta
+   * Giving) rather than one shared/fabricated value repeated across
+   * cards - each mocked response below returns a different amount, and
+   * every one must appear on its own card. Also proves the retired
+   * demo-data sections (Monthly trends, Financial alerts,
+   * `SampleDataBadge`) are gone.
+   */
+  it('renders six distinct real giving numbers for TREASURER, sourced from their own gatheringCategory - never fabricated or duplicated', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('TREASURER'));
+
+    function bucket(totalAmountMinor: string, offeringMinor: string, titheMinor: string) {
+      return {
+        branchId: 'branch-1',
+        from: '2026-08-16T00:00:00.000Z',
+        to: '2026-08-23T00:00:00.000Z',
+        buckets: [
+          {
+            bucketStart: '2026-08-16T00:00:00.000Z',
+            bucketEnd: '2026-08-23T00:00:00.000Z',
+            label: '2026-08-16',
+            totalAmountMinor,
+            byType: { OFFERING: offeringMinor, TITHE: titheMinor },
+          },
+        ],
+        unattributedAmountMinor: '0',
+        unmappedGatheringTypes: [],
+      };
+    }
+
+    global.fetch = jest.fn().mockImplementation((url: string) => {
+      if (url.includes('gatheringCategory=SUNDAY')) return Promise.resolve({ ok: true, json: async () => bucket('300000', '111100', '188900') });
+      if (url.includes('gatheringCategory=MIDWEEK')) return Promise.resolve({ ok: true, json: async () => bucket('40000', '222200', '177800') });
+      if (url.includes('gatheringCategory=BACENTA_MEETING')) return Promise.resolve({ ok: true, json: async () => bucket('333300', '0', '0') });
+      if (url.includes('gatheringCategory=BASONTA_MEETING')) return Promise.resolve({ ok: true, json: async () => bucket('444400', '0', '0') });
+      if (url.includes('/insights/giving-trend')) return Promise.resolve({ ok: true, json: async () => bucket('555500', '600000', '700000') });
+      return Promise.resolve({ ok: true, json: async () => [] });
+    });
+
+    renderWithProviders(<DashboardPage />);
+
+    await waitFor(() => expect(screen.getByTestId('giving-breakdown-grid')).toBeInTheDocument());
+
+    expect(within(screen.getByTestId('metric-branch-tithes')).getByText('GHS 7,000.00')).toBeInTheDocument();
+    expect(within(screen.getByTestId('metric-branch-offerings')).getByText('GHS 6,000.00')).toBeInTheDocument();
+    expect(within(screen.getByTestId('metric-sunday-offering')).getByText('GHS 1,111.00')).toBeInTheDocument();
+    expect(within(screen.getByTestId('metric-sunday-tithe')).getByText('GHS 1,889.00')).toBeInTheDocument();
+    expect(within(screen.getByTestId('metric-midweek-offering')).getByText('GHS 2,222.00')).toBeInTheDocument();
+    expect(within(screen.getByTestId('metric-midweek-tithe')).getByText('GHS 1,778.00')).toBeInTheDocument();
+    expect(within(screen.getByTestId('metric-bacenta-giving')).getByText('GHS 3,333.00')).toBeInTheDocument();
+    expect(within(screen.getByTestId('metric-basonta-giving')).getByText('GHS 4,444.00')).toBeInTheDocument();
+
+    // The retired demo-data sections must be gone entirely.
+    expect(screen.queryByText('Monthly trends')).not.toBeInTheDocument();
+    expect(screen.queryByText('Financial alerts')).not.toBeInTheDocument();
+    expect(screen.queryByText('Sample data')).not.toBeInTheDocument();
+  });
+
+  it('shows a real ErrorState with retry, never fabricated numbers, when the giving breakdown fails to load for TREASURER', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('TREASURER'));
+    global.fetch = jest.fn().mockImplementation((url: string) => {
+      if (url.includes('/insights/giving-trend')) return Promise.resolve({ ok: false, status: 500, json: async () => ({ message: 'Internal error' }) });
+      return Promise.resolve({ ok: true, json: async () => [] });
+    });
+
+    renderWithProviders(<DashboardPage />);
+
+    await waitFor(() => expect(screen.getByText("Couldn't load the giving breakdown")).toBeInTheDocument());
+    expect(screen.queryByTestId('giving-breakdown-grid')).not.toBeInTheDocument();
   });
 
   it('renders the Branch Pastor dashboard for ASSISTANT_PASTOR with no cluster assigned', () => {
@@ -275,23 +386,167 @@ describe('DashboardPage', () => {
     expect(health.getByText('2 Members')).toBeInTheDocument();
   });
 
-  it('renders the Super Administrator dashboard for ADMIN', async () => {
+  /**
+   * `[Milestone D — Portal Experiences, Portal 2: Branch Administrator]`
+   * Renamed from `SuperAdministratorDashboard` - see that component's own
+   * (now `BranchAdministratorDashboard.tsx`) doc comment. `useBranchDashboard`
+   * (`GET /insights/branch-dashboard`) needs a real `{ pulseScore, alerts }`
+   * shape - `alerts.filter(...)` would otherwise crash on a bare `[]` the
+   * way every other list endpoint this test also hits is fine with.
+   * `useAdminDashboardData` needs its own real `membership-trend`/
+   * `attendance-trend` shapes too, or its own `.snapshot`/`.buckets[0]`
+   * reads crash the same way.
+   */
+  it('renders the Branch Administrator dashboard for ADMIN, with real membership/attendance metrics', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('ADMIN'));
-    // `useBranchDashboard` (`GET /insights/branch-dashboard`) needs a real
-    // `{ pulseScore, alerts }` shape - `openAlertCount`/`alerts.filter(...)`
-    // in `SuperAdministratorDashboard` would otherwise crash on a bare
-    // `[]` the way every other list endpoint this test also hits is fine
-    // with. Every other call (`/people`, `/groups?type=MINISTRY`, `/people/:id`)
-    // tolerates the generic `[]` fallback.
     global.fetch = jest.fn().mockImplementation((url: string) => {
+      if (url.includes('/insights/branch-dashboard-summary')) {
+        return Promise.resolve({ ok: true, json: async () => ({}) });
+      }
       if (url.includes('/insights/branch-dashboard')) {
         return Promise.resolve({ ok: true, json: async () => ({ branchId: 'branch-1', pulseScore: undefined, alerts: [] }) });
+      }
+      if (url.includes('/insights/membership-trend')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            branchId: 'branch-1',
+            from: '2026-01-01T00:00:00.000Z',
+            to: '2026-08-01T00:00:00.000Z',
+            registeredPeopleSeries: [],
+            membersSeries: [],
+            snapshot: {
+              registeredPeopleCount: 500,
+              membersCount: 420,
+              activeMembersCount: 300,
+              inactiveMembersCount: 120,
+              activeMemberWindowWeeks: 8,
+              firstTimersCount: 5,
+              visitorsCount: 10,
+              peopleWithoutBacentaCount: 15,
+              bacentaMembershipCount: 400,
+              basontaMembershipCount: 150,
+            },
+          }),
+        });
+      }
+      if (url.includes('/insights/attendance-trend')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            branchId: 'branch-1',
+            from: '2026-08-16T00:00:00.000Z',
+            to: '2026-08-23T00:00:00.000Z',
+            buckets: [{ bucketStart: '2026-08-16T00:00:00.000Z', bucketEnd: '2026-08-23T00:00:00.000Z', label: '2026-08-16', presentCount: 42 }],
+            byGroup: [],
+            unmappedGatheringTypes: [],
+          }),
+        });
       }
       return Promise.resolve({ ok: true, json: async () => [] });
     });
 
     renderWithProviders(<DashboardPage />);
 
-    await waitFor(() => expect(screen.getByText('Multi-Branch overview')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByTestId('admin-metrics-grid')).toBeInTheDocument());
+    expect(screen.getByTestId('metric-registered-members')).toHaveTextContent('500');
+    expect(screen.getByTestId('metric-active-members')).toHaveTextContent('300');
+    expect(screen.getByTestId('metric-inactive-members')).toHaveTextContent('120');
+    expect(screen.getByTestId('metric-sunday-attendance')).toHaveTextContent('42');
+    expect(screen.getByTestId('metric-bacenta-attendance')).toHaveTextContent('42');
+    expect(screen.getByTestId('metric-basonta-attendance')).toHaveTextContent('42');
+    expect(screen.queryByText('Multi-Branch overview')).not.toBeInTheDocument();
+  });
+
+  /** `[Milestone D — Portal Experiences, Portal 7: Council]`
+   * `COUNCIL_OVERSEER`/`COUNCIL_TREASURER` previously fell to the generic
+   * "coming soon" stub - now render `CouncilDashboard`, real
+   * `council=true` trend data, one real Branch-card per Branch in the
+   * actor's own Council (one, in this deployment). */
+  it('renders the real Council dashboard for COUNCIL_OVERSEER, including Attendance/Membership this role holds', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('COUNCIL_OVERSEER', { branchName: 'Headquarters' }));
+    global.fetch = jest.fn().mockImplementation((url: string) => {
+      if (url.includes('/insights/giving-trend')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ councilBranches: [{ branchId: 'branch-1', from: '', to: '', buckets: [{ label: 'Week', totalAmountMinor: '5000', byType: {} }], unattributedAmountMinor: '0', unmappedGatheringTypes: [] }] }),
+        });
+      }
+      if (url.includes('/insights/attendance-trend')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ councilBranches: [{ branchId: 'branch-1', from: '', to: '', buckets: [{ label: 'Week', presentCount: 12 }], byGroup: [], unmappedGatheringTypes: [] }] }),
+        });
+      }
+      if (url.includes('/insights/membership-trend')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            councilBranches: [
+              {
+                branchId: 'branch-1',
+                from: '',
+                to: '',
+                registeredPeopleSeries: [],
+                membersSeries: [],
+                snapshot: {
+                  registeredPeopleCount: 200,
+                  membersCount: 150,
+                  activeMembersCount: 90,
+                  inactiveMembersCount: 60,
+                  activeMemberWindowWeeks: 8,
+                  firstTimersCount: 0,
+                  visitorsCount: 0,
+                  peopleWithoutBacentaCount: 0,
+                  bacentaMembershipCount: 0,
+                  basontaMembershipCount: 0,
+                },
+              },
+            ],
+          }),
+        });
+      }
+      return Promise.resolve({ ok: true, json: async () => [] });
+    });
+
+    renderWithProviders(<DashboardPage />);
+
+    await waitFor(() => expect(screen.getByTestId('council-branch-card')).toBeInTheDocument());
+    expect(screen.getByText('Headquarters')).toBeInTheDocument();
+    expect(screen.getByTestId('metric-council-giving')).toHaveTextContent('GHS 50.00');
+    expect(screen.getByTestId('metric-council-attendance')).toHaveTextContent('12');
+    expect(screen.getByTestId('metric-council-members')).toHaveTextContent('200');
+  });
+
+  it('renders only Giving for COUNCIL_TREASURER, the one grant this role holds - no Attendance/Membership cards', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('COUNCIL_TREASURER', { branchName: 'Headquarters' }));
+    global.fetch = jest.fn().mockImplementation((url: string) => {
+      if (url.includes('/insights/giving-trend')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ councilBranches: [{ branchId: 'branch-1', from: '', to: '', buckets: [{ label: 'Week', totalAmountMinor: '3000', byType: {} }], unattributedAmountMinor: '0', unmappedGatheringTypes: [] }] }),
+        });
+      }
+      return Promise.resolve({ ok: true, json: async () => [] });
+    });
+
+    renderWithProviders(<DashboardPage />);
+
+    await waitFor(() => expect(screen.getByTestId('metric-council-giving')).toHaveTextContent('GHS 30.00'));
+    expect(screen.queryByTestId('metric-council-attendance')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('metric-council-members')).not.toBeInTheDocument();
+  });
+
+  /** `[Milestone D — Portal Experiences, Portal 8: System Administrator]`
+   * Previously fell to the generic "coming soon" stub - now shows an
+   * honest, specific disclosure naming the real reason (no Tenant
+   * backend exists yet), not a fabricated platform-admin dashboard. */
+  it('shows an honest disclosed-gap state for SYSTEM_ADMINISTRATOR, not a fabricated platform dashboard', () => {
+    mockUseAuth.mockReturnValue(actorWithRole('SYSTEM_ADMINISTRATOR'));
+
+    renderWithProviders(<DashboardPage />);
+
+    expect(screen.getByTestId('system-administrator-dashboard-empty-state')).toBeInTheDocument();
+    expect(screen.getByText('Nothing to administer yet')).toBeInTheDocument();
   });
 });

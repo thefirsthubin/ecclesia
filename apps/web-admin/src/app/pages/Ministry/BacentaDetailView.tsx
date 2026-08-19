@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Badge, Card, EmptyState, ErrorState, Heading, PageContainer, Skeleton, Table, Tabs, Text, useTheme } from '@ecclesia/ui-web';
+import { Badge, Card, EmptyState, ErrorState, PageContainer, PageHeader, Skeleton, Table, Tabs, Text, useTheme } from '@ecclesia/ui-web';
 import type { TableColumn, TabItem } from '@ecclesia/ui-web';
 import type { FollowUpTaskResponseDto, GatheringResponseDto, GatheringStatusDto, GroupLifecycleStatusDto, GroupResponseDto, PersonResponseDto } from '@ecclesia/contracts';
 
@@ -265,7 +265,7 @@ export function BacentaDetailView({ group }: { group: GroupResponseDto }) {
   return (
     <PageContainer maxWidth={900}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
-        <Heading level={1}>{group.name}</Heading>
+        <PageHeader title={group.name} />
         <Card padding={6} testId="bacenta-detail-card">
           <Tabs testId="bacenta-detail-tabs" tabs={tabs} activeTabId={activeTab} onChange={setActiveTab} />
         </Card>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Badge, Button, Card, ErrorState, Heading, Input, PageContainer, RadioGroup, Skeleton, Table, Text, useTheme, useToast } from '@ecclesia/ui-web';
+import { Badge, Button, Card, ErrorState, Input, PageContainer, PageHeader, RadioGroup, SectionHeader, Skeleton, Table, Text, useTheme, useToast } from '@ecclesia/ui-web';
 import type { TableColumn } from '@ecclesia/ui-web';
 import {
   INBOUND_TRANSACTION_STATE_VALUES,
@@ -122,6 +122,15 @@ function formatDifferenceMinor(depositedAmountMinor: string, verifiedTotalMinor:
  * Record Transaction, `ADMIN` on either) - the button is always visible,
  * the same "don't pre-empt the backend" precedent this page's `state`
  * filter already established for queue *visibility*.
+ *
+ * `[Milestone D — Portal Experiences]` Visual pass only - `PageHeader`/
+ * `SectionHeader` replace the old bare `Heading` tags, matching the
+ * product-wide editorial system every other redesigned page now uses.
+ * No business logic, data-fetching, or RBAC changed. The page title
+ * itself is role-aware (`Finance` for `TREASURER`, whose nav item was
+ * renamed to match - `nav-items.ts`'s own `labelOverrides`; `Stewardship`
+ * for every other role reaching this same page, unaffected until their
+ * own portal is redesigned).
  */
 export function StewardshipPage() {
   const theme = useTheme();
@@ -156,6 +165,8 @@ export function StewardshipPage() {
   const [confirmError, setConfirmError] = useState<string | undefined>(undefined);
 
   if (state.status !== 'authenticated') return null;
+
+  const pageTitle = state.actor.role === 'TREASURER' ? 'Finance' : 'Stewardship';
 
   const transactionsState = useTransactionQueue(state.accessToken, transactionStateFilter);
   const expensesState = useExpenseQueue(state.accessToken, expenseStateFilter);
@@ -627,19 +638,21 @@ export function StewardshipPage() {
   ];
 
   return (
-    <PageContainer maxWidth={900}>
+    <PageContainer maxWidth={1280}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5] }}>
-        <Heading level={1}>Stewardship</Heading>
+        <PageHeader title={pageTitle} />
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[3] }}>
-            <Heading level={2}>Financial Transaction verification queue</Heading>
-            {!recordFormOpen && (
-              <Button variant="secondary" size="sm" onClick={() => setRecordFormOpen(true)} accessibilityLabel="Record a new Financial Transaction">
-                + Record Transaction
-              </Button>
-            )}
-          </div>
+          <SectionHeader
+            title="Financial Transaction verification queue"
+            action={
+              !recordFormOpen ? (
+                <Button variant="secondary" size="sm" onClick={() => setRecordFormOpen(true)} accessibilityLabel="Record a new Financial Transaction">
+                  + Record Transaction
+                </Button>
+              ) : undefined
+            }
+          />
 
           {recordFormOpen && (
             <Card padding={6} testId="record-transaction-form">
@@ -769,14 +782,16 @@ export function StewardshipPage() {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[3] }}>
-            <Heading level={2}>Expense approval queue</Heading>
-            {!expenseFormOpen && (
-              <Button variant="secondary" size="sm" onClick={() => setExpenseFormOpen(true)} accessibilityLabel="Request a new Expense">
-                + Request Expense
-              </Button>
-            )}
-          </div>
+          <SectionHeader
+            title="Expense approval queue"
+            action={
+              !expenseFormOpen ? (
+                <Button variant="secondary" size="sm" onClick={() => setExpenseFormOpen(true)} accessibilityLabel="Request a new Expense">
+                  + Request Expense
+                </Button>
+              ) : undefined
+            }
+          />
 
           {expenseFormOpen && (
             <Card padding={6} testId="request-expense-form">
@@ -916,7 +931,7 @@ export function StewardshipPage() {
             `permission-matrix.ts`), the backend's real response is what
             every other caller sees. */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-          <Heading level={2}>Bank Deposit Reconciliation</Heading>
+          <SectionHeader title="Bank Deposit Reconciliation" />
           <Input
             label="Week starting"
             type="date"

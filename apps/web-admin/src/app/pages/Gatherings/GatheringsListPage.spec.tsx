@@ -97,6 +97,77 @@ describe('GatheringsListPage', () => {
     expect(screen.getByText('Scheduled')).toBeInTheDocument();
   });
 
+  /** `[Milestone D — Portal Experiences, Portal 2: Branch Administrator]`
+   * "Gathering cards should expose... preacher, message." Both real
+   * `GatheringResponseDto` fields (`preacherPersonId`/`message`).
+   * Preacher is a column on both tables; Message is Historical-only
+   * (the same "different priority columns per table" precedent Venue/
+   * Attendance already establish) - Preacher resolves via the same real
+   * `GET /people/:id` lookup `PersonNameText` already established
+   * elsewhere in this app. */
+  it('shows the real Preacher name on an upcoming Gathering that has one', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('ADMIN'));
+    const future = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    global.fetch = jest.fn().mockImplementation((url: string) => {
+      if (url.includes('/people/preacher-1')) {
+        return Promise.resolve({ ok: true, json: async () => ({ id: 'preacher-1', firstName: 'Kofi', lastName: 'Owusu' }) });
+      }
+      if (url.includes('/gatherings')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => [gathering({ id: 'g-3', scheduledStart: future, scheduledEnd: null, status: 'SCHEDULED', preacherPersonId: 'preacher-1' })],
+        });
+      }
+      return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
+    });
+
+    renderPage();
+
+    await waitFor(() => expect(screen.getByTestId('gatherings-list-card')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('Kofi Owusu')).toBeInTheDocument());
+  });
+
+  it('shows the real Preacher name and Message on a past Gathering that has both', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('ADMIN'));
+    global.fetch = jest.fn().mockImplementation((url: string) => {
+      if (url.includes('/attendance-records/completeness')) {
+        return Promise.resolve({ ok: true, json: async () => ({ incomplete: false, reason: 'already recorded' }) });
+      }
+      if (url.includes('/people/preacher-1')) {
+        return Promise.resolve({ ok: true, json: async () => ({ id: 'preacher-1', firstName: 'Kofi', lastName: 'Owusu' }) });
+      }
+      if (url.includes('/gatherings')) {
+        return Promise.resolve({ ok: true, json: async () => [gathering({ preacherPersonId: 'preacher-1', message: 'Walking in Faith' })] });
+      }
+      return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
+    });
+
+    renderPage();
+
+    await waitFor(() => expect(screen.getByTestId('past-gatherings-card')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('Kofi Owusu')).toBeInTheDocument());
+    expect(screen.getByText('Walking in Faith')).toBeInTheDocument();
+  });
+
+  it('shows an em-dash, never a fabricated name, when a past Gathering has no Preacher or Message recorded', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('ADMIN'));
+    global.fetch = jest.fn().mockImplementation((url: string) => {
+      if (url.includes('/attendance-records/completeness')) {
+        return Promise.resolve({ ok: true, json: async () => ({ incomplete: false, reason: 'already recorded' }) });
+      }
+      if (url.includes('/gatherings')) {
+        return Promise.resolve({ ok: true, json: async () => [gathering({ preacherPersonId: null, message: null })] });
+      }
+      return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
+    });
+
+    renderPage();
+
+    await waitFor(() => expect(screen.getByTestId('past-gatherings-card')).toBeInTheDocument());
+    const dashes = screen.getAllByText('—');
+    expect(dashes.length).toBeGreaterThanOrEqual(2);
+  });
+
   it('does not show a completeness badge for an upcoming Gathering', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('ADMIN'));
     const future = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();

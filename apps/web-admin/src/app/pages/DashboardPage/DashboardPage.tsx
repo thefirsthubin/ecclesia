@@ -2,31 +2,40 @@ import { EmptyState, PageContainer } from '@ecclesia/ui-web';
 import type { RoleDto } from '@ecclesia/contracts';
 
 import { useAuth } from '../../auth/AuthContext';
+import { BacentaLeaderDashboard } from './BacentaLeaderDashboard';
+import { BranchAdministratorDashboard } from './BranchAdministratorDashboard';
 import { BranchPastorDashboard } from './BranchPastorDashboard';
-import { FinanceOfficerDashboard } from './FinanceOfficerDashboard';
+import { BranchTreasurerDashboard } from './BranchTreasurerDashboard';
+import { CouncilDashboard } from './CouncilDashboard';
 import { MinistryLeaderDashboard } from './MinistryLeaderDashboard';
 import { ResidentPastorDashboard } from './ResidentPastorDashboard';
-import { SuperAdministratorDashboard } from './SuperAdministratorDashboard';
+import { SystemAdministratorDashboard } from './SystemAdministratorDashboard';
 
 /**
  * Role-aware dashboard router (STEP 5, extended by the Remaining
- * Engineering Sprint, Milestone 11 - Objective 1). Five roles now get a
- * fully-built dashboard: `RESIDENT_PASTOR`/`ACTING_RESIDENT_PASTOR`
- * (`ResidentPastorDashboard`, built earlier), `BASONTA_LEADER` (Ministry
- * Leader), `TREASURER` (Finance Officer), `ASSISTANT_PASTOR` (Branch
- * Pastor), and `ADMIN` (Super Administrator - see
- * `SuperAdministratorDashboard.tsx`'s own doc comment for why `ADMIN`,
- * not `COUNCIL_OVERSEER`). Every other role still sees an honest,
- * role-specific stub rather than a broken or fabricated screen.
+ * Engineering Sprint, Milestone 11 - Objective 1, and by Milestone D -
+ * Portal Experiences). Eight roles now get a fully-built dashboard:
+ * `RESIDENT_PASTOR`/`ACTING_RESIDENT_PASTOR` (`ResidentPastorDashboard`,
+ * built earlier), `BASONTA_LEADER` (Ministry Leader), `BACENTA_LEADER`
+ * (Portal 3), `TREASURER` (Branch Treasurer), `ASSISTANT_PASTOR` (Branch
+ * Pastor), `ADMIN` (Branch Administrator - see
+ * `BranchAdministratorDashboard.tsx`'s own doc comment for why `ADMIN`,
+ * not `COUNCIL_OVERSEER`, and for that component's own rename history),
+ * and `COUNCIL_OVERSEER`/`COUNCIL_TREASURER` (Portal 7). Every other role
+ * still sees an honest, role-specific stub rather than a broken or
+ * fabricated screen.
  *
- * `[Design Decision, disclosed]` `BASONTA_LEADER` is no longer grouped
- * with `BACENTA_LEADER`'s "lives on mobile" stub - this milestone's brief
- * explicitly asks for a Ministry Leader Web Admin dashboard, and
- * `BASONTA_LEADER` holds real, working `OWN_GROUP`-scoped grants for
- * every zone `MinistryLeaderDashboard` renders. `BACENTA_LEADER` alone
- * keeps the mobile-only routing below - PRD §16.2 still names that
- * persona's mobile dashboard "the single most important screen in the
- * product," unaffected by this change.
+ * `[Milestone D — Portal Experiences, Portal 3: Bacenta Leader]`
+ * `BACENTA_LEADER`'s prior "lives on mobile" stub is replaced with a real
+ * Web Admin dashboard (`BacentaLeaderDashboard`) - PRD §16.2 still names
+ * the *mobile* Shepherd's dashboard the product's single most important
+ * screen, unaffected by this change; this is a genuinely new, additional
+ * surface for the same role, not a replacement for it.
+ *
+ * `[Milestone D — Portal Experiences, Portal 7: Council]`
+ * `COUNCIL_OVERSEER`/`COUNCIL_TREASURER`'s prior "coming soon" stub is
+ * replaced with `CouncilDashboard` - real, `council=true` Council-scoped
+ * trend data, no fabricated multi-Branch preview.
  */
 export function DashboardPage() {
   const { state } = useAuth();
@@ -43,7 +52,7 @@ export function DashboardPage() {
   }
 
   if (role === 'TREASURER') {
-    return <FinanceOfficerDashboard />;
+    return <BranchTreasurerDashboard />;
   }
 
   if (role === 'ASSISTANT_PASTOR') {
@@ -51,19 +60,19 @@ export function DashboardPage() {
   }
 
   if (role === 'ADMIN') {
-    return <SuperAdministratorDashboard />;
+    return <BranchAdministratorDashboard />;
   }
 
   if (role === 'BACENTA_LEADER') {
-    return (
-      <PageContainer>
-        <EmptyState
-          icon="home"
-          title="Your Bacenta dashboard lives on mobile"
-          description="Design System §3.2 places the Shepherd's dashboard on the mobile app, not Web Admin. Open the Ecclesia mobile app to see it."
-        />
-      </PageContainer>
-    );
+    return <BacentaLeaderDashboard />;
+  }
+
+  if (role === 'COUNCIL_OVERSEER' || role === 'COUNCIL_TREASURER') {
+    return <CouncilDashboard />;
+  }
+
+  if (role === 'SYSTEM_ADMINISTRATOR') {
+    return <SystemAdministratorDashboard />;
   }
 
   return (

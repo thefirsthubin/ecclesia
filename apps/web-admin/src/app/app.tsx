@@ -6,6 +6,7 @@ import { SessionRestoringScreen } from './auth/SessionRestoringScreen';
 import { Route, RouterProvider, Routes, useNavigate } from './router/router';
 import { ProtectedRoute } from './router/ProtectedRoute';
 import { LoginPage } from './pages/LoginPage';
+import { LandingPage } from './pages/Marketing/LandingPage';
 import { DashboardPage } from './pages/DashboardPage/DashboardPage';
 import { ConfigurationPage } from './pages/ConfigurationPage';
 import { AuditLogPage } from './pages/AuditLogPage';
@@ -15,6 +16,7 @@ import { FollowUpTaskQueuePage } from './pages/PastoralCare/FollowUpTaskQueuePag
 import { MinistryPage } from './pages/Ministry/MinistryPage';
 import { GroupDetailPage } from './pages/Ministry/GroupDetailPage';
 import { GatheringsPage } from './pages/Gatherings/GatheringsPage';
+import { OutreachPage } from './pages/Outreach/OutreachPage';
 import { StewardshipPage } from './pages/Stewardship/StewardshipPage';
 import { BranchFinanceOverviewPage } from './pages/Finance/BranchFinanceOverviewPage';
 import { InsightsPage } from './pages/Insights/InsightsPage';
@@ -47,6 +49,16 @@ export function App() {
   );
 }
 
+/**
+ * `[Public landing page]` `/` used to redirect every unauthenticated
+ * visitor straight to `/login`, with no public page at all - so there
+ * was nowhere to render a landing page even once one existed. An
+ * authenticated visitor still redirects straight to `/dashboard`
+ * (unchanged); an unauthenticated one now sees the real public
+ * `LandingPage` instead of an automatic bounce to the sign-in form -
+ * `/login` stays one explicit click away via the landing page's own
+ * "Sign in" actions, not the default landing experience.
+ */
 function RootRedirect() {
   const { state } = useAuth();
   const navigate = useNavigate();
@@ -54,21 +66,20 @@ function RootRedirect() {
   useEffect(() => {
     if (state.status === 'authenticated') {
       navigate('/dashboard', { replace: true });
-    } else if (state.status === 'unauthenticated') {
-      navigate('/login', { replace: true });
     }
     // `restoring` intentionally does nothing yet - wait for it to resolve
-    // one way or the other before picking a destination.
+    // before picking a destination. `unauthenticated` does nothing either
+    // now - it renders the landing page below rather than redirecting.
   }, [state.status, navigate]);
 
   // A visitor can land on `/` while the session-restoration check
   // (STEP 4) is still in flight - show the same restoring UI
   // `ProtectedRoute` uses rather than a blank page for that window.
-  if (state.status === 'restoring') {
+  if (state.status === 'restoring' || state.status === 'authenticated') {
     return <SessionRestoringScreen />;
   }
 
-  return null;
+  return <LandingPage />;
 }
 
 function AppRoutes() {
@@ -125,6 +136,14 @@ function AppRoutes() {
             breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Ministry', href: '/ministry' }, { label: 'Group' }]}
           >
             <GroupDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/outreach"
+        element={
+          <ProtectedRoute breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Outreaches' }]}>
+            <OutreachPage />
           </ProtectedRoute>
         }
       />

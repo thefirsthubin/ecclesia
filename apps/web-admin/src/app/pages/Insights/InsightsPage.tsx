@@ -1,8 +1,12 @@
 import { EmptyState, PageContainer } from '@ecclesia/ui-web';
 
 import { useAuth } from '../../auth/AuthContext';
+import { BacentaLeaderInsightsView } from './BacentaLeaderInsightsView';
+import { BasontaLeaderInsightsView } from './BasontaLeaderInsightsView';
 import { BranchInsightsView } from './BranchInsightsView';
 import { BranchTrendsSection } from './BranchTrendsSection';
+import { CouncilInsightsView } from './CouncilInsightsView';
+import { TreasurerInsightsView } from './TreasurerInsightsView';
 
 /**
  * The `/insights` nav entry (Design System §3.1's persistent sidebar,
@@ -45,6 +49,28 @@ import { BranchTrendsSection } from './BranchTrendsSection';
  * questions - "which Bacentas are healthy," "is attendance increasing or
  * declining," "what follow-ups are overdue"). Every other role's branch
  * here is unchanged.
+ *
+ * `[Milestone D — Portal Experiences, Portal 1: Branch Treasurer]`
+ * `TREASURER` now renders `TreasurerInsightsView` - previously fell to
+ * the generic "not available for this role" stub despite holding a real
+ * BRANCH-scoped `stewardship.transaction.read` grant, the same one
+ * `GET /insights/giving-trend` is gated on.
+ *
+ * `[Milestone D — Portal Experiences, Portal 3: Bacenta Leader]`
+ * `BACENTA_LEADER` now renders `BacentaLeaderInsightsView` (real
+ * attendance/membership/giving trends, OWN_GROUP-scoped to this leader's
+ * own Bacenta) - split out of the combined "lives on mobile" stub it
+ * previously shared with `BASONTA_LEADER`.
+ *
+ * `[Milestone D — Portal Experiences, Portal 4: Basonta Leader]`
+ * `BASONTA_LEADER` now renders `BasontaLeaderInsightsView` - the same
+ * real trend composition, `useGroupLeaderInsightsData.ts`'s shared hooks,
+ * scoped to `actor.basontaId` instead.
+ *
+ * `[Milestone D — Portal Experiences, Portal 7: Council]`
+ * `COUNCIL_OVERSEER`/`COUNCIL_TREASURER` now render `CouncilInsightsView` -
+ * real `council=true` trend data, one panel per real Branch in the
+ * actor's own Council, no fabricated Branch comparison.
  */
 export function InsightsPage() {
   const { state } = useAuth();
@@ -62,16 +88,20 @@ export function InsightsPage() {
     return <BranchInsightsView />;
   }
 
-  if (role === 'BACENTA_LEADER' || role === 'BASONTA_LEADER') {
-    return (
-      <PageContainer>
-        <EmptyState
-          icon="home"
-          title="Your Bacenta pulse view lives on mobile"
-          description="Design System §3.3 places the Shepherd's Bacenta pulse view on the mobile app, not Web Admin. Open the Ecclesia mobile app to see it."
-        />
-      </PageContainer>
-    );
+  if (role === 'TREASURER') {
+    return <TreasurerInsightsView />;
+  }
+
+  if (role === 'BACENTA_LEADER') {
+    return <BacentaLeaderInsightsView />;
+  }
+
+  if (role === 'BASONTA_LEADER') {
+    return <BasontaLeaderInsightsView />;
+  }
+
+  if (role === 'COUNCIL_OVERSEER' || role === 'COUNCIL_TREASURER') {
+    return <CouncilInsightsView />;
   }
 
   return (

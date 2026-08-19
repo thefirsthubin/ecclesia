@@ -1,214 +1,398 @@
-import { BarChart, Badge, Card, EmptyState, ErrorState, HealthStatement, PageContainer, PageHeader, SectionHeader, Skeleton, Table, Text, TrendPanel, useTheme } from '@ecclesia/ui-web';
+import { useState } from 'react';
+import { Badge, Button, Card, ErrorState, HealthStatement, Input, MetricCard, PageContainer, PageHeader, SectionHeader, Skeleton, Table, Text, useTheme, useToast } from '@ecclesia/ui-web';
 import type { TableColumn } from '@ecclesia/ui-web';
-import type { ReconciliationRowDto } from '@ecclesia/contracts';
+import type { ExpenseResponseDto, GivingTrendResultDto } from '@ecclesia/contracts';
 
 import { useAuth } from '../../auth/AuthContext';
-import { GroupNameText } from '../People/GroupNameText';
-import { getCurrentWeekBounds } from '../DashboardPage/useBranchPastorDashboardData';
-import { useBranchDashboardSummary } from '../DashboardPage/useBranchDashboardSummary';
-import { growthSeriesFromSummary } from '../DashboardPage/mapBranchDashboardSummary';
-import { formatAmountMinor, useWeeklyReconciliation } from '../Stewardship/useStewardshipData';
+import { ApiError } from '../../lib/api-client';
+import { PersonNameText } from '../PastoralCare/PersonNameText';
+import { ReceiptUploadPanel } from '../Stewardship/ReceiptUploadPanel';
+import { approveExpense, formatAmountMinor, parseAmountToMinorUnits, rejectExpense, requestExpense, useExpenseQueue } from '../Stewardship/useStewardshipData';
+import { useGivingBreakdown } from '../DashboardPage/useGivingBreakdown';
+import { useDashboardBreakpoint } from '../DashboardPage/useDashboardBreakpoint';
 
-const formatGhs = (value: number) => `GHS ${value.toLocaleString()}`;
+const EXPENSE_STATE_BADGE: Record<string, 'neutral' | 'info' | 'warning' | 'danger' | 'success'> = {
+  REQUESTED: 'info',
+  APPROVED: 'success',
+  REJECTED: 'danger',
+  PAID: 'success',
+  RECEIPT_RETAINED: 'success',
+};
+
+/** Same best-effort server-reason extraction `PersonDetailPage.tsx`/
+ * `GatheringsListPage.tsx` already establish. */
+function extractErrorMessage(error: unknown, fallback: string): string {
+  if (error instanceof ApiError && error.body && typeof error.body === 'object' && 'message' in error.body) {
+    const message = (error.body as { message: unknown }).message;
+    if (typeof message === 'string') return message;
+    if (Array.isArray(message) && message.every((entry) => typeof entry === 'string')) return message.join('; ');
+  }
+  return error instanceof Error ? error.message : fallback;
+}
+
+const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+
+/** Same `[start, end)` -> inclusive-end-date display convention
+ * `BranchTreasurerDashboard.tsx`'s own `formatWeekRangeLabel` establishes -
+ * duplicated rather than extracted, matching this codebase's "small
+ * per-page glue, not worth extracting" precedent. */
+function formatWeekRangeLabel(fromIso: string, toIso: string): string {
+  const start = new Date(fromIso);
+  const end = new Date(new Date(toIso).getTime() - MILLISECONDS_PER_DAY);
+  const startLabel = start.toLocaleDateString(undefined, { month: 'short', day: 'numeric', timeZone: 'UTC' });
+  const endLabel = end.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+  return `Week of ${startLabel} – ${endLabel}`;
+}
+
+function bucketTotal(result: GivingTrendResultDto | undefined): string | null {
+  return result?.buckets[0] ? result.buckets[0].totalAmountMinor : null;
+}
+
+function bucketByType(result: GivingTrendResultDto | undefined, type: 'OFFERING' | 'TITHE'): string | null {
+  return result?.buckets[0]?.byType[type] ?? null;
+}
+
+function formatOrDash(amountMinor: string | null): string | null {
+  return amountMinor === null ? null : formatAmountMinor(amountMinor, 'GHS');
+}
 
 /**
- * `[Branch Pastor portal, Finance completion]` "Finance" - READ-ONLY
- * financial VISIBILITY for the Branch Pastor, explicitly NOT the
- * Treasurer portal `StewardshipPage` already is (Verify/Flag/Escalate/
- * Reconcile transactions, Approve/Reject/Pay expenses, Confirm Deposit,
- * Record Transaction/Request Expense forms - none of that is reachable
- * from this page, by construction: it renders no mutation call anywhere).
+ * `[Branch Pastor portal, Finance completion]` `[Milestone D — Portal
+ * Experiences, rebuild]` "Finance" - read-only financial VISIBILITY for
+ * `ADMIN` (BRANCH, `stewardship.transaction.read` with zero accompanying
+ * mutation grant, Milestone C Phase 1 decision #8) - no
+ * Record/Verify/Flag/Escalate/Reconcile/Confirm Deposit control is ever
+ * reachable for that role. Shared by Branch Pastor (`ASSISTANT_PASTOR`,
+ * CLUSTER), whose grant shape is genuinely different, not identical:
+ * `[Milestone D — Portal Experiences, Portal 6: Assistant Pastor]` this
+ * role also holds `stewardship.expense.request`/`.approve`/`.receipt`/
+ * `.read` at CLUSTER scope (PRD §17.3 - Branch Pastor may approve
+ * expenses "if delegated by the Resident Pastor") - a real, held
+ * capability this page previously had zero UI for (traced against
+ * `permission-matrix.ts`, not assumed; this role holds no `.pay` grant,
+ * so no Pay action renders here - that stays Treasurer-only on
+ * `StewardshipPage`). The Expense section below only renders for
+ * `ASSISTANT_PASTOR`.
  *
- * **Two real, reachable endpoints - traced against `permission-matrix.ts`
- * and re-verified live against the running API, not assumed:**
- *
- * 1. `GET /insights/branch-dashboard-summary` (`insights.branch_dashboard.read`,
- *    BRANCH for `ASSISTANT_PASTOR` - PRD §17.3 "summary only", confirmed
- *    reachable live: `curl` as the real `dev-assistant-pastor` persona
- *    returned `givingTotalMinor`/`growthSeries.giving` successfully, not a
- *    403). This is the *whole-Branch* Total Giving figure - every
- *    `VERIFIED`/`RECONCILED` `FinancialTransaction` for the Branch this
- *    month, regardless of source - and its own real trailing 6-month
- *    monthly series (`BranchDashboardSummaryService.getSummary`,
- *    `apps/api`). The exact same endpoint/hook `ResidentPastorDashboard`
- *    already uses for its own Giving KPI - reused verbatim
- *    (`useBranchDashboardSummary`, `mapBranchDashboardSummary.growthSeriesFromSummary`),
- *    not a new backend capability.
- * 2. `GET /bank-deposit-confirmations/reconciliation` (`stewardship.bank_deposit.read`,
- *    BRANCH for `ASSISTANT_PASTOR`) - the same call the Dashboard's
- *    `useBacentaPerformance` already uses. This is a *narrower* figure:
- *    only Bacenta-collected giving that has actually been bank-deposit-
- *    reconciled, for one chosen week - not comparable to the whole-Branch
- *    monthly total above (see the disclosure card below, which says so
- *    explicitly rather than letting the two numbers silently disagree).
- *
- * **Two real, disclosed gaps, freshly re-verified this pass, not carried
- * over as stale assumptions:**
- *
- * 1. **No Offering/Tithe breakdown is shown.** `FinancialTransaction.type`
- *    (`db/schema.prisma`) genuinely distinguishes `OFFERING`/`TITHE`/
- *    `SPECIAL_OFFERING`/`PLEDGE`/`DONATION` - the schema supports this.
- *    But the only endpoint that exposes individual transactions with
- *    their `type` (`GET /financial-transactions`) is RBAC-granted to
- *    `ASSISTANT_PASTOR` at CLUSTER (`stewardship.transaction.read`) yet
- *    structurally unreachable: `FinancialTransactionListResourceContextGuard`
- *    resolves `{ branchId, bacentaId: actor.bacentaId }`, and `actor.bacentaId`
- *    is `undefined` for a cluster actor (`evaluate.ts`'s own CLUSTER check
- *    requires `resource.bacentaId !== undefined`) - confirmed live this
- *    pass: `curl`ing this endpoint as `dev-assistant-pastor` returns a real
- *    403, "Resource is outside the actor's CLUSTER scope." Widening this
- *    grant to BRANCH would fix it, but that is an RBAC change this task's
- *    own brief says to report, not make silently. Separately, even the
- *    two endpoints that *are* reachable (`branch-dashboard-summary`,
- *    `bank-deposit-confirmations/reconciliation`) only ever return
- *    type-blind sums (`sumVerifiedAmountForBranch`/
- *    `sumVerifiedAmountByGroupForWeek`, `apps/api`) - no reachable
- *    endpoint anywhere breaks giving out by type today.
- * 2. **No Sunday Service / "other Branch gathering" breakdown is shown,
- *    for anyone, at any RBAC scope - this is not a permissions gap.**
- *    `FinancialTransaction` has no relation to `Gathering` at all (no
- *    `gatheringId` column - confirmed by reading the full model in
- *    `db/schema.prisma`). Its only source attribution is the nullable
- *    `sourceGroupId`, which is set for a Bacenta-collected offering and
- *    left `null` for *every* groupless gift alike - a Sunday Service
- *    collection and any other Branch-wide gathering's giving are stored
- *    identically (`sourceGroupId: null`) and are indistinguishable from
- *    each other in the data model itself. Fixing this needs a schema
- *    change (a `gatheringId` column, or recording giving per-Gathering
- *    instead of per-Group) - explicitly out of this task's scope
- *    ("do not create a migration... unless explicitly instructed").
+ * **Rebuilt on `useGivingBreakdown`** (`GET /insights/giving-trend`,
+ * Milestone C's read model) - replacing the two real, disclosed gaps the
+ * prior version of this page carried ("no Sunday/Bacenta/Basonta
+ * breakdown is possible - `FinancialTransaction` has no relation to
+ * `Gathering`"). That was true when written; it no longer is -
+ * `FinancialTransaction.gatheringId` exists today (confirmed against
+ * `financialTransactionResponseSchema`), and `GivingTrendService`'s own
+ * `gatheringCategory` filtering (`SUNDAY`/`MIDWEEK`/`BACENTA_MEETING`/
+ * `BASONTA_MEETING`/`OTHER`) already exposes exactly the breakdown this
+ * page previously disclosed as unbuildable. Portal 2's own spec names
+ * this breakdown explicitly ("Sunday offerings, Sunday tithes, Bacenta
+ * giving, Basonta giving, other giving"), which is what surfaced the
+ * stale disclosure - fixed for both real consumers of this page, not
+ * just the one that prompted the fix.
  */
 export function BranchFinanceOverviewPage() {
   const theme = useTheme();
+  const toast = useToast();
   const { state } = useAuth();
+  const accessToken = state.status === 'authenticated' ? state.accessToken : undefined;
+  const { isCompact } = useDashboardBreakpoint();
+
+  const givingState = useGivingBreakdown(accessToken);
+  const weekContext = givingState.status === 'success' ? formatWeekRangeLabel(givingState.data.from, givingState.data.to) : 'This week';
+
+  // `[Milestone D — Portal Experiences, Portal 6: Assistant Pastor]`
+  // Called unconditionally (Rules of Hooks) - `undefined` token is this
+  // codebase's own "don't fetch" idiom, so `ADMIN` never makes this call.
+  const canSeeExpenses = state.status === 'authenticated' && state.actor.role === 'ASSISTANT_PASTOR';
+  const expensesState = useExpenseQueue(canSeeExpenses ? accessToken : undefined);
+
+  const [expenseFormOpen, setExpenseFormOpen] = useState(false);
+  const [expenseAmountText, setExpenseAmountText] = useState('');
+  const [expenseDescription, setExpenseDescription] = useState('');
+  const [expenseCategory, setExpenseCategory] = useState('');
+  const [expenseSubmitting, setExpenseSubmitting] = useState(false);
+  const [expenseSubmitError, setExpenseSubmitError] = useState<string | undefined>(undefined);
+  const [busyKey, setBusyKey] = useState<string | null>(null);
+  const [rejectDraftId, setRejectDraftId] = useState<string | null>(null);
+  const [rejectReason, setRejectReason] = useState('');
+  const [rejectError, setRejectError] = useState<string | undefined>(undefined);
 
   if (state.status !== 'authenticated') return null;
 
-  const { startDateOnly } = getCurrentWeekBounds();
-  const reconciliationState = useWeeklyReconciliation(state.accessToken, startDateOnly);
-  const summaryState = useBranchDashboardSummary(state.accessToken);
+  const expenseAmountMinor = parseAmountToMinorUnits(expenseAmountText);
+  const expenseAmountError = expenseAmountText.length > 0 && expenseAmountMinor === null ? 'Enter a valid amount greater than 0' : undefined;
 
-  const rows = reconciliationState.status === 'success' ? reconciliationState.data.rows : [];
-  const bacentaTotalMinor = rows.reduce((sum, row) => sum + BigInt(row.verifiedTotalMinor), 0n).toString();
+  const closeExpenseForm = () => {
+    setExpenseFormOpen(false);
+    setExpenseAmountText('');
+    setExpenseDescription('');
+    setExpenseCategory('');
+    setExpenseSubmitError(undefined);
+  };
+  const submitRequestExpense = async () => {
+    if (!expenseAmountMinor || expenseDescription.trim().length === 0) return;
+    setExpenseSubmitting(true);
+    setExpenseSubmitError(undefined);
+    try {
+      await requestExpense(state.accessToken, {
+        amountMinor: expenseAmountMinor,
+        description: expenseDescription.trim(),
+        category: expenseCategory.trim().length > 0 ? expenseCategory.trim() : undefined,
+      });
+      expensesState.refetch();
+      closeExpenseForm();
+    } catch (error) {
+      setExpenseSubmitError(extractErrorMessage(error, 'Something went wrong requesting this expense.'));
+    } finally {
+      setExpenseSubmitting(false);
+    }
+  };
 
-  const columns: TableColumn<ReconciliationRowDto>[] = [
+  const openRejectDraft = (id: string) => {
+    setRejectDraftId(id);
+    setRejectReason('');
+    setRejectError(undefined);
+  };
+  const cancelRejectDraft = () => {
+    setRejectDraftId(null);
+    setRejectReason('');
+    setRejectError(undefined);
+  };
+  const runExpenseAction = async (id: string, action: 'approve' | 'reject', run: () => Promise<ExpenseResponseDto>) => {
+    setBusyKey(`${id}:${action}`);
+    try {
+      await run();
+      expensesState.refetch();
+      if (action === 'approve') toast.show({ status: 'success', message: 'Expense approved.' });
+      else cancelRejectDraft();
+    } catch (error) {
+      const message = extractErrorMessage(error, 'Something went wrong with this action.');
+      if (action === 'reject') setRejectError(message);
+      else toast.show({ status: 'danger', message });
+    } finally {
+      setBusyKey(null);
+    }
+  };
+
+  const expenseColumns: TableColumn<ExpenseResponseDto>[] = [
+    { key: 'description', header: 'Description', render: (expense) => <Text variant="bodySmall">{expense.description}</Text> },
     {
-      key: 'group',
-      header: 'Bacenta',
-      render: (row) => <GroupNameText groupId={row.groupId} />,
-    },
-    {
-      key: 'verified',
-      header: 'Verified Giving',
-      align: 'right',
-      render: (row) => <Text variant="bodySmall">{formatAmountMinor(row.verifiedTotalMinor, 'GHS')}</Text>,
-    },
-    {
-      key: 'deposited',
-      header: 'Bank Status',
-      render: (row) => (
-        <Badge status={row.depositedAmountMinor === null ? 'warning' : row.matched ? 'success' : 'danger'}>
-          {row.depositedAmountMinor === null ? 'Not yet deposited' : row.matched ? 'Deposited & matched' : 'Deposited — mismatch'}
-        </Badge>
+      key: 'category',
+      header: 'Category',
+      render: (expense) => (
+        <Text variant="bodySmall" color={theme.colors.text.secondary}>
+          {expense.category ?? '—'}
+        </Text>
       ),
+    },
+    { key: 'amount', header: 'Amount', align: 'right', render: (expense) => <Text variant="bodySmall">{formatAmountMinor(expense.amountMinor, expense.currency)}</Text> },
+    { key: 'requestedBy', header: 'Requested by', render: (expense) => <PersonNameText personId={expense.requestedByPersonId} /> },
+    { key: 'status', header: 'Status', render: (expense) => <Badge status={EXPENSE_STATE_BADGE[expense.currentState] ?? 'neutral'}>{expense.currentState}</Badge> },
+    {
+      key: 'actions',
+      header: '',
+      align: 'right',
+      render: (expense) =>
+        expense.currentState === 'REQUESTED' ? (
+          <div style={{ display: 'flex', gap: theme.spacing[2], justifyContent: 'flex-end' }}>
+            <Button
+              variant="secondary"
+              size="sm"
+              loading={busyKey === `${expense.id}:approve`}
+              onClick={() => void runExpenseAction(expense.id, 'approve', () => approveExpense(state.accessToken, expense.id))}
+              accessibilityLabel={`Approve expense: ${expense.description}`}
+            >
+              Approve
+            </Button>
+            <Button variant="danger" size="sm" onClick={() => openRejectDraft(expense.id)} accessibilityLabel={`Reject expense: ${expense.description}`}>
+              Reject
+            </Button>
+          </div>
+        ) : null,
     },
   ];
 
-  return (
-    <PageContainer maxWidth={1040}>
-    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5] }}>
-      <PageHeader title="Finance" context={`${state.actor.branchName} · Read-only giving visibility`} />
+  const metricGridStyle = {
+    display: 'grid',
+    gridTemplateColumns: isCompact ? '1fr' : 'repeat(auto-fill, minmax(200px, 1fr))',
+    gap: theme.spacing[3],
+  };
 
-      {summaryState.status === 'loading' && (
+  const heroBlock = (() => {
+    if (givingState.status === 'loading') {
+      return (
         <Card padding={6} elevation={1} testId="branch-finance-total-card">
           <Skeleton height={64} />
         </Card>
-      )}
-
-      {summaryState.status === 'error' && (
+      );
+    }
+    if (givingState.status === 'error') {
+      return (
         <Card padding={6} elevation={1} testId="branch-finance-total-card">
-          <ErrorState title="Couldn't load Total Giving" onRetry={summaryState.refetch} />
+          <ErrorState title="Couldn't load this week's giving" onRetry={givingState.refetch} />
         </Card>
-      )}
-
-      {summaryState.status === 'success' && (
-        <Card padding={6} elevation={1} testId="branch-finance-total-card">
-          <HealthStatement
-            headline={formatAmountMinor(summaryState.data.givingTotalMinor, 'GHS')}
-            statement={`${summaryState.data.givingTrend >= 0 ? '+' : ''}${summaryState.data.givingTrend}% vs. last month · every verified gift to your Branch this month.`}
-            tone={summaryState.data.givingTrend >= 0 ? 'positive' : 'attention'}
-            trend={growthSeriesFromSummary(summaryState.data).giving}
-            testId="branch-finance-total-statement"
-          />
-        </Card>
-      )}
-
-      <Card padding={6} testId="branch-finance-trend-card">
-        <TrendPanel title="Giving Trend" description="Last 6 months, Branch-wide" status={summaryState.status} onRetry={summaryState.refetch} errorTitle="Couldn't load Giving Trend">
-          {summaryState.status === 'success' && <BarChart data={growthSeriesFromSummary(summaryState.data).giving} formatValue={formatGhs} testId="branch-finance-trend-chart" />}
-        </TrendPanel>
+      );
+    }
+    const weekTotal = bucketTotal(givingState.data.branch);
+    const notRecorded = weekTotal === null;
+    return (
+      <Card padding={6} elevation={1} testId="branch-finance-total-card">
+        <HealthStatement
+          headline={notRecorded ? '—' : formatAmountMinor(weekTotal, 'GHS')}
+          statement={notRecorded ? `No giving has been recorded for ${weekContext} yet.` : `given across the Branch, ${weekContext.toLowerCase()}.`}
+          tone={notRecorded ? 'attention' : 'positive'}
+          testId="branch-finance-total-statement"
+        />
       </Card>
+    );
+  })();
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-        <SectionHeader title="Giving by Bacenta" description="This week only · bank-deposit-verified Bacenta offerings, not the whole-Branch total above" />
+  return (
+    <PageContainer maxWidth={1120}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5] }}>
+        <PageHeader
+          title="Finance"
+          context={`${state.actor.branchName} · ${canSeeExpenses ? 'Giving visibility + expense workflow' : 'Read-only giving visibility'} · ${weekContext}`}
+          action={
+            canSeeExpenses && !expenseFormOpen ? (
+              <Button variant="secondary" size="sm" onClick={() => setExpenseFormOpen(true)} accessibilityLabel="Request expense">
+                + Request expense
+              </Button>
+            ) : undefined
+          }
+        />
 
-        {reconciliationState.status === 'loading' && (
-          <Card padding={6}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-              <Skeleton height={40} />
-              <Skeleton height={40} />
+        {heroBlock}
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+          <SectionHeader title="Giving Breakdown" description={weekContext} />
+          {givingState.status === 'loading' && (
+            <Card padding={6}>
+              <Skeleton height={120} />
+            </Card>
+          )}
+          {givingState.status === 'error' && (
+            <Card padding={6}>
+              <ErrorState title="Couldn't load the giving breakdown" onRetry={givingState.refetch} />
+            </Card>
+          )}
+          {givingState.status === 'success' && (
+            <div style={metricGridStyle} data-testid="branch-finance-breakdown-grid">
+              <MetricCard label="Sunday Offerings" value={formatOrDash(bucketByType(givingState.data.sunday, 'OFFERING'))} context={weekContext} testId="metric-sunday-offerings" />
+              <MetricCard label="Sunday Tithes" value={formatOrDash(bucketByType(givingState.data.sunday, 'TITHE'))} context={weekContext} testId="metric-sunday-tithes" />
+              <MetricCard label="Bacenta Giving" value={formatOrDash(bucketTotal(givingState.data.bacenta))} context={weekContext} testId="metric-bacenta-giving" />
+              <MetricCard label="Basonta Giving" value={formatOrDash(bucketTotal(givingState.data.basonta))} context={weekContext} testId="metric-basonta-giving" />
+              <MetricCard label="Other Giving" value={formatOrDash(bucketTotal(givingState.data.other))} context={weekContext} testId="metric-other-giving" />
             </div>
+          )}
+        </div>
+
+        {givingState.status === 'success' && givingState.data.branch.unattributedAmountMinor !== '0' && (
+          <Card padding={4} testId="branch-finance-unattributed-card">
+            <SectionHeader
+              title="Some giving has no linked Gathering or Group"
+              description={`${formatAmountMinor(givingState.data.branch.unattributedAmountMinor, 'GHS')} this week - never guessed into a category above`}
+            />
           </Card>
         )}
 
-        {reconciliationState.status === 'error' && (
-          <Card padding={6}>
-            <ErrorState title="Couldn't load Branch giving totals" onRetry={reconciliationState.refetch} />
-          </Card>
-        )}
+        {/* `[Milestone D — Portal Experiences, Portal 6: Assistant Pastor]`
+            The real expense request/approve workflow this role's own
+            CLUSTER-scoped `stewardship.expense.*` grants support - no Pay
+            action (Treasurer-only, `.pay` not held by this role). */}
+        {canSeeExpenses && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+            <SectionHeader title="Expenses" description="Request, approve, or reject expenses across your cluster" />
 
-        {reconciliationState.status === 'success' && (
-          <Card padding={6} testId="branch-finance-breakdown-card">
-            {rows.length === 0 ? (
-              <EmptyState
-                icon="trendingUp"
-                title="No verified giving recorded yet"
-                description="No Bacenta in your Branch has a verified, bank-deposit-confirmed offering for this week yet."
-              />
-            ) : (
-              <>
-                <Table
-                  testId="branch-finance-breakdown-table"
-                  columns={columns}
-                  data={rows}
-                  getRowId={(row) => row.groupId}
-                  emptyIcon="trendingUp"
-                  emptyTitle="No verified giving recorded yet"
-                  emptyDescription="No Bacenta in your Branch has a verified, bank-deposit-confirmed offering for this week yet."
-                />
-                <div style={{ marginTop: theme.spacing[4], paddingTop: theme.spacing[4], borderTop: `1px solid ${theme.colors.border.subtle}` }}>
-                  <Text variant="bodySmall" color={theme.colors.text.secondary}>
-                    {`Bacenta total this week: ${formatAmountMinor(bacentaTotalMinor, 'GHS')}`}
-                  </Text>
+            {expenseFormOpen && (
+              <Card padding={6} testId="expense-request-form">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+                  <Input label="Amount (GHS)" value={expenseAmountText} onChange={(event) => setExpenseAmountText(event.target.value)} error={expenseAmountError} placeholder="0.00" />
+                  <Input label="Description" value={expenseDescription} onChange={(event) => setExpenseDescription(event.target.value)} placeholder="What is this expense for?" />
+                  <Input label="Category (optional)" value={expenseCategory} onChange={(event) => setExpenseCategory(event.target.value)} placeholder="e.g. Transport, Facilities" />
+                  {expenseSubmitError && (
+                    <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
+                      {expenseSubmitError}
+                    </Text>
+                  )}
+                  <div style={{ display: 'flex', gap: theme.spacing[2] }}>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      disabled={!expenseAmountMinor || expenseDescription.trim().length === 0}
+                      loading={expenseSubmitting}
+                      onClick={() => void submitRequestExpense()}
+                    >
+                      Submit request
+                    </Button>
+                    <Button variant="secondary" size="sm" onClick={closeExpenseForm}>
+                      Cancel
+                    </Button>
+                  </div>
                 </div>
-              </>
+              </Card>
             )}
-          </Card>
+
+            {expensesState.status === 'loading' && (
+              <Card padding={6}>
+                <Skeleton height={40} />
+              </Card>
+            )}
+            {expensesState.status === 'error' && (
+              <Card padding={6}>
+                <ErrorState title="Couldn't load Expenses" onRetry={expensesState.refetch} />
+              </Card>
+            )}
+            {expensesState.status === 'success' && (
+              <Card padding={6} testId="branch-finance-expense-queue-card">
+                <Table
+                  testId="branch-finance-expense-queue-table"
+                  columns={expenseColumns}
+                  data={expensesState.data}
+                  getRowId={(expense) => expense.id}
+                  // `ReceiptUploadPanel` renders per row unconditionally
+                  // (same precedent as `StewardshipPage.tsx`'s own Expense
+                  // table) - `isRowExpanded` is therefore always true;
+                  // `renderRowDetail` itself decides whether the reject
+                  // form also shows.
+                  isRowExpanded={() => true}
+                  renderRowDetail={(expense) => (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+                      {rejectDraftId === expense.id && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[2] }} data-testid="expense-reject-form">
+                          <div style={{ display: 'flex', gap: theme.spacing[2], alignItems: 'flex-end' }}>
+                            <Input label="Reason" value={rejectReason} onChange={(event) => setRejectReason(event.target.value)} placeholder="Why is this being rejected?" />
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              disabled={rejectReason.trim().length === 0}
+                              loading={busyKey === `${expense.id}:reject`}
+                              onClick={() => void runExpenseAction(expense.id, 'reject', () => rejectExpense(state.accessToken, expense.id, { reason: rejectReason.trim() }))}
+                            >
+                              Submit rejection
+                            </Button>
+                            <Button variant="secondary" size="sm" onClick={cancelRejectDraft}>
+                              Cancel
+                            </Button>
+                          </div>
+                          {rejectError && (
+                            <Text variant="bodySmall" color={theme.colors.status.danger.strong}>
+                              {rejectError}
+                            </Text>
+                          )}
+                        </div>
+                      )}
+                      <ReceiptUploadPanel expense={expense} accessToken={state.accessToken} onUploaded={expensesState.refetch} />
+                    </div>
+                  )}
+                  emptyIcon="checkCircle"
+                  emptyTitle="No Expenses"
+                  emptyDescription="No Expenses are visible in your cluster yet."
+                />
+              </Card>
+            )}
+          </div>
         )}
       </div>
-
-      {/* Honest disclosure, not a fabricated figure - see this
-          component's own top doc comment for the full reasoning behind
-          both gaps named here, re-verified live this pass. */}
-      <Card padding={4} testId="branch-finance-scope-note">
-        <Text variant="bodySmall" color={theme.colors.text.secondary}>
-          Giving is not yet broken out by type (Offering vs. Tithe vs. other) at this scope, and Sunday Service giving cannot
-          currently be distinguished from other Branch-wide giving - neither is stored against the Gathering that raised it.
-          &quot;Total Giving&quot; above covers every verified gift to your Branch this month; &quot;Giving by Bacenta&quot;
-          covers only bank-deposit-confirmed Bacenta offerings for the selected week - the two are not directly comparable.
-        </Text>
-      </Card>
-    </div>
     </PageContainer>
   );
 }

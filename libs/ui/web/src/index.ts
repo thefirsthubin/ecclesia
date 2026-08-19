@@ -42,3 +42,4 @@ export * from './lib/HealthStatement';
 export * from './lib/AttentionList';
 export * from './lib/TrendPanel';
 export * from './lib/PageContainer';
+export * from './lib/MetricCard';

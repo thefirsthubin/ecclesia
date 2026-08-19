@@ -1,4 +1,4 @@
-import { Badge, Card, Divider, EmptyState, ErrorState, Heading, PageContainer, Skeleton, Table, Text, useTheme } from '@ecclesia/ui-web';
+import { Badge, Card, Divider, EmptyState, ErrorState, PageContainer, PageHeader, SectionHeader, Skeleton, Table, Text, useTheme } from '@ecclesia/ui-web';
 import type { TableColumn } from '@ecclesia/ui-web';
 import type { GatheringResponseDto, GatheringStatusDto } from '@ecclesia/contracts';
 
@@ -91,7 +91,7 @@ export function BasontaRosterView({ groupId }: { groupId: string }) {
   return (
     <PageContainer maxWidth={900}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[4] }}>
-        <Heading level={1}>Basonta roster</Heading>
+        <PageHeader title="Basonta roster" />
 
         {rosterState.status === 'loading' && (
           <Card padding={6}>
@@ -143,12 +143,14 @@ export function BasontaRosterView({ groupId }: { groupId: string }) {
 
         <Card padding={6} testId="basonta-gatherings-card">
           <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing[2] }}>
-              <Heading level={3}>Gatherings</Heading>
-              <Link to="/gatherings">
-                <Text variant="bodySmall">View in Gatherings →</Text>
-              </Link>
-            </div>
+            <SectionHeader
+              title="Gatherings"
+              action={
+                <Link to="/gatherings">
+                  <Text variant="bodySmall">View in Gatherings →</Text>
+                </Link>
+              }
+            />
             {gatheringsState.status === 'loading' && <Skeleton height={20} />}
             {gatheringsState.status === 'error' && <ErrorState title="Couldn't load Gatherings" onRetry={gatheringsState.refetch} />}
             {gatheringsState.status === 'success' && (

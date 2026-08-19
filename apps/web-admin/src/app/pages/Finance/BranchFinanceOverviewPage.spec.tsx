@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { ThemeProvider, ToastProvider } from '@ecclesia/ui-web';
 
 import { BranchFinanceOverviewPage } from './BranchFinanceOverviewPage';
@@ -18,41 +18,36 @@ function actorWithRole(role: string, extra: Record<string, unknown> = {}) {
   };
 }
 
-function reconciliationRow(overrides: Record<string, unknown> = {}) {
+function givingTrendResult(overrides: Partial<Record<string, unknown>> = {}) {
   return {
-    groupId: 'group-1',
-    verifiedTotalMinor: '50000',
-    depositedAmountMinor: null,
-    bankReference: null,
-    matched: false,
+    branchId: 'branch-1',
+    from: '2026-08-16T00:00:00.000Z',
+    to: '2026-08-23T00:00:00.000Z',
+    buckets: [
+      {
+        bucketStart: '2026-08-16T00:00:00.000Z',
+        bucketEnd: '2026-08-23T00:00:00.000Z',
+        label: '2026-08-16',
+        totalAmountMinor: '100000',
+        byType: { OFFERING: '60000', TITHE: '40000' },
+      },
+    ],
+    unattributedAmountMinor: '0',
+    unmappedGatheringTypes: [],
     ...overrides,
   };
 }
 
-function branchDashboardSummary(overrides: Record<string, unknown> = {}) {
-  return {
-    branchId: 'branch-1',
-    membersCount: 60,
-    membersTrend: 5,
-    attendanceTotal: 35,
-    attendanceTrend: 0,
-    givingTotalMinor: '52400',
-    givingTrend: 12,
-    growthSeries: {
-      attendance: [{ label: 'Mar', value: 0 }],
-      membership: [{ label: 'Mar', value: 0 }],
-      giving: [
-        { label: 'Mar', value: 0 },
-        { label: 'Apr', value: 0 },
-        { label: 'Aug', value: 52400 },
-      ],
-    },
-    volunteersCount: 15,
-    volunteersTrend: 15,
-    bacentaLeaderboard: [],
-    engagementTrend: { direction: 'flat', deltaPoints: 0, windowDays: 21 },
-    ...overrides,
-  };
+function mockFetch(overrides: { sunday?: string; midweek?: string; bacenta?: string; basonta?: string; other?: string; branch?: string; unattributed?: string } = {}) {
+  return jest.fn().mockImplementation((url: string) => {
+    if (url.includes('gatheringCategory=SUNDAY')) return Promise.resolve({ ok: true, json: async () => givingTrendResult({ buckets: [{ ...givingTrendResult().buckets[0], totalAmountMinor: overrides.sunday ?? '100000', byType: { OFFERING: '60000', TITHE: '40000' } }] }) });
+    if (url.includes('gatheringCategory=MIDWEEK')) return Promise.resolve({ ok: true, json: async () => givingTrendResult({ buckets: [{ ...givingTrendResult().buckets[0], totalAmountMinor: overrides.midweek ?? '20000' }] }) });
+    if (url.includes('gatheringCategory=BACENTA_MEETING')) return Promise.resolve({ ok: true, json: async () => givingTrendResult({ buckets: [{ ...givingTrendResult().buckets[0], totalAmountMinor: overrides.bacenta ?? '80000' }] }) });
+    if (url.includes('gatheringCategory=BASONTA_MEETING')) return Promise.resolve({ ok: true, json: async () => givingTrendResult({ buckets: [{ ...givingTrendResult().buckets[0], totalAmountMinor: overrides.basonta ?? '30000' }] }) });
+    if (url.includes('gatheringCategory=OTHER')) return Promise.resolve({ ok: true, json: async () => givingTrendResult({ buckets: [{ ...givingTrendResult().buckets[0], totalAmountMinor: overrides.other ?? '10000' }] }) });
+    if (url.includes('/insights/giving-trend')) return Promise.resolve({ ok: true, json: async () => givingTrendResult({ unattributedAmountMinor: overrides.unattributed ?? '0', buckets: [{ ...givingTrendResult().buckets[0], totalAmountMinor: overrides.branch ?? '150000' }] }) });
+    return Promise.resolve({ ok: true, json: async () => [] });
+  });
 }
 
 function renderPage() {
@@ -65,234 +60,165 @@ function renderPage() {
   );
 }
 
+afterEach(() => jest.clearAllMocks());
+
 /**
- * `[Branch Pastor portal, Finance completion]` Locks in the properties
- * the brief's own "Finance, NOT the Treasurer portal" decision depends
- * on: (1) the real whole-Branch Total Giving figure and its 6-month
- * trend render, sourced from the one endpoint `ASSISTANT_PASTOR`'s
- * `insights.branch_dashboard.read` grant genuinely reaches at BRANCH
- * scope (confirmed live against the running API this pass - see
- * `BranchFinanceOverviewPage.tsx`'s own doc comment); (2) the Bacenta
- * breakdown still renders from the reconciliation endpoint; and (3) not
- * one Treasurer-only operational control is reachable from this page -
- * asserted by name, not merely "no buttons at all."
+ * `[Milestone D — Portal Experiences]` Rebuilt on `useGivingBreakdown` -
+ * see that component's own doc comment for why the prior "no Sunday/
+ * Bacenta/Basonta breakdown is possible" disclosure was stale. Locks in
+ * the properties the "read-only Finance, NOT the Treasurer portal"
+ * decision depends on: (1) real, distinct giving numbers per category;
+ * (2) not one Treasurer-only operational control is reachable from this
+ * page; (3) both real consumers (`ASSISTANT_PASTOR`, `ADMIN`) render it
+ * identically.
  */
-describe('BranchFinanceOverviewPage', () => {
-  afterEach(() => jest.clearAllMocks());
+describe('[Milestone D] BranchFinanceOverviewPage', () => {
+  it.each(['ASSISTANT_PASTOR', 'ADMIN'])('renders five distinct real giving numbers for %s, never fabricated or duplicated', async (role) => {
+    mockUseAuth.mockReturnValue(actorWithRole(role));
+    global.fetch = mockFetch({ sunday: '111100', bacenta: '222200', basonta: '333300', other: '444400' });
 
-  it('renders the real whole-Branch Total Giving figure and its trend from the branch dashboard summary', async () => {
+    renderPage();
+
+    await waitFor(() => expect(screen.getByTestId('branch-finance-breakdown-grid')).toBeInTheDocument());
+    expect(within(screen.getByTestId('metric-sunday-offerings')).getByText('GHS 600.00')).toBeInTheDocument();
+    expect(within(screen.getByTestId('metric-sunday-tithes')).getByText('GHS 400.00')).toBeInTheDocument();
+    expect(within(screen.getByTestId('metric-bacenta-giving')).getByText('GHS 2,222.00')).toBeInTheDocument();
+    expect(within(screen.getByTestId('metric-basonta-giving')).getByText('GHS 3,333.00')).toBeInTheDocument();
+    expect(within(screen.getByTestId('metric-other-giving')).getByText('GHS 4,444.00')).toBeInTheDocument();
+  });
+
+  it('renders the real whole-Branch total for the week as the hero statement', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('ASSISTANT_PASTOR'));
-    global.fetch = jest.fn().mockImplementation((url: string) => {
-      if (url.includes('/insights/branch-dashboard-summary')) {
-        return Promise.resolve({ ok: true, json: async () => branchDashboardSummary({ givingTotalMinor: '52400', givingTrend: 12 }) });
-      }
-      if (url.includes('/bank-deposit-confirmations/reconciliation')) {
-        return Promise.resolve({ ok: true, json: async () => ({ branchId: 'branch-1', weekStartDate: '2026-01-05', rows: [] }) });
-      }
-      return Promise.resolve({ ok: true, json: async () => [] });
-    });
+    global.fetch = mockFetch({ branch: '150000' });
 
     renderPage();
 
-    await waitFor(() => expect(within(screen.getByTestId('branch-finance-total-card')).getByText('GHS 524.00')).toBeInTheDocument());
-    expect(within(screen.getByTestId('branch-finance-total-card')).getByText(/\+12% vs\. last month/)).toBeInTheDocument();
+    await waitFor(() => expect(within(screen.getByTestId('branch-finance-total-card')).getByText('GHS 1,500.00')).toBeInTheDocument());
   });
 
-  it('renders the real 6-month Giving Trend chart from the branch dashboard summary', async () => {
+  it('discloses unattributed giving explicitly rather than silently dropping it', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('ADMIN'));
+    global.fetch = mockFetch({ unattributed: '5000' });
+
+    renderPage();
+
+    await waitFor(() => expect(screen.getByTestId('branch-finance-unattributed-card')).toBeInTheDocument());
+    expect(screen.getByTestId('branch-finance-unattributed-card')).toHaveTextContent('GHS 50.00');
+  });
+
+  it('does not render the unattributed disclosure card when there is nothing to disclose', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('ASSISTANT_PASTOR'));
-    global.fetch = jest.fn().mockImplementation((url: string) => {
-      if (url.includes('/insights/branch-dashboard-summary')) {
-        return Promise.resolve({
-          ok: true,
-          json: async () =>
-            branchDashboardSummary({
-              growthSeries: {
-                attendance: [],
-                membership: [],
-                giving: [
-                  { label: 'Mar', value: 0 },
-                  { label: 'Apr', value: 10000 },
-                  { label: 'Aug', value: 52400 },
-                ],
-              },
-            }),
-        });
-      }
-      if (url.includes('/bank-deposit-confirmations/reconciliation')) {
-        return Promise.resolve({ ok: true, json: async () => ({ branchId: 'branch-1', weekStartDate: '2026-01-05', rows: [] }) });
-      }
-      return Promise.resolve({ ok: true, json: async () => [] });
-    });
+    global.fetch = mockFetch({ unattributed: '0' });
 
     renderPage();
 
-    await waitFor(() => expect(screen.getByTestId('branch-finance-trend-chart')).toBeInTheDocument());
-    const chart = within(screen.getByTestId('branch-finance-trend-chart'));
-    expect(chart.getByText('Mar')).toBeInTheDocument();
-    expect(chart.getByText('Aug')).toBeInTheDocument();
-    expect(chart.getByText('GHS 524')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByTestId('branch-finance-breakdown-grid')).toBeInTheDocument());
+    expect(screen.queryByTestId('branch-finance-unattributed-card')).not.toBeInTheDocument();
   });
 
-  it('fetches the current week\'s reconciliation and renders the per-Bacenta breakdown', async () => {
-    mockUseAuth.mockReturnValue(actorWithRole('ASSISTANT_PASTOR', { clusterBacentaIds: ['bacenta-1', 'bacenta-2'] }));
-    const fetchMock = jest.fn().mockImplementation((url: string) => {
-      if (url.includes('/insights/branch-dashboard-summary')) {
-        return Promise.resolve({ ok: true, json: async () => branchDashboardSummary() });
-      }
-      if (url.includes('/bank-deposit-confirmations/reconciliation')) {
-        return Promise.resolve({
-          ok: true,
-          json: async () => ({
-            branchId: 'branch-1',
-            weekStartDate: '2026-01-05',
-            rows: [
-              reconciliationRow({ groupId: 'bacenta-1', verifiedTotalMinor: '50000', matched: false, depositedAmountMinor: null }),
-              reconciliationRow({ groupId: 'bacenta-2', verifiedTotalMinor: '30000', matched: true, depositedAmountMinor: '30000', bankReference: 'SLIP-1' }),
-            ],
-          }),
-        });
-      }
-      if (url.includes('/groups/bacenta-1')) {
-        return Promise.resolve({ ok: true, json: async () => ({ id: 'bacenta-1', name: 'Grace Bacenta', type: 'PASTORAL_CARE' }) });
-      }
-      if (url.includes('/groups/bacenta-2')) {
-        return Promise.resolve({ ok: true, json: async () => ({ id: 'bacenta-2', name: 'Faith Bacenta', type: 'PASTORAL_CARE' }) });
-      }
-      return Promise.resolve({ ok: true, json: async () => [] });
-    });
-    global.fetch = fetchMock;
-
-    renderPage();
-
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('/bank-deposit-confirmations/reconciliation'), expect.anything()));
-    await waitFor(() => expect(screen.getByTestId('branch-finance-breakdown-table')).toBeInTheDocument());
-
-    const table = within(screen.getByTestId('branch-finance-breakdown-table'));
-    await waitFor(() => expect(table.getByText('Grace Bacenta')).toBeInTheDocument());
-    expect(table.getByText('Faith Bacenta')).toBeInTheDocument();
-    expect(table.getByText('GHS 500.00')).toBeInTheDocument();
-    expect(table.getByText('GHS 300.00')).toBeInTheDocument();
-    expect(table.getByText('Not yet deposited')).toBeInTheDocument();
-    expect(table.getByText('Deposited & matched')).toBeInTheDocument();
-
-    // Bacenta-only subtotal (500 + 300), distinct from and never equated
-    // with the whole-Branch Total Giving figure above.
-    expect(screen.getByText('Bacenta total this week: GHS 800.00')).toBeInTheDocument();
-  });
-
-  it('discloses its scope honestly rather than fabricating type- or gathering-differentiated giving figures', async () => {
+  it('shows a retryable ErrorState, never fabricated numbers, when the giving breakdown fails to load', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('ASSISTANT_PASTOR'));
-    global.fetch = jest.fn().mockImplementation((url: string) => {
-      if (url.includes('/insights/branch-dashboard-summary')) {
-        return Promise.resolve({ ok: true, json: async () => branchDashboardSummary() });
-      }
-      if (url.includes('/bank-deposit-confirmations/reconciliation')) {
-        return Promise.resolve({ ok: true, json: async () => ({ branchId: 'branch-1', weekStartDate: '2026-01-05', rows: [] }) });
-      }
-      return Promise.resolve({ ok: true, json: async () => [] });
-    });
+    global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 500, json: async () => ({ message: 'Internal error' }) });
 
     renderPage();
 
-    await waitFor(() => expect(screen.getByTestId('branch-finance-scope-note')).toBeInTheDocument());
-    const note = screen.getByTestId('branch-finance-scope-note');
-    expect(note).toHaveTextContent(/not yet broken out by type/i);
-    expect(note).toHaveTextContent(/Sunday Service giving cannot currently be distinguished/i);
+    await waitFor(() => expect(screen.getByText("Couldn't load this week's giving")).toBeInTheDocument());
+    expect(screen.queryByTestId('branch-finance-breakdown-grid')).not.toBeInTheDocument();
   });
 
-  it('shows an empty state, not a fabricated zero, when no Bacenta has a verified figure yet', async () => {
+  it('exposes zero operational controls for ADMIN - no mutation action of any kind is reachable from this page', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('ADMIN'));
+    global.fetch = mockFetch();
+
+    renderPage();
+
+    await waitFor(() => expect(screen.getByTestId('branch-finance-breakdown-grid')).toBeInTheDocument());
+
+    const ANY_CONTROL_NAMES = [/verify/i, /flag/i, /escalate/i, /reconcile/i, /approve/i, /reject/i, /^pay$/i, /confirm deposit/i, /record transaction/i, /request expense/i];
+    const buttons = screen.queryAllByRole('button');
+    for (const pattern of ANY_CONTROL_NAMES) {
+      expect(buttons.some((button) => pattern.test(button.textContent ?? ''))).toBe(false);
+    }
+    expect(screen.queryAllByTestId('expense-request-form')).toHaveLength(0);
+    expect(screen.queryByTestId('branch-finance-expense-queue-card')).not.toBeInTheDocument();
+  });
+
+  /** `[Milestone D — Portal Experiences, Portal 6: Assistant Pastor]`
+   * `ASSISTANT_PASTOR` genuinely holds `stewardship.expense.request`/
+   * `.approve`/`.receipt`/`.read` at CLUSTER scope (traced against
+   * `permission-matrix.ts`, not assumed) - "Treasurer-only" was the wrong
+   * frame for this role all along. This locks in the corrected boundary:
+   * real Request/Approve/Reject controls now render for this role, but
+   * the genuinely Treasurer-only ones (Verify/Flag/Escalate/Reconcile/
+   * Pay/Confirm Deposit/Record Transaction - none of which this role
+   * holds a grant for) still never appear. */
+  it('exposes the real Request/Approve/Reject expense controls for ASSISTANT_PASTOR, but none of the genuinely Treasurer-only ones', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('ASSISTANT_PASTOR'));
-    global.fetch = jest.fn().mockImplementation((url: string) => {
-      if (url.includes('/insights/branch-dashboard-summary')) {
-        return Promise.resolve({ ok: true, json: async () => branchDashboardSummary() });
-      }
-      if (url.includes('/bank-deposit-confirmations/reconciliation')) {
-        return Promise.resolve({ ok: true, json: async () => ({ branchId: 'branch-1', weekStartDate: '2026-01-05', rows: [] }) });
-      }
-      return Promise.resolve({ ok: true, json: async () => [] });
-    });
+    global.fetch = mockFetch();
 
     renderPage();
 
-    await waitFor(() => expect(screen.getAllByText('No verified giving recorded yet').length).toBeGreaterThan(0));
-  });
+    await waitFor(() => expect(screen.getByTestId('branch-finance-expense-queue-card')).toBeInTheDocument());
+    expect(screen.getByRole('button', { name: 'Request expense' })).toBeInTheDocument();
 
-  it('shows a retryable error state when the Total Giving request fails, independently of the Bacenta breakdown', async () => {
-    mockUseAuth.mockReturnValue(actorWithRole('ASSISTANT_PASTOR'));
-    global.fetch = jest.fn().mockImplementation((url: string) => {
-      if (url.includes('/insights/branch-dashboard-summary')) {
-        return Promise.reject(new Error('network unavailable in test'));
-      }
-      if (url.includes('/bank-deposit-confirmations/reconciliation')) {
-        return Promise.resolve({ ok: true, json: async () => ({ branchId: 'branch-1', weekStartDate: '2026-01-05', rows: [] }) });
-      }
-      return Promise.resolve({ ok: true, json: async () => [] });
-    });
-
-    renderPage();
-
-    await waitFor(() => expect(screen.getByText("Couldn't load Total Giving")).toBeInTheDocument());
-  });
-
-  it('shows a retryable error state when the reconciliation request fails, independently of Total Giving', async () => {
-    mockUseAuth.mockReturnValue(actorWithRole('ASSISTANT_PASTOR'));
-    global.fetch = jest.fn().mockImplementation((url: string) => {
-      if (url.includes('/insights/branch-dashboard-summary')) {
-        return Promise.resolve({ ok: true, json: async () => branchDashboardSummary() });
-      }
-      if (url.includes('/bank-deposit-confirmations/reconciliation')) {
-        return Promise.reject(new Error('network unavailable in test'));
-      }
-      return Promise.resolve({ ok: true, json: async () => [] });
-    });
-
-    renderPage();
-
-    await waitFor(() => expect(screen.getByText("Couldn't load Branch giving totals")).toBeInTheDocument());
-  });
-
-  it('exposes zero Treasurer-only operational controls - no mutation action is reachable from this page', async () => {
-    mockUseAuth.mockReturnValue(actorWithRole('ASSISTANT_PASTOR', { clusterBacentaIds: ['bacenta-1'] }));
-    global.fetch = jest.fn().mockImplementation((url: string) => {
-      if (url.includes('/insights/branch-dashboard-summary')) {
-        return Promise.resolve({ ok: true, json: async () => branchDashboardSummary() });
-      }
-      if (url.includes('/bank-deposit-confirmations/reconciliation')) {
-        return Promise.resolve({
-          ok: true,
-          json: async () => ({
-            branchId: 'branch-1',
-            weekStartDate: '2026-01-05',
-            rows: [reconciliationRow({ groupId: 'bacenta-1' })],
-          }),
-        });
-      }
-      if (url.includes('/groups/bacenta-1')) {
-        return Promise.resolve({ ok: true, json: async () => ({ id: 'bacenta-1', name: 'Grace Bacenta', type: 'PASTORAL_CARE' }) });
-      }
-      return Promise.resolve({ ok: true, json: async () => [] });
-    });
-
-    renderPage();
-
-    await waitFor(() => expect(screen.getByText('Grace Bacenta')).toBeInTheDocument());
-
-    const TREASURER_ONLY_CONTROL_NAMES = [
-      /verify/i,
-      /flag/i,
-      /escalate/i,
-      /reconcile/i,
-      /approve/i,
-      /reject/i,
-      /^pay$/i,
-      /confirm deposit/i,
-      /record transaction/i,
-      /request expense/i,
-    ];
+    const TREASURER_ONLY_CONTROL_NAMES = [/verify/i, /flag/i, /escalate/i, /reconcile/i, /^pay$/i, /confirm deposit/i, /record transaction/i];
     const buttons = screen.queryAllByRole('button');
     for (const pattern of TREASURER_ONLY_CONTROL_NAMES) {
       expect(buttons.some((button) => pattern.test(button.textContent ?? ''))).toBe(false);
     }
-    expect(screen.queryAllByRole('form')).toHaveLength(0);
+  });
+
+  it('requests an expense via the reveal form, then refetches and shows it in the queue', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('ASSISTANT_PASTOR'));
+    let expenses: unknown[] = [];
+    global.fetch = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
+      if (url.includes('/expenses') && init?.method === 'POST') {
+        const body = JSON.parse(init.body as string) as Record<string, unknown>;
+        expenses = [{ id: 'exp-new', requestedByPersonId: 'person-1', currentState: 'REQUESTED', currency: 'GHS', createdAt: new Date().toISOString(), ...body }];
+        return Promise.resolve({ ok: true, json: async () => expenses[0] });
+      }
+      if (url.endsWith('/expenses')) return Promise.resolve({ ok: true, json: async () => expenses });
+      if (url.includes('/insights/giving-trend')) return mockFetch()(url);
+      return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
+    });
+
+    renderPage();
+    await waitFor(() => expect(screen.getByText('No Expenses')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByRole('button', { name: 'Request expense' }));
+    fireEvent.change(screen.getByLabelText('Amount (GHS)'), { target: { value: '75.50' } });
+    fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'Transport for outreach' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Submit request' }));
+
+    await waitFor(() => expect(screen.getByText('Transport for outreach')).toBeInTheDocument());
+    expect(screen.queryByTestId('expense-request-form')).not.toBeInTheDocument();
+  });
+
+  it('approves an expense and refetches the queue', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('ASSISTANT_PASTOR'));
+    let currentState = 'REQUESTED';
+    global.fetch = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
+      if (url.includes('/expenses/exp-1/approve') && init?.method === 'POST') {
+        currentState = 'APPROVED';
+        return Promise.resolve({ ok: true, json: async () => ({ id: 'exp-1', currentState }) });
+      }
+      if (url.endsWith('/expenses')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => [{ id: 'exp-1', description: 'Transport', category: null, amountMinor: '7550', currency: 'GHS', requestedByPersonId: 'person-2', currentState, createdAt: new Date().toISOString() }],
+        });
+      }
+      if (url.includes('/people/person-2')) return Promise.resolve({ ok: true, json: async () => ({ id: 'person-2', firstName: 'Kofi', lastName: 'Mensah' }) });
+      if (url.includes('/insights/giving-trend')) return mockFetch()(url);
+      return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
+    });
+
+    renderPage();
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Approve expense: Transport' })).toBeInTheDocument());
+
+    fireEvent.click(screen.getByRole('button', { name: 'Approve expense: Transport' }));
+
+    await waitFor(() => expect(screen.getByText('APPROVED')).toBeInTheDocument());
+    expect(screen.queryByRole('button', { name: 'Approve expense: Transport' })).not.toBeInTheDocument();
   });
 });

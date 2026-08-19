@@ -162,27 +162,152 @@ describe('InsightsPage', () => {
     await waitFor(() => expect(screen.getByText('Nothing is overdue across your cluster right now.')).toBeInTheDocument());
   });
 
-  it('points a Bacenta Leader to the mobile app instead of a web view', () => {
-    mockUseAuth.mockReturnValue(actorWithRole('BACENTA_LEADER'));
-
-    renderPage();
-
-    expect(screen.getByText('Your Bacenta pulse view lives on mobile')).toBeInTheDocument();
-  });
-
-  it('points a Basonta Leader to the mobile app too', () => {
-    mockUseAuth.mockReturnValue(actorWithRole('BASONTA_LEADER'));
-
-    renderPage();
-
-    expect(screen.getByText('Your Bacenta pulse view lives on mobile')).toBeInTheDocument();
-  });
-
   it('shows a not-available message for a role with no Insights scope', () => {
-    mockUseAuth.mockReturnValue(actorWithRole('TREASURER'));
+    mockUseAuth.mockReturnValue(actorWithRole('WORKER'));
 
     renderPage();
 
     expect(screen.getByText('Insights — not available for this role')).toBeInTheDocument();
+  });
+
+  /** `[Milestone D — Portal Experiences, Portal 1: Branch Treasurer]`
+   * `TREASURER` previously fell to the generic "not available" stub -
+   * now renders `TreasurerInsightsView`, real `GET /insights/giving-trend`
+   * data. */
+  it('renders the giving trend chart and real totals for TREASURER', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('TREASURER'));
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        from: '2026-03-01T00:00:00.000Z',
+        to: '2026-09-01T00:00:00.000Z',
+        buckets: [
+          { bucketStart: '2026-07-01T00:00:00.000Z', bucketEnd: '2026-08-01T00:00:00.000Z', label: 'Jul 2026', totalAmountMinor: '100000', byType: { OFFERING: '60000', TITHE: '40000' } },
+          { bucketStart: '2026-08-01T00:00:00.000Z', bucketEnd: '2026-09-01T00:00:00.000Z', label: 'Aug 2026', totalAmountMinor: '150000', byType: { OFFERING: '90000', TITHE: '60000' } },
+        ],
+        unattributedAmountMinor: '0',
+        unmappedGatheringTypes: [],
+      }),
+    });
+
+    renderPage();
+
+    await waitFor(() => expect(screen.getByTestId('treasurer-insights-line-chart')).toBeInTheDocument());
+    expect(screen.getByTestId('metric-insights-total')).toHaveTextContent('GHS 2,500.00');
+    expect(screen.getByTestId('metric-insights-latest')).toHaveTextContent('GHS 1,500.00');
+    expect(screen.getByTestId('metric-insights-direction')).toHaveTextContent('Increasing');
+    expect(screen.getByTestId('metric-insights-growth')).toHaveTextContent('+50%');
+  });
+
+  /** `[Milestone D — Portal Experiences, Portal 3: Bacenta Leader]`
+   * `BACENTA_LEADER` previously fell to the shared "lives on mobile" stub -
+   * now renders `BacentaLeaderInsightsView`, real `GET
+   * /insights/attendance-trend` data (the default "Attendance" metric
+   * tab), `groupId`-scoped to this leader's own Bacenta. */
+  it('renders the attendance trend chart for BACENTA_LEADER, scoped to their own Bacenta', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('BACENTA_LEADER', { bacentaId: 'bacenta-1' }));
+    const fetchMock = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        from: '2026-03-01T00:00:00.000Z',
+        to: '2026-09-01T00:00:00.000Z',
+        buckets: [
+          { bucketStart: '2026-07-01T00:00:00.000Z', bucketEnd: '2026-08-01T00:00:00.000Z', label: 'Jul 2026', presentCount: 10 },
+          { bucketStart: '2026-08-01T00:00:00.000Z', bucketEnd: '2026-09-01T00:00:00.000Z', label: 'Aug 2026', presentCount: 15 },
+        ],
+        byGroup: [],
+        unmappedGatheringTypes: [],
+      }),
+    });
+    global.fetch = fetchMock;
+
+    renderPage();
+
+    await waitFor(() => expect(screen.getByTestId('bacenta-attendance-line-chart')).toBeInTheDocument());
+    expect(screen.getByTestId('metric-attendance-latest')).toHaveTextContent('15');
+    expect(screen.getByTestId('metric-attendance-trend')).toHaveTextContent('Increasing');
+    const [url] = fetchMock.mock.calls[0] as [string];
+    expect(url).toContain('groupId=bacenta-1');
+  });
+
+  /** `[Milestone D — Portal Experiences, Portal 4: Basonta Leader]`
+   * `BASONTA_LEADER` previously fell to the shared "lives on mobile" stub -
+   * now renders `BasontaLeaderInsightsView`, real `GET
+   * /insights/attendance-trend` data, `groupId`-scoped to this leader's
+   * own Basonta. */
+  it('renders the attendance trend chart for BASONTA_LEADER, scoped to their own Basonta', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('BASONTA_LEADER', { basontaId: 'basonta-1' }));
+    const fetchMock = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        from: '2026-03-01T00:00:00.000Z',
+        to: '2026-09-01T00:00:00.000Z',
+        buckets: [
+          { bucketStart: '2026-07-01T00:00:00.000Z', bucketEnd: '2026-08-01T00:00:00.000Z', label: 'Jul 2026', presentCount: 6 },
+          { bucketStart: '2026-08-01T00:00:00.000Z', bucketEnd: '2026-09-01T00:00:00.000Z', label: 'Aug 2026', presentCount: 9 },
+        ],
+        byGroup: [],
+        unmappedGatheringTypes: [],
+      }),
+    });
+    global.fetch = fetchMock;
+
+    renderPage();
+
+    await waitFor(() => expect(screen.getByTestId('basonta-attendance-line-chart')).toBeInTheDocument());
+    expect(screen.getByTestId('metric-attendance-latest')).toHaveTextContent('9');
+    expect(screen.getByTestId('metric-attendance-trend')).toHaveTextContent('Increasing');
+    const [url] = fetchMock.mock.calls[0] as [string];
+    expect(url).toContain('groupId=basonta-1');
+  });
+
+  /** `[Milestone D — Portal Experiences, Portal 7: Council]`
+   * `COUNCIL_OVERSEER` previously fell to the shared "not available for
+   * this role" stub - now renders `CouncilInsightsView`, real
+   * `council=true` giving-trend data (the default "Giving" metric),
+   * one panel per real Branch in the actor's own Council. */
+  it('renders the giving trend chart for COUNCIL_OVERSEER, council=true scoped', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('COUNCIL_OVERSEER', { branchName: 'Headquarters' }));
+    const fetchMock = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        councilBranches: [
+          {
+            branchId: 'branch-1',
+            from: '2026-03-01T00:00:00.000Z',
+            to: '2026-09-01T00:00:00.000Z',
+            buckets: [
+              { bucketStart: '2026-07-01T00:00:00.000Z', bucketEnd: '2026-08-01T00:00:00.000Z', label: 'Jul 2026', totalAmountMinor: '100000', byType: {} },
+              { bucketStart: '2026-08-01T00:00:00.000Z', bucketEnd: '2026-09-01T00:00:00.000Z', label: 'Aug 2026', totalAmountMinor: '150000', byType: {} },
+            ],
+            unattributedAmountMinor: '0',
+            unmappedGatheringTypes: [],
+          },
+        ],
+      }),
+    });
+    global.fetch = fetchMock;
+
+    renderPage();
+
+    await waitFor(() => expect(screen.getByTestId('council-insights-branch-card')).toBeInTheDocument());
+    expect(screen.getByText('Headquarters')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByTestId('council-giving-line-chart')).toBeInTheDocument());
+    expect(screen.getByTestId('metric-council-giving-latest')).toHaveTextContent('GHS 1,500.00');
+    const [url] = fetchMock.mock.calls[0] as [string];
+    expect(url).toContain('council=true');
+  });
+
+  it('offers only the Giving metric for COUNCIL_TREASURER - no metric selector, since it is the only grant this role holds', async () => {
+    mockUseAuth.mockReturnValue(actorWithRole('COUNCIL_TREASURER', { branchName: 'Headquarters' }));
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ councilBranches: [{ branchId: 'branch-1', from: '', to: '', buckets: [], unattributedAmountMinor: '0', unmappedGatheringTypes: [] }] }),
+    });
+
+    renderPage();
+
+    await waitFor(() => expect(screen.getByTestId('council-insights-branch-card')).toBeInTheDocument());
+    expect(screen.queryByRole('group', { name: 'Metric' })).not.toBeInTheDocument();
   });
 });

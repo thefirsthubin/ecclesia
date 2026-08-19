@@ -2,8 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { ThemeProvider, ToastProvider } from '@ecclesia/ui-web';
 
 import { Route, RouterProvider, Routes } from '../../router/router';
-import { __resetPeopleListPagePersistedStateForTests } from './PeopleListPage';
-import { BranchPeopleWorkspace } from './BranchPeopleWorkspace';
+import { PeopleDirectoryWorkspace } from './PeopleDirectoryWorkspace';
 
 const mockUseAuth = jest.fn();
 jest.mock('../../auth/AuthContext', () => ({
@@ -15,7 +14,7 @@ function actor(extra: Record<string, unknown> = {}) {
     state: {
       status: 'authenticated',
       accessToken: 'token',
-      actor: { personId: 'staff-1', role: 'ASSISTANT_PASTOR', branchId: 'branch-1', clusterBacentaIds: ['bacenta-1'], ...extra },
+      actor: { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1', branchName: 'River of Life HQ', ...extra },
     },
   };
 }
@@ -38,20 +37,36 @@ function person(overrides: Record<string, unknown> = {}) {
   };
 }
 
+function group(overrides: Record<string, unknown> = {}) {
+  return {
+    id: 'bacenta-1',
+    branchId: 'branch-1',
+    type: 'PASTORAL_CARE',
+    name: 'Grace Bacenta',
+    meetingSchedule: null,
+    meetingLocation: null,
+    category: null,
+    lifecycleStatus: 'ACTIVE',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    ...overrides,
+  };
+}
+
 function mockFetch() {
   return jest.fn().mockImplementation((url: string) => {
     if (url.includes('/people/person-1/group-memberships')) return Promise.resolve({ ok: true, json: async () => [] });
     if (url.includes('/people/person-1/role-assignments')) return Promise.resolve({ ok: true, json: async () => [] });
     if (url.includes('/people/person-1/follow-up-tasks')) return Promise.resolve({ ok: true, json: async () => [] });
     if (url.includes('/people/person-1')) return Promise.resolve({ ok: true, json: async () => person() });
-    if (url.includes('/people?')) return Promise.resolve({ ok: true, json: async () => [person()] });
+    if (url.includes('/groups?type=PASTORAL_CARE')) return Promise.resolve({ ok: true, json: async () => [group()] });
+    if (url.includes('/potentials')) return Promise.resolve({ ok: true, json: async () => [] });
+    if (url.includes('/people?groupId=')) return Promise.resolve({ ok: true, json: async () => [person()] });
+    if (url.includes('/people')) return Promise.resolve({ ok: true, json: async () => [person()] });
     return Promise.resolve({ ok: true, json: async () => [] });
   });
 }
 
-/** Registers `/people` and `/people/:id` exactly as `app.tsx` does, both
- * pointed at the same `BranchPeopleWorkspace` instance - the real
- * behavior under test, not a synthetic shortcut. */
 function renderAt(startPath: string) {
   window.history.pushState({}, '', startPath);
   return render(
@@ -59,8 +74,8 @@ function renderAt(startPath: string) {
       <ToastProvider>
         <RouterProvider>
           <Routes>
-            <Route path="/people" element={<BranchPeopleWorkspace />} />
-            <Route path="/people/:id" element={<BranchPeopleWorkspace />} />
+            <Route path="/people" element={<PeopleDirectoryWorkspace />} />
+            <Route path="/people/:id" element={<PeopleDirectoryWorkspace />} />
           </Routes>
         </RouterProvider>
       </ToastProvider>
@@ -69,7 +84,6 @@ function renderAt(startPath: string) {
 }
 
 beforeEach(() => {
-  __resetPeopleListPagePersistedStateForTests();
   mockUseAuth.mockReturnValue(actor());
 });
 
@@ -78,54 +92,48 @@ afterEach(() => {
   window.history.pushState({}, '', '/');
 });
 
-/**
- * `[Whole Ecclesia layout rebalance, Branch Pastor People redesign]`
- * "When the Branch Pastor clicks a person's name, open the profile as a
- * side panel - preserve the list underneath, allow closing without
- * losing filters/search state, and a direct profile URL should still
- * work." Every assertion below traces to one of those explicit
- * requirements.
- */
-describe('BranchPeopleWorkspace', () => {
-  it('opens the member profile drawer, with the People list still visible underneath, when a row is clicked', async () => {
+/** `[Milestone D — Portal Experiences]` The Bacenta-directory counterpart
+ * to `PeopleListWorkspace.spec.tsx` - same drawer-not-new-page contract,
+ * proven against the Bacenta-cards list shape instead of the flat table. */
+describe('[Milestone D] PeopleDirectoryWorkspace', () => {
+  it('opens the member profile drawer, with the Bacenta directory still visible underneath, when a person row is clicked', async () => {
     global.fetch = mockFetch();
     renderAt('/people');
 
-    await waitFor(() => expect(screen.getByRole('link', { name: /Ama Owusu/ })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByTestId('bacenta-card-grid')).toBeInTheDocument());
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 
+    // Open the Bacenta roster, then click into the member's profile.
+    fireEvent.click(screen.getByTestId('bacenta-card-bacenta-1'));
+    await waitFor(() => expect(screen.getByTestId('selected-bacenta-roster-card')).toBeInTheDocument());
     fireEvent.click(screen.getByRole('link', { name: /Ama Owusu/ }));
 
     await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
     expect(screen.getByText('Member Profile')).toBeInTheDocument();
-    // The list is still mounted underneath, not replaced by a new page.
-    expect(screen.getByRole('link', { name: /Ama Owusu/ })).toBeInTheDocument();
-    expect(screen.getByRole('searchbox', { name: 'Search by name' })).toBeInTheDocument();
+    // The directory is still mounted underneath, not replaced by a new page.
+    expect(screen.getByTestId('bacenta-card-grid')).toBeInTheDocument();
   });
 
-  it('loads a direct profile URL with the drawer already open (deep-linking), without losing the list', async () => {
+  it('loads a direct profile URL with the drawer already open (deep-linking), without losing the directory', async () => {
     global.fetch = mockFetch();
     renderAt('/people/person-1');
 
     await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
-    expect(screen.getByRole('searchbox', { name: 'Search by name' })).toBeInTheDocument();
+    expect(screen.getByTestId('bacenta-card-grid')).toBeInTheDocument();
   });
 
-  it('closes the drawer without clearing the search text underneath', async () => {
+  it('closes the drawer via the scrim without navigating away from the directory', async () => {
     global.fetch = mockFetch();
     renderAt('/people');
 
-    const search = await screen.findByRole('searchbox', { name: 'Search by name' });
-    fireEvent.change(search, { target: { value: 'Ama' } });
-    expect(search).toHaveValue('Ama');
-
+    await waitFor(() => expect(screen.getByTestId('bacenta-card-grid')).toBeInTheDocument());
+    fireEvent.click(screen.getByTestId('bacenta-card-bacenta-1'));
     fireEvent.click(await screen.findByRole('link', { name: /Ama Owusu/ }));
     await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
 
-    // `Drawer`'s own scrim click closes it (dismissible by default).
     fireEvent.click(screen.getByTestId('member-profile-drawer-scrim'));
 
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
-    expect(screen.getByRole('searchbox', { name: 'Search by name' })).toHaveValue('Ama');
+    expect(screen.getByTestId('bacenta-card-grid')).toBeInTheDocument();
   });
 });
