@@ -8,6 +8,7 @@ import { PeopleModule } from '../people/people.module';
 import { AttendanceRecordController } from './controllers/attendance-record.controller';
 import { GatheringController } from './controllers/gathering.controller';
 import { GatheringSeriesController } from './controllers/gathering-series.controller';
+import { GatheringTypeCategoryMappingController } from './controllers/gathering-type-category-mapping.controller';
 import { VisitorIntakeController } from './controllers/visitor-intake.controller';
 import { AttendanceResourceContextGuard } from './guards/attendance-resource-context.guard';
 import {
@@ -19,15 +20,18 @@ import {
   GatheringSeriesCreateResourceContextGuard,
   GatheringSeriesResourceContextGuard,
 } from './guards/gathering-series-resource-context.guard';
+import { GatheringTypeCategoryMappingResourceContextGuard } from './guards/gathering-type-category-mapping-resource-context.guard';
 import { VisitorIntakeResourceContextGuard } from './guards/visitor-intake-resource-context.guard';
 import { AttendanceRecordRepository } from './repositories/attendance-record.repository';
 import { GatheringRepository } from './repositories/gathering.repository';
 import { GatheringSeriesRepository } from './repositories/gathering-series.repository';
+import { GatheringTypeCategoryMappingRepository } from './repositories/gathering-type-category-mapping.repository';
 import { VisitorIntakeRepository } from './repositories/visitor-intake.repository';
 import { AttendanceRecordService } from './services/attendance-record.service';
 import { GatheringService } from './services/gathering.service';
 import { GatheringSeriesService } from './services/gathering-series.service';
 import { GatheringScopeService } from './services/gathering-scope.service';
+import { GatheringTypeCategoryService } from './services/gathering-type-category.service';
 import { VisitorIntakeService } from './services/visitor-intake.service';
 
 /**
@@ -60,17 +64,35 @@ import { VisitorIntakeService } from './services/visitor-intake.service';
  */
 @Module({
   imports: [DatabaseModule, RbacPlatformModule, EventsModule, PeopleModule, PastoralCareModule],
-  controllers: [GatheringSeriesController, GatheringController, AttendanceRecordController, VisitorIntakeController],
+  // `[Milestone C]` `GatheringTypeCategoryMappingController`'s literal
+  // `/gatherings/type-category-mappings` route must be registered before
+  // `GatheringController`'s `/gatherings/:id` - Nest resolves routes in
+  // controller-registration order, and a `:id` wildcard registered first
+  // swallows a later-registered literal segment under the same prefix
+  // (confirmed live: `GET /gatherings/type-category-mappings` 500'd,
+  // `GatheringResourceContextGuard` tried to `findUnique({ id:
+  // 'type-category-mappings' })`, a real cross-controller instance of the
+  // same route-ordering hazard this codebase has already hit once before,
+  // within a single controller's own route list).
+  controllers: [
+    GatheringTypeCategoryMappingController,
+    GatheringSeriesController,
+    GatheringController,
+    AttendanceRecordController,
+    VisitorIntakeController,
+  ],
   providers: [
     GatheringSeriesRepository,
     GatheringRepository,
     AttendanceRecordRepository,
     VisitorIntakeRepository,
+    GatheringTypeCategoryMappingRepository,
     GatheringSeriesService,
     GatheringService,
     GatheringScopeService,
     AttendanceRecordService,
     VisitorIntakeService,
+    GatheringTypeCategoryService,
     GatheringSeriesCreateResourceContextGuard,
     GatheringSeriesResourceContextGuard,
     GatheringCreateResourceContextGuard,
@@ -78,7 +100,15 @@ import { VisitorIntakeService } from './services/visitor-intake.service';
     GatheringListResourceContextGuard,
     AttendanceResourceContextGuard,
     VisitorIntakeResourceContextGuard,
+    GatheringTypeCategoryMappingResourceContextGuard,
   ],
-  exports: [GatheringScopeService, AttendanceRecordService],
+  // `[Milestone C: Portal Read Models + Analytics]` `GatheringTypeCategoryService`
+  // is also exported - `AttendanceTrendService`/`GivingTrendService`
+  // (`apps/api/src/modules/insights`/`stewardship`) both need
+  // `typesForCategory` to resolve which configured Gathering type strings
+  // a requested category means, the same "small, purpose-built public
+  // method" cross-module pattern `AttendanceRecordService`'s own export
+  // already establishes.
+  exports: [GatheringScopeService, AttendanceRecordService, GatheringTypeCategoryService],
 })
 export class GatheringsModule {}

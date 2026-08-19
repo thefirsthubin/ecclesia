@@ -34,6 +34,14 @@ import { OutreachService } from './services/outreach.service';
  * (`OutreachContactService.promote`'s lazy-Person-creation call, reusing
  * FR-PPL-02's duplicate detection rather than reimplementing it) - People
  * needs nothing from Outreach, so there is no cycle to break.
+ *
+ * `[Milestone C.1.2: Outreach Analytics]` Exports `OutreachService`/
+ * `OutreachContactService` - the first time this module exports
+ * anything. `OutreachConversionService` (`apps/api/src/modules/insights`)
+ * needs `countByBranch`/`countByGroups`/`listForConversion` for the
+ * conversion read model, the same "small, purpose-built public method"
+ * cross-module pattern every other bounded-context module's own exports
+ * already establish.
  */
 @Module({
   imports: [DatabaseModule, RbacPlatformModule, PeopleModule],
@@ -49,5 +57,6 @@ import { OutreachService } from './services/outreach.service';
     OutreachContactCreateResourceContextGuard,
     OutreachContactResourceContextGuard,
   ],
+  exports: [OutreachService, OutreachContactService],
 })
 export class OutreachModule {}

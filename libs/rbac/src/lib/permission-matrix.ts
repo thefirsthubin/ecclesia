@@ -450,11 +450,26 @@ const BASE_MATRIX: PermissionRule[] = [
     reason: "PRD §17.3 - own Bacenta's offerings",
   },
   {
+    // `[Milestone C: Portal Read Models + Analytics]` Phase 1 decision #7
+    // - Basonta Leader gains the exact parity with Bacenta Leader this
+    // milestone's own audit flagged as a confirmed, real asymmetry (no
+    // data-model gap - `FinancialTransaction.sourceGroupId` already
+    // supports a MINISTRY-type group identically to a PASTORAL_CARE one;
+    // only this permission-matrix row was missing). Every other scope
+    // restriction on this action is unchanged - Basonta Leader still
+    // cannot verify/reconcile, same as Bacenta Leader below.
+    role: 'BASONTA_LEADER',
+    action: 'stewardship.transaction.record',
+    effect: 'ALLOW',
+    scope: 'OWN_GROUP',
+    reason: '[Milestone C] Parity with BACENTA_LEADER - a Basonta meeting\'s own giving can now be recorded by its own leader, the same authority a Bacenta Leader already had for their own group.',
+  },
+  {
     role: 'TREASURER',
     action: 'stewardship.transaction.record',
     effect: 'ALLOW',
     scope: 'SELF',
-    reason: 'PRD §17.3 - individual Mobile Money entries only (Horizon 2)',
+    reason: 'PRD §17.3 - individual Mobile Money entries only (Horizon 2). [Milestone C] Deliberately NOT widened beyond SELF - Phase 1 decision #6: Treasurer stays SELF-scoped for recording; Bacenta/Basonta leaders remain responsible for their own group\'s giving.',
   },
   {
     role: 'MEMBER',
@@ -485,6 +500,21 @@ const BASE_MATRIX: PermissionRule[] = [
   // `.read` explicitly. See STEWARDSHIP_DESIGN_NOTES.md.
   { role: 'TREASURER', action: 'stewardship.transaction.read', effect: 'ALLOW', scope: 'BRANCH' },
   {
+    // `[Milestone C: Portal Read Models + Analytics]` Phase 1 decision #8
+    // - Branch Administrator gains read-only financial visibility only.
+    // Deliberately just this one action: no `.record`/`.verify`/
+    // `.reconcile`/expense-approval/expense-payment grant accompanies it -
+    // ADMIN still cannot touch money, only see it, so the existing
+    // Treasurer/Admin separation-of-duties boundary this milestone's own
+    // audit confirmed (ADMIN previously held zero stewardship.* rows of
+    // any kind) is narrowed by exactly one read grant, not dissolved.
+    role: 'ADMIN',
+    action: 'stewardship.transaction.read',
+    effect: 'ALLOW',
+    scope: 'BRANCH',
+    reason: '[Milestone C] Visibility only, per Phase 1 decision #8 - explicitly not a separation-of-duties bypass. No accompanying .record/.verify/.reconcile grant.',
+  },
+  {
     // [Multi-Tenant Foundation, Phase 1] COUNCIL_TREASURER's one and only
     // permission-matrix row this phase - deliberately minimal, the same
     // restraint this phase's own instructions apply to COUNCIL_OVERSEER
@@ -504,10 +534,28 @@ const BASE_MATRIX: PermissionRule[] = [
   },
   { role: 'BACENTA_LEADER', action: 'stewardship.transaction.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
   {
+    // `[Milestone C]` Phase 1 decision #7's read half - pairs with the
+    // `.record` grant above. Same OWN_GROUP scope, same "can record must
+    // never verify" boundary as BACENTA_LEADER immediately below.
+    role: 'BASONTA_LEADER',
+    action: 'stewardship.transaction.read',
+    effect: 'ALLOW',
+    scope: 'OWN_GROUP',
+    reason: '[Milestone C] Parity with BACENTA_LEADER.',
+  },
+  {
     role: 'BACENTA_LEADER',
     action: 'stewardship.transaction.verify',
     effect: 'DENY',
     reason: 'PRD §17.3 / BR-STW-04 - a role that can record must never verify, even another group’s entries',
+  },
+  {
+    // `[Milestone C]` Same BR-STW-04 boundary, applied symmetrically now
+    // that Basonta Leader can also record.
+    role: 'BASONTA_LEADER',
+    action: 'stewardship.transaction.verify',
+    effect: 'DENY',
+    reason: '[Milestone C] PRD §17.3 / BR-STW-04 - a role that can record must never verify, mirroring BACENTA_LEADER.',
   },
   {
     role: 'TREASURER',
@@ -1080,6 +1128,61 @@ const BASE_MATRIX: PermissionRule[] = [
     reason:
       "[Multi-Tenant Foundation, Phase 1] GLOBAL is used here deliberately, not as a shortcut - Tenant is the platform's own administrative resource, not customer (church) data, so there is no Tenant/Council boundary for this specific action to violate the way there would be for e.g. stewardship.transaction.read. This is the one legitimate use of GLOBAL this phase's own instructions anticipate (\"do not use GLOBAL as tenant access\" refers to granting access to customer data across tenants, which this is not) - every other action in this matrix keeps GLOBAL unused.",
   },
+  // `[Milestone C: Portal Read Models + Analytics]` Phase 1 decision #10:
+  // SYSTEM_ADMINISTRATOR deliberately receives no new rows this
+  // milestone. Church-operational financial/pastoral/people/attendance
+  // access was explicitly ruled out even where a dashboard would want it
+  // - see this milestone's own final report for what remains
+  // unimplemented as a result (system-health/user-management/audit
+  // capabilities this role's own locked scope names but no existing
+  // backend model yet supports safely).
+
+  // --- `[Milestone C: Portal Read Models + Analytics]` Council
+  // Administrator (`COUNCIL_OVERSEER`) - Phase 1 decision #9. The first
+  // real grants this role has ever held (previously zero rows, "Horizon
+  // 3... included for completeness"). Deliberately minimal and read-only:
+  // organizational oversight across the Council's own Branches, never
+  // pastoral-private data (no `pastoral_care.*` row of any kind), never a
+  // financial or branch-operational mutation (no `.record`/`.verify`/
+  // `.reconcile`/`.create`/`.update` anywhere below). Every scope is
+  // COUNCIL, the same set-membership-against-`councilBranchIds` mechanism
+  // RESIDENT_PASTOR's own widened rows already use - no new scope
+  // mechanism, no new RLS policy. ---
+  {
+    role: 'COUNCIL_OVERSEER',
+    action: 'people.person.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Milestone C] Organizational oversight - membership visibility across the Council, read-only.',
+  },
+  {
+    role: 'COUNCIL_OVERSEER',
+    action: 'gatherings.gathering.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Milestone C] Needed to identify/attribute Gatherings behind an attendance breakdown - metadata only, no attendance PII by itself.',
+  },
+  {
+    role: 'COUNCIL_OVERSEER',
+    action: 'gatherings.attendance.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Milestone C] Organizational oversight - attendance visibility across the Council, read-only. Carries individual-level PII, the same disclosed widening RESIDENT_PASTOR\'s own equivalent grant already accepted.',
+  },
+  {
+    role: 'COUNCIL_OVERSEER',
+    action: 'stewardship.transaction.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Milestone C] Organizational oversight - giving visibility across the Council, read-only. No .record/.verify/.reconcile - this is not Treasurer authority.',
+  },
+  {
+    role: 'COUNCIL_OVERSEER',
+    action: 'insights.branch_dashboard.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Milestone C] Branch-overview/growth-trend dashboards, read-only, across the Council.',
+  },
 
   // --- `[Milestone B: People + Pastoral + Outreach Foundation]` Outreach
   // (MILESTONE_B_DESIGN_NOTES.md Part 4/11). Organizational data, not
@@ -1114,6 +1217,32 @@ const BASE_MATRIX: PermissionRule[] = [
   { role: 'BASONTA_LEADER', action: 'outreach.contact.create', effect: 'ALLOW', scope: 'OWN_GROUP' },
   { role: 'BASONTA_LEADER', action: 'outreach.contact.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
   { role: 'BASONTA_LEADER', action: 'outreach.contact.update', effect: 'ALLOW', scope: 'OWN_GROUP' },
+
+  // --- `[Milestone C: Portal Read Models + Analytics]` Potential (Phase
+  // 1 decision #4). Same role/scope shape as `outreach.*` immediately
+  // above, deliberately: a Potential is organizational, Bacenta/Basonta/
+  // Cluster-level cultivation activity, not pastoral-sensitive content -
+  // RESIDENT_PASTOR gets read-only Council oversight, never `.create`
+  // (the same "oversees, does not personally perform" reasoning already
+  // applied to Outreach); ADMIN holds no grant at all, also mirroring
+  // Outreach's own precedent (organizational data an Admin has no
+  // established need to touch, not a deliberate privacy exclusion). ---
+  {
+    role: 'RESIDENT_PASTOR',
+    action: 'people.potential.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Milestone C] Council-level oversight of the Potential pipeline, read-only - mirrors outreach.event.read\'s own reasoning.',
+  },
+  { role: 'ASSISTANT_PASTOR', action: 'people.potential.create', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'ASSISTANT_PASTOR', action: 'people.potential.read', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'ASSISTANT_PASTOR', action: 'people.potential.update', effect: 'ALLOW', scope: 'CLUSTER' },
+  { role: 'BACENTA_LEADER', action: 'people.potential.create', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BACENTA_LEADER', action: 'people.potential.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BACENTA_LEADER', action: 'people.potential.update', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BASONTA_LEADER', action: 'people.potential.create', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BASONTA_LEADER', action: 'people.potential.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
+  { role: 'BASONTA_LEADER', action: 'people.potential.update', effect: 'ALLOW', scope: 'OWN_GROUP' },
 ];
 
 /**

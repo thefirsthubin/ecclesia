@@ -178,4 +178,45 @@ describe('PersonRepository', () => {
       ]);
     });
   });
+
+  describe('[Milestone C] countByBranchAndLifecycleStage', () => {
+    it('filters by branchId and lifecycleStage', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.person.count.mockResolvedValue(12);
+
+      const result = await repository.countByBranchAndLifecycleStage('branch-1', 'MEMBER');
+
+      expect(prisma.person.count).toHaveBeenCalledWith({ where: { branchId: 'branch-1', lifecycleStage: 'MEMBER' } });
+      expect(result).toBe(12);
+    });
+  });
+
+  describe('[Milestone C] findIdsByBranchAndLifecycleStage', () => {
+    it('selects only id, filtered by branchId and lifecycleStage', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.person.findMany.mockResolvedValue([{ id: 'person-1' }, { id: 'person-2' }]);
+
+      const result = await repository.findIdsByBranchAndLifecycleStage('branch-1', 'FIRST_TIME_GUEST');
+
+      expect(prisma.person.findMany).toHaveBeenCalledWith({
+        where: { branchId: 'branch-1', lifecycleStage: 'FIRST_TIME_GUEST' },
+        select: { id: true },
+      });
+      expect(result).toEqual([{ id: 'person-1' }, { id: 'person-2' }]);
+    });
+  });
+
+  describe('[Milestone C] countWithoutActiveBacenta', () => {
+    it('mirrors findWithoutActiveBacenta\'s own WHERE clause, count-only', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.person.count.mockResolvedValue(7);
+
+      const result = await repository.countWithoutActiveBacenta('branch-1');
+
+      expect(prisma.person.count).toHaveBeenCalledWith({
+        where: { branchId: 'branch-1', groupMemberships: { none: { groupType: 'PASTORAL_CARE', endedAt: null } } },
+      });
+      expect(result).toBe(7);
+    });
+  });
 });

@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+import { financialTransactionTypeSchema } from './stewardship.schemas';
+import { gatheringCategorySchema } from './gatherings.schemas';
+
 /**
  * Shared Zod schemas for the Insights bounded context (PRD §13.6). See
  * `people.schemas.ts`'s own doc comment for why enums are re-declared
@@ -258,3 +261,238 @@ export const branchDashboardSummaryResponseSchema = z.object({
   engagementTrend: engagementTrendSchema,
 });
 export type BranchDashboardSummaryResponseDto = z.infer<typeof branchDashboardSummaryResponseSchema>;
+
+/**
+ * `[Milestone C: Portal Read Models + Analytics]` Phase 2's shared
+ * bucketing contract - the request/response shapes every new trend
+ * endpoint (giving-trend, attendance-trend, membership-trend) reuses,
+ * rather than each inventing its own. Mirrors `libs/domain/insights`'s
+ * `TimeBucketGranularity`/`TimeBucket` shape exactly (re-declared, not
+ * imported - `libs/contracts` is a leaf library, same rule every other
+ * schema file in this package already follows).
+ */
+export const TIME_BUCKET_GRANULARITY_VALUES = ['week', 'month', 'year'] as const;
+export const timeBucketGranularitySchema = z.enum(TIME_BUCKET_GRANULARITY_VALUES);
+export type TimeBucketGranularityDto = z.infer<typeof timeBucketGranularitySchema>;
+
+/** Shared by every trend query - `groupId` names one specific Bacenta/
+ * Basonta to drill into (validated against the actor's own scope by the
+ * route's resource-context guard, the same `groupId`-optional shape
+ * `FollowUpTaskListForActorResourceContextGuard`/`ListOutreachQuery`
+ * already establish); `council: true` requests a Council-wide,
+ * per-Branch breakdown instead (only meaningful for a COUNCIL-scoped
+ * actor - `RESIDENT_PASTOR`, `COUNCIL_TREASURER`, `COUNCIL_OVERSEER`).
+ * Neither implies the other; supplying both is rejected by the service
+ * layer (a single request names at most one explicit scope narrowing). */
+export const trendQueryBaseSchema = z.object({
+  granularity: timeBucketGranularitySchema.default('month'),
+  count: z.coerce.number().int().min(1).max(52).default(6),
+  endingAt: z.string().datetime().optional(),
+  groupId: z.string().uuid().optional(),
+  council: z.coerce.boolean().default(false),
+});
+
+export const timeBucketResponseSchema = z.object({
+  bucketStart: z.string(),
+  bucketEnd: z.string(),
+  label: z.string(),
+});
+
+/**
+ * `[Milestone C]` Phase 3's Giving Trend read model.
+ * `giving.schemas.ts`'s own `financialTransactionTypeSchema.exclude(['EXPENSE'])`
+ * convention is reused verbatim - `EXPENSE` must never appear in giving
+ * analytics, per Phase 3's explicit instruction, enforced here at the
+ * contract layer, not merely by service-layer discipline.
+ */
+export const getGivingTrendQuerySchema = trendQueryBaseSchema.extend({
+  type: financialTransactionTypeSchema.exclude(['EXPENSE']).optional(),
+  gatheringCategory: gatheringCategorySchema.optional(),
+});
+export type GetGivingTrendQuery = z.infer<typeof getGivingTrendQuerySchema>;
+
+export const givingTrendBucketSchema = timeBucketResponseSchema.extend({
+  totalAmountMinor: z.string(),
+  byType: z.record(financialTransactionTypeSchema.exclude(['EXPENSE']), z.string()),
+});
+export type GivingTrendBucketDto = z.infer<typeof givingTrendBucketSchema>;
+
+/** One Branch's own giving-trend result - the shape every scope
+ * (branch/cluster/own-group) response uses; a `council: true` request
+ * wraps one of these per Branch (`councilBranches` below). */
+export const givingTrendResultSchema = z.object({
+  from: z.string(),
+  to: z.string(),
+  buckets: z.array(givingTrendBucketSchema),
+  /**
+   * Phase 1 decision #5: transactions with neither `gatheringId` nor
+   * `sourceGroupId` - reported as one explicit total for the whole
+   * queried window, never guessed into a category/group bucket above and
+   * never silently dropped.
+   */
+  unattributedAmountMinor: z.string(),
+  /** Every configured `Gathering.type` string seen among this window's
+   * rows that has no `GatheringTypeCategoryMapping` row yet - surfaced
+   * so a caller filtering by `gatheringCategory` can see what's being
+   * silently excluded from every category bucket, rather than
+   * discovering it only as a total that doesn't add up. Empty unless
+   * `gatheringCategory` was supplied. */
+  unmappedGatheringTypes: z.array(z.string()),
+});
+export type GivingTrendResultDto = z.infer<typeof givingTrendResultSchema>;
+
+export const givingTrendResponseSchema = z.union([
+  givingTrendResultSchema.extend({ branchId: z.string().uuid() }),
+  z.object({ councilBranches: z.array(givingTrendResultSchema.extend({ branchId: z.string().uuid() })) }),
+]);
+export type GivingTrendResponseDto = z.infer<typeof givingTrendResponseSchema>;
+
+/**
+ * `[Milestone C]` Phase 4's Attendance Trend read model.
+ * `gatheringCategory` here (unlike Giving's) may also be omitted entirely
+ * to mean "all gatherings" (Phase 4's explicit "all gatherings" support),
+ * distinct from any one specific category.
+ */
+export const getAttendanceTrendQuerySchema = trendQueryBaseSchema.extend({
+  gatheringCategory: gatheringCategorySchema.optional(),
+});
+export type GetAttendanceTrendQuery = z.infer<typeof getAttendanceTrendQuerySchema>;
+
+export const attendanceTrendBucketSchema = timeBucketResponseSchema.extend({
+  presentCount: z.number().int().min(0),
+});
+export type AttendanceTrendBucketDto = z.infer<typeof attendanceTrendBucketSchema>;
+
+/** One group's own attendance total for the whole queried window -
+ * Phase 4's explicit "also support group-level attendance aggregation." */
+export const attendanceTrendGroupBreakdownEntrySchema = z.object({
+  groupId: z.string().uuid(),
+  presentCount: z.number().int().min(0),
+});
+export type AttendanceTrendGroupBreakdownEntryDto = z.infer<typeof attendanceTrendGroupBreakdownEntrySchema>;
+
+export const attendanceTrendResultSchema = z.object({
+  from: z.string(),
+  to: z.string(),
+  buckets: z.array(attendanceTrendBucketSchema),
+  byGroup: z.array(attendanceTrendGroupBreakdownEntrySchema),
+  /** Every configured `Gathering.type` string seen among this window's
+   * attended Gatherings that has no `GatheringTypeCategoryMapping` row -
+   * same disclosure discipline as `GivingTrendResultDto.unmappedGatheringTypes`.
+   * Empty unless `gatheringCategory` was supplied. */
+  unmappedGatheringTypes: z.array(z.string()),
+});
+export type AttendanceTrendResultDto = z.infer<typeof attendanceTrendResultSchema>;
+
+export const attendanceTrendResponseSchema = z.union([
+  attendanceTrendResultSchema.extend({ branchId: z.string().uuid() }),
+  z.object({ councilBranches: z.array(attendanceTrendResultSchema.extend({ branchId: z.string().uuid() })) }),
+]);
+export type AttendanceTrendResponseDto = z.infer<typeof attendanceTrendResponseSchema>;
+
+/**
+ * `[Milestone C]` Phase 5's Membership Trend read model. Two shapes
+ * deliberately kept separate:
+ *
+ * - `series` - bucketed, cumulative-snapshot counts (registered people,
+ *   Members), the same "as of each bucket's end boundary" technique
+ *   `BranchDashboardSummaryService.growthSeries.membership` already
+ *   established (`countByBranchCreatedBefore`) - genuinely honest
+ *   history, since `Person`/`GroupMembership` rows are never deleted.
+ * - `snapshot` - a **current-moment-only** set of counts (active/inactive
+ *   members, first timers, visitors, people without Bacenta, Bacenta/
+ *   Basonta membership). Explicitly not bucketed into a historical
+ *   series - Phase 1 decision #2's active/inactive definition depends on
+ *   a rolling 8-week attendance window ending "now," and re-deriving
+ *   that same rolling window as of every past bucket boundary would only
+ *   be honest if this system had reliably captured attendance data for
+ *   every one of those past 8-week windows too, which cannot be assumed
+ *   this far back - Phase 1 decision #13 and this milestone's own
+ *   "do not fabricate historical transitions" instruction both apply
+ *   here. A current snapshot is the honest, defensible scope.
+ */
+export const membershipSnapshotSchema = z.object({
+  registeredPeopleCount: z.number().int().min(0),
+  membersCount: z.number().int().min(0),
+  activeMembersCount: z.number().int().min(0),
+  inactiveMembersCount: z.number().int().min(0),
+  /** Weeks in the rolling Sunday-attendance window behind
+   * `activeMembersCount`/`inactiveMembersCount` - Phase 1 decision #2's
+   * `ACTIVE_MEMBER_WINDOW = 8 weeks`, echoed back so a caller never has
+   * to hardcode it independently. */
+  activeMemberWindowWeeks: z.number().int().min(1),
+  firstTimersCount: z.number().int().min(0),
+  visitorsCount: z.number().int().min(0),
+  peopleWithoutBacentaCount: z.number().int().min(0),
+  bacentaMembershipCount: z.number().int().min(0),
+  basontaMembershipCount: z.number().int().min(0),
+});
+export type MembershipSnapshotDto = z.infer<typeof membershipSnapshotSchema>;
+
+export const getMembershipTrendQuerySchema = trendQueryBaseSchema;
+export type GetMembershipTrendQuery = z.infer<typeof getMembershipTrendQuerySchema>;
+
+export const membershipTrendResultSchema = z.object({
+  from: z.string(),
+  to: z.string(),
+  registeredPeopleSeries: z.array(growthSeriesPointSchema),
+  membersSeries: z.array(growthSeriesPointSchema),
+  snapshot: membershipSnapshotSchema,
+});
+export type MembershipTrendResultDto = z.infer<typeof membershipTrendResultSchema>;
+
+export const membershipTrendResponseSchema = z.union([
+  membershipTrendResultSchema.extend({ branchId: z.string().uuid() }),
+  z.object({ councilBranches: z.array(membershipTrendResultSchema.extend({ branchId: z.string().uuid() })) }),
+]);
+export type MembershipTrendResponseDto = z.infer<typeof membershipTrendResponseSchema>;
+
+/**
+ * `[Milestone C.1.2: Outreach Analytics]` The Outreach conversion read
+ * model - reuses `trendQueryBaseSchema`'s `groupId`/`council` scope
+ * shape (no `granularity`/`count`/`endingAt` bucketing - this is a
+ * single-window summary, not a bucketed trend) plus an explicit
+ * `from`/`to` window, mirroring `listOutreachQuerySchema`'s own shape.
+ */
+export const getOutreachConversionQuerySchema = z.object({
+  groupId: z.string().uuid().optional(),
+  council: z.coerce.boolean().default(false),
+  from: z.string().datetime().optional(),
+  to: z.string().datetime().optional(),
+});
+export type GetOutreachConversionQuery = z.infer<typeof getOutreachConversionQuerySchema>;
+
+export const outreachConversionResultSchema = z.object({
+  from: z.string().nullable(),
+  to: z.string().nullable(),
+  outreachesCount: z.number().int().min(0),
+  contactsReachedCount: z.number().int().min(0),
+  promotedContactsCount: z.number().int().min(0),
+  conversionPercentage: z.number().min(0).max(100),
+  /** `null` when no contact has been promoted yet in the queried scope -
+   * never a fabricated `0`. Phase 6's explicit instruction: this is an
+   * **inferred** duration (`Person.createdAt - OutreachContact.createdAt`,
+   * `OutreachContactRepository.listForConversion`'s own doc comment),
+   * never presented as a stored historical promotion timestamp - see
+   * `averageInferredPromotionDaysIsInferred` below, always `true`, so a
+   * consumer can never mistake this field for a hard fact without
+   * reading documentation. */
+  averageInferredPromotionDays: z.number().min(0).nullable(),
+  averageInferredPromotionDaysIsInferred: z.literal(true),
+  /** Promoted contacts whose resulting Person is currently a `MEMBER`
+   * AND has attended a SUNDAY-category Gathering within the approved
+   * 8-week active-member window (Phase 1 decision #2) - only honestly
+   * computable now that that definition exists (Milestone C Phase 5).
+   * Never claims a conversion the active-member definition can't
+   * actually support - see `OutreachConversionService`'s own doc
+   * comment. */
+  convertedToActiveMemberCount: z.number().int().min(0),
+  convertedToActiveMemberPercentage: z.number().min(0).max(100),
+});
+export type OutreachConversionResultDto = z.infer<typeof outreachConversionResultSchema>;
+
+export const outreachConversionResponseSchema = z.union([
+  outreachConversionResultSchema.extend({ branchId: z.string().uuid() }),
+  z.object({ councilBranches: z.array(outreachConversionResultSchema.extend({ branchId: z.string().uuid() })) }),
+]);
+export type OutreachConversionResponseDto = z.infer<typeof outreachConversionResponseSchema>;

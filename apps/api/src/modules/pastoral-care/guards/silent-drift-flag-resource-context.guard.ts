@@ -37,11 +37,18 @@ export class SilentDriftFlagListResourceContextGuard extends EcclesiaContextGuar
  * own `FollowUpTaskListForActorResourceContextGuard`: a `groupId` query
  * param means an OWN_GROUP/CLUSTER-scoped actor named their own Group
  * (resolved via `GroupScopeService`, same as the path-param guard above);
- * its absence falls back to the actor's own Branch, satisfying
+ * its absence falls back to the actor's own Branch/cluster, satisfying
  * `pastoral_care.silent_drift_flag.read`'s BRANCH-scope rows (Resident
  * Pastor, Admin) with no Group to name. `branchId` is never taken from
  * the client - it comes from `actor.branchId`, the server-resolved
  * `ActorContext` `AuthGuard` already populated before this guard runs.
+ *
+ * `[Milestone C: Portal Read Models + Analytics]` Phase 1 decision #11's
+ * fix - same shape as `FollowUpTaskListForActorResourceContextGuard`'s
+ * own fix: a CLUSTER-scoped actor now also gets `resource.bacentaId` set
+ * to one member of `actor.clusterBacentaIds`, so the CLUSTER scope check
+ * can actually be satisfied. Real per-row narrowing to the full cluster
+ * happens in `SilentDriftFlagService.list()`.
  */
 @Injectable()
 export class SilentDriftFlagListForActorResourceContextGuard extends EcclesiaContextGuardBase {
@@ -58,6 +65,6 @@ export class SilentDriftFlagListForActorResourceContextGuard extends EcclesiaCon
     if (groupId) {
       return this.groupScopeService.loadResourceContext(groupId);
     }
-    return Promise.resolve({ branchId: actor.branchId });
+    return Promise.resolve({ branchId: actor.branchId, bacentaId: actor.clusterBacentaIds?.[0] });
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { Group, GroupMembership } from '@prisma/client';
+import type { Group, GroupMembership, GroupType } from '@prisma/client';
 
 import { PrismaService } from '../../../platform/database/prisma.service';
 
@@ -121,6 +121,60 @@ export class GroupMembershipRepository {
       select: { personId: true, startedAt: true },
       orderBy: { startedAt: 'asc' },
     });
+  }
+
+  /**
+   * `[Milestone C: Portal Read Models + Analytics]` Phase 1 decision
+   * #11's real cluster-narrowing primitive: every Person with an active
+   * `PASTORAL_CARE` membership in any one of `groupIds` (an Assistant
+   * Pastor's own `clusterBacentaIds`). Distinct-person, not
+   * distinct-membership - a Person cannot hold two active Bacenta
+   * memberships at once (`one_active_bacenta_per_person`), so this
+   * never needs deduplication, but `distinct` is passed anyway as
+   * defense against that invariant ever being relaxed. Used by
+   * `PastoralCalendarService`/`FollowUpTaskService`'s own cluster-scoped
+   * "list for actor" paths to resolve "which Persons belong to my own
+   * cluster" without those pastoral-care module callers reaching into
+   * `people.group_memberships` directly - the same schema-ownership
+   * boundary every other cross-module consumer of this service already
+   * respects.
+   */
+  /**
+   * `[Milestone C: Portal Read Models + Analytics]` Phase 5's "Bacenta
+   * membership"/"Basonta membership" counts, generalized from
+   * `countDistinctActiveMinistryMembersByBranch` below (which stays
+   * MINISTRY-only and untouched, since `BranchDashboardSummaryService`'s
+   * existing `volunteersCount`/`volunteersTrend` already depend on its
+   * exact signature) - same "distinct Person, currently active, as of a
+   * point in time" semantics, parameterized by `groupType` so
+   * `MembershipTrendService` can call it once for `PASTORAL_CARE`
+   * (Bacenta) and once for `MINISTRY` (Basonta) instead of two
+   * near-duplicate methods.
+   */
+  async countDistinctActiveByGroupType(branchId: string, groupType: GroupType, asOf: Date = new Date()): Promise<number> {
+    const memberships = await this.prisma.groupMembership.findMany({
+      where: {
+        branchId,
+        groupType,
+        startedAt: { lte: asOf },
+        OR: [{ endedAt: null }, { endedAt: { gt: asOf } }],
+      },
+      distinct: ['personId'],
+      select: { personId: true },
+    });
+    return memberships.length;
+  }
+
+  async listActivePersonIdsForGroups(groupIds: string[]): Promise<string[]> {
+    if (groupIds.length === 0) {
+      return [];
+    }
+    const memberships = await this.prisma.groupMembership.findMany({
+      where: { groupId: { in: groupIds }, groupType: 'PASTORAL_CARE', endedAt: null },
+      distinct: ['personId'],
+      select: { personId: true },
+    });
+    return memberships.map((m) => m.personId);
   }
 
   /** Ministry milestone (FR-MIN-04): a Person's concurrent active

@@ -37,6 +37,7 @@ describe('FollowUpTaskService', () => {
       updateStatus: jest.fn(),
       updateDetails: jest.fn(),
       listByGroup: jest.fn(),
+      listByGroups: jest.fn(),
       listByBranch: jest.fn(),
       listByPerson: jest.fn(),
     };
@@ -164,6 +165,18 @@ describe('FollowUpTaskService', () => {
 
       expect(followUpTaskRepository.listByBranch).toHaveBeenCalledWith('branch-1', undefined);
       expect(followUpTaskRepository.listByGroup).not.toHaveBeenCalled();
+      expect(result).toHaveLength(1);
+    });
+
+    it('[Milestone C] narrows to listByGroups(actor.clusterBacentaIds) for a CLUSTER-scoped actor when groupId is absent', async () => {
+      const { service, followUpTaskRepository } = buildService();
+      const clusterActor: ActorContext = { ...actor, clusterBacentaIds: ['bacenta-1', 'bacenta-2'] };
+      followUpTaskRepository.listByGroups.mockResolvedValue([buildTask({ id: 'ft-1' })]);
+
+      const result = await service.list(clusterActor, {} as never);
+
+      expect(followUpTaskRepository.listByGroups).toHaveBeenCalledWith(['bacenta-1', 'bacenta-2'], undefined);
+      expect(followUpTaskRepository.listByBranch).not.toHaveBeenCalled();
       expect(result).toHaveLength(1);
     });
   });

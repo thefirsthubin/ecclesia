@@ -4,19 +4,32 @@ import { DatabaseModule } from '../../platform/database/database.module';
 import { EventsModule } from '../../platform/events/events.module';
 import { RbacPlatformModule } from '../../platform/rbac/rbac-platform.module';
 import { GatheringsModule } from '../gatherings/gatherings.module';
+import { OutreachModule } from '../outreach/outreach.module';
 import { PeopleModule } from '../people/people.module';
 import { StewardshipModule } from '../stewardship/stewardship.module';
 import { AlertController } from './controllers/alert.controller';
+import { AttendanceTrendController } from './controllers/attendance-trend.controller';
 import { DashboardController } from './controllers/dashboard.controller';
+import { GivingTrendController } from './controllers/giving-trend.controller';
+import { MembershipTrendController } from './controllers/membership-trend.controller';
+import { OutreachConversionController } from './controllers/outreach-conversion.controller';
 import { AlertResourceContextGuard } from './guards/alert-resource-context.guard';
+import { AttendanceTrendResourceContextGuard } from './guards/attendance-trend-resource-context.guard';
+import { GivingTrendResourceContextGuard } from './guards/giving-trend-resource-context.guard';
 import { BranchDashboardResourceContextGuard, GroupDashboardResourceContextGuard } from './guards/insights-dashboard-resource-context.guard';
+import { MembershipTrendResourceContextGuard } from './guards/membership-trend-resource-context.guard';
+import { OutreachConversionResourceContextGuard } from './guards/outreach-conversion-resource-context.guard';
 import { AlertRepository } from './repositories/alert.repository';
 import { EngagementSignalRepository } from './repositories/engagement-signal.repository';
 import { PulseScoreHistoryRepository } from './repositories/pulse-score-history.repository';
 import { PulseScoreRepository } from './repositories/pulse-score.repository';
 import { AlertService } from './services/alert.service';
+import { AttendanceTrendService } from './services/attendance-trend.service';
 import { BranchDashboardSummaryService } from './services/branch-dashboard-summary.service';
 import { EngagementSignalService } from './services/engagement-signal.service';
+import { GivingTrendService } from './services/giving-trend.service';
+import { MembershipTrendService } from './services/membership-trend.service';
+import { OutreachConversionService } from './services/outreach-conversion.service';
 import { PulseScoreService } from './services/pulse-score.service';
 
 /**
@@ -50,8 +63,15 @@ import { PulseScoreService } from './services/pulse-score.service';
  * gives for its own People/Pastoral Care imports.
  */
 @Module({
-  imports: [DatabaseModule, RbacPlatformModule, EventsModule, PeopleModule, GatheringsModule, StewardshipModule],
-  controllers: [DashboardController, AlertController],
+  imports: [DatabaseModule, RbacPlatformModule, EventsModule, PeopleModule, GatheringsModule, StewardshipModule, OutreachModule],
+  controllers: [
+    DashboardController,
+    AlertController,
+    GivingTrendController,
+    AttendanceTrendController,
+    MembershipTrendController,
+    OutreachConversionController,
+  ],
   providers: [
     EngagementSignalRepository,
     PulseScoreRepository,
@@ -61,9 +81,17 @@ import { PulseScoreService } from './services/pulse-score.service';
     AlertService,
     PulseScoreService,
     BranchDashboardSummaryService,
+    GivingTrendService,
+    AttendanceTrendService,
+    MembershipTrendService,
+    OutreachConversionService,
     BranchDashboardResourceContextGuard,
     GroupDashboardResourceContextGuard,
     AlertResourceContextGuard,
+    GivingTrendResourceContextGuard,
+    AttendanceTrendResourceContextGuard,
+    MembershipTrendResourceContextGuard,
+    OutreachConversionResourceContextGuard,
   ],
   exports: [EngagementSignalService],
 })

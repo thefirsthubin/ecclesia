@@ -58,4 +58,25 @@ export class OutreachRepository {
       orderBy: { occurredAt: 'desc' },
     });
   }
+
+  /** `[Milestone C.1.2: Outreach Analytics]` The conversion read model's
+   * "how many Outreach events happened" count, Branch-wide. */
+  countByBranch(branchId: string, from?: Date, to?: Date): Promise<number> {
+    return this.prisma.outreach.count({
+      where: { branchId, ...(from || to ? { occurredAt: { gte: from, lte: to } } : {}) },
+    });
+  }
+
+  /** `[Milestone C.1.2]` The same count, narrowed to a scope's own
+   * Group(s) - `Outreach.groupId` is a direct column, the same simple
+   * cluster-narrowing case `FollowUpTaskRepository.listByGroups` already
+   * established. */
+  countByGroups(groupIds: string[], from?: Date, to?: Date): Promise<number> {
+    if (groupIds.length === 0) {
+      return Promise.resolve(0);
+    }
+    return this.prisma.outreach.count({
+      where: { groupId: { in: groupIds }, ...(from || to ? { occurredAt: { gte: from, lte: to } } : {}) },
+    });
+  }
 }

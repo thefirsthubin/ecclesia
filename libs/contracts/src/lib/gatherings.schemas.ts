@@ -199,3 +199,43 @@ export const visitorIntakeResponseSchema = z.object({
   followUpTaskCreated: z.boolean(),
 });
 export type VisitorIntakeResponseDto = z.infer<typeof visitorIntakeResponseSchema>;
+
+/**
+ * `[Milestone C: Portal Read Models + Analytics]` Phase 1 decision #1's
+ * canonical mapping mechanism. `Gathering.type`/`Configuration.gatheringTypes`
+ * stay exactly what they always were (Branch-configurable free strings) -
+ * this schema never touches either. `GATHERING_CATEGORY_VALUES` is the
+ * closed, five-value conceptual set analytics group by; a configured type
+ * string with no mapping row is reported as unmapped (see
+ * `unmappedGatheringTypesResponseSchema` below), never guessed at.
+ */
+export const GATHERING_CATEGORY_VALUES = ['SUNDAY', 'MIDWEEK', 'BACENTA_MEETING', 'BASONTA_MEETING', 'OTHER'] as const;
+export const gatheringCategorySchema = z.enum(GATHERING_CATEGORY_VALUES);
+export type GatheringCategoryDto = z.infer<typeof gatheringCategorySchema>;
+
+export const upsertGatheringTypeCategoryMappingSchema = z.object({
+  gatheringType: z.string().trim().min(1, 'gatheringType is required'),
+  category: gatheringCategorySchema,
+});
+export type UpsertGatheringTypeCategoryMappingInput = z.infer<typeof upsertGatheringTypeCategoryMappingSchema>;
+
+export const gatheringTypeCategoryMappingResponseSchema = z.object({
+  id: z.string().uuid(),
+  branchId: z.string().uuid(),
+  gatheringType: z.string(),
+  category: gatheringCategorySchema,
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+export type GatheringTypeCategoryMappingResponseDto = z.infer<typeof gatheringTypeCategoryMappingResponseSchema>;
+
+/** `GET /gatherings/type-category-mappings` response - every configured
+ * type this Branch has (`Configuration.gatheringTypes`), split into its
+ * mapped rows and the configured strings that have no mapping yet
+ * (`unmappedTypes`) - surfaced explicitly so a caller can never mistake
+ * "unmapped" for "OTHER" or silently drop it. */
+export const gatheringTypeCategoryMappingListResponseSchema = z.object({
+  mappings: z.array(gatheringTypeCategoryMappingResponseSchema),
+  unmappedTypes: z.array(z.string()),
+});
+export type GatheringTypeCategoryMappingListResponseDto = z.infer<typeof gatheringTypeCategoryMappingListResponseSchema>;

@@ -43,14 +43,23 @@ export class SilentDriftFlagService {
 
   /** `[Silent-Drift Detection Branch-wide milestone]` `GET
    * /pastoral-care/silent-drift-flags`. `query.groupId` present -> same
-   * Group-scoped read `listForGroup` already does; absent -> BRANCH-wide,
-   * for the BRANCH-scoped actor `SilentDriftFlagListForActorResourceContextGuard`
-   * already resolved against `actor.branchId`. Byte-for-byte the same
-   * shape `FollowUpTaskService.list` already established. */
+   * Group-scoped read `listForGroup` already does; absent -> for a
+   * CLUSTER-scoped actor (Assistant Pastor), narrowed to
+   * `actor.clusterBacentaIds` (`[Milestone C]` Phase 1 decision #11's
+   * fix, byte-for-byte the same shape `FollowUpTaskService.list` now
+   * establishes); otherwise BRANCH-wide, for the BRANCH-scoped actor
+   * `SilentDriftFlagListForActorResourceContextGuard` already resolved
+   * against `actor.branchId`. */
   async list(actor: ActorContext, query: ListSilentDriftFlagsForActorQuery): Promise<SilentDriftFlagResponseDto[]> {
-    const flags = query.groupId
-      ? await this.silentDriftFlagRepository.listByGroup(query.groupId, query.status as SilentDriftStatus[] | undefined)
-      : await this.silentDriftFlagRepository.listByBranch(actor.branchId, query.status as SilentDriftStatus[] | undefined);
+    const statuses = query.status as SilentDriftStatus[] | undefined;
+    let flags: SilentDriftFlag[];
+    if (query.groupId) {
+      flags = await this.silentDriftFlagRepository.listByGroup(query.groupId, statuses);
+    } else if (actor.clusterBacentaIds && actor.clusterBacentaIds.length > 0) {
+      flags = await this.silentDriftFlagRepository.listByGroups(actor.clusterBacentaIds, statuses);
+    } else {
+      flags = await this.silentDriftFlagRepository.listByBranch(actor.branchId, statuses);
+    }
     return flags.map(toResponseDto);
   }
 }

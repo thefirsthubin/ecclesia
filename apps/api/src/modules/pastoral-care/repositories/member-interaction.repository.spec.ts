@@ -62,4 +62,30 @@ describe('[Milestone B] MemberInteractionRepository', () => {
       orderBy: { scheduledAt: 'asc' },
     });
   });
+
+  describe('[Milestone C] listScheduledInRangeForPersons', () => {
+    it('filters by personId IN the given set and a scheduledAt window', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.memberInteraction.findMany.mockResolvedValue([{ id: 'interaction-1' }]);
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-08-31T00:00:00.000Z');
+
+      const result = await repository.listScheduledInRangeForPersons(['person-1', 'person-2'], from, to);
+
+      expect(prisma.memberInteraction.findMany).toHaveBeenCalledWith({
+        where: { personId: { in: ['person-1', 'person-2'] }, scheduledAt: { gte: from, lte: to } },
+        orderBy: { scheduledAt: 'asc' },
+      });
+      expect(result).toEqual([{ id: 'interaction-1' }]);
+    });
+
+    it('returns an empty array without querying when given an empty person set', async () => {
+      const { repository, prisma } = buildRepository();
+
+      const result = await repository.listScheduledInRangeForPersons([], new Date(), new Date());
+
+      expect(prisma.memberInteraction.findMany).not.toHaveBeenCalled();
+      expect(result).toEqual([]);
+    });
+  });
 });

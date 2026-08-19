@@ -10,6 +10,7 @@ import type { OutreachContact } from '@prisma/client';
 
 import { PersonService } from '../../people/services/person.service';
 import { OutreachContactRepository } from '../repositories/outreach-contact.repository';
+import type { OutreachContactForConversionRow } from '../repositories/outreach-contact.repository';
 import { OutreachRepository } from '../repositories/outreach.repository';
 
 function toResponseDto(contact: OutreachContact): OutreachContactResponseDto {
@@ -112,5 +113,12 @@ export class OutreachContactService {
       throw new NotFoundException(`No OutreachContact found with id '${id}'`);
     }
     return existing;
+  }
+
+  /** `[Milestone C.1.2: Outreach Analytics]` Thin passthrough - see
+   * `OutreachContactRepository.listForConversion`'s own doc comment.
+   * Consumed by `OutreachConversionService`. */
+  listForConversion(branchId: string, groupIds?: string[], from?: Date, to?: Date): Promise<OutreachContactForConversionRow[]> {
+    return this.outreachContactRepository.listForConversion(branchId, groupIds, from, to);
   }
 }

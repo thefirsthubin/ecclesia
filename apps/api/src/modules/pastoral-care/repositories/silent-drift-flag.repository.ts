@@ -42,4 +42,19 @@ export class SilentDriftFlagRepository {
       orderBy: { createdAt: 'desc' },
     });
   }
+
+  /** `[Milestone C: Portal Read Models + Analytics]` Phase 1 decision
+   * #11's real cluster-narrowing counterpart to `listByBranch` above -
+   * `SilentDriftFlag.groupId` is required (unlike `FollowUpTask.groupId`),
+   * so every row is always attributable to a Bacenta and this method
+   * never has an analogous "no groupId" exclusion to disclose. */
+  listByGroups(groupIds: string[], statuses: SilentDriftStatus[] = DEFAULT_STATUSES): Promise<SilentDriftFlag[]> {
+    if (groupIds.length === 0) {
+      return Promise.resolve([]);
+    }
+    return this.prisma.silentDriftFlag.findMany({
+      where: { groupId: { in: groupIds }, status: { in: statuses } },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
 }

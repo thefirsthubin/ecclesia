@@ -82,4 +82,30 @@ describe('[Milestone B] CounsellingSessionRepository', () => {
       expect(result).toEqual([{ id: 'session-1' }]);
     });
   });
+
+  describe('[Milestone C] listScheduledInRangeForPersons', () => {
+    it('filters by personId IN the given set, excludes CANCELLED, and a scheduledAt window', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.counsellingSession.findMany.mockResolvedValue([{ id: 'session-1' }]);
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-08-31T00:00:00.000Z');
+
+      const result = await repository.listScheduledInRangeForPersons(['person-1', 'person-2'], from, to);
+
+      expect(prisma.counsellingSession.findMany).toHaveBeenCalledWith({
+        where: { personId: { in: ['person-1', 'person-2'] }, status: { not: 'CANCELLED' }, scheduledAt: { gte: from, lte: to } },
+        orderBy: { scheduledAt: 'asc' },
+      });
+      expect(result).toEqual([{ id: 'session-1' }]);
+    });
+
+    it('returns an empty array without querying when given an empty person set', async () => {
+      const { repository, prisma } = buildRepository();
+
+      const result = await repository.listScheduledInRangeForPersons([], new Date(), new Date());
+
+      expect(prisma.counsellingSession.findMany).not.toHaveBeenCalled();
+      expect(result).toEqual([]);
+    });
+  });
 });

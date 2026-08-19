@@ -7,6 +7,7 @@ import { PeopleModule } from '../people/people.module';
 import { CounsellingSessionController, CounsellingSessionStatusController } from './controllers/counselling-session.controller';
 import { FollowUpTaskController } from './controllers/follow-up-task.controller';
 import { MemberInteractionController } from './controllers/member-interaction.controller';
+import { PastoralActivitySummaryController } from './controllers/pastoral-activity-summary.controller';
 import { PastoralCalendarController } from './controllers/pastoral-calendar.controller';
 import { PastoralNoteController } from './controllers/pastoral-note.controller';
 import { PoimenEnrollmentController } from './controllers/poimen-enrollment.controller';
@@ -23,6 +24,7 @@ import {
   FollowUpTaskResourceContextGuard,
 } from './guards/follow-up-task-resource-context.guard';
 import { MemberInteractionResourceContextGuard } from './guards/member-interaction-resource-context.guard';
+import { PastoralActivitySummaryResourceContextGuard } from './guards/pastoral-activity-summary-resource-context.guard';
 import { PastoralCalendarResourceContextGuard } from './guards/pastoral-calendar-resource-context.guard';
 import { PastoralNoteResourceContextGuard } from './guards/pastoral-note-resource-context.guard';
 import { PoimenEnrollmentResourceContextGuard } from './guards/poimen-enrollment-resource-context.guard';
@@ -44,6 +46,7 @@ import { SilentDriftFlagRepository } from './repositories/silent-drift-flag.repo
 import { CounsellingSessionService } from './services/counselling-session.service';
 import { FollowUpTaskService } from './services/follow-up-task.service';
 import { MemberInteractionService } from './services/member-interaction.service';
+import { PastoralActivitySummaryService } from './services/pastoral-activity-summary.service';
 import { PastoralCalendarService } from './services/pastoral-calendar.service';
 import { PastoralNoteService } from './services/pastoral-note.service';
 import { PoimenEnrollmentService } from './services/poimen-enrollment.service';
@@ -85,6 +88,7 @@ import { SilentDriftFlagService } from './services/silent-drift-flag.service';
     CounsellingSessionStatusController,
     MemberInteractionController,
     PastoralCalendarController,
+    PastoralActivitySummaryController,
     SilentDriftFlagController,
   ],
   providers: [
@@ -113,6 +117,8 @@ import { SilentDriftFlagService } from './services/silent-drift-flag.service';
     MemberInteractionResourceContextGuard,
     PastoralCalendarService,
     PastoralCalendarResourceContextGuard,
+    PastoralActivitySummaryService,
+    PastoralActivitySummaryResourceContextGuard,
     SilentDriftFlagRepository,
     SilentDriftFlagService,
     SilentDriftFlagListResourceContextGuard,

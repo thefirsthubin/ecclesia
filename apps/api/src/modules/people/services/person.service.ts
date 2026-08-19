@@ -261,4 +261,34 @@ export class PersonService {
     }
     return results;
   }
+
+  /** `[Milestone C: Portal Read Models + Analytics]` Thin passthrough -
+   * see `PersonRepository.countByBranchAndLifecycleStage`'s own doc
+   * comment. Consumed by `MembershipTrendService`. */
+  countByBranchAndLifecycleStage(branchId: string, lifecycleStage: string): Promise<number> {
+    return this.personRepository.countByBranchAndLifecycleStage(branchId, lifecycleStage);
+  }
+
+  /** `[Milestone C]` Thin passthrough - see
+   * `PersonRepository.findIdsByBranchAndLifecycleStage`'s own doc comment. */
+  async findIdsByBranchAndLifecycleStage(branchId: string, lifecycleStage: string): Promise<string[]> {
+    const rows = await this.personRepository.findIdsByBranchAndLifecycleStage(branchId, lifecycleStage);
+    return rows.map((row) => row.id);
+  }
+
+  /** `[Milestone C]` Thin passthrough - see
+   * `PersonRepository.countWithoutActiveBacenta`'s own doc comment. */
+  countWithoutActiveBacenta(branchId: string): Promise<number> {
+    return this.personRepository.countWithoutActiveBacenta(branchId);
+  }
+
+  /** `[Milestone C]` Batch id lookup, avoiding an N-`getById` loop -
+   * `MembershipTrendService`'s own group-scoped cumulative series needs
+   * every in-scope Person's `createdAt`, which `findByIds` already
+   * returns alongside every other field this milestone doesn't need but
+   * isn't worth a narrower `select`-only repository method for. */
+  async getByIds(ids: string[]): Promise<PersonResponseDto[]> {
+    const persons = await this.personRepository.findByIds(ids);
+    return persons.map(toResponseDto);
+  }
 }

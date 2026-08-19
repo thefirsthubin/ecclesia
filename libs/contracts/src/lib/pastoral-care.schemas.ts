@@ -405,3 +405,72 @@ export const pastoralCalendarResponseSchema = z.object({
   interactions: z.array(pastoralCalendarInteractionEntrySchema),
 });
 export type PastoralCalendarResponseDto = z.infer<typeof pastoralCalendarResponseSchema>;
+
+/** `[Milestone C.1.3: Pastoral Activity Analytics]` `GET
+ * /pastoral-care/activity-summary` - same `from`/`to` shape as
+ * `getPastoralCalendarQuerySchema`, reused rather than duplicated. `to`
+ * only bounds `CounsellingSession`/`MemberInteraction` (both windowed by
+ * `scheduledAt`, via `listScheduledInRange`/`listScheduledInRangeForPersons`,
+ * the same primitives `PastoralCalendarService` already uses) -
+ * `FollowUpTask` counts are a current-state snapshot across every status,
+ * not windowed by `dueAt`, since no all-status/dueAt-windowed listing
+ * method exists (only the `DEFAULT_STATUSES`-restricted
+ * `listByBranchWithDueAtInRange`/`listByGroupsWithDueAtInRange`, unsuited
+ * to a full status distribution). See `PastoralActivitySummaryService`'s
+ * own doc comment. */
+export const getPastoralActivitySummaryQuerySchema = z.object({
+  from: z.string().datetime(),
+  to: z.string().datetime(),
+});
+export type GetPastoralActivitySummaryQuery = z.infer<typeof getPastoralActivitySummaryQuerySchema>;
+
+/** `[Milestone C.1.3]` Never `description`/`briefNote`/`content` -
+ * status/trigger/assignee counts only, the safe aggregate boundary this
+ * whole read model exists to enforce. */
+export const pastoralActivityFollowUpSummarySchema = z.object({
+  totalCount: z.number().int(),
+  byStatus: z.object({
+    OPEN: z.number().int(),
+    IN_PROGRESS: z.number().int(),
+    ESCALATED: z.number().int(),
+    COMPLETED: z.number().int(),
+    CANCELLED: z.number().int(),
+  }),
+  /** `dueAt < now` AND `status` in `[OPEN, ESCALATED]` - the same
+   * "still-open and past due" definition FR-PC-03's SLA queue uses. */
+  overdueCount: z.number().int(),
+  /** `COMPLETED / totalCount`, rounded to one decimal; `null` when
+   * `totalCount` is 0 rather than dividing by zero. */
+  completionRate: z.number().nullable(),
+  byAssignee: z.array(z.object({ assignedToPersonId: z.string().uuid(), count: z.number().int() })),
+  /** Keyed by `FollowUpTaskTrigger`, plus `'UNSPECIFIED'` for the
+   * pre-Milestone-B rows `FollowUpTaskTrigger`'s own doc comment
+   * describes as never reconstructable. */
+  byTrigger: z.record(z.string(), z.number().int()),
+});
+export type PastoralActivityFollowUpSummaryDto = z.infer<typeof pastoralActivityFollowUpSummarySchema>;
+
+/** `[Milestone C.1.3]` `status` only - `CANCELLED` never appears here,
+ * matching `CounsellingSessionRepository.listScheduledInRange`'s own
+ * `status: { not: 'CANCELLED' }` filter (a cancelled session has nothing
+ * to report on a forward-looking activity window). */
+export const pastoralActivityCounsellingSummarySchema = z.object({
+  totalCount: z.number().int(),
+  byStatus: z.record(z.string(), z.number().int()),
+});
+export type PastoralActivityCounsellingSummaryDto = z.infer<typeof pastoralActivityCounsellingSummarySchema>;
+
+export const pastoralActivityInteractionSummarySchema = z.object({
+  totalCount: z.number().int(),
+  byType: z.record(z.string(), z.number().int()),
+});
+export type PastoralActivityInteractionSummaryDto = z.infer<typeof pastoralActivityInteractionSummarySchema>;
+
+export const pastoralActivitySummaryResponseSchema = z.object({
+  from: z.string(),
+  to: z.string(),
+  followUpTasks: pastoralActivityFollowUpSummarySchema,
+  counsellingSessions: pastoralActivityCounsellingSummarySchema,
+  interactions: pastoralActivityInteractionSummarySchema,
+});
+export type PastoralActivitySummaryResponseDto = z.infer<typeof pastoralActivitySummaryResponseSchema>;

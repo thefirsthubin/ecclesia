@@ -275,4 +275,66 @@ export class FinancialTransactionRepository {
     });
     return result._sum.amountMinor ?? 0n;
   }
+
+  /**
+   * `[Milestone C: Portal Read Models + Analytics]` The Giving Trend
+   * read-model's raw row source. Returns every VERIFIED/RECONCILED row in
+   * `[from, to]` **for the correct date**, per Phase 3's explicit
+   * instruction: a row with a `gatheringId` is matched against that
+   * Gathering's own `scheduledStart` (via the `gathering` relation
+   * filter/select below), never its own `createdAt`; a row with no
+   * `gatheringId` has no better date available and is matched/reported
+   * against `createdAt` instead - the one honest fallback, not a silent
+   * substitution for a "real" service date that doesn't exist for that
+   * row. The caller (`GivingTrendService`) does the actual bucketing -
+   * this method only fetches the candidate rows and each one's resolved
+   * date, deliberately not aggregating in SQL, since the two different
+   * date sources per row make a single `groupBy` impossible without a
+   * raw-SQL `CASE` expression this codebase's own conventions avoid in
+   * favor of small, explicit application-layer composition (the same
+   * choice `BranchDashboardSummaryService`/`PastoralCalendarService`
+   * already make elsewhere).
+   */
+  listVerifiedForTrend(
+    branchId: string,
+    from: Date,
+    to: Date,
+    types: FinancialTransactionType[],
+    sourceGroupIds?: string[],
+  ): Promise<VerifiedTransactionForTrendRow[]> {
+    return this.prisma.financialTransaction.findMany({
+      where: {
+        branchId,
+        currentState: { in: ['VERIFIED', 'RECONCILED'] },
+        type: { in: types },
+        ...(sourceGroupIds ? { sourceGroupId: { in: sourceGroupIds } } : {}),
+        OR: [
+          { gatheringId: { not: null }, gathering: { scheduledStart: { gte: from, lte: to } } },
+          { gatheringId: null, createdAt: { gte: from, lte: to } },
+        ],
+      },
+      select: {
+        id: true,
+        type: true,
+        amountMinor: true,
+        sourceGroupId: true,
+        gatheringId: true,
+        createdAt: true,
+        gathering: { select: { scheduledStart: true, type: true } },
+      },
+    });
+  }
+}
+
+/** Row shape returned by `listVerifiedForTrend` - `gathering` is Prisma's
+ * own nested-select result (`null` when `gatheringId` is null), read
+ * directly by `GivingTrendService` to resolve each row's true date. */
+export interface VerifiedTransactionForTrendRow {
+  id: string;
+  type: FinancialTransactionType;
+  amountMinor: bigint;
+  sourceGroupId: string | null;
+  gatheringId: string | null;
+  createdAt: Date;
+  gathering: { scheduledStart: Date; type: string } | null;
 }

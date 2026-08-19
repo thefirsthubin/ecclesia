@@ -311,6 +311,16 @@ describe('FinancialTransactionService', () => {
 
       expect(financialTransactionRepository.findManyByBranch).toHaveBeenCalledWith('branch-1', undefined, 'OFFERING', 'bacenta-2');
     });
+
+    it('[Milestone C, bug fix] narrows to the actor\'s own Basonta when actor.basontaId is set (BASONTA_LEADER list view) - confirmed 403 live before this fix', async () => {
+      const { service, financialTransactionRepository } = buildService();
+      const basontaLeader: ActorContext = { personId: 'bsl-1', role: 'BASONTA_LEADER', branchId: 'branch-1', basontaId: 'basonta-1' };
+      financialTransactionRepository.findManyByBranch.mockResolvedValue([buildTransaction()]);
+
+      await service.listByBranch(basontaLeader, 'RECORDED');
+
+      expect(financialTransactionRepository.findManyByBranch).toHaveBeenCalledWith('branch-1', 'RECORDED', undefined, 'basonta-1');
+    });
   });
 
   describe('sumVerifiedAmountForBranch', () => {
@@ -385,6 +395,20 @@ describe('FinancialTransactionService', () => {
 
       expect(result.groupBy).toBe('none');
       expect(result.rows).toEqual([{ sourceGroupId: 'bacenta-1', totalAmountMinor: '5000' }]);
+    });
+
+    it('[Milestone C, bug fix] a Basonta-scoped actor always gets groupBy "none" narrowed to their own Basonta, even if "group" was requested', async () => {
+      const { service, financialTransactionRepository } = buildService();
+      const basontaLeader: ActorContext = { personId: 'bsl-1', role: 'BASONTA_LEADER', branchId: 'branch-1', basontaId: 'basonta-1' };
+      financialTransactionRepository.sumVerifiedAmountByGroupForRange.mockResolvedValue([
+        { sourceGroupId: 'basonta-1', totalAmountMinor: 5000n },
+        { sourceGroupId: 'basonta-2', totalAmountMinor: 7000n },
+      ]);
+
+      const result = await service.summarize(basontaLeader, from, to, undefined, 'group');
+
+      expect(result.groupBy).toBe('none');
+      expect(result.rows).toEqual([{ sourceGroupId: 'basonta-1', totalAmountMinor: '5000' }]);
     });
 
     it('a Bacenta-scoped actor with no matching row gets a zeroed row, not an empty array', async () => {

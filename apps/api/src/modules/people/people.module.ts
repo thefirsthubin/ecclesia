@@ -7,6 +7,7 @@ import { PastoralCareModule } from '../pastoral-care/pastoral-care.module';
 import { GroupController } from './controllers/group.controller';
 import { GroupMembershipController } from './controllers/group-membership.controller';
 import { PersonController } from './controllers/person.controller';
+import { PotentialController } from './controllers/potential.controller';
 import { RoleAssignmentController } from './controllers/role-assignment.controller';
 import {
   GroupCreateResourceContextGuard,
@@ -19,10 +20,16 @@ import {
   PersonListResourceContextGuard,
   PersonResourceContextGuard,
 } from './guards/person-resource-context.guard';
+import {
+  PotentialCreateResourceContextGuard,
+  PotentialListResourceContextGuard,
+  PotentialResourceContextGuard,
+} from './guards/potential-resource-context.guard';
 import { RoleAssignmentResourceContextGuard, RoleAssignmentRevokeResourceContextGuard } from './guards/role-assignment-resource-context.guard';
 import { GroupRepository } from './repositories/group.repository';
 import { GroupMembershipRepository } from './repositories/group-membership.repository';
 import { PersonRepository } from './repositories/person.repository';
+import { PotentialRepository } from './repositories/potential.repository';
 import { RoleAssignmentRepository } from './repositories/role-assignment.repository';
 import { GroupService } from './services/group.service';
 import { GroupLeadershipService } from './services/group-leadership.service';
@@ -31,6 +38,7 @@ import { GroupRosterService } from './services/group-roster.service';
 import { GroupScopeService } from './services/group-scope.service';
 import { PersonScopeService } from './services/person-scope.service';
 import { PersonService } from './services/person.service';
+import { PotentialService } from './services/potential.service';
 import { RoleAssignmentService } from './services/role-assignment.service';
 
 /**
@@ -60,12 +68,13 @@ import { RoleAssignmentService } from './services/role-assignment.service';
  */
 @Module({
   imports: [DatabaseModule, RbacPlatformModule, EventsModule, forwardRef(() => PastoralCareModule)],
-  controllers: [PersonController, GroupController, GroupMembershipController, RoleAssignmentController],
+  controllers: [PersonController, GroupController, GroupMembershipController, RoleAssignmentController, PotentialController],
   providers: [
     PersonRepository,
     GroupRepository,
     GroupMembershipRepository,
     RoleAssignmentRepository,
+    PotentialRepository,
     PersonService,
     PersonScopeService,
     GroupService,
@@ -74,6 +83,7 @@ import { RoleAssignmentService } from './services/role-assignment.service';
     GroupMembershipService,
     GroupRosterService,
     RoleAssignmentService,
+    PotentialService,
     PersonResourceContextGuard,
     PersonCreateResourceContextGuard,
     PersonListResourceContextGuard,
@@ -83,6 +93,9 @@ import { RoleAssignmentService } from './services/role-assignment.service';
     GroupMembershipResourceContextGuard,
     RoleAssignmentResourceContextGuard,
     RoleAssignmentRevokeResourceContextGuard,
+    PotentialCreateResourceContextGuard,
+    PotentialListResourceContextGuard,
+    PotentialResourceContextGuard,
   ],
   // `PersonScopeService` is People's public service interface (Blueprint
   // §7.2) for other bounded-context modules whose resources reference a

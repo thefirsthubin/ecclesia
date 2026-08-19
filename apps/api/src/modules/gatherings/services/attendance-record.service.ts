@@ -9,6 +9,7 @@ import type { AttendanceRecord } from '@prisma/client';
 
 import { EventBridgePublisherService } from '../../../platform/events/eventbridge-publisher.service';
 import { AttendanceRecordRepository } from '../repositories/attendance-record.repository';
+import type { AttendanceForTrendRow } from '../repositories/attendance-record.repository';
 import { GatheringRepository } from '../repositories/gathering.repository';
 
 function toResponseDto(record: AttendanceRecord): AttendanceRecordResponseDto {
@@ -110,5 +111,27 @@ export class AttendanceRecordService {
    * from an already-RBAC-guarded controller route. */
   countPresentInWindow(branchId: string, from: Date, to: Date): Promise<number> {
     return this.attendanceRecordRepository.countPresentInWindow(branchId, from, to);
+  }
+
+  /** `[Milestone C: Portal Read Models + Analytics]` Thin passthrough -
+   * see `AttendanceRecordRepository.listPresentForTrend`'s own doc
+   * comment. Consumed by `AttendanceTrendService` (`apps/api/src/modules/insights`). */
+  listPresentForTrend(
+    branchId: string,
+    from: Date,
+    to: Date,
+    gatheringTypes?: string[],
+    ownerGroupIds?: string[],
+    personIds?: string[],
+  ): Promise<AttendanceForTrendRow[]> {
+    return this.attendanceRecordRepository.listPresentForTrend(branchId, from, to, gatheringTypes, ownerGroupIds, personIds);
+  }
+
+  /** `[Milestone C]` Thin passthrough - see
+   * `AttendanceRecordRepository.listDistinctPresentPersonIds`'s own doc
+   * comment. Consumed by `MembershipTrendService`'s active-member
+   * computation. */
+  listDistinctPresentPersonIds(branchId: string, from: Date, to: Date, gatheringTypes: string[]): Promise<string[]> {
+    return this.attendanceRecordRepository.listDistinctPresentPersonIds(branchId, from, to, gatheringTypes);
   }
 }

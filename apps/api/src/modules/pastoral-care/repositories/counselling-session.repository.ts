@@ -61,4 +61,25 @@ export class CounsellingSessionRepository {
       orderBy: { scheduledAt: 'asc' },
     });
   }
+
+  /**
+   * `[Milestone C: Portal Read Models + Analytics]` Phase 1 decision
+   * #11's real cluster-narrowing counterpart to `listScheduledInRange`
+   * above, for the Pastoral Calendar's Assistant Pastor path.
+   * `CounsellingSession` carries no `groupId` column (unlike
+   * `FollowUpTask`/`SilentDriftFlag`) - narrowing by cluster therefore
+   * filters by `personId IN personIds`, where `personIds` is resolved by
+   * the caller via People's exported `GroupMembershipService.listActivePersonIdsForGroups`
+   * (the actor's own `clusterBacentaIds`' current members), never by a
+   * direct cross-schema join from this repository.
+   */
+  listScheduledInRangeForPersons(personIds: string[], from: Date, to: Date): Promise<CounsellingSession[]> {
+    if (personIds.length === 0) {
+      return Promise.resolve([]);
+    }
+    return this.prisma.counsellingSession.findMany({
+      where: { personId: { in: personIds }, status: { not: 'CANCELLED' }, scheduledAt: { gte: from, lte: to } },
+      orderBy: { scheduledAt: 'asc' },
+    });
+  }
 }

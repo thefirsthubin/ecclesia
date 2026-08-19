@@ -46,6 +46,8 @@ describe('AttendanceRecordService', () => {
       findByGathering: jest.fn(),
       countByGathering: jest.fn(),
       countPresentInWindow: jest.fn(),
+      listPresentForTrend: jest.fn(),
+      listDistinctPresentPersonIds: jest.fn(),
     };
     const gatheringRepository = { findById: jest.fn() };
     const eventPublisher = { publish: jest.fn() };
@@ -159,6 +161,40 @@ describe('AttendanceRecordService', () => {
 
       expect(attendanceRecordRepository.countPresentInWindow).toHaveBeenCalledWith('branch-1', from, to);
       expect(result).toBe(356);
+    });
+  });
+
+  describe('[Milestone C] listPresentForTrend', () => {
+    it('delegates directly to the repository', async () => {
+      const { service, attendanceRecordRepository } = buildService();
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-09-01T00:00:00.000Z');
+      attendanceRecordRepository.listPresentForTrend.mockResolvedValue([]);
+
+      await service.listPresentForTrend('branch-1', from, to, ['Sunday Service'], ['bacenta-1'], ['person-1']);
+
+      expect(attendanceRecordRepository.listPresentForTrend).toHaveBeenCalledWith(
+        'branch-1',
+        from,
+        to,
+        ['Sunday Service'],
+        ['bacenta-1'],
+        ['person-1'],
+      );
+    });
+  });
+
+  describe('[Milestone C] listDistinctPresentPersonIds', () => {
+    it('delegates directly to the repository', async () => {
+      const { service, attendanceRecordRepository } = buildService();
+      const from = new Date('2026-06-23T00:00:00.000Z');
+      const to = new Date('2026-08-18T00:00:00.000Z');
+      attendanceRecordRepository.listDistinctPresentPersonIds.mockResolvedValue(['p1']);
+
+      const result = await service.listDistinctPresentPersonIds('branch-1', from, to, ['Sunday Service']);
+
+      expect(attendanceRecordRepository.listDistinctPresentPersonIds).toHaveBeenCalledWith('branch-1', from, to, ['Sunday Service']);
+      expect(result).toEqual(['p1']);
     });
   });
 });

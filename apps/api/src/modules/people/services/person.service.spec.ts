@@ -18,6 +18,9 @@ describe('PersonService', () => {
       findWithoutActiveBacenta: jest.fn().mockResolvedValue([]),
       countByBranch: jest.fn(),
       countByBranchCreatedBefore: jest.fn(),
+      countByBranchAndLifecycleStage: jest.fn(),
+      findIdsByBranchAndLifecycleStage: jest.fn().mockResolvedValue([]),
+      countWithoutActiveBacenta: jest.fn(),
     };
     const groupRosterService = {
       listActiveMembers: jest.fn().mockResolvedValue([]),
@@ -275,6 +278,52 @@ describe('PersonService', () => {
       const result = await service.listOrganizedByBacenta(actor);
 
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('[Milestone C] countByBranchAndLifecycleStage', () => {
+    it('delegates to the repository', async () => {
+      const { service, personRepository } = buildService();
+      personRepository.countByBranchAndLifecycleStage.mockResolvedValue(9);
+
+      const result = await service.countByBranchAndLifecycleStage('branch-1', 'MEMBER');
+
+      expect(personRepository.countByBranchAndLifecycleStage).toHaveBeenCalledWith('branch-1', 'MEMBER');
+      expect(result).toBe(9);
+    });
+  });
+
+  describe('[Milestone C] findIdsByBranchAndLifecycleStage', () => {
+    it('unwraps the repository\'s {id} rows into plain string ids', async () => {
+      const { service, personRepository } = buildService();
+      personRepository.findIdsByBranchAndLifecycleStage.mockResolvedValue([{ id: 'p1' }, { id: 'p2' }]);
+
+      const result = await service.findIdsByBranchAndLifecycleStage('branch-1', 'MEMBER');
+
+      expect(result).toEqual(['p1', 'p2']);
+    });
+  });
+
+  describe('[Milestone C] countWithoutActiveBacenta', () => {
+    it('delegates to the repository', async () => {
+      const { service, personRepository } = buildService();
+      personRepository.countWithoutActiveBacenta.mockResolvedValue(4);
+
+      const result = await service.countWithoutActiveBacenta('branch-1');
+
+      expect(result).toBe(4);
+    });
+  });
+
+  describe('[Milestone C] getByIds', () => {
+    it('maps every found Person to a response DTO', async () => {
+      const { service, personRepository } = buildService();
+      personRepository.findByIds.mockResolvedValue([personRow]);
+
+      const result = await service.getByIds(['person-1']);
+
+      expect(personRepository.findByIds).toHaveBeenCalledWith(['person-1']);
+      expect(result).toEqual([expect.objectContaining({ id: 'person-1' })]);
     });
   });
 });

@@ -31,6 +31,7 @@ describe('[Milestone B] OutreachContactService', () => {
       listByOutreach: jest.fn(),
       setPersonId: jest.fn(),
       updateOutcome: jest.fn(),
+      listForConversion: jest.fn(),
     };
     const outreachRepository = {
       findById: jest.fn(),
@@ -145,6 +146,21 @@ describe('[Milestone B] OutreachContactService', () => {
         actor,
         expect.objectContaining({ lastName: 'Owusu', overrideDuplicateCheck: true }),
       );
+    });
+  });
+
+  describe('[Milestone C.1.2] listForConversion', () => {
+    it('delegates directly to the repository', async () => {
+      const { service, outreachContactRepository } = buildService();
+      const rows = [{ id: 'contact-1', personId: null, createdAt: NOW }];
+      outreachContactRepository.listForConversion.mockResolvedValue(rows);
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-08-31T00:00:00.000Z');
+
+      const result = await service.listForConversion('branch-1', ['bacenta-1'], from, to);
+
+      expect(outreachContactRepository.listForConversion).toHaveBeenCalledWith('branch-1', ['bacenta-1'], from, to);
+      expect(result).toBe(rows);
     });
   });
 });

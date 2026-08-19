@@ -36,38 +36,40 @@ model Council {
 /// [BLUEPRINT-EXACT] Blueprint §7.2's table list; §7.3's RLS policy scopes
 /// every Branch-scoped table to `branch_id`, making Branch the tenant root.
 model Branch {
-  id                       String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  councilId                String                    @map("council_id") @db.Uuid
-  name                     String
-  timezone                 String?
-  createdAt                DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                DateTime                  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  gatheringSeries          GatheringSeries[]
-  gatherings               Gathering[]
-  visitorIntakeSubmissions VisitorIntakeSubmission[]
-  alerts                   Alert[]
-  engagementSignals        EngagementSignal[]
-  pulseScoreHistory        PulseScoreHistory[]
-  pulseScores              PulseScore[]
-  followUpTasks            FollowUpTask[]
-  pastoralNotes            PastoralNote[]
-  prayerNotes              PrayerNote[]
-  counsellingSessions      CounsellingSession[]
-  memberInteractions       MemberInteraction[]
-  silentDriftFlags         SilentDriftFlag[]
-  groups                   Group[]
-  persons                  Person[]
-  roleAssignments          RoleAssignment[]
-  auditLogEntries          AuditLog[]
-  council                  Council                   @relation(fields: [councilId], references: [id])
-  configuration            Configuration?
-  processedEvents          ProcessedEvent[]
-  users                    User[]
-  bankDepositConfirmations BankDepositConfirmation[]
-  financialTransactions    FinancialTransaction[]
-  projects                 Project[]
-  outreaches               Outreach[]
-  outreachContacts         OutreachContact[]
+  id                            String                         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  councilId                     String                         @map("council_id") @db.Uuid
+  name                          String
+  timezone                      String?
+  createdAt                     DateTime                       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                     DateTime                       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  gatheringSeries               GatheringSeries[]
+  gatherings                    Gathering[]
+  visitorIntakeSubmissions      VisitorIntakeSubmission[]
+  alerts                        Alert[]
+  engagementSignals             EngagementSignal[]
+  pulseScoreHistory             PulseScoreHistory[]
+  pulseScores                   PulseScore[]
+  followUpTasks                 FollowUpTask[]
+  pastoralNotes                 PastoralNote[]
+  prayerNotes                   PrayerNote[]
+  counsellingSessions           CounsellingSession[]
+  memberInteractions            MemberInteraction[]
+  silentDriftFlags              SilentDriftFlag[]
+  groups                        Group[]
+  persons                       Person[]
+  roleAssignments               RoleAssignment[]
+  auditLogEntries               AuditLog[]
+  council                       Council                        @relation(fields: [councilId], references: [id])
+  configuration                 Configuration?
+  processedEvents               ProcessedEvent[]
+  users                         User[]
+  bankDepositConfirmations      BankDepositConfirmation[]
+  financialTransactions         FinancialTransaction[]
+  projects                      Project[]
+  outreaches                    Outreach[]
+  outreachContacts              OutreachContact[]
+  gatheringTypeCategoryMappings GatheringTypeCategoryMapping[]
+  potentials                    Potential[]
 
   @@map("branches")
   @@schema("platform")
@@ -228,6 +230,7 @@ model Group {
   bankDepositConfirmations BankDepositConfirmation[]
   financialTransactions    FinancialTransaction[]
   outreaches               Outreach[]
+  potentials               Potential[]
 
   @@index([branchId, type])
   @@map("groups")
@@ -294,6 +297,9 @@ model Person {
   outreachesLed                     Outreach[]                @relation("OutreachLeader")
   outreachesCreated                 Outreach[]                @relation("OutreachCreatedBy")
   outreachContacts                  OutreachContact[]
+  potentials                        Potential[]               @relation("PotentialPerson")
+  potentialsAssigned                Potential[]               @relation("PotentialAssignedTo")
+  potentialsCreated                 Potential[]               @relation("PotentialCreatedBy")
 
   @@index([branchId])
   @@index([guardianPersonId])
@@ -680,6 +686,56 @@ model WorkerAvailability {
   @@index([branchId])
   @@map("worker_availability")
   @@schema("ministry")
+}
+
+/// `[Milestone C: Portal Read Models + Analytics]` The canonical mapping
+/// mechanism Phase 1's approved product decision requires: `Gathering.type`
+/// stays exactly what it always was (a Branch-configurable free string,
+/// validated only against that Branch's own `Configuration.gatheringTypes`
+/// list) - this model never replaces or reinterprets it. It adds one new
+/// fact per Branch per configured type string: which conceptual
+/// `GatheringCategory` that string means for analytics purposes. A
+/// configured type with no row here is deliberately **unmapped**, not
+/// guessed at from its name, its date, or any other heuristic - every
+/// analytics read-model that needs a category (giving-trend,
+/// attendance-trend) must surface unmapped types explicitly rather than
+/// silently excluding or misclassifying them. `@@unique([branchId,
+/// gatheringType])` - exactly one category per configured string per
+/// Branch, the same "one fact, once" discipline
+/// `one_active_bacenta_per_person` already establishes for a different
+/// invariant.
+model GatheringTypeCategoryMapping {
+  id            String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  branchId      String            @map("branch_id") @db.Uuid
+  /// The exact string as it appears in this Branch's own
+  /// `Configuration.gatheringTypes` (and therefore in `Gathering.type`) -
+  /// not a foreign key, the same "references by name, not by relation"
+  /// convention `GatheringSeries.type`'s own doc comment already
+  /// establishes for the underlying configured-type mechanism itself.
+  gatheringType String            @map("gathering_type")
+  category      GatheringCategory
+  createdAt     DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+  branch        Branch            @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
+  @@unique([branchId, gatheringType])
+  @@index([branchId, category])
+  @@map("gathering_type_category_mappings")
+  @@schema("gatherings")
+}
+
+/// `[Milestone C]` The five conceptual categories Phase 1's approved
+/// decision names exactly - a closed set analytics read-models group by,
+/// deliberately distinct from the open-ended, Branch-configurable
+/// `Gathering.type` string itself.
+enum GatheringCategory {
+  SUNDAY
+  MIDWEEK
+  BACENTA_MEETING
+  BASONTA_MEETING
+  OTHER
+
+  @@schema("gatherings")
 }
 
 /// [PRD-DERIVED] FR-GTH-02: recurring series generating dated instances.
@@ -1383,4 +1439,92 @@ model OutreachContact {
   @@index([outreachId])
   @@map("outreach_contacts")
   @@schema("outreach")
+}
+
+// =============================================================================
+// `[Milestone C: Portal Read Models + Analytics]` Potential - Phase 1's
+// approved decision #4. A deliberately new, minimal representation: the
+// audit this milestone is built from confirmed no existing table can
+// safely stand in for it. `OutreachContact` is structurally 1:1 with a
+// specific Outreach event (`outreachId` required) and is never
+// auto-converted here, per that decision's explicit instruction.
+// `Person.lifecycleStage`'s `FOLLOW_UP` value only applies to an
+// already-created `Person` row and is never silently reinterpreted as a
+// Potential either - a Potential may exist with no `Person` at all
+// (`personId` nullable). Placed in the `people` schema, not `outreach`:
+// a Potential is a cross-cutting "someone we are cultivating toward
+// membership" concept, sourced from Outreach among other channels, not
+// an Outreach-owned fact.
+// =============================================================================
+
+model Potential {
+  id                 String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  branchId           String          @map("branch_id") @db.Uuid
+  /// Ownership/scope (Phase 1 decision #4's own required field) - the
+  /// Bacenta/Basonta this Potential is being cultivated within, mirroring
+  /// `FinancialTransaction.sourceGroupId`'s own "organizational
+  /// attribution, nullable" convention. Nullable - a Potential sourced
+  /// Branch-wide (e.g. a website inquiry) may have no single owning Group
+  /// yet.
+  groupId            String?         @map("group_id") @db.Uuid
+  /// Person/contact reference (required field) - nullable: most
+  /// Potentials are lightweight, not-yet-a-Person records (the same
+  /// "capture now, promote later" shape `OutreachContact.personId`
+  /// already establishes), but a Potential may also name an existing
+  /// Person directly (e.g. a Member's own personal referral, already
+  /// known to the church in some other capacity).
+  personId           String?         @map("person_id") @db.Uuid
+  firstName          String          @map("first_name")
+  lastName           String?         @map("last_name")
+  phone              String?
+  /// Source (required field) - where this Potential came from.
+  source             PotentialSource
+  /// Status (required field).
+  status             PotentialStatus @default(NEW)
+  /// Notes (required field) - brief operational notes only, same
+  /// discipline as `Outreach.notes`/`FollowUpTask.description`, never a
+  /// place for sensitive pastoral content.
+  notes              String?
+  /// The second half of ownership/scope - who is actively cultivating
+  /// this Potential, mirroring `FollowUpTask.assignedToPersonId`'s own
+  /// convention. Nullable - a newly-created Potential may not yet be
+  /// assigned.
+  assignedToPersonId String?         @map("assigned_to_person_id") @db.Uuid
+  createdByPersonId  String          @map("created_by_person_id") @db.Uuid
+  createdAt          DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+  branch             Branch          @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  group              Group?          @relation(fields: [groupId], references: [id])
+  person             Person?         @relation("PotentialPerson", fields: [personId], references: [id])
+  assignedToPerson   Person?         @relation("PotentialAssignedTo", fields: [assignedToPersonId], references: [id])
+  createdByPerson    Person          @relation("PotentialCreatedBy", fields: [createdByPersonId], references: [id])
+
+  @@index([branchId])
+  @@index([groupId])
+  @@map("potentials")
+  @@schema("people")
+}
+
+/// `[Milestone C]` A minimal, closed source set - not an exhaustive
+/// channel taxonomy, just enough to distinguish "came from an Outreach
+/// event" from every other path, per Phase 1 decision #4's own framing.
+enum PotentialSource {
+  OUTREACH
+  REFERRAL
+  WALK_IN
+  OTHER
+
+  @@schema("people")
+}
+
+/// `[Milestone C]` A minimal, closed status set - triage only, not a full
+/// pipeline workflow (matching `PrayerNoteStatus`/`OutreachContactOutcome`'s
+/// own "minimal, closed set" precedent in this codebase).
+enum PotentialStatus {
+  NEW
+  IN_PROGRESS
+  CONVERTED
+  CLOSED
+
+  @@schema("people")
 }

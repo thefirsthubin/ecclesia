@@ -118,6 +118,18 @@ describe('FinancialTransactionListResourceContextGuard', () => {
       resource: { branchId: 'branch-1' },
     });
   });
+
+  it('[Milestone C, bug fix] also resolves basontaId when the actor has one (BASONTA_LEADER) - confirmed live to 403 before this fix', async () => {
+    const guard = new FinancialTransactionListResourceContextGuard(branchConfigurationService as never, prisma as never);
+    const basontaLeader: ActorContext = { personId: 'bsl-1', role: 'BASONTA_LEADER', branchId: 'branch-1', basontaId: 'basonta-1' };
+    const request: Partial<RequestWithActorContext> = { actorContext: basontaLeader, query: {} } as never;
+
+    await guard.canActivate(buildContext(request));
+
+    expect((request as Record<string, unknown>)[ECCLESIA_REQUEST_CONTEXT_KEY]).toMatchObject({
+      resource: { branchId: 'branch-1', basontaId: 'basonta-1' },
+    });
+  });
 });
 
 /** `[Milestone A: Financial + Gathering Backend Foundation]` Mirrors
@@ -144,6 +156,18 @@ describe('FinancialTransactionSummaryResourceContextGuard', () => {
 
     expect((request as Record<string, unknown>)[ECCLESIA_REQUEST_CONTEXT_KEY]).toMatchObject({
       resource: { branchId: 'branch-1', bacentaId: 'bacenta-1' },
+    });
+  });
+
+  it('[Milestone C, bug fix] also resolves basontaId when the actor has one (BASONTA_LEADER)', async () => {
+    const guard = new FinancialTransactionSummaryResourceContextGuard(branchConfigurationService as never, prisma as never);
+    const basontaLeader: ActorContext = { personId: 'bsl-1', role: 'BASONTA_LEADER', branchId: 'branch-1', basontaId: 'basonta-1' };
+    const request: Partial<RequestWithActorContext> = { actorContext: basontaLeader, query: {} } as never;
+
+    await guard.canActivate(buildContext(request));
+
+    expect((request as Record<string, unknown>)[ECCLESIA_REQUEST_CONTEXT_KEY]).toMatchObject({
+      resource: { branchId: 'branch-1', basontaId: 'basonta-1' },
     });
   });
 });

@@ -261,6 +261,17 @@ export const ACTIONS = [
   // mutable record).
   'pastoral_care.interaction.create',
   'pastoral_care.interaction.read',
+
+  // `[Milestone C: Portal Read Models + Analytics]` Potential (Phase 1
+  // decision #4) - a new, minimal domain concept, deliberately its own
+  // action namespace rather than piggy-backing on `outreach.contact.*` or
+  // `people.person.*`, since a Potential is neither an OutreachContact
+  // nor a Person and must not silently inherit either's grant. Same
+  // create/read/update shape as `outreach.contact.*`, no `.delete` -
+  // closing one out is a status transition (`CLOSED`), not a deletion.
+  'people.potential.create',
+  'people.potential.read',
+  'people.potential.update',
 ] as const;
 
 export type Action = (typeof ACTIONS)[number];

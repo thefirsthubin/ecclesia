@@ -225,4 +225,62 @@ describe('GroupMembershipRepository', () => {
       expect(result).toEqual({ id: 'membership-1', endedAt: expect.any(Date), reason: 'moved house' });
     });
   });
+
+  describe('[Milestone C] countDistinctActiveByGroupType', () => {
+    it('counts distinct active-as-of Persons for the given branch and groupType', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.groupMembership.findMany.mockResolvedValue([{ personId: 'p1' }, { personId: 'p2' }]);
+      const asOf = new Date('2026-08-17T00:00:00.000Z');
+
+      const result = await repository.countDistinctActiveByGroupType('branch-1', 'PASTORAL_CARE', asOf);
+
+      expect(prisma.groupMembership.findMany).toHaveBeenCalledWith({
+        where: {
+          branchId: 'branch-1',
+          groupType: 'PASTORAL_CARE',
+          startedAt: { lte: asOf },
+          OR: [{ endedAt: null }, { endedAt: { gt: asOf } }],
+        },
+        distinct: ['personId'],
+        select: { personId: true },
+      });
+      expect(result).toBe(2);
+    });
+
+    it('defaults asOf to the current time when omitted', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.groupMembership.findMany.mockResolvedValue([]);
+      const before = Date.now();
+
+      await repository.countDistinctActiveByGroupType('branch-1', 'MINISTRY');
+
+      const call = prisma.groupMembership.findMany.mock.calls[0][0];
+      expect(call.where.startedAt.lte.getTime()).toBeGreaterThanOrEqual(before);
+    });
+  });
+
+  describe('[Milestone C] listActivePersonIdsForGroups', () => {
+    it('returns distinct active PASTORAL_CARE members of the given groups', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.groupMembership.findMany.mockResolvedValue([{ personId: 'person-1' }, { personId: 'person-2' }]);
+
+      const result = await repository.listActivePersonIdsForGroups(['bacenta-1', 'bacenta-2']);
+
+      expect(prisma.groupMembership.findMany).toHaveBeenCalledWith({
+        where: { groupId: { in: ['bacenta-1', 'bacenta-2'] }, groupType: 'PASTORAL_CARE', endedAt: null },
+        distinct: ['personId'],
+        select: { personId: true },
+      });
+      expect(result).toEqual(['person-1', 'person-2']);
+    });
+
+    it('returns an empty array without querying when given an empty group set', async () => {
+      const { repository, prisma } = buildRepository();
+
+      const result = await repository.listActivePersonIdsForGroups([]);
+
+      expect(prisma.groupMembership.findMany).not.toHaveBeenCalled();
+      expect(result).toEqual([]);
+    });
+  });
 });

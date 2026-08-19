@@ -132,13 +132,23 @@ export class FollowUpTaskService {
 
   /** `GET /pastoral-care/follow-up-tasks` (Pastoral Care Web Admin sprint).
    * `query.groupId` present -> same Group-scoped read `listForGroup`
-   * already does; absent -> BRANCH-wide, for the BRANCH-scoped actor
+   * already does; absent -> for a CLUSTER-scoped actor (Assistant
+   * Pastor), narrowed to `actor.clusterBacentaIds` (`[Milestone C]` Phase
+   * 1 decision #11's fix - previously this fell through to the
+   * Branch-wide case for every actor, CLUSTER-scoped or not); otherwise
+   * BRANCH-wide, for the BRANCH-scoped actor (Resident Pastor, Admin)
    * `FollowUpTaskListForActorResourceContextGuard` already resolved
    * against `actor.branchId`. */
   async list(actor: ActorContext, query: ListFollowUpTasksForActorQuery): Promise<FollowUpTaskResponseDto[]> {
-    const tasks = query.groupId
-      ? await this.followUpTaskRepository.listByGroup(query.groupId, query.status as FollowUpTaskStatus[] | undefined)
-      : await this.followUpTaskRepository.listByBranch(actor.branchId, query.status as FollowUpTaskStatus[] | undefined);
+    const statuses = query.status as FollowUpTaskStatus[] | undefined;
+    let tasks: FollowUpTask[];
+    if (query.groupId) {
+      tasks = await this.followUpTaskRepository.listByGroup(query.groupId, statuses);
+    } else if (actor.clusterBacentaIds && actor.clusterBacentaIds.length > 0) {
+      tasks = await this.followUpTaskRepository.listByGroups(actor.clusterBacentaIds, statuses);
+    } else {
+      tasks = await this.followUpTaskRepository.listByBranch(actor.branchId, statuses);
+    }
     return tasks.map(toResponseDto);
   }
 

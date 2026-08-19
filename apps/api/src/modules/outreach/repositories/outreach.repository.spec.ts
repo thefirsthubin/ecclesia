@@ -3,7 +3,7 @@ import { OutreachRepository } from './outreach.repository';
 describe('[Milestone B] OutreachRepository', () => {
   function buildRepository() {
     const prisma = {
-      outreach: { create: jest.fn(), findUnique: jest.fn(), findMany: jest.fn() },
+      outreach: { create: jest.fn(), findUnique: jest.fn(), findMany: jest.fn(), count: jest.fn() },
     };
     const repository = new OutreachRepository(prisma as never);
     return { repository, prisma };
@@ -84,6 +84,52 @@ describe('[Milestone B] OutreachRepository', () => {
         where: { branchId: 'branch-1' },
         orderBy: { occurredAt: 'desc' },
       });
+    });
+  });
+
+  describe('[Milestone C.1.2] countByBranch', () => {
+    it('counts by branchId with no date filter when from/to are omitted', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.outreach.count.mockResolvedValue(3);
+
+      const result = await repository.countByBranch('branch-1');
+
+      expect(prisma.outreach.count).toHaveBeenCalledWith({ where: { branchId: 'branch-1' } });
+      expect(result).toBe(3);
+    });
+
+    it('adds an occurredAt range filter when from/to are given', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.outreach.count.mockResolvedValue(1);
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-08-31T00:00:00.000Z');
+
+      await repository.countByBranch('branch-1', from, to);
+
+      expect(prisma.outreach.count).toHaveBeenCalledWith({
+        where: { branchId: 'branch-1', occurredAt: { gte: from, lte: to } },
+      });
+    });
+  });
+
+  describe('[Milestone C.1.2] countByGroups', () => {
+    it('short-circuits to 0 without querying prisma when groupIds is empty', async () => {
+      const { repository, prisma } = buildRepository();
+
+      const result = await repository.countByGroups([]);
+
+      expect(result).toBe(0);
+      expect(prisma.outreach.count).not.toHaveBeenCalled();
+    });
+
+    it('counts by groupId IN groupIds', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.outreach.count.mockResolvedValue(2);
+
+      const result = await repository.countByGroups(['bacenta-1', 'bacenta-2']);
+
+      expect(prisma.outreach.count).toHaveBeenCalledWith({ where: { groupId: { in: ['bacenta-1', 'bacenta-2'] } } });
+      expect(result).toBe(2);
     });
   });
 });

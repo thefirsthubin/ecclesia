@@ -130,4 +130,18 @@ describe('FollowUpTaskListForActorResourceContextGuard (Pastoral Care Web Admin 
       resource: { branchId: 'branch-1' },
     });
   });
+
+  it('[Milestone C] sets resource.bacentaId from the actor\'s own cluster when no groupId is present, so CLUSTER scope can actually be satisfied', async () => {
+    const groupScopeService = { loadResourceContext: jest.fn() };
+    const guard = new FollowUpTaskListForActorResourceContextGuard(branchConfigurationService as never, prisma as never, groupScopeService as never);
+    const actor: ActorContext = { personId: 'ap-1', role: 'ASSISTANT_PASTOR', branchId: 'branch-1', clusterBacentaIds: ['bacenta-1', 'bacenta-2'] };
+    const request: Partial<RequestWithActorContext> = { actorContext: actor, query: {} } as never;
+
+    await guard.canActivate(buildContext(request));
+
+    expect(groupScopeService.loadResourceContext).not.toHaveBeenCalled();
+    expect((request as Record<string, unknown>)[ECCLESIA_REQUEST_CONTEXT_KEY]).toMatchObject({
+      resource: { branchId: 'branch-1', bacentaId: 'bacenta-1' },
+    });
+  });
 });

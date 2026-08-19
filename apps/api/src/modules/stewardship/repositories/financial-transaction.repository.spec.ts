@@ -321,4 +321,47 @@ describe('FinancialTransactionRepository', () => {
       });
     });
   });
+
+  describe('[Milestone C] listVerifiedForTrend', () => {
+    it('matches gatheringId-linked rows by Gathering.scheduledStart, and un-linked rows by their own createdAt', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.financialTransaction.findMany.mockResolvedValue([]);
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-08-31T00:00:00.000Z');
+
+      await repository.listVerifiedForTrend('branch-1', from, to, ['OFFERING', 'TITHE']);
+
+      expect(prisma.financialTransaction.findMany).toHaveBeenCalledWith({
+        where: {
+          branchId: 'branch-1',
+          currentState: { in: ['VERIFIED', 'RECONCILED'] },
+          type: { in: ['OFFERING', 'TITHE'] },
+          OR: [
+            { gatheringId: { not: null }, gathering: { scheduledStart: { gte: from, lte: to } } },
+            { gatheringId: null, createdAt: { gte: from, lte: to } },
+          ],
+        },
+        select: {
+          id: true,
+          type: true,
+          amountMinor: true,
+          sourceGroupId: true,
+          gatheringId: true,
+          createdAt: true,
+          gathering: { select: { scheduledStart: true, type: true } },
+        },
+      });
+    });
+
+    it('adds a sourceGroupId IN filter when a group set is given', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.financialTransaction.findMany.mockResolvedValue([]);
+
+      await repository.listVerifiedForTrend('branch-1', new Date(), new Date(), ['OFFERING'], ['bacenta-1', 'bacenta-2']);
+
+      expect(prisma.financialTransaction.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: expect.objectContaining({ sourceGroupId: { in: ['bacenta-1', 'bacenta-2'] } }) }),
+      );
+    });
+  });
 });

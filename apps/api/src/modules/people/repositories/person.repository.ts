@@ -206,4 +206,41 @@ export class PersonRepository {
   countByBranchCreatedBefore(branchId: string, cutoffExclusive: Date): Promise<number> {
     return this.prisma.person.count({ where: { branchId, createdAt: { lt: cutoffExclusive } } });
   }
+
+  /**
+   * `[Milestone C: Portal Read Models + Analytics]` Phase 5's Membership
+   * Trend read model. `lifecycleStage` accepts a Prisma-generated string
+   * union at the call site (`LifecycleStage` from `@prisma/client`) - the
+   * same cast discipline `updateLifecycleStage` above already
+   * establishes for this exact enum. Used directly for the First
+   * Timers/Visitors counts (`FIRST_TIME_GUEST`/`VISITOR`, Phase 1
+   * decision #3), and to resolve the MEMBER-lifecycle Person id set the
+   * active/inactive computation intersects against attendance.
+   */
+  countByBranchAndLifecycleStage(branchId: string, lifecycleStage: string): Promise<number> {
+    return this.prisma.person.count({ where: { branchId, lifecycleStage: lifecycleStage as PrismaLifecycleStage } });
+  }
+
+  /** Every Person id in the Branch currently at `lifecycleStage` -
+   * `MembershipTrendService` intersects this MEMBER-stage id set against
+   * `AttendanceRecordService.listDistinctPresentPersonIds`'s own
+   * Sunday-attendance id set to compute the approved active/inactive
+   * definition (Phase 1 decision #2), never by adding a new
+   * `lifecycleStage` value. */
+  findIdsByBranchAndLifecycleStage(branchId: string, lifecycleStage: string): Promise<{ id: string }[]> {
+    return this.prisma.person.findMany({
+      where: { branchId, lifecycleStage: lifecycleStage as PrismaLifecycleStage },
+      select: { id: true },
+    });
+  }
+
+  /** Count-only sibling of `findWithoutActiveBacenta` above - same
+   * `WHERE` clause, avoiding fetching full `Person` rows for a milestone
+   * that only needs the number (Branch Administrator's "people without a
+   * Bacenta" dashboard KPI). */
+  countWithoutActiveBacenta(branchId: string): Promise<number> {
+    return this.prisma.person.count({
+      where: { branchId, groupMemberships: { none: { groupType: 'PASTORAL_CARE', endedAt: null } } },
+    });
+  }
 }

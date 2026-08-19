@@ -10,6 +10,8 @@ describe('GroupMembershipService', () => {
       listByPerson: jest.fn(),
       countDistinctActiveMinistryMembersByBranch: jest.fn(),
       closeMembership: jest.fn(),
+      listActivePersonIdsForGroups: jest.fn(),
+      countDistinctActiveByGroupType: jest.fn(),
     };
     const personRepository = {
       findById: jest.fn(),
@@ -180,6 +182,31 @@ describe('GroupMembershipService', () => {
       personRepository.findActiveGroupMemberships.mockResolvedValue([]);
 
       await expect(service.leave('person-1', { groupId: 'bacenta-2', reason: 'moved house' })).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('[Milestone C] listActivePersonIdsForGroups', () => {
+    it('delegates directly to the repository', async () => {
+      const { service, groupMembershipRepository } = buildService();
+      groupMembershipRepository.listActivePersonIdsForGroups.mockResolvedValue(['p1', 'p2']);
+
+      const result = await service.listActivePersonIdsForGroups(['bacenta-1']);
+
+      expect(groupMembershipRepository.listActivePersonIdsForGroups).toHaveBeenCalledWith(['bacenta-1']);
+      expect(result).toEqual(['p1', 'p2']);
+    });
+  });
+
+  describe('[Milestone C] countDistinctActiveByGroupType', () => {
+    it('delegates directly to the repository', async () => {
+      const { service, groupMembershipRepository } = buildService();
+      groupMembershipRepository.countDistinctActiveByGroupType.mockResolvedValue(6);
+      const asOf = new Date('2026-08-17T00:00:00.000Z');
+
+      const result = await service.countDistinctActiveByGroupType('branch-1', 'MINISTRY', asOf);
+
+      expect(groupMembershipRepository.countDistinctActiveByGroupType).toHaveBeenCalledWith('branch-1', 'MINISTRY', asOf);
+      expect(result).toBe(6);
     });
   });
 });

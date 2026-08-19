@@ -173,4 +173,45 @@ describe('FollowUpTaskRepository', () => {
       expect(result).toEqual([{ id: 'ft-1' }]);
     });
   });
+
+  describe('[Milestone C] listByGroups', () => {
+    it('filters by groupId IN the given set, defaulting to the two still-open statuses', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.followUpTask.findMany.mockResolvedValue([{ id: 'ft-1' }]);
+
+      const result = await repository.listByGroups(['bacenta-1', 'bacenta-2']);
+
+      expect(prisma.followUpTask.findMany).toHaveBeenCalledWith({
+        where: { groupId: { in: ['bacenta-1', 'bacenta-2'] }, status: { in: ['OPEN', 'ESCALATED'] } },
+        orderBy: [{ dueAt: { sort: 'asc', nulls: 'last' } }, { createdAt: 'asc' }],
+      });
+      expect(result).toEqual([{ id: 'ft-1' }]);
+    });
+
+    it('returns an empty array without querying when given an empty group set', async () => {
+      const { repository, prisma } = buildRepository();
+
+      const result = await repository.listByGroups([]);
+
+      expect(prisma.followUpTask.findMany).not.toHaveBeenCalled();
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('[Milestone C] listByGroupsWithDueAtInRange', () => {
+    it('filters by groupId IN the given set, the default open statuses, and a dueAt window', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.followUpTask.findMany.mockResolvedValue([{ id: 'ft-1' }]);
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-08-31T00:00:00.000Z');
+
+      const result = await repository.listByGroupsWithDueAtInRange(['bacenta-1'], from, to);
+
+      expect(prisma.followUpTask.findMany).toHaveBeenCalledWith({
+        where: { groupId: { in: ['bacenta-1'] }, status: { in: ['OPEN', 'ESCALATED'] }, dueAt: { gte: from, lte: to } },
+        orderBy: { dueAt: 'asc' },
+      });
+      expect(result).toEqual([{ id: 'ft-1' }]);
+    });
+  });
 });

@@ -88,8 +88,24 @@ export class FollowUpTaskListResourceContextGuard extends EcclesiaContextGuardBa
  * `groupId` query param means an OWN_GROUP/CLUSTER-scoped actor named
  * their own Group (resolved via `GroupScopeService`, same as the
  * path-param guard above); its absence falls back to the actor's own
- * Branch, satisfying `pastoral_care.followup_task.read`'s BRANCH-scope
- * rows (Resident Pastor, Admin) with no Group to name.
+ * Branch/cluster, satisfying `pastoral_care.followup_task.read`'s
+ * BRANCH-scope rows (Resident Pastor, Admin) with no Group to name.
+ *
+ * `[Milestone C: Portal Read Models + Analytics]` Phase 1 decision #11's
+ * fix: when the actor is CLUSTER-scoped (`actor.clusterBacentaIds` is
+ * populated - only ASSISTANT_PASTOR today), this now also sets
+ * `resource.bacentaId` to one member of that set, so `evaluate.ts`'s
+ * CLUSTER case (which requires `resource.bacentaId !== undefined`) can
+ * actually be satisfied - previously this always resolved a bare
+ * `{ branchId }`, which is structurally unable to match CLUSTER at all
+ * (confirmed by this milestone's own audit). This resource is used only
+ * to gate *whether* the actor may hit this endpoint as a class of
+ * request - the real per-row narrowing to the actor's full cluster (not
+ * just the one representative id here) happens in
+ * `FollowUpTaskService.list()`, via the new `listByGroups` repository
+ * method. A BRANCH-scoped actor (Resident Pastor, Admin) has no
+ * `clusterBacentaIds` at all, so `bacentaId` stays `undefined` for them,
+ * unchanged from before this fix.
  */
 @Injectable()
 export class FollowUpTaskListForActorResourceContextGuard extends EcclesiaContextGuardBase {
@@ -106,6 +122,6 @@ export class FollowUpTaskListForActorResourceContextGuard extends EcclesiaContex
     if (groupId) {
       return this.groupScopeService.loadResourceContext(groupId);
     }
-    return Promise.resolve({ branchId: actor.branchId });
+    return Promise.resolve({ branchId: actor.branchId, bacentaId: actor.clusterBacentaIds?.[0] });
   }
 }

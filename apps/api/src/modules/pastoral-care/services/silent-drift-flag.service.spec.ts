@@ -25,7 +25,7 @@ describe('SilentDriftFlagService', () => {
   const actor = { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' } as never;
 
   function buildService() {
-    const silentDriftFlagRepository = { listByGroup: jest.fn(), listByBranch: jest.fn() };
+    const silentDriftFlagRepository = { listByGroup: jest.fn(), listByGroups: jest.fn(), listByBranch: jest.fn() };
     const service = new SilentDriftFlagService(silentDriftFlagRepository as never);
     return { service, silentDriftFlagRepository };
   }
@@ -88,6 +88,18 @@ describe('SilentDriftFlagService', () => {
 
       expect(silentDriftFlagRepository.listByBranch).toHaveBeenCalledWith('branch-1', undefined);
       expect(silentDriftFlagRepository.listByGroup).not.toHaveBeenCalled();
+      expect(result).toHaveLength(1);
+    });
+
+    it('[Milestone C] narrows to listByGroups(actor.clusterBacentaIds) for a CLUSTER-scoped actor when groupId is absent', async () => {
+      const { service, silentDriftFlagRepository } = buildService();
+      const clusterActor = { personId: 'ap-1', role: 'ASSISTANT_PASTOR', branchId: 'branch-1', clusterBacentaIds: ['bacenta-1', 'bacenta-2'] } as never;
+      silentDriftFlagRepository.listByGroups.mockResolvedValue([buildFlag()]);
+
+      const result = await service.list(clusterActor, {} as never);
+
+      expect(silentDriftFlagRepository.listByGroups).toHaveBeenCalledWith(['bacenta-1', 'bacenta-2'], undefined);
+      expect(silentDriftFlagRepository.listByBranch).not.toHaveBeenCalled();
       expect(result).toHaveLength(1);
     });
   });

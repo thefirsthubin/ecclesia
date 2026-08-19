@@ -89,6 +89,27 @@ export class FollowUpTaskRepository {
     });
   }
 
+  /**
+   * `[Milestone C: Portal Read Models + Analytics]` Phase 1 decision
+   * #11's real cluster-narrowing counterpart to `listByBranch` above -
+   * for a CLUSTER-scoped actor (Assistant Pastor) calling `GET
+   * /pastoral-care/follow-up-tasks` with no `groupId`, narrowed to
+   * `groupId IN (actor.clusterBacentaIds)` rather than the whole Branch.
+   * A task with no `groupId` at all is excluded here, the same
+   * pre-existing convention `listByGroup` already has (a task never
+   * assigned to a specific group cannot be matched to any cluster
+   * either) - not a new limitation this fix introduces.
+   */
+  listByGroups(groupIds: string[], statuses: FollowUpTaskStatus[] = DEFAULT_STATUSES): Promise<FollowUpTask[]> {
+    if (groupIds.length === 0) {
+      return Promise.resolve([]);
+    }
+    return this.prisma.followUpTask.findMany({
+      where: { groupId: { in: groupIds }, status: { in: statuses } },
+      orderBy: [{ dueAt: { sort: 'asc', nulls: 'last' } }, { createdAt: 'asc' }],
+    });
+  }
+
   /** `[Milestone B, Slice 7 - Pastoral Calendar]` Open/escalated tasks
    * whose `dueAt` falls in a date window, for the composed calendar
    * read-model (`PastoralCalendarService`) - see
@@ -98,6 +119,21 @@ export class FollowUpTaskRepository {
   listByBranchWithDueAtInRange(branchId: string, from: Date, to: Date): Promise<FollowUpTask[]> {
     return this.prisma.followUpTask.findMany({
       where: { branchId, status: { in: DEFAULT_STATUSES }, dueAt: { gte: from, lte: to } },
+      orderBy: { dueAt: 'asc' },
+    });
+  }
+
+  /** `[Milestone C: Portal Read Models + Analytics]` Phase 1 decision
+   * #11's cluster-narrowed counterpart to `listByBranchWithDueAtInRange`
+   * above, for the Pastoral Calendar's Assistant Pastor path - narrowed
+   * to `groupId IN groupIds` (the actor's own `clusterBacentaIds`)
+   * instead of the whole Branch. */
+  listByGroupsWithDueAtInRange(groupIds: string[], from: Date, to: Date): Promise<FollowUpTask[]> {
+    if (groupIds.length === 0) {
+      return Promise.resolve([]);
+    }
+    return this.prisma.followUpTask.findMany({
+      where: { groupId: { in: groupIds }, status: { in: DEFAULT_STATUSES }, dueAt: { gte: from, lte: to } },
       orderBy: { dueAt: 'asc' },
     });
   }

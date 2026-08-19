@@ -57,4 +57,28 @@ describe('SilentDriftFlagRepository', () => {
       );
     });
   });
+
+  describe('[Milestone C] listByGroups', () => {
+    it('filters by groupId IN the given set, defaulting to the two still-open statuses', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.silentDriftFlag.findMany.mockResolvedValue([{ id: 'sdf-1' }]);
+
+      const result = await repository.listByGroups(['bacenta-1', 'bacenta-2']);
+
+      expect(prisma.silentDriftFlag.findMany).toHaveBeenCalledWith({
+        where: { groupId: { in: ['bacenta-1', 'bacenta-2'] }, status: { in: ['FLAGGED', 'ESCALATED'] } },
+        orderBy: { createdAt: 'desc' },
+      });
+      expect(result).toEqual([{ id: 'sdf-1' }]);
+    });
+
+    it('returns an empty array without querying when given an empty group set', async () => {
+      const { repository, prisma } = buildRepository();
+
+      const result = await repository.listByGroups([]);
+
+      expect(prisma.silentDriftFlag.findMany).not.toHaveBeenCalled();
+      expect(result).toEqual([]);
+    });
+  });
 });

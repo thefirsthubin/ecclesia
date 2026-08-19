@@ -168,4 +168,20 @@ export class GroupMembershipService {
   countDistinctActiveMinistryMembersByBranch(branchId: string, asOf?: Date): Promise<number> {
     return this.groupMembershipRepository.countDistinctActiveMinistryMembersByBranch(branchId, asOf);
   }
+
+  /** `[Milestone C: Portal Read Models + Analytics]` Thin passthrough -
+   * see `GroupMembershipRepository.listActivePersonIdsForGroups`'s own
+   * doc comment. No `actor`/authorization parameter, matching this
+   * module's other cross-module-consumed methods - the caller is only
+   * ever reached from an already-RBAC-guarded controller route. */
+  listActivePersonIdsForGroups(groupIds: string[]): Promise<string[]> {
+    return this.groupMembershipRepository.listActivePersonIdsForGroups(groupIds);
+  }
+
+  /** `[Milestone C]` Thin passthrough - see
+   * `GroupMembershipRepository.countDistinctActiveByGroupType`'s own doc
+   * comment. Consumed by `MembershipTrendService`. */
+  countDistinctActiveByGroupType(branchId: string, groupType: 'PASTORAL_CARE' | 'MINISTRY', asOf?: Date): Promise<number> {
+    return this.groupMembershipRepository.countDistinctActiveByGroupType(branchId, groupType, asOf);
+  }
 }

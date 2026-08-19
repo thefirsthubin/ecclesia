@@ -107,7 +107,19 @@ export class FinancialTransactionListResourceContextGuard extends EcclesiaContex
   }
 
   protected async loadResource(_request: RequestWithActorContext, actor: ActorContext): Promise<ResourceContext> {
-    return { branchId: actor.branchId, bacentaId: actor.bacentaId };
+    // `[Milestone C: Portal Read Models + Analytics, bug fix]` Also sets
+    // `basontaId` - discovered live while verifying Phase 1 decision #7's
+    // BASONTA_LEADER `stewardship.transaction.read` parity grant: this
+    // guard only ever populated `bacentaId` (written when only
+    // BACENTA_LEADER held OWN_GROUP scope on this action), so a Basonta
+    // Leader's own `actor.basontaId` was never placed on the resolved
+    // `ResourceContext` at all - `evaluate.ts`'s OWN_GROUP case checks
+    // `resource.basontaId === actor.basontaId` as its second clause, which
+    // could never pass with `resource.basontaId` always `undefined`. A
+    // real 403 confirmed live (`GET /financial-transactions` as
+    // dev-basonta-leader, immediately after the new `.record` grant
+    // above worked correctly), not a hypothetical.
+    return { branchId: actor.branchId, bacentaId: actor.bacentaId, basontaId: actor.basontaId };
   }
 }
 
@@ -115,13 +127,14 @@ export class FinancialTransactionListResourceContextGuard extends EcclesiaContex
  * `[Milestone A: Financial + Gathering Backend Foundation]` `GET
  * /v1/financial-transactions/summary` - structurally identical to
  * `FinancialTransactionListResourceContextGuard` above (same `.branchId`/
- * `.bacentaId` resolution, same "the guard commits this endpoint to the
- * actor's own scope, by construction" pattern), kept as its own guard
- * class rather than reusing the List guard directly so each route's
- * `@UseGuards(...)` names its own guard explicitly - matching how every
- * other action pairing in this module (`FinancialTransactionResourceContextGuard`
- * vs. `FinancialTransactionListResourceContextGuard`) already keeps
- * distinct guard classes even when their bodies are near-identical.
+ * `.bacentaId`/`.basontaId` resolution, same "the guard commits this
+ * endpoint to the actor's own scope, by construction" pattern), kept as
+ * its own guard class rather than reusing the List guard directly so
+ * each route's `@UseGuards(...)` names its own guard explicitly -
+ * matching how every other action pairing in this module
+ * (`FinancialTransactionResourceContextGuard` vs.
+ * `FinancialTransactionListResourceContextGuard`) already keeps distinct
+ * guard classes even when their bodies are near-identical.
  */
 @Injectable()
 export class FinancialTransactionSummaryResourceContextGuard extends EcclesiaContextGuardBase {
@@ -130,6 +143,7 @@ export class FinancialTransactionSummaryResourceContextGuard extends EcclesiaCon
   }
 
   protected async loadResource(_request: RequestWithActorContext, actor: ActorContext): Promise<ResourceContext> {
-    return { branchId: actor.branchId, bacentaId: actor.bacentaId };
+    // `[Milestone C, bug fix]` Same fix as the List guard above.
+    return { branchId: actor.branchId, bacentaId: actor.bacentaId, basontaId: actor.basontaId };
   }
 }

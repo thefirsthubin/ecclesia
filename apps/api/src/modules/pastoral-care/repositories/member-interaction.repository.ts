@@ -55,4 +55,19 @@ export class MemberInteractionRepository {
       orderBy: { scheduledAt: 'asc' },
     });
   }
+
+  /** `[Milestone C: Portal Read Models + Analytics]` Phase 1 decision
+   * #11's real cluster-narrowing counterpart to `listScheduledInRange`
+   * above - see `CounsellingSessionRepository.listScheduledInRangeForPersons`'s
+   * own doc comment for why this filters by `personId IN personIds`
+   * rather than a `groupId` column, which this model also has none of. */
+  listScheduledInRangeForPersons(personIds: string[], from: Date, to: Date): Promise<MemberInteraction[]> {
+    if (personIds.length === 0) {
+      return Promise.resolve([]);
+    }
+    return this.prisma.memberInteraction.findMany({
+      where: { personId: { in: personIds }, scheduledAt: { gte: from, lte: to } },
+      orderBy: { scheduledAt: 'asc' },
+    });
+  }
 }

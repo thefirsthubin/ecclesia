@@ -17,6 +17,7 @@ import type { FinancialTransaction, FinancialTransactionType } from '@prisma/cli
 import { GatheringScopeService } from '../../gatherings/services/gathering-scope.service';
 import { EventBridgePublisherService } from '../../../platform/events/eventbridge-publisher.service';
 import { FinancialTransactionRepository } from '../repositories/financial-transaction.repository';
+import type { VerifiedTransactionForTrendRow } from '../repositories/financial-transaction.repository';
 
 function toResponseDto(transaction: FinancialTransaction, recordedByPersonId: string | null): FinancialTransactionResponseDto {
   return {
@@ -176,10 +177,20 @@ export class FinancialTransactionService {
    * trusting a client-supplied filter; a BRANCH-scoped actor (Treasurer/
    * Resident Pastor) has no `bacentaId`, so their own explicit
    * `sourceGroupId` filter (if any) passes through untouched.
+   *
+   * `[Milestone C: Portal Read Models + Analytics, bug fix]` `actor.basontaId`
+   * narrows the same way, for a `BASONTA_LEADER` - discovered live while
+   * verifying Phase 1 decision #7's read parity grant: this method
+   * previously only ever checked `actor.bacentaId`, so even after the
+   * resource-context guard fix (above), a Basonta Leader's own list would
+   * have silently fallen through to `sourceGroupId` (an unset,
+   * client-supplied filter), the same class of "half-fixed" gap this
+   * milestone's own cluster-narrowing fix elsewhere took care to avoid.
    */
   async listByBranch(actor: ActorContext, currentState?: string, type?: FinancialTransactionType, sourceGroupId?: string): Promise<FinancialTransactionResponseDto[]> {
-    const transactions = actor.bacentaId
-      ? await this.financialTransactionRepository.findManyByBranch(actor.branchId, currentState, type, actor.bacentaId)
+    const ownGroupId = actor.bacentaId ?? actor.basontaId;
+    const transactions = ownGroupId
+      ? await this.financialTransactionRepository.findManyByBranch(actor.branchId, currentState, type, ownGroupId)
       : await this.financialTransactionRepository.findManyByBranch(actor.branchId, currentState, type, sourceGroupId);
     return transactions.map((transaction) => toResponseDto(transaction, null));
   }
@@ -276,6 +287,19 @@ export class FinancialTransactionService {
     return this.financialTransactionRepository.sumVerifiedAmountForBranch(branchId, from, to, type);
   }
 
+  /** `[Milestone C: Portal Read Models + Analytics]` Thin passthrough -
+   * see `FinancialTransactionRepository.listVerifiedForTrend`'s own doc
+   * comment. Consumed by `GivingTrendService` (`apps/api/src/modules/insights`). */
+  listVerifiedForTrend(
+    branchId: string,
+    from: Date,
+    to: Date,
+    types: FinancialTransactionType[],
+    sourceGroupIds?: string[],
+  ): Promise<VerifiedTransactionForTrendRow[]> {
+    return this.financialTransactionRepository.listVerifiedForTrend(branchId, from, to, types, sourceGroupIds);
+  }
+
   /**
    * `[Milestone A: Financial + Gathering Backend Foundation]` `GET
    * /financial-transactions/summary` - the generalized Giving-analytics
@@ -284,10 +308,12 @@ export class FinancialTransactionService {
    * `sumVerifiedAmountByGroupForRange` (per-group breakdown) behind one
    * response shape rather than a union type: `groupBy=none` returns
    * exactly one row with `sourceGroupId: null` standing in for "the whole
-   * branch, as if it were one group." `actor.bacentaId`, when present,
-   * narrows `groupBy=group` to that one Bacenta's own row only (mirroring
+   * branch, as if it were one group." `actor.bacentaId`/`actor.basontaId`
+   * (`[Milestone C]` the latter added as a bug fix - see `listByBranch`'s
+   * own doc comment for the discovery), when present, narrows
+   * `groupBy=group` to that one Bacenta/Basonta's own row only (mirroring
    * `listByBranch`'s own OWN_GROUP-scope handling) and forces `groupBy=none`
-   * regardless of what was requested, since a single-Bacenta-scoped actor
+   * regardless of what was requested, since a single-Group-scoped actor
    * has no meaningful "per group" breakdown beyond their own one group.
    */
   async summarize(
@@ -297,16 +323,17 @@ export class FinancialTransactionService {
     type?: FinancialTransactionType,
     groupBy: 'none' | 'group' = 'none',
   ): Promise<FinancialTransactionSummaryResponseDto> {
-    const effectiveGroupBy = actor.bacentaId ? 'none' : groupBy;
+    const ownGroupId = actor.bacentaId ?? actor.basontaId;
+    const effectiveGroupBy = ownGroupId ? 'none' : groupBy;
 
     let rows: FinancialTransactionSummaryRowDto[];
     if (effectiveGroupBy === 'group') {
       const grouped = await this.financialTransactionRepository.sumVerifiedAmountByGroupForRange(actor.branchId, from, to, type);
       rows = grouped.map((row) => ({ sourceGroupId: row.sourceGroupId, totalAmountMinor: row.totalAmountMinor.toString() }));
-    } else if (actor.bacentaId) {
+    } else if (ownGroupId) {
       const grouped = await this.financialTransactionRepository.sumVerifiedAmountByGroupForRange(actor.branchId, from, to, type);
-      const own = grouped.find((row) => row.sourceGroupId === actor.bacentaId);
-      rows = [{ sourceGroupId: actor.bacentaId, totalAmountMinor: (own?.totalAmountMinor ?? 0n).toString() }];
+      const own = grouped.find((row) => row.sourceGroupId === ownGroupId);
+      rows = [{ sourceGroupId: ownGroupId, totalAmountMinor: (own?.totalAmountMinor ?? 0n).toString() }];
     } else {
       const total = await this.financialTransactionRepository.sumVerifiedAmountForBranch(actor.branchId, from, to, type);
       rows = [{ sourceGroupId: null, totalAmountMinor: total.toString() }];

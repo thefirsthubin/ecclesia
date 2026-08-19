@@ -61,4 +61,17 @@ export class OutreachService {
     }
     return toResponseDto(outreach);
   }
+
+  /** `[Milestone C.1.2: Outreach Analytics]` Thin passthrough - see
+   * `OutreachRepository.countByBranch`'s own doc comment. Consumed by
+   * `OutreachConversionService` (`apps/api/src/modules/insights`). */
+  countByBranch(branchId: string, from?: Date, to?: Date): Promise<number> {
+    return this.outreachRepository.countByBranch(branchId, from, to);
+  }
+
+  /** `[Milestone C.1.2]` Thin passthrough - see
+   * `OutreachRepository.countByGroups`'s own doc comment. */
+  countByGroups(groupIds: string[], from?: Date, to?: Date): Promise<number> {
+    return this.outreachRepository.countByGroups(groupIds, from, to);
+  }
 }

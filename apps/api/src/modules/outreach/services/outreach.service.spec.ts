@@ -29,6 +29,8 @@ describe('[Milestone B] OutreachService', () => {
       findById: jest.fn(),
       listByGroup: jest.fn(),
       listByBranch: jest.fn(),
+      countByBranch: jest.fn(),
+      countByGroups: jest.fn(),
     };
     const service = new OutreachService(outreachRepository as never);
     return { service, outreachRepository };
@@ -102,6 +104,30 @@ describe('[Milestone B] OutreachService', () => {
 
       expect(result.id).toBe('outreach-1');
       expect(result.occurredAt).toBe(NOW.toISOString());
+    });
+  });
+
+  describe('[Milestone C.1.2] countByBranch / countByGroups', () => {
+    it('countByBranch() delegates directly to the repository', async () => {
+      const { service, outreachRepository } = buildService();
+      outreachRepository.countByBranch.mockResolvedValue(5);
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-08-31T00:00:00.000Z');
+
+      const result = await service.countByBranch('branch-1', from, to);
+
+      expect(outreachRepository.countByBranch).toHaveBeenCalledWith('branch-1', from, to);
+      expect(result).toBe(5);
+    });
+
+    it('countByGroups() delegates directly to the repository', async () => {
+      const { service, outreachRepository } = buildService();
+      outreachRepository.countByGroups.mockResolvedValue(2);
+
+      const result = await service.countByGroups(['bacenta-1']);
+
+      expect(outreachRepository.countByGroups).toHaveBeenCalledWith(['bacenta-1'], undefined, undefined);
+      expect(result).toBe(2);
     });
   });
 });

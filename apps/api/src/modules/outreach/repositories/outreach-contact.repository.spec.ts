@@ -71,4 +71,53 @@ describe('[Milestone B] OutreachContactRepository', () => {
     expect(prisma.outreachContact.update).toHaveBeenCalledWith({ where: { id: 'contact-1' }, data: { outcome: 'ATTENDED' } });
     expect(result).toEqual({ id: 'contact-1', outcome: 'ATTENDED' });
   });
+
+  describe('[Milestone C.1.2] listForConversion', () => {
+    it('filters by branchId alone when groupIds/from/to are all omitted', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.outreachContact.findMany.mockResolvedValue([]);
+
+      await repository.listForConversion('branch-1');
+
+      expect(prisma.outreachContact.findMany).toHaveBeenCalledWith({
+        where: { branchId: 'branch-1' },
+        select: { id: true, personId: true, createdAt: true },
+      });
+    });
+
+    it('narrows via the outreach relation when groupIds is given', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.outreachContact.findMany.mockResolvedValue([]);
+
+      await repository.listForConversion('branch-1', ['bacenta-1', 'bacenta-2']);
+
+      expect(prisma.outreachContact.findMany).toHaveBeenCalledWith({
+        where: { branchId: 'branch-1', outreach: { groupId: { in: ['bacenta-1', 'bacenta-2'] } } },
+        select: { id: true, personId: true, createdAt: true },
+      });
+    });
+
+    it('adds an outreach.occurredAt range filter when from/to are given', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.outreachContact.findMany.mockResolvedValue([]);
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-08-31T00:00:00.000Z');
+
+      await repository.listForConversion('branch-1', undefined, from, to);
+
+      expect(prisma.outreachContact.findMany).toHaveBeenCalledWith({
+        where: { branchId: 'branch-1', outreach: { occurredAt: { gte: from, lte: to } } },
+        select: { id: true, personId: true, createdAt: true },
+      });
+    });
+
+    it('short-circuits to [] without querying prisma when groupIds is an empty array', async () => {
+      const { repository, prisma } = buildRepository();
+
+      const result = await repository.listForConversion('branch-1', []);
+
+      expect(result).toEqual([]);
+      expect(prisma.outreachContact.findMany).not.toHaveBeenCalled();
+    });
+  });
 });

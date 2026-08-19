@@ -64,4 +64,46 @@ export class OutreachContactRepository {
   updateOutcome(id: string, outcome: OutreachContactOutcome): Promise<OutreachContact> {
     return this.prisma.outreachContact.update({ where: { id }, data: { outcome } });
   }
+
+  /**
+   * `[Milestone C.1.2: Outreach Analytics]` The conversion read model's
+   * raw row source - every contact in scope, with just enough to compute
+   * totals, promotion count, and an *inferred* (never stored) promotion
+   * duration: `id`/`personId`/`this row's own createdAt` (the "first
+   * contact" timestamp `OutreachConversionService` subtracts a promoted
+   * Person's own `createdAt` from). `groupIds`, when given, narrows via
+   * the `outreach` relation - `OutreachContact` itself carries no
+   * `groupId` column, only `Outreach.groupId` does (the leading Group of
+   * the event this contact was reached at). `from`/`to`, when given, also
+   * filter via `outreach.occurredAt` - the contact's own `createdAt` is
+   * expected to closely track the outreach event's date in practice, but
+   * `occurredAt` is the more principled "did this happen in the
+   * requested window" field for an *event*-scoped read model.
+   */
+  listForConversion(branchId: string, groupIds?: string[], from?: Date, to?: Date): Promise<OutreachContactForConversionRow[]> {
+    if (groupIds && groupIds.length === 0) {
+      return Promise.resolve([]);
+    }
+    return this.prisma.outreachContact.findMany({
+      where: {
+        branchId,
+        ...(groupIds || from || to
+          ? {
+              outreach: {
+                ...(groupIds ? { groupId: { in: groupIds } } : {}),
+                ...(from || to ? { occurredAt: { gte: from, lte: to } } : {}),
+              },
+            }
+          : {}),
+      },
+      select: { id: true, personId: true, createdAt: true },
+    });
+  }
+}
+
+/** Row shape returned by `listForConversion`. */
+export interface OutreachContactForConversionRow {
+  id: string;
+  personId: string | null;
+  createdAt: Date;
 }

@@ -8,4 +8,5 @@ export * from './lib/outreach.schemas';
 export * from './lib/pastoral-care.schemas';
 export * from './lib/people.schemas';
 export * from './lib/platform.schemas';
+export * from './lib/potential.schemas';
 export * from './lib/stewardship.schemas';
