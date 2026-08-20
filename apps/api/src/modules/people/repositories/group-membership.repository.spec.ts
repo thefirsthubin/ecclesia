@@ -283,4 +283,26 @@ describe('GroupMembershipRepository', () => {
       expect(result).toEqual([]);
     });
   });
+
+  /** `[Post-Milestone D — Portal Experiences follow-up]` */
+  describe('[Post-Milestone D] listRecentByGroup', () => {
+    it('finds memberships whose startedAt or endedAt falls within the window, newest-change-first', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.groupMembership.findMany.mockResolvedValue([{ personId: 'person-1', startedAt: new Date(), endedAt: null, reason: null }]);
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-08-31T00:00:00.000Z');
+
+      const result = await repository.listRecentByGroup('group-1', from, to);
+
+      expect(prisma.groupMembership.findMany).toHaveBeenCalledWith({
+        where: {
+          groupId: 'group-1',
+          OR: [{ startedAt: { gte: from, lte: to } }, { endedAt: { gte: from, lte: to } }],
+        },
+        select: { personId: true, startedAt: true, endedAt: true, reason: true },
+        orderBy: { startedAt: 'desc' },
+      });
+      expect(result).toHaveLength(1);
+    });
+  });
 });

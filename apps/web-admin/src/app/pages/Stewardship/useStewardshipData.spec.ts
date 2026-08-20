@@ -1,3 +1,5 @@
+import { renderHook, waitFor } from '@testing-library/react';
+
 import {
   approveExpense,
   confirmBankDeposit,
@@ -7,6 +9,7 @@ import {
   payExpense,
   reconcileTransaction,
   rejectExpense,
+  useTransactionQueue,
   verifyTransaction,
 } from './useStewardshipData';
 
@@ -23,6 +26,32 @@ describe('formatAmountMinor', () => {
 
   it('formats zero', () => {
     expect(formatAmountMinor('0', 'GHS')).toBe('GHS 0.00');
+  });
+});
+
+/** `[Post-Milestone D — Portal Experiences follow-up]` */
+describe('[Post-Milestone D] useTransactionQueue', () => {
+  it('passes council=true through to the request when given', async () => {
+    const fetchMock = jest.fn().mockResolvedValue({ ok: true, json: async () => [] });
+    global.fetch = fetchMock;
+
+    const { result } = renderHook(() => useTransactionQueue('token', undefined, true));
+    await waitFor(() => expect(result.current.status).toBe('success'));
+
+    const [url] = fetchMock.mock.calls[0] as [string];
+    expect(url).toContain('council=true');
+  });
+
+  it('omits council from the request when not given', async () => {
+    const fetchMock = jest.fn().mockResolvedValue({ ok: true, json: async () => [] });
+    global.fetch = fetchMock;
+
+    const { result } = renderHook(() => useTransactionQueue('token', 'VERIFIED'));
+    await waitFor(() => expect(result.current.status).toBe('success'));
+
+    const [url] = fetchMock.mock.calls[0] as [string];
+    expect(url).toContain('state=VERIFIED');
+    expect(url).not.toContain('council');
   });
 });
 

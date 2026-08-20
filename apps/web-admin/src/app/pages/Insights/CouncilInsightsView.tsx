@@ -5,7 +5,7 @@ import type { IconName } from '@ecclesia/ui-core';
 import { useAuth } from '../../auth/AuthContext';
 import { formatAmountMinor } from '../Stewardship/useStewardshipData';
 import { summarizeNumberSeries } from './useGroupLeaderInsightsData';
-import { useCouncilAttendanceTrend, useCouncilGivingTrend, useCouncilMembershipTrend } from './useCouncilTrendData';
+import { useBranches, useCouncilAttendanceTrend, useCouncilGivingTrend, useCouncilMembershipTrend } from './useCouncilTrendData';
 import type { BranchAttendanceResult, BranchGivingResult, BranchMembershipResult, CouncilTrendFilter } from './useCouncilTrendData';
 import { summarizeTrend } from './useTreasurerInsightsData';
 
@@ -17,12 +17,13 @@ const GRANULARITY_OPTIONS: { value: CouncilTrendFilter['granularity']; label: st
 
 const TREND_ICON: Record<'up' | 'down' | 'flat', IconName> = { up: 'trendingUp', down: 'trendingDown', flat: 'arrowRight' };
 
-/** Same disclosed limitation `CouncilDashboard.tsx`'s own `branchLabel`
- * documents - no `GET /branches/:id` lookup exists anywhere in
- * `apps/api`, so only the actor's own Branch resolves to a real name;
- * any other Branch in their Council shows its raw id. */
-function branchLabel(branchId: string, actorBranchId: string, actorBranchName: string): string {
-  return branchId === actorBranchId ? actorBranchName : branchId;
+/** `[Post-Milestone D — Portal Experiences follow-up]` Same
+ * `useBranches`-backed real name resolution `CouncilDashboard.tsx`'s own
+ * `branchLabel` establishes - see that function's own doc comment for
+ * why the raw-id fallback still exists (only reached while `useBranches`
+ * is still loading/erroring). */
+function branchLabel(branchId: string, actorBranchId: string, actorBranchName: string, branchNameById: Map<string, string>): string {
+  return branchNameById.get(branchId) ?? (branchId === actorBranchId ? actorBranchName : branchId);
 }
 
 function GivingBranchPanel({ branch, granularityLabel }: { branch: BranchGivingResult; granularityLabel: string; branchName: string }) {
@@ -119,6 +120,10 @@ export function CouncilInsightsView() {
   const actorBranchName = state.status === 'authenticated' ? state.actor.branchName : '';
   const isOverseer = state.status === 'authenticated' && state.actor.role === 'COUNCIL_OVERSEER';
 
+  const branchesState = useBranches(accessToken);
+  const branchNameById = new Map<string, string>();
+  if (branchesState.status === 'success') for (const branch of branchesState.data) branchNameById.set(branch.id, branch.name);
+
   const metricOptions = isOverseer
     ? ([
         { value: 'giving', label: 'Giving' },
@@ -182,8 +187,8 @@ export function CouncilInsightsView() {
                 givingState.data.map((branch) => (
                   <Card padding={6} elevation={1} key={branch.branchId} testId="council-insights-branch-card">
                     <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-                      <SectionHeader title={branchLabel(branch.branchId, actorBranchId, actorBranchName)} description={`${selectedGranularity.label} Giving Trend`} />
-                      <GivingBranchPanel branch={branch} granularityLabel={selectedGranularity.label} branchName={branchLabel(branch.branchId, actorBranchId, actorBranchName)} />
+                      <SectionHeader title={branchLabel(branch.branchId, actorBranchId, actorBranchName, branchNameById)} description={`${selectedGranularity.label} Giving Trend`} />
+                      <GivingBranchPanel branch={branch} granularityLabel={selectedGranularity.label} branchName={branchLabel(branch.branchId, actorBranchId, actorBranchName, branchNameById)} />
                     </div>
                   </Card>
                 ))}
@@ -192,7 +197,7 @@ export function CouncilInsightsView() {
                 attendanceState.data.map((branch) => (
                   <Card padding={6} elevation={1} key={branch.branchId} testId="council-insights-branch-card">
                     <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-                      <SectionHeader title={branchLabel(branch.branchId, actorBranchId, actorBranchName)} description={`${selectedGranularity.label} Attendance Trend`} />
+                      <SectionHeader title={branchLabel(branch.branchId, actorBranchId, actorBranchName, branchNameById)} description={`${selectedGranularity.label} Attendance Trend`} />
                       <AttendanceBranchPanel branch={branch} />
                     </div>
                   </Card>
@@ -202,7 +207,7 @@ export function CouncilInsightsView() {
                 membershipState.data.map((branch) => (
                   <Card padding={6} elevation={1} key={branch.branchId} testId="council-insights-branch-card">
                     <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-                      <SectionHeader title={branchLabel(branch.branchId, actorBranchId, actorBranchName)} description={`${selectedGranularity.label} Membership Growth`} />
+                      <SectionHeader title={branchLabel(branch.branchId, actorBranchId, actorBranchName, branchNameById)} description={`${selectedGranularity.label} Membership Growth`} />
                       <MembershipBranchPanel branch={branch} />
                     </div>
                   </Card>

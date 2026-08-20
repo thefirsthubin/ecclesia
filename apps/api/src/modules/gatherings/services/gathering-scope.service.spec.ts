@@ -4,7 +4,7 @@ import { GatheringScopeService } from './gathering-scope.service';
 
 describe('GatheringScopeService', () => {
   function buildService() {
-    const gatheringRepository = { findById: jest.fn() };
+    const gatheringRepository = { findById: jest.fn(), listByGroupAndRange: jest.fn() };
     const service = new GatheringScopeService(gatheringRepository as never);
     return { service, gatheringRepository };
   }
@@ -32,5 +32,20 @@ describe('GatheringScopeService', () => {
     const result = await service.loadScope('gathering-1');
 
     expect(result).toEqual({ branchId: 'branch-1', ownerGroupId: null });
+  });
+
+  /** `[Post-Milestone D — Portal Experiences follow-up]` */
+  describe('[Post-Milestone D] listGatheringsForGroup', () => {
+    it('delegates directly to the repository', async () => {
+      const { service, gatheringRepository } = buildService();
+      gatheringRepository.listByGroupAndRange.mockResolvedValue([]);
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-08-31T00:00:00.000Z');
+
+      const result = await service.listGatheringsForGroup('group-1', from, to);
+
+      expect(gatheringRepository.listByGroupAndRange).toHaveBeenCalledWith('group-1', from, to);
+      expect(result).toEqual([]);
+    });
   });
 });

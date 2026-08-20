@@ -50,4 +50,18 @@ export class StaffingTargetRepository {
   findByGroupId(groupId: string): Promise<StaffingTarget[]> {
     return this.prisma.staffingTarget.findMany({ where: { groupId }, orderBy: { gatheringId: 'asc' } });
   }
+
+  /**
+   * `[Post-Milestone D — Portal Experiences follow-up]` "Basonta recent
+   * activity" read model's staffing-target-changes source: every target
+   * set (or corrected - `upsert` above only ever touches `updatedAt`, not
+   * `createdAt`, on a correction) for `groupId` whose `createdAt` falls
+   * within `[from, to]`, newest first.
+   */
+  listByGroupWithCreatedInRange(groupId: string, from: Date, to: Date): Promise<StaffingTarget[]> {
+    return this.prisma.staffingTarget.findMany({
+      where: { groupId, createdAt: { gte: from, lte: to } },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
 }

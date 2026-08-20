@@ -1,10 +1,11 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { checkGatheringStatusTransition } from '@ecclesia/domain-gatherings';
 import type { CreateGatheringInput, GatheringResponseDto, ListGatheringsQuery, UpdateGatheringInput } from '@ecclesia/contracts';
 import type { ActorContext } from '@ecclesia/rbac';
 import { Prisma } from '@prisma/client';
 import type { Gathering } from '@prisma/client';
 
+import { PrismaService } from '../../../platform/database/prisma.service';
 import { GatheringRepository } from '../repositories/gathering.repository';
 
 /** `listForGroup`'s default window when the caller supplies no explicit
@@ -42,7 +43,10 @@ function toResponseDto(gathering: Gathering): GatheringResponseDto {
  */
 @Injectable()
 export class GatheringService {
-  constructor(private readonly gatheringRepository: GatheringRepository) {}
+  constructor(
+    private readonly gatheringRepository: GatheringRepository,
+    private readonly prisma: PrismaService,
+  ) {}
 
   async create(actor: ActorContext, input: CreateGatheringInput): Promise<GatheringResponseDto> {
     const gathering = await this.gatheringRepository.create({
@@ -69,14 +73,49 @@ export class GatheringService {
    * card) or forward (e.g. "next upcoming meeting," the Today's Meeting
    * card, or the web-admin calendar's default view) - this service only
    * fills in the default forward-looking window when neither is
-   * supplied. `query.ownerGroupId` present -> Group-scoped; absent ->
-   * BRANCH-wide against `actor.branchId`, resolved the same way
+   * supplied. `query.ownerGroupId` present -> Group-scoped; `query.council`
+   * -> every Branch in the actor's own Council (`[Post-Milestone D —
+   * Portal Experiences follow-up]`, see below); otherwise BRANCH-wide
+   * against `actor.branchId`, resolved the same way
    * `GatheringListResourceContextGuard` already decided which case this
-   * request was. */
+   * request was.
+   *
+   * **`council=true`**: the same `runInBranchScope`-per-`councilBranchIds`
+   * loop `GivingTrendService.getTrend`'s own `query.council` branch
+   * establishes, reused here rather than reinvented -
+   * `GatheringRepository.listByBranchAndRange` is already a pure
+   * `(branchId, ...) => Gathering[]` call, the exact shape that loop
+   * composes against. Unlike the bucketed trend endpoints, the response
+   * stays a flat `GatheringResponseDto[]` (not a `{councilBranches: [...]}`
+   * wrapper) - every row already carries its own `branchId`
+   * (`toResponseDto`), so a Council-wide caller can already attribute
+   * each row to its Branch without a new envelope shape, and every
+   * existing single-Branch consumer of this endpoint's response type is
+   * unaffected. */
   async list(actor: ActorContext, query: ListGatheringsQuery): Promise<GatheringResponseDto[]> {
+    if (query.council && query.ownerGroupId) {
+      throw new BadRequestException('Supply at most one of council or ownerGroupId, not both');
+    }
+
     const now = new Date();
     const from = query.from ? new Date(query.from) : now;
     const to = query.to ? new Date(query.to) : new Date(now.getTime() + DEFAULT_LIST_WINDOW_DAYS * 24 * 60 * 60 * 1000);
+
+    if (query.council) {
+      if (!actor.councilBranchIds || actor.councilBranchIds.length === 0) {
+        throw new BadRequestException('This actor has no Council scope to aggregate across');
+      }
+      const gatherings: Gathering[] = [];
+      // Sequential, not `Promise.all` - same "N sequential connections,
+      // not N simultaneous ones" discipline `PrismaService.runInCouncilScope`'s
+      // own doc comment establishes for this exact shape of loop.
+      for (const branchId of actor.councilBranchIds) {
+        const branchGatherings = await this.prisma.runInBranchScope(branchId, () => this.gatheringRepository.listByBranchAndRange(branchId, from, to, query.type));
+        gatherings.push(...branchGatherings);
+      }
+      return gatherings.map(toResponseDto);
+    }
+
     const gatherings = query.ownerGroupId
       ? await this.gatheringRepository.listByGroupAndRange(query.ownerGroupId, from, to, query.type)
       : await this.gatheringRepository.listByBranchAndRange(actor.branchId, from, to, query.type);

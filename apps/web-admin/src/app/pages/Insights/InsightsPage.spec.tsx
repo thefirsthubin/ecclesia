@@ -268,23 +268,26 @@ describe('InsightsPage', () => {
    * one panel per real Branch in the actor's own Council. */
   it('renders the giving trend chart for COUNCIL_OVERSEER, council=true scoped', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('COUNCIL_OVERSEER', { branchName: 'Headquarters' }));
-    const fetchMock = jest.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        councilBranches: [
-          {
-            branchId: 'branch-1',
-            from: '2026-03-01T00:00:00.000Z',
-            to: '2026-09-01T00:00:00.000Z',
-            buckets: [
-              { bucketStart: '2026-07-01T00:00:00.000Z', bucketEnd: '2026-08-01T00:00:00.000Z', label: 'Jul 2026', totalAmountMinor: '100000', byType: {} },
-              { bucketStart: '2026-08-01T00:00:00.000Z', bucketEnd: '2026-09-01T00:00:00.000Z', label: 'Aug 2026', totalAmountMinor: '150000', byType: {} },
-            ],
-            unattributedAmountMinor: '0',
-            unmappedGatheringTypes: [],
-          },
-        ],
-      }),
+    const fetchMock = jest.fn().mockImplementation((url: string) => {
+      if (url.includes('/platform/branches')) return Promise.resolve({ ok: true, json: async () => [{ id: 'branch-1', name: 'Headquarters' }] });
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({
+          councilBranches: [
+            {
+              branchId: 'branch-1',
+              from: '2026-03-01T00:00:00.000Z',
+              to: '2026-09-01T00:00:00.000Z',
+              buckets: [
+                { bucketStart: '2026-07-01T00:00:00.000Z', bucketEnd: '2026-08-01T00:00:00.000Z', label: 'Jul 2026', totalAmountMinor: '100000', byType: {} },
+                { bucketStart: '2026-08-01T00:00:00.000Z', bucketEnd: '2026-09-01T00:00:00.000Z', label: 'Aug 2026', totalAmountMinor: '150000', byType: {} },
+              ],
+              unattributedAmountMinor: '0',
+              unmappedGatheringTypes: [],
+            },
+          ],
+        }),
+      });
     });
     global.fetch = fetchMock;
 
@@ -294,15 +297,18 @@ describe('InsightsPage', () => {
     expect(screen.getByText('Headquarters')).toBeInTheDocument();
     await waitFor(() => expect(screen.getByTestId('council-giving-line-chart')).toBeInTheDocument());
     expect(screen.getByTestId('metric-council-giving-latest')).toHaveTextContent('GHS 1,500.00');
-    const [url] = fetchMock.mock.calls[0] as [string];
+    const [url] = fetchMock.mock.calls.find(([callUrl]) => (callUrl as string).includes('/insights/giving-trend')) as [string];
     expect(url).toContain('council=true');
   });
 
   it('offers only the Giving metric for COUNCIL_TREASURER - no metric selector, since it is the only grant this role holds', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('COUNCIL_TREASURER', { branchName: 'Headquarters' }));
-    global.fetch = jest.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({ councilBranches: [{ branchId: 'branch-1', from: '', to: '', buckets: [], unattributedAmountMinor: '0', unmappedGatheringTypes: [] }] }),
+    global.fetch = jest.fn().mockImplementation((url: string) => {
+      if (url.includes('/platform/branches')) return Promise.resolve({ ok: true, json: async () => [{ id: 'branch-1', name: 'Headquarters' }] });
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({ councilBranches: [{ branchId: 'branch-1', from: '', to: '', buckets: [], unattributedAmountMinor: '0', unmappedGatheringTypes: [] }] }),
+      });
     });
 
     renderPage();

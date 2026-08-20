@@ -184,4 +184,14 @@ export class GroupMembershipService {
   countDistinctActiveByGroupType(branchId: string, groupType: 'PASTORAL_CARE' | 'MINISTRY', asOf?: Date): Promise<number> {
     return this.groupMembershipRepository.countDistinctActiveByGroupType(branchId, groupType, asOf);
   }
+
+  /** `[Post-Milestone D — Portal Experiences follow-up]` Thin passthrough
+   * - see `GroupMembershipRepository.listRecentByGroup`'s own doc
+   * comment. No `actor`/authorization parameter, matching this module's
+   * other cross-module-consumed methods - the caller
+   * (`GroupActivityService`, Ministry module) is only ever reached from
+   * an already-RBAC-guarded controller route. */
+  listRecentByGroup(groupId: string, from: Date, to: Date) {
+    return this.groupMembershipRepository.listRecentByGroup(groupId, from, to);
+  }
 }

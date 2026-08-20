@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { checkInboundTransactionTransition, isInboundTransactionState } from '@ecclesia/domain-stewardship';
 import type { InboundTransactionState } from '@ecclesia/domain-stewardship';
 import type {
@@ -16,6 +16,7 @@ import type { FinancialTransaction, FinancialTransactionType } from '@prisma/cli
 
 import { GatheringScopeService } from '../../gatherings/services/gathering-scope.service';
 import { EventBridgePublisherService } from '../../../platform/events/eventbridge-publisher.service';
+import { PrismaService } from '../../../platform/database/prisma.service';
 import { FinancialTransactionRepository } from '../repositories/financial-transaction.repository';
 import type { VerifiedTransactionForTrendRow } from '../repositories/financial-transaction.repository';
 
@@ -53,6 +54,7 @@ export class FinancialTransactionService {
     private readonly financialTransactionRepository: FinancialTransactionRepository,
     private readonly eventPublisher: EventBridgePublisherService,
     private readonly gatheringScopeService: GatheringScopeService,
+    private readonly prisma: PrismaService,
   ) {}
 
   /**
@@ -187,7 +189,26 @@ export class FinancialTransactionService {
    * client-supplied filter), the same class of "half-fixed" gap this
    * milestone's own cluster-narrowing fix elsewhere took care to avoid.
    */
-  async listByBranch(actor: ActorContext, currentState?: string, type?: FinancialTransactionType, sourceGroupId?: string): Promise<FinancialTransactionResponseDto[]> {
+  async listByBranch(actor: ActorContext, currentState?: string, type?: FinancialTransactionType, sourceGroupId?: string, council?: boolean): Promise<FinancialTransactionResponseDto[]> {
+    if (council && sourceGroupId) {
+      throw new BadRequestException('Supply at most one of council or sourceGroupId, not both');
+    }
+
+    if (council) {
+      if (!actor.councilBranchIds || actor.councilBranchIds.length === 0) {
+        throw new BadRequestException('This actor has no Council scope to aggregate across');
+      }
+      const transactions: FinancialTransaction[] = [];
+      // Sequential, not `Promise.all` - same "N sequential connections,
+      // not N simultaneous ones" discipline `PrismaService.runInCouncilScope`'s
+      // own doc comment establishes for this exact shape of loop.
+      for (const branchId of actor.councilBranchIds) {
+        const branchTransactions = await this.prisma.runInBranchScope(branchId, () => this.financialTransactionRepository.findManyByBranch(branchId, currentState, type, undefined));
+        transactions.push(...branchTransactions);
+      }
+      return transactions.map((transaction) => toResponseDto(transaction, null));
+    }
+
     const ownGroupId = actor.bacentaId ?? actor.basontaId;
     const transactions = ownGroupId
       ? await this.financialTransactionRepository.findManyByBranch(actor.branchId, currentState, type, ownGroupId)

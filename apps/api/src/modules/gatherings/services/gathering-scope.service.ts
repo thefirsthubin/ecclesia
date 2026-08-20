@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import type { Gathering } from '@prisma/client';
 
 import { GatheringRepository } from '../repositories/gathering.repository';
 
@@ -43,5 +44,17 @@ export class GatheringScopeService {
       throw new NotFoundException(`No Gathering found with id '${gatheringId}'`);
     }
     return { branchId: gathering.branchId, ownerGroupId: gathering.ownerGroupId };
+  }
+
+  /** `[Post-Milestone D — Portal Experiences follow-up]` Thin passthrough
+   * - see `GatheringRepository.listByGroupAndRange`'s own doc comment.
+   * Ministry's "Basonta recent activity" read model (`GroupActivityService`)
+   * is this method's consumer, the same "small, purpose-built public
+   * method" pattern `loadScope` above and this module's other exports
+   * already establish - no `actor`/authorization parameter, since the
+   * caller is only ever reached from an already-RBAC-guarded controller
+   * route. */
+  listGatheringsForGroup(groupId: string, from: Date, to: Date): Promise<Gathering[]> {
+    return this.gatheringRepository.listByGroupAndRange(groupId, from, to);
   }
 }

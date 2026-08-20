@@ -49,4 +49,22 @@ describe('StaffingTargetRepository', () => {
     expect(prisma.staffingTarget.findMany).toHaveBeenCalledWith({ where: { groupId: 'basonta-1' }, orderBy: { gatheringId: 'asc' } });
     expect(result).toEqual([{ id: 'target-1' }, { id: 'target-2' }]);
   });
+
+  /** `[Post-Milestone D — Portal Experiences follow-up]` */
+  describe('[Post-Milestone D] listByGroupWithCreatedInRange', () => {
+    it('lists Staffing Targets for a Basonta whose createdAt falls within the window, newest first', async () => {
+      const { repository, prisma } = buildRepository();
+      prisma.staffingTarget.findMany.mockResolvedValue([{ id: 'target-1' }]);
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-08-31T00:00:00.000Z');
+
+      const result = await repository.listByGroupWithCreatedInRange('basonta-1', from, to);
+
+      expect(prisma.staffingTarget.findMany).toHaveBeenCalledWith({
+        where: { groupId: 'basonta-1', createdAt: { gte: from, lte: to } },
+        orderBy: { createdAt: 'desc' },
+      });
+      expect(result).toEqual([{ id: 'target-1' }]);
+    });
+  });
 });

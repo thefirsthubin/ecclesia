@@ -170,7 +170,20 @@ describe('DashboardPage', () => {
    */
   it('renders the Ministry Leader dashboard for BASONTA_LEADER', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('BASONTA_LEADER', { basontaId: 'basonta-1' }));
-    global.fetch = jest.fn().mockResolvedValue({ ok: true, json: async () => [] });
+    // `[Post-Milestone D — Portal Experiences follow-up]` `useGroupActivity`
+    // needs the real `GroupActivityResponseDto` shape, not the generic `[]`
+    // every other fetch in this test still returns - `buildActivityFeed`
+    // reads `.membershipChanges`/`.staffingTargetChanges`/`.gatherings` off
+    // it directly, which would throw on a bare array.
+    global.fetch = jest.fn().mockImplementation((url: string) => {
+      if (url.includes('/ministry/groups/basonta-1/activity')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ from: '2026-07-21T00:00:00.000Z', to: '2026-08-20T00:00:00.000Z', membershipChanges: [], staffingTargetChanges: [], gatherings: [] }),
+        });
+      }
+      return Promise.resolve({ ok: true, json: async () => [] });
+    });
 
     renderWithProviders(<DashboardPage />);
 
@@ -538,15 +551,24 @@ describe('DashboardPage', () => {
   });
 
   /** `[Milestone D — Portal Experiences, Portal 8: System Administrator]`
-   * Previously fell to the generic "coming soon" stub - now shows an
-   * honest, specific disclosure naming the real reason (no Tenant
-   * backend exists yet), not a fabricated platform-admin dashboard. */
-  it('shows an honest disclosed-gap state for SYSTEM_ADMINISTRATOR, not a fabricated platform dashboard', () => {
+   * Previously fell to the generic "coming soon" stub, then an honest
+   * disclosed-gap state (no Tenant backend existed yet).
+   * `[Post-Milestone D — Portal Experiences follow-up]` Now real: the
+   * Tenant list renders from `GET /platform/tenants`. */
+  it('renders the real Tenant list for SYSTEM_ADMINISTRATOR', async () => {
     mockUseAuth.mockReturnValue(actorWithRole('SYSTEM_ADMINISTRATOR'));
+    global.fetch = jest.fn().mockImplementation((url: string) => {
+      if (url.includes('/platform/tenants')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => [{ id: 'tenant-1', name: 'River of Life', createdAt: '2026-08-01T00:00:00.000Z' }],
+        });
+      }
+      return Promise.resolve({ ok: true, json: async () => [] });
+    });
 
     renderWithProviders(<DashboardPage />);
 
-    expect(screen.getByTestId('system-administrator-dashboard-empty-state')).toBeInTheDocument();
-    expect(screen.getByText('Nothing to administer yet')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText('River of Life')).toBeInTheDocument());
   });
 });

@@ -532,6 +532,20 @@ const BASE_MATRIX: PermissionRule[] = [
     reason:
       "[Multi-Tenant Foundation, Phase 1] Council Treasurer's locked scope: \"Financial oversight across all branches belonging to the user's Council.\" Minimal single-row grant - see this rule's own inline comment.",
   },
+  {
+    // `[Post-Milestone D — Portal Experiences follow-up]` The second row
+    // this role has ever held - added specifically so the Council
+    // Insights/Dashboard views this role already reaches can show each
+    // Branch's own real name, not a raw id. Does not widen the Phase 1
+    // "financial oversight only" restraint - `platform.branch.read` is
+    // Branch identity (id + name), not financial or church-operational
+    // data.
+    role: 'COUNCIL_TREASURER',
+    action: 'platform.branch.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: '[Post-Milestone D — Portal Experiences follow-up] Same reasoning as COUNCIL_OVERSEER\'s own platform.branch.read row.',
+  },
   { role: 'BACENTA_LEADER', action: 'stewardship.transaction.read', effect: 'ALLOW', scope: 'OWN_GROUP' },
   {
     // `[Milestone C]` Phase 1 decision #7's read half - pairs with the
@@ -1182,6 +1196,13 @@ const BASE_MATRIX: PermissionRule[] = [
     effect: 'ALLOW',
     scope: 'COUNCIL',
     reason: '[Milestone C] Branch-overview/growth-trend dashboards, read-only, across the Council.',
+  },
+  {
+    role: 'COUNCIL_OVERSEER',
+    action: 'platform.branch.read',
+    effect: 'ALLOW',
+    scope: 'COUNCIL',
+    reason: "[Post-Milestone D — Portal Experiences follow-up] Resolves each Branch's own real name for a Council-wide view (e.g. the Council Dashboard's per-Branch cards) - previously only the actor's own home Branch had a name to show at all, since no Branch-list endpoint existed. Read-only, COUNCIL scope, same set-membership-against-councilBranchIds mechanism every other row in this block already uses.",
   },
 
   // --- `[Milestone B: People + Pastoral + Outreach Foundation]` Outreach

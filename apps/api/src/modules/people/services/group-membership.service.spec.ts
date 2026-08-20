@@ -12,6 +12,7 @@ describe('GroupMembershipService', () => {
       closeMembership: jest.fn(),
       listActivePersonIdsForGroups: jest.fn(),
       countDistinctActiveByGroupType: jest.fn(),
+      listRecentByGroup: jest.fn(),
     };
     const personRepository = {
       findById: jest.fn(),
@@ -207,6 +208,21 @@ describe('GroupMembershipService', () => {
 
       expect(groupMembershipRepository.countDistinctActiveByGroupType).toHaveBeenCalledWith('branch-1', 'MINISTRY', asOf);
       expect(result).toBe(6);
+    });
+  });
+
+  /** `[Post-Milestone D — Portal Experiences follow-up]` */
+  describe('[Post-Milestone D] listRecentByGroup', () => {
+    it('delegates directly to the repository', async () => {
+      const { service, groupMembershipRepository } = buildService();
+      groupMembershipRepository.listRecentByGroup.mockResolvedValue([]);
+      const from = new Date('2026-08-01T00:00:00.000Z');
+      const to = new Date('2026-08-31T00:00:00.000Z');
+
+      const result = await service.listRecentByGroup('group-1', from, to);
+
+      expect(groupMembershipRepository.listRecentByGroup).toHaveBeenCalledWith('group-1', from, to);
+      expect(result).toEqual([]);
     });
   });
 });

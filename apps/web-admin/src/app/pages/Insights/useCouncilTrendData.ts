@@ -1,4 +1,4 @@
-import type { AttendanceTrendResultDto, GetAttendanceTrendQuery, GivingTrendResultDto, MembershipTrendResultDto } from '@ecclesia/contracts';
+import type { AttendanceTrendResultDto, BranchResponseDto, GetAttendanceTrendQuery, GivingTrendResultDto, MembershipTrendResultDto } from '@ecclesia/contracts';
 
 import { apiGet } from '../../lib/api-client';
 import { useAsyncData } from '../../lib/useAsyncData';
@@ -66,5 +66,26 @@ export function useCouncilMembershipTrend(accessToken: string | undefined, filte
       return 'councilBranches' in response ? response.councilBranches : [response];
     },
     [accessToken, filter.granularity, filter.count],
+  );
+}
+
+/**
+ * `[Post-Milestone D — Portal Experiences follow-up]` `GET
+ * /platform/branches` - every real Branch in the actor's own Council,
+ * with its real name (`COUNCIL_OVERSEER`/`COUNCIL_TREASURER` both hold
+ * `platform.branch.read` at COUNCIL scope, traced against
+ * `permission-matrix.ts`). Closes the gap `CouncilDashboard.tsx`/
+ * `CouncilInsightsView.tsx`'s own `branchLabel` fallback disclosed at
+ * Milestone D ship time - those two components now use this hook instead
+ * of falling back to a raw Branch id for any Branch other than the
+ * actor's own.
+ */
+export function useBranches(accessToken: string | undefined): AsyncDataResult<BranchResponseDto[]> {
+  return useAsyncData<BranchResponseDto[]>(
+    (signal) => {
+      if (!accessToken) return Promise.reject(new Error('not authenticated'));
+      return apiGet<BranchResponseDto[]>('/platform/branches', { authToken: accessToken, signal });
+    },
+    [accessToken],
   );
 }

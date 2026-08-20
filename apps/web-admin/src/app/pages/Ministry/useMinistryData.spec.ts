@@ -1,4 +1,6 @@
-import { createGroup, updateGroup } from './useMinistryData';
+import { renderHook, waitFor } from '@testing-library/react';
+
+import { createGroup, updateGroup, useGroupActivity } from './useMinistryData';
 
 /** `[Group CRUD milestone]` */
 describe('createGroup', () => {
@@ -55,5 +57,25 @@ describe('updateGroup', () => {
 
     expect(error.status).toBe(400);
     expect(error.body).toMatchObject({ message: 'At least one field must be provided' });
+  });
+});
+
+/** `[Post-Milestone D — Portal Experiences follow-up]` */
+describe('[Post-Milestone D] useGroupActivity', () => {
+  afterEach(() => jest.clearAllMocks());
+
+  it('fetches the group activity feed with the given from/to window', async () => {
+    const responseBody = { from: '2026-07-21T00:00:00.000Z', to: '2026-08-20T00:00:00.000Z', membershipChanges: [], staffingTargetChanges: [], gatherings: [] };
+    const fetchMock = jest.fn().mockResolvedValue({ ok: true, json: async () => responseBody });
+    global.fetch = fetchMock;
+
+    const { result } = renderHook(() => useGroupActivity('token', 'basonta-1', '2026-07-21T00:00:00.000Z', '2026-08-20T00:00:00.000Z'));
+    await waitFor(() => expect(result.current.status).toBe('success'));
+
+    const [url] = fetchMock.mock.calls[0] as [string];
+    expect(url).toContain('/ministry/groups/basonta-1/activity');
+    expect(url).toContain('from=2026-07-21T00%3A00%3A00.000Z');
+    expect(url).toContain('to=2026-08-20T00%3A00%3A00.000Z');
+    expect(result.current.status === 'success' && result.current.data).toEqual(responseBody);
   });
 });

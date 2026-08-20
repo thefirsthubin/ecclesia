@@ -222,4 +222,23 @@ export class GroupMembershipRepository {
     });
     return memberships.length;
   }
+
+  /**
+   * `[Post-Milestone D — Portal Experiences follow-up]` "Basonta recent
+   * activity" read model's membership-changes source: every membership
+   * on `groupId` that either started or ended within `[from, to]` -
+   * unlike every method above (all "active as of a point in time"),
+   * this is genuinely windowed on the change events themselves, ordered
+   * newest-change-first.
+   */
+  listRecentByGroup(groupId: string, from: Date, to: Date): Promise<Pick<GroupMembership, 'personId' | 'startedAt' | 'endedAt' | 'reason'>[]> {
+    return this.prisma.groupMembership.findMany({
+      where: {
+        groupId,
+        OR: [{ startedAt: { gte: from, lte: to } }, { endedAt: { gte: from, lte: to } }],
+      },
+      select: { personId: true, startedAt: true, endedAt: true, reason: true },
+      orderBy: { startedAt: 'desc' },
+    });
+  }
 }

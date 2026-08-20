@@ -213,6 +213,16 @@ export const ACTIONS = [
   // reasoning specific to this one action.
   'platform.tenant.read',
 
+  // `[Post-Milestone D — Portal Experiences follow-up]` Branch - no PRD
+  // §17.3 row exists (a Council-wide Branch *list*, distinct from any one
+  // Branch's own operational data, wasn't a named surface until this
+  // follow-up). `Branch`/`Council` are both `@@schema("platform")` models
+  // (`db/schema.prisma`), same reasoning that already placed
+  // `platform.tenant.read` here rather than under a business-domain
+  // namespace. See `permission-matrix.ts`'s `COUNCIL_OVERSEER`/
+  // `COUNCIL_TREASURER` rows for the COUNCIL-scope reasoning.
+  'platform.branch.read',
+
   // `[Milestone B: People + Pastoral + Outreach Foundation]` Outreach - no
   // PRD §17.3 row covers this (Outreach did not exist as a domain until
   // this milestone). See MILESTONE_B_DESIGN_NOTES.md Part 4. One event

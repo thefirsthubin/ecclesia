@@ -37,8 +37,9 @@ describe('GatheringService', () => {
       listByGroupAndRange: jest.fn(),
       listByBranchAndRange: jest.fn(),
     };
-    const service = new GatheringService(gatheringRepository as never);
-    return { service, gatheringRepository };
+    const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
+    const service = new GatheringService(gatheringRepository as never, prisma as never);
+    return { service, gatheringRepository, prisma };
   }
 
   describe('create', () => {
@@ -126,6 +127,39 @@ describe('GatheringService', () => {
       expect(gatheringRepository.listByBranchAndRange).toHaveBeenCalledWith('branch-1', expect.any(Date), expect.any(Date), undefined);
       expect(gatheringRepository.listByGroupAndRange).not.toHaveBeenCalled();
       expect(result).toHaveLength(1);
+    });
+  });
+
+  /** `[Post-Milestone D — Portal Experiences follow-up]` `council=true` -
+   * every real Branch in the actor's own Council, one `runInBranchScope`
+   * call per Branch, results flattened into one array (every row already
+   * carries its own `branchId`). */
+  describe('list (council=true)', () => {
+    const overseer: ActorContext = { personId: 'overseer-1', role: 'COUNCIL_OVERSEER', branchId: 'branch-1', councilBranchIds: ['branch-1', 'branch-2'] };
+
+    it('lists across every Branch in the Council, one runInBranchScope call per Branch, flattened into one array', async () => {
+      const { service, gatheringRepository, prisma } = buildService();
+      gatheringRepository.listByBranchAndRange.mockImplementation((branchId: string) => Promise.resolve([buildGathering({ id: `g-${branchId}`, branchId })]));
+
+      const result = await service.list(overseer, { council: true } as never);
+
+      expect(prisma.runInBranchScope).toHaveBeenCalledTimes(2);
+      expect(prisma.runInBranchScope).toHaveBeenNthCalledWith(1, 'branch-1', expect.any(Function));
+      expect(prisma.runInBranchScope).toHaveBeenNthCalledWith(2, 'branch-2', expect.any(Function));
+      expect(result.map((g) => g.id)).toEqual(['g-branch-1', 'g-branch-2']);
+    });
+
+    it('rejects with a BadRequestException when both council and ownerGroupId are supplied', async () => {
+      const { service } = buildService();
+
+      await expect(service.list(overseer, { council: true, ownerGroupId: 'bacenta-1' } as never)).rejects.toThrow('Supply at most one of council or ownerGroupId, not both');
+    });
+
+    it('rejects with a BadRequestException when the actor has no Council scope', async () => {
+      const { service } = buildService();
+      const admin: ActorContext = { personId: 'admin-1', role: 'ADMIN', branchId: 'branch-1' };
+
+      await expect(service.list(admin, { council: true } as never)).rejects.toThrow('This actor has no Council scope to aggregate across');
     });
   });
 

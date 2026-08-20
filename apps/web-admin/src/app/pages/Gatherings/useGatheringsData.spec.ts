@@ -1,6 +1,7 @@
+import { renderHook, waitFor } from '@testing-library/react';
 import type { ActorContext } from '@ecclesia/rbac';
 
-import { createGathering, nextGatheringStatusOptions, resolveDefaultGatheringsQuery, updateGathering } from './useGatheringsData';
+import { createGathering, nextGatheringStatusOptions, resolveDefaultGatheringsQuery, updateGathering, useGatheringsList } from './useGatheringsData';
 
 /**
  * Same shape/reasoning as `People/usePeopleData.spec.ts`'s
@@ -60,6 +61,42 @@ describe('resolveDefaultGatheringsQuery', () => {
 
   it('does not throw for a role with no gatherings.gathering.read row of its own (e.g. TREASURER)', () => {
     expect(resolveDefaultGatheringsQuery(actor({ role: 'TREASURER' }))).toEqual({});
+  });
+
+  /** `[Post-Milestone D — Portal Experiences follow-up]` `COUNCIL_OVERSEER`
+   * holds `gatherings.gathering.read` at COUNCIL scope - previously fell
+   * through to the same unfiltered `{}` query as every other unhandled
+   * role, which the backend silently narrowed to just this actor's own
+   * home Branch (a real, disclosed gap this closes). */
+  it('resolves a Council Administrator to council=true - every Branch in their Council, not just their own home Branch', () => {
+    expect(resolveDefaultGatheringsQuery(actor({ role: 'COUNCIL_OVERSEER' }))).toEqual({ council: true });
+  });
+});
+
+/** `[Post-Milestone D — Portal Experiences follow-up]` */
+describe('[Post-Milestone D] useGatheringsList', () => {
+  afterEach(() => jest.clearAllMocks());
+
+  it('passes council=true through to the request when given', async () => {
+    const fetchMock = jest.fn().mockResolvedValue({ ok: true, json: async () => [] });
+    global.fetch = fetchMock;
+
+    const { result } = renderHook(() => useGatheringsList('token', { council: true }));
+    await waitFor(() => expect(result.current.status).toBe('success'));
+
+    const [url] = fetchMock.mock.calls[0] as [string];
+    expect(url).toContain('council=true');
+  });
+
+  it('omits council from the request when not given', async () => {
+    const fetchMock = jest.fn().mockResolvedValue({ ok: true, json: async () => [] });
+    global.fetch = fetchMock;
+
+    const { result } = renderHook(() => useGatheringsList('token', { ownerGroupId: 'bacenta-1' }));
+    await waitFor(() => expect(result.current.status).toBe('success'));
+
+    const [url] = fetchMock.mock.calls[0] as [string];
+    expect(url).not.toContain('council');
   });
 });
 

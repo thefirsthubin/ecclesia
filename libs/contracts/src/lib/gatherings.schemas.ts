@@ -135,11 +135,23 @@ export type GatheringResponseDto = z.infer<typeof gatheringResponseSchema>;
  * `type` is a new optional exact-match filter, the other half of §16.4's
  * "filterable by type and Group."
  */
+/**
+ * `[Post-Milestone D — Portal Experiences follow-up]` `council` - a
+ * `COUNCIL`-scoped actor (`COUNCIL_OVERSEER`) explicitly opting into
+ * every Branch in their own Council, not just their own home Branch (the
+ * guard's own default when `council` is omitted). Same
+ * `z.coerce.boolean().default(false)` shape `trendQueryBaseSchema`
+ * (`insights.schemas.ts`) already establishes for the identical
+ * `council=true` idiom. Response stays a flat `GatheringResponseDto[]` -
+ * every row already carries its own `branchId`, so no new wrapper shape
+ * is needed the way the bucketed trend endpoints required.
+ */
 export const listGatheringsQuerySchema = z.object({
   ownerGroupId: z.string().uuid().optional(),
   type: z.string().trim().min(1).optional(),
   from: z.string().datetime().optional(),
   to: z.string().datetime().optional(),
+  council: z.coerce.boolean().default(false),
 });
 export type ListGatheringsQuery = z.infer<typeof listGatheringsQuerySchema>;
 

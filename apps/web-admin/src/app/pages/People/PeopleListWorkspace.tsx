@@ -1,8 +1,9 @@
-import { Drawer, PageContainer } from '@ecclesia/ui-web';
+import { Drawer, PageContainer, useTheme } from '@ecclesia/ui-web';
 
 import { useNavigate, useParams } from '../../router/router';
 import { PeopleListPage } from './PeopleListPage';
 import { PersonDetailPage } from './PersonDetailPage';
+import { PotentialsSection } from './PotentialsSection';
 
 /**
  * `[Whole Ecclesia layout rebalance, Branch Pastor People redesign,
@@ -30,15 +31,24 @@ import { PersonDetailPage } from './PersonDetailPage';
  * People-workspace shape; it reuses this same `Drawer`+`PersonDetailPage`
  * pairing rather than a third implementation. This component itself is
  * presentation/navigation only.
+ *
+ * `[Post-Milestone D — Portal Experiences follow-up]` `PotentialsSection`
+ * added below the list - all three roles routed here hold a real
+ * `people.potential.*` grant (traced against `permission-matrix.ts`), a
+ * gap found during Milestone D's own D11 audit.
  */
 export function PeopleListWorkspace() {
+  const theme = useTheme();
   const navigate = useNavigate();
   const { id } = useParams<{ id?: string }>();
 
   return (
     <>
       <PageContainer maxWidth={1120}>
-        <PeopleListPage />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[5] }}>
+          <PeopleListPage />
+          <PotentialsSection />
+        </div>
       </PageContainer>
       <Drawer
         isOpen={Boolean(id)}

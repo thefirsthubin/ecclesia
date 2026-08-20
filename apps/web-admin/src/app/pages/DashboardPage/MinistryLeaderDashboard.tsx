@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { Badge, Button, Card, Divider, EmptyState, ErrorState, Heading, LineChart, PageContainer, Skeleton, Text, TrendPanel, useTheme } from '@ecclesia/ui-web';
-import type { AttendanceTrendResultDto, PersonResponseDto } from '@ecclesia/contracts';
+import type { AttendanceTrendResultDto, GroupActivityResponseDto, PersonResponseDto } from '@ecclesia/contracts';
 
 import { useAuth } from '../../auth/AuthContext';
 import { apiGet } from '../../lib/api-client';
@@ -8,13 +9,64 @@ import type { AsyncDataResult } from '../../lib/useAsyncData';
 import { useNavigate } from '../../router/router';
 import { useGatheringsList } from '../Gatherings/useGatheringsData';
 import { StaffingTargetsPanel } from '../Ministry/StaffingTargetsPanel';
-import { useOvercommitmentFlags, useRoster } from '../Ministry/useMinistryData';
+import { useGroupActivity, useOvercommitmentFlags, useRoster } from '../Ministry/useMinistryData';
 import { PersonNameText } from '../PastoralCare/PersonNameText';
 import { DashboardHeader } from './DashboardHeader';
 import { useDashboardBreakpoint } from './useDashboardBreakpoint';
 
 function formatDateTime(iso: string): string {
   return new Date(iso).toLocaleString();
+}
+
+/** `[Post-Milestone D — Portal Experiences follow-up]` The Recent
+ * Ministry Activity card's window - the past 30 days, the mirror image
+ * of `FollowUpTaskQueuePage.tsx`'s own `calendarWindow` (next 30 days) -
+ * that card is deliberately forward-looking ("what needs my attention
+ * soon"), this one is backward-looking ("what happened recently"), so
+ * the two never show the same Gatherings even though both can include
+ * one. */
+function recentActivityWindow(now: Date): { from: string; to: string } {
+  const from = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  return { from: from.toISOString(), to: now.toISOString() };
+}
+
+type ActivityEntry =
+  | { key: string; timestamp: string; kind: 'membership'; personId: string; label: string; description: string }
+  | { key: string; timestamp: string; kind: 'staffingTarget' | 'gathering'; label: string; description: string };
+
+/** Merges the three real, separately-fetched sources into one
+ * chronological list for display - a frontend-only concern, distinct
+ * from `groupActivityResponseSchema`'s own deliberate choice to keep
+ * them as separate typed arrays over the wire (see that schema's doc
+ * comment). A `personId`-carrying `'membership'` entry is kept distinct
+ * from the other two kinds so the render layer can resolve it to a real
+ * name via `PersonNameText`, rather than ever showing a raw UUID. */
+function buildActivityFeed(data: GroupActivityResponseDto): ActivityEntry[] {
+  const entries: ActivityEntry[] = [
+    ...data.membershipChanges.map((change): ActivityEntry => ({
+      key: `membership-${change.personId}-${change.startedAt}`,
+      timestamp: change.endedAt ?? change.startedAt,
+      kind: 'membership',
+      personId: change.personId,
+      label: change.endedAt ? 'Membership ended' : 'Membership started',
+      description: change.reason ?? '',
+    })),
+    ...data.staffingTargetChanges.map((change): ActivityEntry => ({
+      key: `staffing-target-${change.id}`,
+      timestamp: change.createdAt,
+      kind: 'staffingTarget',
+      label: 'Staffing target set',
+      description: `Target of ${change.targetCount}`,
+    })),
+    ...data.gatherings.map((gathering): ActivityEntry => ({
+      key: `gathering-${gathering.id}`,
+      timestamp: gathering.scheduledStart,
+      kind: 'gathering',
+      label: 'Gathering',
+      description: gathering.type,
+    })),
+  ];
+  return entries.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 }
 
 /** `[Milestone D — Portal Experiences, Portal 4: Basonta Leader]` Real
@@ -58,12 +110,20 @@ function useMinistryAttendanceTrend(accessToken: string | undefined, groupId: st
  * Attendance is now real too (`useMinistryAttendanceTrend`,
  * `GET /insights/attendance-trend` `groupId`-narrowed to this Basonta,
  * `gatheringCategory=BASONTA_MEETING`) - the prior demo series is
- * removed. Recent Ministry Activity has no honest replacement: no
- * activity-feed/audit-log endpoint scoped to a single group exists
- * anywhere in `apps/api` (a genuine backend gap, not merely undemoed),
- * so that section now shows an explicit unavailable state rather than
- * fabricated activity - the "show an honest empty/unavailable state and
- * report the backend gap" rule, not a UI-only fix.
+ * removed.
+ *
+ * `[Post-Milestone D — Portal Experiences follow-up]` Recent Ministry
+ * Activity is now real too (`useGroupActivity`, `GET
+ * /ministry/groups/:groupId/activity` - the disclosed backend gap this
+ * milestone's own comment used to describe here, closed by
+ * `GroupActivityService`). `buildActivityFeed` merges its three real
+ * sources - membership changes, Staffing Target changes, and this
+ * Basonta's own Gatherings - into one chronological list for the past 30
+ * days; see that function's own doc comment for why the merge happens
+ * only at the render layer. Deliberately still omits any
+ * overcommitment-flag history - see `groupActivityResponseSchema`'s own
+ * doc comment (`libs/contracts/src/lib/ministry.schemas.ts`) for why that
+ * would require fabricating a timestamp that isn't persisted anywhere.
  */
 export function MinistryLeaderDashboard() {
   const theme = useTheme();
@@ -88,6 +148,11 @@ export function MinistryLeaderDashboard() {
   const overcommitmentState = useOvercommitmentFlags(accessToken, groupId ?? '');
   const gatheringsState = useGatheringsList(accessToken, groupId ? { ownerGroupId: groupId } : {});
   const attendanceTrendState = useMinistryAttendanceTrend(accessToken, groupId);
+  // Lazy initializer - see `FollowUpTaskQueuePage.tsx`'s own
+  // `calendarWindow` precedent for why a plain `recentActivityWindow(new
+  // Date())` call inline would recompute (and refetch) on every render.
+  const [activityRange] = useState(() => recentActivityWindow(new Date()));
+  const activityState = useGroupActivity(accessToken, groupId ?? '', activityRange.from, activityRange.to);
 
   const rosterSize = rosterState.status === 'success' ? rosterState.data.length : undefined;
   const overcommittedCount = overcommitmentState.status === 'success' ? overcommitmentState.data.length : undefined;
@@ -239,11 +304,37 @@ export function MinistryLeaderDashboard() {
           <Card padding={6} testId="recent-ministry-activity-card">
             <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
               <Heading level={3}>Recent ministry activity</Heading>
-              <EmptyState
-                icon="clock"
-                title="Not available yet"
-                description="No activity feed exists for a single Basonta in this release - this is a disclosed backend gap, not fabricated data."
-              />
+              {activityState.status === 'loading' && <Skeleton height={20} />}
+              {activityState.status === 'error' && <ErrorState title="Couldn't load recent activity" onRetry={activityState.refetch} />}
+              {activityState.status === 'success' &&
+                (buildActivityFeed(activityState.data).length === 0 ? (
+                  <EmptyState icon="clock" title="No recent activity" description="Nothing has changed on this Basonta in the last 30 days." />
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
+                    {buildActivityFeed(activityState.data)
+                      .slice(0, 5)
+                      .map((entry, index) => (
+                        <div key={entry.key}>
+                          {index > 0 && <Divider />}
+                          <div style={{ paddingTop: index > 0 ? theme.spacing[3] : 0, display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
+                            <Text variant="bodySmall">
+                              {entry.label}
+                              {entry.kind === 'membership' && (
+                                <>
+                                  {' — '}
+                                  <PersonNameText personId={entry.personId} />
+                                </>
+                              )}
+                              {entry.description && ` — ${entry.description}`}
+                            </Text>
+                            <Text variant="caption" color={theme.colors.text.secondary}>
+                              {formatDateTime(entry.timestamp)}
+                            </Text>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                ))}
             </div>
           </Card>
         </div>

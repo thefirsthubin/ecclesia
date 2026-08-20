@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from '@testing-library/react';
 
-import { useCouncilAttendanceTrend, useCouncilGivingTrend, useCouncilMembershipTrend } from './useCouncilTrendData';
+import { useBranches, useCouncilAttendanceTrend, useCouncilGivingTrend, useCouncilMembershipTrend } from './useCouncilTrendData';
 import type { CouncilTrendFilter } from './useCouncilTrendData';
 
 const FILTER: CouncilTrendFilter = { granularity: 'week', count: 1 };
@@ -101,5 +101,29 @@ describe('[Milestone D, Portal 7] useCouncilMembershipTrend', () => {
 
     const [url] = fetchMock.mock.calls[0] as [string];
     expect(url).toContain('council=true');
+  });
+});
+
+describe('[Post-Milestone D] useBranches', () => {
+  afterEach(() => jest.clearAllMocks());
+
+  it('GETs /platform/branches', async () => {
+    const fetchMock = jest.fn().mockResolvedValue({ ok: true, json: async () => [{ id: 'branch-1', name: 'Headquarters' }] });
+    global.fetch = fetchMock;
+
+    const { result } = renderHook(() => useBranches('token'));
+    await waitFor(() => expect(result.current.status).toBe('success'));
+
+    const [url] = fetchMock.mock.calls[0] as [string];
+    expect(url).toContain('/platform/branches');
+    if (result.current.status !== 'success') throw new Error('expected success');
+    expect(result.current.data).toEqual([{ id: 'branch-1', name: 'Headquarters' }]);
+  });
+
+  it('rejects rather than fetching when there is no access token', async () => {
+    global.fetch = jest.fn();
+    const { result } = renderHook(() => useBranches(undefined));
+    await waitFor(() => expect(result.current.status).toBe('error'));
+    expect(global.fetch).not.toHaveBeenCalled();
   });
 });

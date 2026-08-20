@@ -168,7 +168,13 @@ export function StewardshipPage() {
 
   const pageTitle = state.actor.role === 'TREASURER' ? 'Finance' : 'Stewardship';
 
-  const transactionsState = useTransactionQueue(state.accessToken, transactionStateFilter);
+  // `[Post-Milestone D — Portal Experiences follow-up]` `COUNCIL_OVERSEER`/
+  // `COUNCIL_TREASURER` both hold `stewardship.transaction.read` at
+  // COUNCIL scope - see `useTransactionQueue`'s own doc comment for why
+  // this was previously silently narrowed to just the actor's own home
+  // Branch.
+  const isCouncilRole = state.actor.role === 'COUNCIL_OVERSEER' || state.actor.role === 'COUNCIL_TREASURER';
+  const transactionsState = useTransactionQueue(state.accessToken, transactionStateFilter, isCouncilRole);
   const expensesState = useExpenseQueue(state.accessToken, expenseStateFilter);
   const reconciliationState = useWeeklyReconciliation(state.accessToken, reconciliationWeekStartDate || undefined);
 

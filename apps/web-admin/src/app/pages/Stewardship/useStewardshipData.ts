@@ -30,15 +30,27 @@ import type { AsyncDataResult } from '../../lib/useAsyncData';
  * is left to the backend's RBAC 403, the same "don't pre-empt the
  * backend" precedent Gatherings' ASSISTANT_PASTOR/BASONTA_LEADER gap
  * already established.
+ *
+ * `[Post-Milestone D — Portal Experiences follow-up]` `council` -
+ * `COUNCIL_OVERSEER`/`COUNCIL_TREASURER` both hold
+ * `stewardship.transaction.read` at `COUNCIL` scope, but before this fix
+ * an omitted query silently narrowed every request to just the actor's
+ * own home Branch, not the full Council their grant covers (the same
+ * class of gap Gatherings' `resolveDefaultGatheringsQuery` closed for
+ * `COUNCIL_OVERSEER`) - `StewardshipPage.tsx` now passes `council: true`
+ * for both Council roles.
  */
-export function useTransactionQueue(accessToken: string | undefined, state?: string): AsyncDataResult<FinancialTransactionResponseDto[]> {
+export function useTransactionQueue(accessToken: string | undefined, state?: string, council?: boolean): AsyncDataResult<FinancialTransactionResponseDto[]> {
   return useAsyncData<FinancialTransactionResponseDto[]>(
     (signal) => {
       if (!accessToken) return Promise.reject(new Error('not authenticated'));
-      const qs = state ? `?state=${encodeURIComponent(state)}` : '';
-      return apiGet<FinancialTransactionResponseDto[]>(`/financial-transactions${qs}`, { authToken: accessToken, signal });
+      const params = new URLSearchParams();
+      if (state) params.set('state', state);
+      if (council) params.set('council', 'true');
+      const qs = params.toString();
+      return apiGet<FinancialTransactionResponseDto[]>(`/financial-transactions${qs ? `?${qs}` : ''}`, { authToken: accessToken, signal });
     },
-    [accessToken, state],
+    [accessToken, state, council],
   );
 }
 

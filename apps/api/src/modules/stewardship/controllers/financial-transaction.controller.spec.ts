@@ -29,12 +29,22 @@ describe('FinancialTransactionController', () => {
     expect(financialTransactionService.record).toHaveBeenCalledWith(actor, body);
   });
 
-  it('listByBranch() delegates to FinancialTransactionService.listByBranch with the actor and state/type/sourceGroupId query params', async () => {
+  it('listByBranch() delegates to FinancialTransactionService.listByBranch with the actor and state/type/sourceGroupId/council query params', async () => {
     const { controller, financialTransactionService } = buildController();
 
-    await controller.listByBranch(actor, { state: 'FLAGGED', type: 'OFFERING', sourceGroupId: 'bacenta-1' });
+    await controller.listByBranch(actor, { state: 'FLAGGED', type: 'OFFERING', sourceGroupId: 'bacenta-1', council: false });
 
-    expect(financialTransactionService.listByBranch).toHaveBeenCalledWith(actor, 'FLAGGED', 'OFFERING', 'bacenta-1');
+    expect(financialTransactionService.listByBranch).toHaveBeenCalledWith(actor, 'FLAGGED', 'OFFERING', 'bacenta-1', false);
+  });
+
+  /** `[Post-Milestone D — Portal Experiences follow-up]` */
+  it('listByBranch() passes council=true through to FinancialTransactionService.listByBranch', async () => {
+    const { controller, financialTransactionService } = buildController();
+    const overseer: ActorContext = { personId: 'overseer-1', role: 'COUNCIL_OVERSEER', branchId: 'branch-1', councilBranchIds: ['branch-1', 'branch-2'] };
+
+    await controller.listByBranch(overseer, { council: true });
+
+    expect(financialTransactionService.listByBranch).toHaveBeenCalledWith(overseer, undefined, undefined, undefined, true);
   });
 
   it('[Milestone A] summarize() delegates to FinancialTransactionService.summarize with parsed from/to Dates', async () => {

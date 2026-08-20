@@ -57,7 +57,7 @@ export class FinancialTransactionController {
   @RequirePermission('stewardship.transaction.read')
   @UseGuards(FinancialTransactionListResourceContextGuard, RbacGuard)
   listByBranch(@CurrentActor() actor: ActorContext, @Query(new ZodValidationPipe(listFinancialTransactionsQuerySchema)) query: ListFinancialTransactionsQuery) {
-    return this.financialTransactionService.listByBranch(actor, query.state, query.type, query.sourceGroupId);
+    return this.financialTransactionService.listByBranch(actor, query.state, query.type, query.sourceGroupId, query.council);
   }
 
   /**

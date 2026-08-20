@@ -112,3 +112,55 @@ export const overcommitmentFlagResponseSchema = z.object({
 });
 export type OvercommitmentFlagResponseDto = z.infer<typeof overcommitmentFlagResponseSchema>;
 export const overcommitmentFlagListResponseSchema = z.array(overcommitmentFlagResponseSchema);
+
+/**
+ * `[Post-Milestone D — Portal Experiences follow-up]` `GET
+ * /ministry/groups/:groupId/activity` - the "Basonta recent activity"
+ * read model `MinistryLeaderDashboard.tsx`'s own doc comment disclosed
+ * as a genuine backend gap ("no activity-feed/audit-log endpoint scoped
+ * to a single group exists anywhere in `apps/api`"). Same
+ * `from`/`to`-window shape `getPastoralCalendarQuerySchema` already
+ * establishes. A pure composition read-model, not a new table - three
+ * already-existing date-bearing facts (`GroupMembership.startedAt`/
+ * `.endedAt`, `StaffingTarget.createdAt`, `Gathering.scheduledStart`),
+ * the same "aggregate, don't duplicate" discipline
+ * `PastoralCalendarService` already follows. Deliberately omits any
+ * overcommitment-flag history - `overcommitmentFlagResponseSchema` above
+ * is entirely compute-on-read from current state, with no persisted
+ * timestamp of when a Person became overcommitted, so a time-windowed
+ * "overcommitment changes" entry would have to be fabricated.
+ */
+export const getGroupActivityQuerySchema = z.object({
+  from: z.string().datetime(),
+  to: z.string().datetime(),
+});
+export type GetGroupActivityQuery = z.infer<typeof getGroupActivityQuerySchema>;
+
+export const groupActivityMembershipEntrySchema = z.object({
+  personId: z.string().uuid(),
+  startedAt: z.string().datetime(),
+  endedAt: z.string().datetime().nullable(),
+  reason: z.string().nullable(),
+});
+
+export const groupActivityStaffingTargetEntrySchema = z.object({
+  id: z.string().uuid(),
+  gatheringId: z.string().uuid(),
+  targetCount: z.number().int(),
+  createdAt: z.string().datetime(),
+});
+
+export const groupActivityGatheringEntrySchema = z.object({
+  id: z.string().uuid(),
+  type: z.string(),
+  scheduledStart: z.string().datetime(),
+});
+
+export const groupActivityResponseSchema = z.object({
+  from: z.string(),
+  to: z.string(),
+  membershipChanges: z.array(groupActivityMembershipEntrySchema),
+  staffingTargetChanges: z.array(groupActivityStaffingTargetEntrySchema),
+  gatherings: z.array(groupActivityGatheringEntrySchema),
+});
+export type GroupActivityResponseDto = z.infer<typeof groupActivityResponseSchema>;

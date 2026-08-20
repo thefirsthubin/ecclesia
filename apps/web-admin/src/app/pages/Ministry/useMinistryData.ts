@@ -1,4 +1,11 @@
-import type { CreateGroupInput, GroupResponseDto, OvercommitmentFlagResponseDto, RosterMemberResponseDto, UpdateGroupInput } from '@ecclesia/contracts';
+import type {
+  CreateGroupInput,
+  GroupActivityResponseDto,
+  GroupResponseDto,
+  OvercommitmentFlagResponseDto,
+  RosterMemberResponseDto,
+  UpdateGroupInput,
+} from '@ecclesia/contracts';
 
 import { apiGet, apiPatch, apiPost } from '../../lib/api-client';
 import { useAsyncData } from '../../lib/useAsyncData';
@@ -89,5 +96,29 @@ export function useOvercommitmentFlags(
       });
     },
     [accessToken, groupId],
+  );
+}
+
+/** `[Post-Milestone D — Portal Experiences follow-up]` `GET
+ * /ministry/groups/:groupId/activity?from=&to=` - see
+ * `groupActivityResponseSchema`'s own doc comment
+ * (`libs/contracts/src/lib/ministry.schemas.ts`) for the full reasoning
+ * behind this being real, composed data rather than a fabricated feed. */
+export function useGroupActivity(
+  accessToken: string | undefined,
+  groupId: string,
+  from: string,
+  to: string,
+): AsyncDataResult<GroupActivityResponseDto> {
+  return useAsyncData<GroupActivityResponseDto>(
+    (signal) => {
+      if (!accessToken) return Promise.reject(new Error('not authenticated'));
+      const params = new URLSearchParams({ from, to });
+      return apiGet<GroupActivityResponseDto>(`/ministry/groups/${groupId}/activity?${params.toString()}`, {
+        authToken: accessToken,
+        signal,
+      });
+    },
+    [accessToken, groupId, from, to],
   );
 }

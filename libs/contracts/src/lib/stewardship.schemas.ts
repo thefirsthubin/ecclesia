@@ -106,10 +106,18 @@ export type RecordFinancialTransactionInput = z.infer<typeof recordFinancialTran
  * without a separate endpoint (a `BACENTA_LEADER`'s own OWN_GROUP scope
  * already narrows server-side regardless of this param, unchanged).
  */
+/**
+ * `[Post-Milestone D — Portal Experiences follow-up]` `council` - same
+ * `z.coerce.boolean().default(false)` idiom `listGatheringsQuerySchema`
+ * (`gatherings.schemas.ts`) and `trendQueryBaseSchema` (`insights.schemas.ts`)
+ * already establish. Response stays a flat `FinancialTransactionResponseDto[]` -
+ * every row already carries its own `branchId`.
+ */
 export const listFinancialTransactionsQuerySchema = z.object({
   state: z.string().trim().min(1).optional(),
   type: financialTransactionTypeSchema.exclude(['EXPENSE']).optional(),
   sourceGroupId: z.string().uuid().optional(),
+  council: z.coerce.boolean().default(false),
 });
 export type ListFinancialTransactionsQuery = z.infer<typeof listFinancialTransactionsQuerySchema>;
 

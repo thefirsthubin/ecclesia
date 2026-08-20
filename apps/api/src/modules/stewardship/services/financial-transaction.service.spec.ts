@@ -41,8 +41,9 @@ describe('FinancialTransactionService', () => {
     };
     const eventPublisher = { publish: jest.fn() };
     const gatheringScopeService = { loadScope: jest.fn() };
-    const service = new FinancialTransactionService(financialTransactionRepository as never, eventPublisher as never, gatheringScopeService as never);
-    return { service, financialTransactionRepository, eventPublisher, gatheringScopeService };
+    const prisma = { runInBranchScope: jest.fn((_branchId: string, fn: () => unknown) => fn()) };
+    const service = new FinancialTransactionService(financialTransactionRepository as never, eventPublisher as never, gatheringScopeService as never, prisma as never);
+    return { service, financialTransactionRepository, eventPublisher, gatheringScopeService, prisma };
   }
 
   describe('record', () => {
@@ -320,6 +321,39 @@ describe('FinancialTransactionService', () => {
       await service.listByBranch(basontaLeader, 'RECORDED');
 
       expect(financialTransactionRepository.findManyByBranch).toHaveBeenCalledWith('branch-1', 'RECORDED', undefined, 'basonta-1');
+    });
+  });
+
+  /** `[Post-Milestone D — Portal Experiences follow-up]` `council=true` -
+   * every real Branch in the actor's own Council, one `runInBranchScope`
+   * call per Branch, results flattened into one array. */
+  describe('listByBranch (council=true)', () => {
+    const overseer: ActorContext = { personId: 'overseer-1', role: 'COUNCIL_OVERSEER', branchId: 'branch-1', councilBranchIds: ['branch-1', 'branch-2'] };
+
+    it('lists across every Branch in the Council, one runInBranchScope call per Branch, flattened into one array', async () => {
+      const { service, financialTransactionRepository, prisma } = buildService();
+      financialTransactionRepository.findManyByBranch.mockImplementation((branchId: string) => Promise.resolve([buildTransaction({ id: `ft-${branchId}`, branchId })]));
+
+      const result = await service.listByBranch(overseer, 'VERIFIED', undefined, undefined, true);
+
+      expect(prisma.runInBranchScope).toHaveBeenCalledTimes(2);
+      expect(prisma.runInBranchScope).toHaveBeenNthCalledWith(1, 'branch-1', expect.any(Function));
+      expect(prisma.runInBranchScope).toHaveBeenNthCalledWith(2, 'branch-2', expect.any(Function));
+      expect(financialTransactionRepository.findManyByBranch).toHaveBeenNthCalledWith(1, 'branch-1', 'VERIFIED', undefined, undefined);
+      expect(financialTransactionRepository.findManyByBranch).toHaveBeenNthCalledWith(2, 'branch-2', 'VERIFIED', undefined, undefined);
+      expect(result.map((t) => t.id)).toEqual(['ft-branch-1', 'ft-branch-2']);
+    });
+
+    it('rejects with a BadRequestException when both council and sourceGroupId are supplied', async () => {
+      const { service } = buildService();
+
+      await expect(service.listByBranch(overseer, undefined, undefined, 'bacenta-1', true)).rejects.toThrow('Supply at most one of council or sourceGroupId, not both');
+    });
+
+    it('rejects with a BadRequestException when the actor has no Council scope', async () => {
+      const { service } = buildService();
+
+      await expect(service.listByBranch(treasurer, undefined, undefined, undefined, true)).rejects.toThrow('This actor has no Council scope to aggregate across');
     });
   });
 

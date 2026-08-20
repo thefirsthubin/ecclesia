@@ -61,14 +61,27 @@ export interface AttendanceCompletenessResult {
  * unfiltered `{}` query RESIDENT_PASTOR/ADMIN already use - matching its
  * real, current scope exactly, not widening anything.
  */
+/**
+ * `[Post-Milestone D — Portal Experiences follow-up]` `COUNCIL_OVERSEER`
+ * now resolves to `{ council: true }` - this role holds
+ * `gatherings.gathering.read` at `COUNCIL` scope (`permission-matrix.ts`),
+ * but before this fix the omitted-query fallback (`GatheringListResourceContextGuard`'s
+ * own Branch-only default) silently narrowed every request to just this
+ * actor's own home Branch, not the full Council their grant actually
+ * covers - a real, disclosed gap found during Milestone D's own D11/D12
+ * audit, not a new capability being invented here.
+ */
 export function resolveDefaultGatheringsQuery(
   actor: Pick<ActorContext, 'role' | 'bacentaId' | 'basontaId' | 'clusterBacentaIds'>,
-): Pick<ListGatheringsQuery, 'ownerGroupId'> {
+): Partial<Pick<ListGatheringsQuery, 'ownerGroupId' | 'council'>> {
   if (actor.role === 'BACENTA_LEADER' && actor.bacentaId) {
     return { ownerGroupId: actor.bacentaId };
   }
   if (actor.role === 'BASONTA_LEADER' && actor.basontaId) {
     return { ownerGroupId: actor.basontaId };
+  }
+  if (actor.role === 'COUNCIL_OVERSEER') {
+    return { council: true };
   }
   // RESIDENT_PASTOR/ADMIN/ASSISTANT_PASTOR all resolve to whole-Branch
   // (BRANCH-scope rows - see this function's own doc comment for
@@ -79,7 +92,7 @@ export function resolveDefaultGatheringsQuery(
   return {};
 }
 
-export function useGatheringsList(accessToken: string | undefined, query: ListGatheringsQuery): AsyncDataResult<GatheringResponseDto[]> {
+export function useGatheringsList(accessToken: string | undefined, query: Partial<ListGatheringsQuery>): AsyncDataResult<GatheringResponseDto[]> {
   return useAsyncData<GatheringResponseDto[]>(
     (signal) => {
       if (!accessToken) return Promise.reject(new Error('not authenticated'));
@@ -96,10 +109,11 @@ export function useGatheringsList(accessToken: string | undefined, query: ListGa
       // `undefined` and gets the exact same request as before.
       if (query.from) params.set('from', query.from);
       if (query.to) params.set('to', query.to);
+      if (query.council) params.set('council', 'true');
       const qs = params.toString();
       return apiGet<GatheringResponseDto[]>(`/gatherings${qs ? `?${qs}` : ''}`, { authToken: accessToken, signal });
     },
-    [accessToken, query.ownerGroupId, query.type, query.from, query.to],
+    [accessToken, query.ownerGroupId, query.type, query.from, query.to, query.council],
   );
 }
 

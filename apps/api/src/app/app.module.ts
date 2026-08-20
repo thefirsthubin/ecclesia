@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuditLogModule } from '../modules/audit-log/audit-log.module';
+import { BranchesModule } from '../modules/branches/branches.module';
 import { ConfigurationModule } from '../modules/configuration/configuration.module';
 import { GatheringsModule } from '../modules/gatherings/gatherings.module';
 import { InsightsModule } from '../modules/insights/insights.module';
@@ -11,6 +12,7 @@ import { OutreachModule } from '../modules/outreach/outreach.module';
 import { PastoralCareModule } from '../modules/pastoral-care/pastoral-care.module';
 import { PeopleModule } from '../modules/people/people.module';
 import { StewardshipModule } from '../modules/stewardship/stewardship.module';
+import { TenantsModule } from '../modules/tenants/tenants.module';
 import { PlatformModule } from '../platform/platform.module';
 
 /**
@@ -42,14 +44,21 @@ import { PlatformModule } from '../platform/platform.module';
  * staying out of `PlatformModule`, see its own doc comment.
  * `OutreachModule` (`[Milestone B: People + Pastoral + Outreach
  * Foundation]`) is the ninth - see that module's own doc comment.
+ * `BranchesModule` (`[Post-Milestone D — Portal Experiences follow-up]`)
+ * is the tenth, the read side of `platform.branches` - same reasoning as
+ * `ConfigurationModule`/`AuditLogModule` for staying out of
+ * `PlatformModule`.
+ * `TenantsModule` (`[Post-Milestone D — Portal Experiences follow-up]`)
+ * is the eleventh, the read side of `platform.tenants` - same reasoning
+ * as `BranchesModule` for staying out of `PlatformModule`.
  * `PeopleModule` and `PastoralCareModule` import each other
  * (`forwardRef`) for their bidirectional public-service dependency - see
  * both modules' own doc comments. `GatheringsModule`, `StewardshipModule`,
  * `InsightsModule`, and `MinistryModule` each import `PeopleModule`
  * normally (no cycle); `MinistryModule` additionally imports
- * `GatheringsModule` normally. `ConfigurationModule`/`AuditLogModule`
- * import neither - each one's own guard needs only
- * `RbacPlatformModule`/`DatabaseModule`.
+ * `GatheringsModule` normally. `ConfigurationModule`/`AuditLogModule`/
+ * `BranchesModule`/`TenantsModule` import neither - each one's own guard
+ * needs only `RbacPlatformModule`/`DatabaseModule`.
  */
 @Module({
   imports: [
@@ -63,6 +72,8 @@ import { PlatformModule } from '../platform/platform.module';
     ConfigurationModule,
     AuditLogModule,
     OutreachModule,
+    BranchesModule,
+    TenantsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

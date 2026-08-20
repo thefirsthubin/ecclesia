@@ -2,7 +2,7 @@ import { Card, ErrorState, MetricCard, PageContainer, PageHeader, SectionHeader,
 
 import { useAuth } from '../../auth/AuthContext';
 import { formatAmountMinor } from '../Stewardship/useStewardshipData';
-import { useCouncilAttendanceTrend, useCouncilGivingTrend, useCouncilMembershipTrend } from '../Insights/useCouncilTrendData';
+import { useBranches, useCouncilAttendanceTrend, useCouncilGivingTrend, useCouncilMembershipTrend } from '../Insights/useCouncilTrendData';
 import type { BranchAttendanceResult, BranchGivingResult, BranchMembershipResult } from '../Insights/useCouncilTrendData';
 import { useDashboardBreakpoint } from './useDashboardBreakpoint';
 
@@ -16,16 +16,19 @@ function formatWeekRangeLabel(fromIso: string, toIso: string): string {
   return `Week of ${startLabel} – ${endLabel}`;
 }
 
-/** No `GET /branches/:id` (or any Branch list/lookup) endpoint exists
- * anywhere in `apps/api` - `actor.branchName` only ever resolves the
- * acting user's own home Branch (`AuthController`'s own doc comment).
- * For the actor's own Branch this is a real name; for any other Branch
- * in their Council (not reachable in today's single-Branch deployment,
- * but the real, honest fallback once a second Branch exists) this shows
- * the raw `branchId` rather than fabricating a name - a disclosed
- * backend gap, not a guess. */
-function branchLabel(branchId: string, actorBranchId: string, actorBranchName: string): string {
-  return branchId === actorBranchId ? actorBranchName : branchId;
+/**
+ * `[Post-Milestone D — Portal Experiences follow-up]` `GET
+ * /platform/branches` (`useBranches`) now resolves every real Branch
+ * name in the actor's own Council - the raw-`branchId` fallback this
+ * function used at Milestone D ship time (when no such endpoint existed)
+ * is now only reached while `useBranches` is still loading/erroring, or
+ * for the rare instant before its first response resolves; `actorBranchName`
+ * (already known synchronously from the auth response) covers the
+ * actor's own Branch in that window so their own card never flashes a
+ * raw id.
+ */
+function branchLabel(branchId: string, actorBranchId: string, actorBranchName: string, branchNameById: Map<string, string>): string {
+  return branchNameById.get(branchId) ?? (branchId === actorBranchId ? actorBranchName : branchId);
 }
 
 /**
@@ -45,6 +48,10 @@ function branchLabel(branchId: string, actorBranchId: string, actorBranchName: s
  * No Prayer Notes/Counselling/Interaction content anywhere on this page -
  * neither Council role holds any `pastoral_care.*` grant (Milestone D
  * rule 4).
+ *
+ * `[Post-Milestone D — Portal Experiences follow-up]` Branch names now
+ * come from `useBranches` (`GET /platform/branches`), not a raw id
+ * fallback - see `branchLabel`'s own doc comment.
  */
 export function CouncilDashboard() {
   const theme = useTheme();
@@ -58,6 +65,7 @@ export function CouncilDashboard() {
   const givingState = useCouncilGivingTrend(accessToken, { granularity: 'week', count: 1 });
   const attendanceState = useCouncilAttendanceTrend(isOverseer ? accessToken : undefined, { granularity: 'week', count: 1 });
   const membershipState = useCouncilMembershipTrend(isOverseer ? accessToken : undefined, { granularity: 'week', count: 1 });
+  const branchesState = useBranches(accessToken);
 
   const weekContext = givingState.status === 'success' && givingState.data[0] ? formatWeekRangeLabel(givingState.data[0].from, givingState.data[0].to) : 'This week';
 
@@ -69,6 +77,8 @@ export function CouncilDashboard() {
   if (attendanceState.status === 'success') for (const branch of attendanceState.data) attendanceByBranch.set(branch.branchId, branch);
   const membershipByBranch = new Map<string, BranchMembershipResult>();
   if (membershipState.status === 'success') for (const branch of membershipState.data) membershipByBranch.set(branch.branchId, branch);
+  const branchNameById = new Map<string, string>();
+  if (branchesState.status === 'success') for (const branch of branchesState.data) branchNameById.set(branch.id, branch.name);
 
   return (
     <PageContainer maxWidth={1280}>
@@ -99,7 +109,7 @@ export function CouncilDashboard() {
                 return (
                   <Card padding={6} key={branch.branchId} testId="council-branch-card">
                     <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[3] }}>
-                      <SectionHeader title={branchLabel(branch.branchId, actorBranchId, actorBranchName)} description={weekContext} />
+                      <SectionHeader title={branchLabel(branch.branchId, actorBranchId, actorBranchName, branchNameById)} description={weekContext} />
                       <div style={metricGridStyle}>
                         <MetricCard label="Giving" value={givingTotal === null ? null : formatAmountMinor(givingTotal, 'GHS')} context={weekContext} testId="metric-council-giving" />
                         {isOverseer && (

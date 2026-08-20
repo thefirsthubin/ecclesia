@@ -88,19 +88,18 @@ describe('PERMISSION_MATRIX as an executable specification (Blueprint §9.5)', (
   });
 
   /**
-   * `[Multi-Tenant Foundation, Phase 1]` Pins that both new roles hold
-   * their intended single minimal row this phase - not empty (the role
-   * "exists" in the matrix), not more than the deliberately minimal grant
-   * documented on that row itself.
+   * `[Multi-Tenant Foundation, Phase 1]` Pinned COUNCIL_TREASURER to
+   * exactly one row this phase (`stewardship.transaction.read`).
+   * `[Post-Milestone D — Portal Experiences follow-up]` A second row,
+   * `platform.branch.read`, was added deliberately (Branch-name
+   * resolution for the Council views this role already reaches) - this
+   * test now pins exactly those two, not more.
    */
-  it('COUNCIL_TREASURER holds exactly one row this phase: stewardship.transaction.read at COUNCIL scope', () => {
+  it('COUNCIL_TREASURER holds exactly two rows: stewardship.transaction.read and platform.branch.read, both at COUNCIL scope', () => {
     const rows = PERMISSION_MATRIX.filter((rule) => rule.role === 'COUNCIL_TREASURER');
-    expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({
-      action: 'stewardship.transaction.read',
-      effect: 'ALLOW',
-      scope: 'COUNCIL',
-    });
+    expect(rows).toHaveLength(2);
+    expect(rows).toContainEqual(expect.objectContaining({ action: 'stewardship.transaction.read', effect: 'ALLOW', scope: 'COUNCIL' }));
+    expect(rows).toContainEqual(expect.objectContaining({ action: 'platform.branch.read', effect: 'ALLOW', scope: 'COUNCIL' }));
   });
 
   it('SYSTEM_ADMINISTRATOR holds exactly one row this phase: platform.tenant.read at GLOBAL scope, and no people/stewardship/pastoral_care rows at all', () => {

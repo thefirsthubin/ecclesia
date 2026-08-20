@@ -4,17 +4,20 @@ import { DatabaseModule } from '../../platform/database/database.module';
 import { RbacPlatformModule } from '../../platform/rbac/rbac-platform.module';
 import { GatheringsModule } from '../gatherings/gatherings.module';
 import { PeopleModule } from '../people/people.module';
+import { GroupActivityController } from './controllers/group-activity.controller';
 import { RosterController } from './controllers/roster.controller';
 import { StaffingTargetController } from './controllers/staffing-target.controller';
 import { WorkerAvailabilityController } from './controllers/worker-availability.controller';
 import { RosterResourceContextGuard } from './guards/roster-resource-context.guard';
 import {
   StaffingTargetCreateResourceContextGuard,
+  StaffingTargetListResourceContextGuard,
   StaffingTargetResourceContextGuard,
 } from './guards/staffing-target-resource-context.guard';
 import { WorkerAvailabilityResourceContextGuard } from './guards/worker-availability-resource-context.guard';
 import { StaffingTargetRepository } from './repositories/staffing-target.repository';
 import { WorkerAvailabilityRepository } from './repositories/worker-availability.repository';
+import { GroupActivityService } from './services/group-activity.service';
 import { RosterService } from './services/roster.service';
 import { StaffingTargetService } from './services/staffing-target.service';
 import { WorkerAvailabilityService } from './services/worker-availability.service';
@@ -44,17 +47,32 @@ import { WorkerAvailabilityService } from './services/worker-availability.servic
  *
  * Exports nothing - no other bounded-context module currently consumes a
  * Ministry service.
+ *
+ * `[Post-Milestone D — Portal Experiences follow-up]` Adds
+ * `GroupActivityController`/`GroupActivityService` (the "Basonta recent
+ * activity" read model) - composes `PeopleModule`'s exported
+ * `GroupMembershipService` and `GatheringsModule`'s exported
+ * `GatheringScopeService`, both already imported above, plus this
+ * module's own `StaffingTargetRepository`; no new cross-module import
+ * needed. Also registers `StaffingTargetListResourceContextGuard` as a
+ * provider here for the first time - `[Bug fix]` it was already
+ * referenced in `StaffingTargetController`'s `@UseGuards` but never
+ * added to this array, so `GET /ministry/staffing-targets?groupId=`
+ * could not resolve it via DI; found and fixed incidentally while
+ * touching this same import block for the unrelated work above.
  */
 @Module({
   imports: [DatabaseModule, RbacPlatformModule, PeopleModule, GatheringsModule],
-  controllers: [StaffingTargetController, WorkerAvailabilityController, RosterController],
+  controllers: [StaffingTargetController, WorkerAvailabilityController, RosterController, GroupActivityController],
   providers: [
     StaffingTargetRepository,
     WorkerAvailabilityRepository,
     StaffingTargetService,
     WorkerAvailabilityService,
     RosterService,
+    GroupActivityService,
     StaffingTargetCreateResourceContextGuard,
+    StaffingTargetListResourceContextGuard,
     StaffingTargetResourceContextGuard,
     WorkerAvailabilityResourceContextGuard,
     RosterResourceContextGuard,

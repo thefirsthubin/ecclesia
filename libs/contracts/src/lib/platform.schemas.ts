@@ -132,3 +132,40 @@ export type AuditLogEntryResponseDto = z.infer<typeof auditLogEntryResponseSchem
 
 export const auditLogListResponseSchema = z.array(auditLogEntryResponseSchema);
 export type AuditLogListResponseDto = z.infer<typeof auditLogListResponseSchema>;
+
+/**
+ * `[Post-Milestone D — Portal Experiences follow-up]` `platform.branches`
+ * (`db/schema.prisma`) - `GET /platform/branches`'s response shape. Only
+ * `id`/`name` are exposed - the minimum needed to resolve a real Branch
+ * name for a Council-wide view; `timezone` and every other `Branch`
+ * column have no current web-admin consumer, matching this file's own
+ * "don't build UI for a field with no consumer" discipline just above.
+ */
+export const branchResponseSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+});
+export type BranchResponseDto = z.infer<typeof branchResponseSchema>;
+
+export const branchListResponseSchema = z.array(branchResponseSchema);
+export type BranchListResponseDto = z.infer<typeof branchListResponseSchema>;
+
+/**
+ * `[Post-Milestone D — Portal Experiences follow-up]` `platform.tenants`
+ * (`db/schema.prisma`) - `GET /platform/tenants`'s response shape, the
+ * real Tenant list `SystemAdministratorDashboard.tsx`'s own doc comment
+ * disclosed as a genuine backend gap ("no Tenant controller/service/
+ * repository exists anywhere in `apps/api`"). `id`/`name`/`createdAt`
+ * only - `updatedAt` and the `council` relation have no current
+ * web-admin consumer, the same "don't build UI for a field with no
+ * consumer" discipline `branchResponseSchema` above already follows.
+ */
+export const tenantResponseSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  createdAt: z.string().datetime(),
+});
+export type TenantResponseDto = z.infer<typeof tenantResponseSchema>;
+
+export const tenantListResponseSchema = z.array(tenantResponseSchema);
+export type TenantListResponseDto = z.infer<typeof tenantListResponseSchema>;
